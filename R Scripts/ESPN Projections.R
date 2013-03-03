@@ -1,11 +1,12 @@
-##############
+###########################
 # File: ESPN Projections.R
 # Description: Downloads Fantasy Football Projections from ESPN.com
 # Date: 3/2/2013
 # Author: Isaac Petersen (isaactpetersen@gmail.com)
 # Notes:
+# -These projections are from last year (ESPN has not yet updated them for the upcoming season)
 # -ESPN projections do not include fumbles!
-##############
+###########################
 
 #Load libraries
 library("XML")
@@ -80,3 +81,6 @@ projections <- projections[,c("name","pos","team","positionRank","overallRank","
 #Order players by overall rank
 projections <- projections[order(projections$overallRank),]
 row.names(projections) <- 1:dim(projections)[1]
+
+#Save file
+save(projections, file = paste(getwd(),"/Data/ESPN-Projections-2012.RData", sep=""))
