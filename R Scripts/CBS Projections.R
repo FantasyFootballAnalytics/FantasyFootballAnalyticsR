@@ -92,5 +92,9 @@ projections_cbs <- projections_cbs[,c("name","pos","team_cbs","positionRank_cbs"
 projections_cbs <- projections_cbs[order(projections_cbs$overallRank_cbs),]
 row.names(projections_cbs) <- 1:dim(projections_cbs)[1]
 
+#Density Plot
+ggplot(projections_cbs, aes(x=pts_cbs), fill=pos) + geom_density(fill="red", alpha=.3) + xlab("Player's Projected Points") + opts(title = "Density Plot of CBS Projected Points from 2012")
+ggsave(paste(getwd(),"/Figures/CBS projections 2012.jpg", sep=""))
+
 #Save file
 save(projections_cbs, file = paste(getwd(),"/Data/CBS-Projections-2012.RData", sep=""))
