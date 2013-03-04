@@ -11,6 +11,7 @@
 #Load libraries
 library("XML")
 library("stringr")
+library("ggplot2")
 
 #Download fantasy football projections from ESPN.com
 qb_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2012&slotCategoryId=0", stringsAsFactors = FALSE)$playertable_0
@@ -92,6 +93,10 @@ projections_espn <- projections_espn[,c("name","pos","team_espn","positionRank_e
 #Order players by overall rank
 projections_espn <- projections_espn[order(projections_espn$overallRank_espn),]
 row.names(projections_espn) <- 1:dim(projections_espn)[1]
+
+#Density Plot
+ggplot(projections_espn, aes(x=pts_espn), fill=pos) + geom_density(fill="blue", alpha=.3) + xlab("Player's Projected Points") + opts(title = "Density Plot of ESPN Projected Points from 2012")
+ggsave(paste(getwd(),"/Figures/ESPN projections 2012.jpg", sep=""))
 
 #Save file
 save(projections_espn, file = paste(getwd(),"/Data/ESPN-Projections-2012.RData", sep=""))
