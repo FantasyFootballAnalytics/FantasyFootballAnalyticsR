@@ -75,6 +75,7 @@ projections_espn[which(projections_espn$name=="Steve Johnson"),"name"] <- "Stevi
 projections_espn$team_espn <- str_sub(projections_espn$player_espn, start=str_locate(string=projections_espn$player_espn, ',')[,1]+2, end = str_locate(string=projections_espn$player_espn, ',')[,1]+4)
 projections_espn$team_espn <- str_trim(projections_espn$team_espn, side="right")
 projections_espn$team_espn <- toupper(projections_espn$team_espn)
+projections_espn$team_espn[projections_espn$team_espn=="WSH"] <- "WAS"
 
 #Remove duplicate cases
 projections_espn[duplicated(projections_espn$name),]

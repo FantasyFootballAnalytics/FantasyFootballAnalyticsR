@@ -32,6 +32,28 @@ projections[duplicated(projections$name),]
 projections[projections$name=="Steve Smith",][c(1,4),] <- NA
 projections <- projections[!is.na(projections$name),]
 
+#Calculate ESPN and CBS projections
+projections$passYdsPts_espn <- projections$passYds_espn*passYdsMultiplier
+projections$passTdsPts_espn <- projections$passTds_espn*passTdsMultiplier
+projections$passIntPts_espn <- projections$passInt_espn*passIntMultiplier
+projections$rushYdsPts_espn <- projections$rushYds_espn*rushYdsMultiplier
+projections$rushTdsPts_espn <- projections$rushTds_espn*rushTdsMultiplier
+projections$recYdsPts_espn <- projections$recYds_espn*recYdsMultiplier
+projections$recTdsPts_espn <- projections$recTds_espn*recTdsMultiplier
+projections$fumblesPts_espn <- projections$fumbles_espn*fumlMultiplier
+
+projections$passYdsPts_cbs <- projections$passYds_cbs*passYdsMultiplier
+projections$passTdsPts_cbs <- projections$passTds_cbs*passTdsMultiplier
+projections$passIntPts_cbs <- projections$passInt_cbs*passIntMultiplier
+projections$rushYdsPts_cbs <- projections$rushYds_cbs*rushYdsMultiplier
+projections$rushTdsPts_cbs <- projections$rushTds_cbs*rushTdsMultiplier
+projections$recYdsPts_cbs <- projections$recYds_cbs*recYdsMultiplier
+projections$recTdsPts_cbs <- projections$recTds_cbs*recTdsMultiplier
+projections$fumblesPts_cbs <- projections$fumbles_cbs*fumlMultiplier
+
+projections$projectedPts_espn <- rowSums(projections[,c("passYdsPts_espn","passTdsPts_espn","passIntPts_espn","rushYdsPts_espn","rushTdsPts_espn","recYdsPts_espn","recTdsPts_espn","fumblesPts_espn")], na.rm=T)
+projections$projectedPts_cbs <- rowSums(projections[,c("passYdsPts_cbs","passTdsPts_cbs","passIntPts_cbs","rushYdsPts_cbs","rushTdsPts_cbs","recYdsPts_cbs","recTdsPts_cbs","fumblesPts_cbs")], na.rm=T)
+
 #Calculate average of categories
 projections$passYds <- rowMeans(projections[,c("passYds_espn","passYds_cbs")], na.rm=TRUE)
 projections$passTds <- rowMeans(projections[,c("passTds_espn","passTds_cbs")], na.rm=TRUE)
@@ -42,7 +64,7 @@ projections$recYds <- rowMeans(projections[,c("recYds_espn","recYds_cbs")], na.r
 projections$recTds <- rowMeans(projections[,c("recTds_espn","recTds_cbs")], na.rm=TRUE)
 projections$fumbles <- rowMeans(projections[,c("fumbles_espn","fumbles_cbs")], na.rm=TRUE)
 
-#If one's site is 0, take max of sites
+#If one site's projection is 0, take max of sites' projections
 for (i in 1:dim(projections)[1]){
   ifelse(projections$passYds_espn[i]==0 | projections$passYds_cbs[i]==0, projections$passYds[i] <- max(projections$passYds_espn[i], projections$passYds_cbs[i], na.rm=TRUE), projections$passYds[i] <- projections$passYds[i])
   ifelse(projections$passTds_espn[i]==0 | projections$passTds_cbs[i]==0, projections$passTds[i] <- max(projections$passTds_espn[i], projections$passTds_cbs[i], na.rm=TRUE), projections$passTds[i] <- projections$passTds[i])
@@ -64,7 +86,7 @@ projections[,c("name","recYds_espn","recYds_cbs","recYds")]
 projections[,c("name","recTds_espn","recTds_cbs","recTds")]
 projections[,c("name","fumbles_espn","fumbles_cbs","fumbles")]
 
-#Calculate projected points for your league
+#Calculate projected points for your league (avg of ESPN and CBS projections)
 projections$passYdsPts <- projections$passYds*passYdsMultiplier
 projections$passTdsPts <- projections$passTds*passTdsMultiplier
 projections$passIntPts <- projections$passInt*passIntMultiplier
@@ -83,12 +105,11 @@ projections$overallRank <- rank(-projections$projectedPts, ties.method="min")
 projections <- projections[order(projections$overallRank),]
 row.names(projections) <- 1:dim(projections)[1]
 
+#Keep important variables
+projections <- projections[,c("name","pos","team_espn","team_cbs","overallRank","projectedPts_espn","projectedPts_cbs","projectedPts")]
+
 #View projections
-projections[,c("name","pos","projectedPts")]
+projections
 
 #Save file
 save(projections, file = paste(getwd(),"/Data/LeagueProjections-2012.RData", sep=""))
-
-#ADD TO OTHER FILE
-projections$sdPts <- apply(projections[,c("pts_espn","pts_cbs")],1,sd)
-projections[,c("name","pos","pts_espn","pts_cbs","sdPts")]
