@@ -95,7 +95,7 @@ projections_espn <- projections_espn[order(projections_espn$overallRank_espn),]
 row.names(projections_espn) <- 1:dim(projections_espn)[1]
 
 #Density Plot
-ggplot(projections_espn, aes(x=pts_espn), fill=pos) + geom_density(fill="blue", alpha=.3) + xlab("Player's Projected Points") + opts(title = "Density Plot of ESPN Projected Points from 2012")
+ggplot(projections_espn, aes(x=pts_espn), fill=pos) + geom_density(fill="blue", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of ESPN Projected Points from 2012")
 ggsave(paste(getwd(),"/Figures/ESPN projections 2012.jpg", sep=""))
 
 #Save file

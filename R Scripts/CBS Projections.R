@@ -10,6 +10,7 @@
 #Load libraries
 library("XML")
 library("stringr")
+library("ggplot2")
 
 #Download fantasy football projections from cbssports.com
 qb_cbs <- readHTMLTable("http://fantasynews.cbssports.com/fantasyfootball/stats/weeklyprojections/QB/season", stringsAsFactors = FALSE)[7]$'NULL'
@@ -93,7 +94,7 @@ projections_cbs <- projections_cbs[order(projections_cbs$overallRank_cbs),]
 row.names(projections_cbs) <- 1:dim(projections_cbs)[1]
 
 #Density Plot
-ggplot(projections_cbs, aes(x=pts_cbs), fill=pos) + geom_density(fill="red", alpha=.3) + xlab("Player's Projected Points") + opts(title = "Density Plot of CBS Projected Points from 2012")
+ggplot(projections_cbs, aes(x=pts_cbs), fill=pos) + geom_density(fill="red", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of CBS Projected Points from 2012")
 ggsave(paste(getwd(),"/Figures/CBS projections 2012.jpg", sep=""))
 
 #Save file
