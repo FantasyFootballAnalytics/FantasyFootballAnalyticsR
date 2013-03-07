@@ -63,14 +63,15 @@ projections_espn$recYds_espn <- as.numeric(projections_espn$recYds_espn)
 projections_espn$recTds_espn <- as.numeric(projections_espn$recTds_espn)
 projections_espn$pts_espn <- as.numeric(projections_espn$pts_espn)
 
-#Add fumble variable
+#Add variables from other projection sources
 projections_espn$fumbles_espn <- NA
+projections_espn$twoPts_espn <- NA
 
 #Player names
 projections_espn$name <- str_sub(projections_espn$player_espn, end=str_locate(string=projections_espn$player_espn, ',')[,1]-1)
 projections_espn$name <- str_replace_all(projections_espn$name, "\\*", "")
 
-projections_espn[which(projections_espn$name=="Steve Johnson"),"name"] <- "Stevie Johnson"
+#projections_espn[which(projections_espn$name=="Steve Johnson"),"name"] <- "Stevie Johnson"
 
 #Player teams
 projections_espn$team_espn <- str_sub(projections_espn$player_espn, start=str_locate(string=projections_espn$player_espn, ',')[,1]+2, end = str_locate(string=projections_espn$player_espn, ',')[,1]+4)
@@ -88,14 +89,14 @@ projections_espn$overallRank_espn <- rank(-projections_espn$pts_espn, ties.metho
 #Order variables in data set
 projections_espn <- projections_espn[,c("name","pos","team_espn","positionRank_espn","overallRank_espn",
                                         "passAtt_espn","passComp_espn","passYds_espn","passTds_espn","passInt_espn",
-                                        "rushYds_espn","rushTds_espn","recYds_espn","recTds_espn","fumbles_espn","pts_espn")]
+                                        "rushYds_espn","rushTds_espn","recYds_espn","recTds_espn","twoPts_espn","fumbles_espn","pts_espn")]
 
 #Order players by overall rank
 projections_espn <- projections_espn[order(projections_espn$overallRank_espn),]
 row.names(projections_espn) <- 1:dim(projections_espn)[1]
 
 #Density Plot
-ggplot(projections_espn, aes(x=pts_espn), fill=pos) + geom_density(fill="blue", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of ESPN Projected Points from 2012")
+ggplot(projections_espn, aes(x=pts_espn)) + geom_density(fill="blue", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of ESPN Projected Points from 2012")
 ggsave(paste(getwd(),"/Figures/ESPN projections 2012.jpg", sep=""))
 
 #Save file

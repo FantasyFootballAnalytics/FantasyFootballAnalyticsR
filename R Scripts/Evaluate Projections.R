@@ -7,8 +7,14 @@
 # -ESPN projections do not include fumbles!
 ###########################
 
+#Library
+library("psy")
+library("psych")
+library("ggplot2")
+
 #Website
 #http://fifthdown.blogs.nytimes.com/2010/11/12/how-accurate-are-yahoo-espn-and-cbs-fantasy-projections/
+#http://www.r-bloggers.com/dont-use-correlation-to-track-prediction-performance/
 
 #Load data
 load(paste(getwd(),"/Data/LeagueProjections-2012.RData", sep=""))
@@ -21,44 +27,77 @@ actualPoints$actualPts <- actualPoints$Fan.Pts
 actualPoints <- actualPoints[,c("name","actualPts")]
 row.names(actualPoints) <- 1:dim(actualPoints)[1]
 
+#Change player names
+actualPoints[which(actualPoints$name=="Stevie Johnson"),"name"] <- "Steve Johnson"
+
 #Merge projections with Yahoo actual points
 projectedWithActualPts <- merge(projections, actualPoints, by="name", all.x=TRUE)
 
 #Remove duplicate cases
 projectedWithActualPts[duplicated(projectedWithActualPts$name),]
-projectedWithActualPts[projectedWithActualPts$name=="Alex Smith",][1,] <- NA
+projectedWithActualPts[projectedWithActualPts$name=="Alex Smith",]
+projectedWithActualPts[projectedWithActualPts$name=="Steve Smith",]
+
+projectedWithActualPts[projectedWithActualPts$name=="Alex Smith",][2,] <- NA
 projectedWithActualPts <- projectedWithActualPts[!is.na(projectedWithActualPts$name),]
-projectedWithActualPts[projectedWithActualPts$name=="Steve Smith",][c(3,4),] <- NA
+projectedWithActualPts[projectedWithActualPts$name=="Steve Smith",][c(1,4),] <- NA
 projectedWithActualPts <- projectedWithActualPts[!is.na(projectedWithActualPts$name),]
 
 #Correlation between projections and actual points
-#ESPN
-cor.test(projectedWithActualPts$projectedPts_espn, projectedWithActualPts$actualPts) #r=.734, p<.001
-cor(projectedWithActualPts$projectedPts_espn, projectedWithActualPts$actualPts, use="pairwise.complete.obs")^2 #r-squared = .539
+cor(projectedWithActualPts[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts","projectedPtsLatent","actualPts")], use="pairwise.complete.obs")
 
-#CBS
-cor.test(projectedWithActualPts$projectedPts_cbs, projectedWithActualPts$actualPts) #r=.762, p<.001
-cor(projectedWithActualPts$projectedPts_cbs, projectedWithActualPts$actualPts, use="pairwise.complete.obs")^2 #r-squared = .580
+#R-squared
+summary(lm(actualPts ~ projectedPts_espn, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPts_cbs, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPts_nfl, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPts, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPtsLatent, data=projectedWithActualPts))$r.squared
 
-#Average
-cor.test(projectedWithActualPts$projectedPts, projectedWithActualPts$actualPts) #r=.765, p<.001
-cor(projectedWithActualPts$projectedPts, projectedWithActualPts$actualPts, use="pairwise.complete.obs")^2 #r-squared = .585
+#Absolute agreement
+icc(projectedWithActualPts[,c("projectedPts_espn","actualPts")])$icc.agreement
+icc(projectedWithActualPts[,c("projectedPts_cbs","actualPts")])$icc.agreement
+icc(projectedWithActualPts[,c("projectedPts_nfl","actualPts")])$icc.agreement
+icc(projectedWithActualPts[,c("projectedPts","actualPts")])$icc.agreement
+icc(projectedWithActualPts[,c("projectedPtsLatent","actualPts")])$icc.agreement
+
+#Harrell's c-index & Somers Dxy
+rcorrcens(actualPts ~ projectedPts_espn, data=projectedWithActualPts)
+rcorrcens(actualPts ~ projectedPts_cbs, data=projectedWithActualPts)
+rcorrcens(actualPts ~ projectedPts_nfl, data=projectedWithActualPts)
+rcorrcens(actualPts ~ projectedPts, data=projectedWithActualPts)
+rcorrcens(actualPts ~ projectedPtsLatent, data=projectedWithActualPts)
 
 #After removing cases with projected points of 0
 projectedWithActualPtsNoZeros <- projectedWithActualPts[which(projectedWithActualPts$projectedPts!=0),]
 
 #Re-evaluate correlation between projections and actual points when cases with 0 projected points were excluded
-#ESPN
-cor.test(projectedWithActualPtsNoZeros$projectedPts_espn, projectedWithActualPtsNoZeros$actualPts) #r=.721, p<.001
-cor(projectedWithActualPtsNoZeros$projectedPts_espn, projectedWithActualPtsNoZeros$actualPts, use="pairwise.complete.obs")^2 #r-squared = .519
+cor(projectedWithActualPtsNoZeros[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts","projectedPtsLatent","actualPts")], use="pairwise.complete.obs")
 
-#CBS
-cor.test(projectedWithActualPtsNoZeros$projectedPts_cbs, projectedWithActualPtsNoZeros$actualPts) #r=.754, p<.001
-cor(projectedWithActualPtsNoZeros$projectedPts_cbs, projectedWithActualPtsNoZeros$actualPts, use="pairwise.complete.obs")^2 #r-squared = .569
+#R-squared
+summary(lm(actualPts ~ projectedPts_espn, data=projectedWithActualPtsNoZeros))$r.squared
+summary(lm(actualPts ~ projectedPts_cbs, data=projectedWithActualPtsNoZeros))$r.squared
+summary(lm(actualPts ~ projectedPts_nfl, data=projectedWithActualPtsNoZeros))$r.squared
+summary(lm(actualPts ~ projectedPts, data=projectedWithActualPtsNoZeros))$r.squared
+summary(lm(actualPts ~ projectedPtsLatent, data=projectedWithActualPtsNoZeros))$r.squared
 
-#Average
-cor.test(projectedWithActualPtsNoZeros$projectedPts, projectedWithActualPtsNoZeros$actualPts) #r=.759, p<.001
-cor(projectedWithActualPtsNoZeros$projectedPts, projectedWithActualPtsNoZeros$actualPts, use="pairwise.complete.obs")^2 #r-squared = .576
+#Re-evaluate Absolute agreement
+icc(projectedWithActualPtsNoZeros[,c("projectedPts_espn","actualPts")])$icc.agreement
+icc(projectedWithActualPtsNoZeros[,c("projectedPts_cbs","actualPts")])$icc.agreement
+icc(projectedWithActualPtsNoZeros[,c("projectedPts_nfl","actualPts")])$icc.agreement
+icc(projectedWithActualPtsNoZeros[,c("projectedPts","actualPts")])$icc.agreement
+icc(projectedWithActualPtsNoZeros[,c("projectedPtsLatent","actualPts")])$icc.agreement
+
+#Harrell's c-index & Somers Dxy
+rcorrcens(actualPts ~ projectedPts_espn, data=projectedWithActualPtsNoZeros)
+rcorrcens(actualPts ~ projectedPts_cbs, data=projectedWithActualPtsNoZeros)
+rcorrcens(actualPts ~ projectedPts_nfl, data=projectedWithActualPtsNoZeros)
+rcorrcens(actualPts ~ projectedPts, data=projectedWithActualPtsNoZeros)
+rcorrcens(actualPts ~ projectedPtsLatent, data=projectedWithActualPtsNoZeros)
+
+#Plot
+ggplot(data=projectedWithActualPts, aes(x=projectedPtsLatent, y=actualPts)) + geom_point() + geom_smooth() + xlab("Projected Fantasy Football Points") + ylab("Actual Fantasy Football Points") + ggtitle("Associaton Between Projected Fantasy Points and Actual Points") +
+  annotate("text", x = 80, y = max(projectedWithActualPts$projectedPtsLatent), label = paste("R-Squared = ",round(summary(lm(actualPts ~ projectedPtsLatent, data=projectedWithActualPts))$r.squared,2),sep=""))
+ggsave(paste(getwd(),"/Figures/Evaluate Projections 2012.jpg", sep=""))
 
 #Save data
 save(projectedWithActualPts, file = paste(getwd(),"/Data/projectedWithActualPoints-2012.RData", sep=""))

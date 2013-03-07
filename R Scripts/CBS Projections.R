@@ -74,6 +74,9 @@ projections_cbs$passInt_cbs <- as.numeric(projections_cbs$passInt_cbs)
 projections_cbs$passCompPct_cbs <- as.numeric(projections_cbs$passCompPct_cbs)
 projections_cbs$passYdsPerAtt_cbs <- as.numeric(projections_cbs$passYdsPerAtt_cbs)
 
+#Add variables from other projection sources
+projections_cbs$twoPts_cbs <- NA
+
 #Player names
 projections_cbs$name <- str_sub(projections_cbs$player, end=str_locate(string=projections_cbs$player, ',')[,1]-1)
 
@@ -87,14 +90,14 @@ projections_cbs$overallRank_cbs <- rank(-projections_cbs$pts_cbs, ties.method="m
 projections_cbs <- projections_cbs[,c("name","pos","team_cbs","positionRank_cbs","overallRank_cbs",
                                       "passAtt_cbs","passComp_cbs","passYds_cbs","passTds_cbs","passInt_cbs","passCompPct_cbs","passYdsPerAtt_cbs",
                                       "rushAtt_cbs","rushYds_cbs","rushYdsPerAtt_cbs","rushTds_cbs",
-                                      "rec_cbs","recYds_cbs","recYdsPerRec_cbs","recTds_cbs","fumbles_cbs","pts_cbs")]
+                                      "rec_cbs","recYds_cbs","recYdsPerRec_cbs","recTds_cbs","twoPts_cbs","fumbles_cbs","pts_cbs")]
 
 #Order players by overall rank
 projections_cbs <- projections_cbs[order(projections_cbs$overallRank_cbs),]
 row.names(projections_cbs) <- 1:dim(projections_cbs)[1]
 
 #Density Plot
-ggplot(projections_cbs, aes(x=pts_cbs), fill=pos) + geom_density(fill="red", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of CBS Projected Points from 2012")
+ggplot(projections_cbs, aes(x=pts_cbs)) + geom_density(fill="red", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of CBS Projected Points from 2012")
 ggsave(paste(getwd(),"/Figures/CBS projections 2012.jpg", sep=""))
 
 #Save file

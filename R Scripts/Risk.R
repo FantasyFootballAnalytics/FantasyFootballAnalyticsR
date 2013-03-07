@@ -8,5 +8,5 @@
 # -ESPN projections do not include fumbles!
 ###########################
 
-projections$sdPts <- apply(projections[,c("projectedPts_espn","projectedPts_cbs")],1,sd)
-projections[,c("name","pos","projectedPts_espn","projectedPts_cbs","sdPts")]
+projections$sdPts <- apply(projections[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl")],1,sd)
+projections[,c("name","pos","projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts","projectedPtsLatent","sdPts")]
