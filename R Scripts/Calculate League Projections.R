@@ -58,13 +58,10 @@ for (i in 1:dim(projections)[1]){
     projections[i,"team"] <- projections[i,"team_espn"]
   } else if (is.na(projections[i,"team_espn"])==TRUE){
     ifelse(length(unique(c(projections[i,"team_cbs"],projections[i,"team_nfl"])))==1, projections[i,"team"] <- unique(c(projections[i,"team_cbs"],projections[i,"team_nfl"])), projections[i,"team"] <- paste(projections[i,"team_cbs"], projections[i,"team_nfl"], sep="/"))
-    #projections[i,"team"] <- unique(c(projections[i,"team_cbs"],projections[i,"team_nfl"]))
   } else if (is.na(projections[i,"team_cbs"])==TRUE){
     ifelse(length(unique(c(projections[i,"team_espn"],projections[i,"team_nfl"])))==1, projections[i,"team"] <- unique(c(projections[i,"team_espn"],projections[i,"team_nfl"])), projections[i,"team"] <- paste(projections[i,"team_espn"], projections[i,"team_nfl"], sep="/"))
-    #projections[i,"team"] <- unique(c(projections[i,"team_espn"],projections[i,"team_nfl"]))
   } else if (is.na(projections[i,"team_nfl"])==TRUE){
     ifelse(length(unique(c(projections[i,"team_espn"],projections[i,"team_cbs"])))==1, projections[i,"team"] <- unique(c(projections[i,"team_espn"],projections[i,"team_cbs"])), projections[i,"team"] <- paste(projections[i,"team_espn"], projections[i,"team_cbs"], sep="/"))
-    #projections[i,"team"] <- unique(c(projections[i,"team_espn"],projections[i,"team_cbs"]))
   } else if (projections[i,"team_espn"] == projections[i,"team_cbs"] && projections[i,"team_espn"] == projections[i,"team_nfl"]){
     projections[i,"team"] <- projections[i,"team_espn"]
   } else if (projections[i,"team_espn"] == projections[i,"team_cbs"]){
@@ -219,7 +216,7 @@ pointDensity <- c(projections$projectedPts_espn,projections$projectedPts_cbs,pro
 sourceDensity <- c(rep("ESPN",dim(projections)[1]),rep("CBS",dim(projections)[1]),rep("NFL",dim(projections)[1])) #,rep("Latent",dim(projections)[1])
 densityData <- data.frame(pointDensity,sourceDensity)
 
-ggplot(densityData, aes(x=pointDensity, fill=sourceDensity)) + geom_density(alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of CBS Projected Points from 2012") + theme(legend.title=element_blank())
+ggplot(densityData, aes(x=pointDensity, fill=sourceDensity)) + geom_density(alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of Projected Points from 2012") + theme(legend.title=element_blank())
 ggsave(paste(getwd(),"/Figures/Calculate projections 2012.jpg", sep=""))
 
 #Save file
