@@ -13,6 +13,9 @@ library("XML")
 library("stringr")
 library("ggplot2")
 
+#Functions
+source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
+
 #Download fantasy football projections from ESPN.com
 qb_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2012&slotCategoryId=0", stringsAsFactors = FALSE)$playertable_0
 rb1_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2012&slotCategoryId=2", stringsAsFactors = FALSE)$playertable_0

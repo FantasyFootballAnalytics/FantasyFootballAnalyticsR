@@ -12,6 +12,9 @@ library("psy")
 library("psych")
 library("ggplot2")
 
+#Functions
+source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
+
 #Website
 #http://fifthdown.blogs.nytimes.com/2010/11/12/how-accurate-are-yahoo-espn-and-cbs-fantasy-projections/
 #http://www.r-bloggers.com/dont-use-correlation-to-track-prediction-performance/

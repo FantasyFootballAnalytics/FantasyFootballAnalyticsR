@@ -8,11 +8,14 @@
 ###########################
 
 #League settings
-numTeams <- 10
-numQB <- 1
-numRB <- 2.5
-numWR <- 2.5
-numTE <- 1
+numTeams <- 10  #number of teams in league
+numQB <- 1      #number of avg QBs in starting lineup
+numRB <- 2.5    #number of avg RBs in starting lineup
+numWR <- 2.5    #number of avg WRs in starting lineup
+numTE <- 1      #number of avg TEs in starting lineup
+
+#Functions
+source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 
 #Load data
 load(paste(getwd(),"/Data/Risk-2012.RData", sep=""))

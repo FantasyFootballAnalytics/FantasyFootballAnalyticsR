@@ -4,14 +4,16 @@
 # Date: 3/3/2013
 # Author: Isaac Petersen (isaactpetersen@gmail.com)
 # Notes:
-# -These projections are from last year (NFL has not yet updated them for the upcoming season)
-# -NFL projections do not include fumbles!
+# -These projections are from last year (NFL.com has not yet updated them for the upcoming season)
 ###########################
 
 #Load libraries
 library("XML")
 library("stringr")
 library("ggplot2")
+
+#Functions
+source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 
 #Download fantasy football projections from NFL.com
 qb1_nfl <- readHTMLTable("http://fantasy.nfl.com/research/projections?position=1&sort=projectedPts&statCategory=projectedStats&statSeason=2012&statType=seasonProjectedStats", stringsAsFactors = FALSE)$`NULL`

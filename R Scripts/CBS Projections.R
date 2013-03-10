@@ -12,6 +12,9 @@ library("XML")
 library("stringr")
 library("ggplot2")
 
+#Functions
+source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
+
 #Download fantasy football projections from cbssports.com
 qb_cbs <- readHTMLTable("http://fantasynews.cbssports.com/fantasyfootball/stats/weeklyprojections/QB/season", stringsAsFactors = FALSE)[7]$'NULL'
 rb1_cbs <- readHTMLTable("http://fantasynews.cbssports.com/fantasyfootball/stats/weeklyprojections/RB/season", stringsAsFactors = FALSE)[7]$'NULL'

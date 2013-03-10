@@ -6,6 +6,8 @@
 # Notes:
 # -These projections are from last year (ESPN and CBS have not yet updated them for the upcoming season)
 # -ESPN projections do not include fumbles!
+#To do:
+#-Add FantasyPros Projections
 ###########################
 
 #Customize your league settings
@@ -21,6 +23,9 @@ fumlMultiplier <- -3        #-3 pts per fumble lost (not included in ESPN projec
 
 #Library
 library("reshape")
+
+#Functions
+source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 
 #Load data
 load(paste(getwd(),"/Data/ESPN-Projections-2012.RData", sep=""))
@@ -120,6 +125,15 @@ projections$twoPts <- rowMeans(projections[,c("twoPts_espn","twoPts_cbs","twoPts
 projections$fumbles <- rowMeans(projections[,c("fumbles_espn","fumbles_cbs","fumbles_nfl")], na.rm=TRUE)
 
 #Convert NA to 0
+#projections[is.na(projections$passYds)==TRUE,"passYds"] <- 0
+#projections[is.na(projections$passTds)==TRUE,"passTds"] <- 0
+#projections[is.na(projections$passInt)==TRUE,"passInt"] <- 0
+#projections[is.na(projections$rushYds)==TRUE,"rushYds"] <- 0
+#projections[is.na(projections$rushTds)==TRUE,"rushTds"] <- 0
+#projections[is.na(projections$recYds)==TRUE,"recYds"] <- 0
+#projections[is.na(projections$recTds)==TRUE,"recTds"] <- 0
+#projections[is.na(projections$twoPts)==TRUE,"twoPts"] <- 0
+#projections[is.na(projections$fumbles)==TRUE,"fumbles"] <- 0
 
 #If one site's projection is 0, take max of sites' projections
 #for (i in 1:dim(projections)[1]){
@@ -164,36 +178,10 @@ factor.scores <- factor.analysis$scores
 factor.loadings <- factor.analysis$loadings[,1]
 factor.loadings
 
-#Function for calculating the weighted standard deviation; needed below.
-weighted.sd <- function(x, w){
-  sum.w <- sum(w)
-  sum.w2 <- sum(w^2)
-  mean.w <- sum(x * w) / sum(w)
-  x.sd.w <- sqrt((sum.w / (sum.w^2 - sum.w2)) * sum(w * (x - mean.w)^2))
-  return(x.sd.w)
-}
-
-#Function for rescaling the factor scores to have the same mean and sd as the original projections data
-re.scale <- function(f.scores, raw.data, loadings){
-  fz.scores <- (f.scores + mean(f.scores))/(apply(f.scores, 2, sd)) #(f.scores + mean(f.scores))/(sd(f.scores))
-  means <- apply(raw.data, 1, weighted.mean, w = loadings)
-  sds <- apply(raw.data, 1, weighted.sd, w = loadings)
-  grand.mean <- mean(means)
-  grand.sd <- mean(sds)
-  final.scores <- ((fz.scores * grand.sd) + grand.mean)
-  return(final.scores)
-}
-
-#Function for rescaling the factor scores to have the same range as the average projections data
-re.scale2 <- function(variable, minOutput, maxOutput){
-  minObserved <- min(variable)
-  maxObserved <- max(variable)
-  values <- (maxOutput-minOutput)/(maxObserved-minObserved)*(variable-maxObserved)+maxOutput
-  return(values)
-}
-
+#Rescale the factor scores to have the same mean and sd as the original projections data
 projectedPtsLatent <- re.scale(factor.scores, projections[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl")], factor.loadings)
 
+#Rescale the factor scores to have the same range as the average projections data
 projections$projectedPtsLatent <- as.vector(re.scale2(variable=projectedPtsLatent, minOutput=0, maxOutput=max(projections$projectedPts)))
 
 cor(projections[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts","projectedPtsLatent")], use="pairwise.complete.obs")

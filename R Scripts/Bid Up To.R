@@ -7,6 +7,12 @@
 # -These calculations are from last year (they have not yet been updated for the upcoming season)
 ###########################
 
+#Library
+library("Rglpk")
+
+#Functions
+source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
+
 #Bid Up To
 listOfPlayers <- vector(mode="character", length=numTotalStarters)
 bidUpTo <- vector(mode="numeric", length=length(optimizeData$name))

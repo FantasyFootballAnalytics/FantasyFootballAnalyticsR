@@ -8,11 +8,14 @@
 ###########################
 
 #League settings
-leagueCap <- 225
+leagueCap <- 225   #
 defaultCap <- 200
 
 #Library
 library("stringr")
+
+#Functions
+source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 
 #Load data
 load(paste(getwd(),"/Data/VOR-2012.RData", sep=""))
@@ -37,6 +40,7 @@ projections <- projections[order(projections$overallRank),]
 #Remove duplicate cases
 projections[duplicated(projections$name),]
 
+#Apply 10% price premium to 33 players with highest projected points, apply 10% price premium for players lower than rank 66
 projections$inflatedCost <- ceiling(projections$avgCost * (leagueCap/defaultCap) * 1.0)
 projections$inflatedCost[projections$overallRank <= 33] <- ceiling(projections$avgCost[projections$overallRank <= 33] * (leagueCap/defaultCap) * 1.1)
 projections$inflatedCost[projections$overallRank >= 67] <- ceiling(projections$avgCost[projections$overallRank >= 67] * (leagueCap/defaultCap) * 0.9)

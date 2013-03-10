@@ -9,19 +9,26 @@ source(paste(getwd(),"/R Scripts/CBS Projections.R", sep=""), echo=TRUE)
 #3. Download NFL.com projections
 source(paste(getwd(),"/R Scripts/NFL Projections.R", sep=""), echo=TRUE)
 
-#4. Calculate projections for your league
+#4. Download FantasyPros projections
+source(paste(getwd(),"/R Scripts/FantasyPros Projections.R", sep=""), echo=TRUE)
+
+#5. Calculate projections for your league
 source(paste(getwd(),"/R Scripts/Calculate League Projections.R", sep=""), echo=TRUE)
 
-#5. Evaluate league projections from last year
+#6. Evaluate league projections from last year
 source(paste(getwd(),"/R Scripts/Evaluate Projections.R", sep=""), echo=TRUE)
 
-#6. Calculate players' risk levels (http://www.drewconway.com/zia/?p=2305)
+#7. Calculate players' risk levels (http://www.drewconway.com/zia/?p=2305)
 source(paste(getwd(),"/R Scripts/Risk.R", sep=""), echo=TRUE)
 
-#7. Calculate VOR for snake draft (https://harvardsportsanalysis.wordpress.com/2012/04/13/optimizing-draft-strategies-in-fantasy-football-abstract/)
+#8. Calculate VOR for snake draft (https://harvardsportsanalysis.wordpress.com/2012/04/13/optimizing-draft-strategies-in-fantasy-football-abstract/)
 
-#8. Download average auction values
+#9. Download average auction values
 
-#9. Calculate optimal team (https://office.microsoft.com/en-us/excel-help/pick-your-fantasy-football-team-with-solver-HA001124603.aspx)
+#10. Calculate optimal team (https://office.microsoft.com/en-us/excel-help/pick-your-fantasy-football-team-with-solver-HA001124603.aspx)
 
-#10. Calculate Bid Up To
+#11. Optimum Risk
+
+#12. Calculate Bid Up To
+
+#13. Draft Day (remove unavailable/drafted players)
