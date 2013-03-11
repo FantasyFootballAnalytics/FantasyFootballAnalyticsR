@@ -35,3 +35,6 @@ source(paste(getwd(),"/R Scripts/Optimum Risk.R", sep=""), echo=TRUE)
 
 #12. Calculate Bid Up To
 source(paste(getwd(),"/R Scripts/Bid Up To.R", sep=""), echo=TRUE)
+
+#13. Draft Day (remove unavailable/drafted players)
+source(paste(getwd(),"/R Scripts/Draft Day.R", sep=""), echo=TRUE)
