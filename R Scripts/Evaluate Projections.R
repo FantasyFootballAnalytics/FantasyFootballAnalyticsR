@@ -98,7 +98,7 @@ rcorrcens(actualPts ~ projectedPts, data=projectedWithActualPtsNoZeros)
 rcorrcens(actualPts ~ projectedPtsLatent, data=projectedWithActualPtsNoZeros)
 
 #Plot
-ggplot(data=projectedWithActualPts, aes(x=projectedPtsLatent, y=actualPts)) + geom_point() + geom_smooth() + xlab("Projected Fantasy Football Points") + ylab("Actual Fantasy Football Points") + ggtitle("Associaton Between Projected Fantasy Points and Actual Points") +
+ggplot(data=projectedWithActualPts, aes(x=projectedPtsLatent, y=actualPts)) + geom_point() + geom_smooth() + xlab("Projected Fantasy Football Points") + ylab("Actual Fantasy Football Points") + ggtitle("Association Between Projected Fantasy Points and Actual Points") +
   annotate("text", x = 80, y = max(projectedWithActualPts$projectedPtsLatent), label = paste("R-Squared = ",round(summary(lm(actualPts ~ projectedPtsLatent, data=projectedWithActualPts))$r.squared,2),sep=""))
 ggsave(paste(getwd(),"/Figures/Evaluate Projections 2012.jpg", sep=""))
 

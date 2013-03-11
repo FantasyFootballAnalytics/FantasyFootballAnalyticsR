@@ -22,16 +22,13 @@ source(paste(getwd(),"/R Scripts/Evaluate Projections.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Risk.R", sep=""), echo=TRUE)
 
 #8. Calculate VOR for snake draft (https://harvardsportsanalysis.wordpress.com/2012/04/13/optimizing-draft-strategies-in-fantasy-football-abstract/)
-source(paste(getwd(),"/R Scripts/Value Over Replacement.R", sep=""), echo=TRUE)
 
 #9. Download average auction values
-source(paste(getwd(),"/R Scripts/Avg Cost.R", sep=""), echo=TRUE)
 
 #10. Calculate optimal team (https://office.microsoft.com/en-us/excel-help/pick-your-fantasy-football-team-with-solver-HA001124603.aspx)
-source(paste(getwd(),"/R Scripts/Optimum Roster.R", sep=""), echo=TRUE)
 
-#11. Calculate optimal risk
-source(paste(getwd(),"/R Scripts/Optimum Risk.R", sep=""), echo=TRUE)
+#11. Optimum Risk
 
 #12. Calculate Bid Up To
-source(paste(getwd(),"/R Scripts/Bid Up To.R", sep=""), echo=TRUE)
+
+#13. Draft Day (remove unavailable/drafted players)
