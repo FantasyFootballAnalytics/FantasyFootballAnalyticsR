@@ -177,12 +177,10 @@ factor.analysis <- factanal(~projectedPts_espn + projectedPts_cbs + projectedPts
 factor.scores <- factor.analysis$scores
 factor.loadings <- factor.analysis$loadings[,1]
 factor.loadings
-
-#Rescale the factor scores to have the same mean and sd as the original projections data
-projectedPtsLatent <- re.scale(factor.scores, projections[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl")], factor.loadings)
+projectedPtsLatent <- factor.scores
 
 #Rescale the factor scores to have the same range as the average projections data
-projections$projectedPtsLatent <- as.vector(re.scale2(variable=projectedPtsLatent, minOutput=0, maxOutput=max(projections$projectedPts)))
+projections$projectedPtsLatent <- as.vector(rescaleRange(variable=projectedPtsLatent, minOutput=0, maxOutput=max(projections$projectedPts)))
 
 cor(projections[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts","projectedPtsLatent")], use="pairwise.complete.obs")
 

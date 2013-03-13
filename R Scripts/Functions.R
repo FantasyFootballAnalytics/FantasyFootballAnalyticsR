@@ -18,7 +18,7 @@ weighted.sd <- function(x, w){
 }
 
 #Function for rescaling the factor scores to have the same mean and sd as the original projections data
-re.scale <- function(f.scores, raw.data, loadings){
+rescaleMeanSD <- function(f.scores, raw.data, loadings){
   fz.scores <- (f.scores + mean(f.scores))/(apply(f.scores, 2, sd)) #(f.scores + mean(f.scores))/(sd(f.scores))
   means <- apply(raw.data, 1, weighted.mean, w = loadings)
   sds <- apply(raw.data, 1, weighted.sd, w = loadings)
@@ -29,7 +29,7 @@ re.scale <- function(f.scores, raw.data, loadings){
 }
 
 #Function for rescaling the factor scores to have the same range as the average projections data
-re.scale2 <- function(variable, minOutput, maxOutput){
+rescaleRange <- function(variable, minOutput, maxOutput){
   minObserved <- min(variable)
   maxObserved <- max(variable)
   values <- (maxOutput-minOutput)/(maxObserved-minObserved)*(variable-maxObserved)+maxOutput
