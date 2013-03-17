@@ -7,6 +7,7 @@
 # -These projections are from last year (ESPN and CBS have not yet updated them for the upcoming season)
 # -ESPN projections do not include fumbles!
 # To do:
+# -Evaluate accuracy of projections while taking into account risk
 # -Add FantasyPros to sdPts calculation
 ###########################
 
@@ -18,7 +19,10 @@ library("stringr")
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 
 #Load data
-load(paste(getwd(),"/Data/LeagueProjections-2012.RData", sep=""))
+#load(paste(getwd(),"/Data/LeagueProjections-2012.RData", sep=""))
+load(paste(getwd(),"/Data/projectedWithActualPoints-2012.RData", sep=""))
+
+projections <- projectedWithActualPts
 
 #Risk - "Experts"
 experts <- readHTMLTable("http://www.fantasypros.com/nfl/rankings/consensus-cheatsheets.php", stringsAsFactors = FALSE)$data
@@ -61,6 +65,9 @@ projections[duplicated(projections$name),]
 
 #Drop variables
 projections <- projections[,!(names(projections) %in% c("pick_experts","sdPick_experts","pick_crowd","sdPick_crowd","sdPickZ","sdPtsZ"))]
+
+#Evaluate accuracy of projections while taking into account risk
+summary(lm(actualPts ~ projectedPtsLatent + risk, data=projections))$r.squared
 
 #Density plot
 ggplot(projections, aes(x=risk)) + geom_density(fill="red", alpha=.7) + xlab("Player's Risk Level") + ggtitle("Density Plot of Players' Risk Levels")
