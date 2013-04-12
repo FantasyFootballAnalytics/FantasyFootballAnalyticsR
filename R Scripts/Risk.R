@@ -66,8 +66,9 @@ projections[duplicated(projections$name),]
 #Drop variables
 projections <- projections[,!(names(projections) %in% c("pick_experts","sdPick_experts","pick_crowd","sdPick_crowd","sdPickZ","sdPtsZ"))]
 
-#Evaluate accuracy of projections while taking into account risk
-summary(lm(actualPts ~ projectedPtsLatent + risk, data=projections))$r.squared
+#Compare accuracy of projections while taking into account risk vs when not taking risk into account
+summary(lm(actualPts ~ projectedPtsLatent, data=projections))$r.squared #not considering risk
+summary(lm(actualPts ~ projectedPtsLatent + risk, data=projections))$r.squared #considering risk
 
 #Density plot
 ggplot(projections, aes(x=risk)) + geom_density(fill="red", alpha=.7) + xlab("Player's Risk Level") + ggtitle("Density Plot of Players' Risk Levels")
