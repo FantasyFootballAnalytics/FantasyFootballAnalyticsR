@@ -32,6 +32,7 @@ load(paste(getwd(),"/Data/BidUpTo-2012.RData", sep=""))
 draftData <- projections[,c("name","pos","team","projectedPtsLatent","vor","sdPick","sdPts","risk","avgCost","inflatedCost","bidUpTo")]
 maxCost <- leagueCap - (numTotalPlayers - numTotalStarters)
 
+options(digits=1)
 draftData
 
 #Day of Draft

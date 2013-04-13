@@ -22,7 +22,7 @@ load(paste(getwd(),"/Data/VOR-2012.RData", sep=""))
 
 #Avg & Projected Cost
 #readHTMLTable("http://football.fantasysports.yahoo.com/f1/24155/draftanalysis?tab=AD&pos=ALL&sort=DA_AP", stringsAsFactors = FALSE)
-avgcost <- read.csv(paste(strsplit(path,"/Indiana/Research/Data")[[1]],"/Fantasy Football/Research/R/avgcost.csv",sep=""))
+avgcost <- read.csv(paste(path,"/Fantasy Football/Research/R/avgcost.csv",sep=""))
 
 avgcost2 <- avgcost[which(avgcost$Avg.Cost!=""),]
 avgcost2$name <- as.character(avgcost2$Player)
