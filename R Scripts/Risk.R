@@ -51,8 +51,14 @@ row.names(projections) <- 1:max(as.numeric(row.names(projections)))
 
 #Calculate risk
 projections$pick <- rowMeans(projections[,c("pick_experts","pick_crowd")], na.rm=TRUE)
-projections$sdPts <- apply(projections[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl")],1,sd) #add FantasyPros
+
+projections$sdPts <- NA
+for (i in 1:dim(projections)[1]){
+  projections$sdPts[i] <- sd(projections[i,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl")], na.rm=TRUE) #add FantasyPros
+}
+
 projections$sdPick <- rowMeans(projections[,c("sdPick_experts","sdPick_crowd")], na.rm=TRUE)
+projections$sdPts[projections$sdPts == 0] <- NA
 projections$sdPickZ <- scale(projections$sdPick)
 projections$sdPtsZ <- scale(projections$sdPts)
 projections$risk <- rowMeans(projections[,c("sdPickZ","sdPtsZ")], na.rm=TRUE)
@@ -69,6 +75,9 @@ projections <- projections[,!(names(projections) %in% c("pick_experts","sdPick_e
 #Compare accuracy of projections while taking into account risk vs when not taking risk into account
 summary(lm(actualPts ~ projectedPtsLatent, data=projections))$r.squared #not considering risk
 summary(lm(actualPts ~ projectedPtsLatent + risk, data=projections))$r.squared #considering risk
+
+#Players with highest risk levels
+projections[rank(projections$risk, na.last="keep") %in% (max(rank(projections$risk, na.last="keep"), na.rm=TRUE)-5):max(rank(projections$risk, na.last="keep"), na.rm=TRUE) ,]
 
 #Density plot
 ggplot(projections, aes(x=risk)) + geom_density(fill="red", alpha=.7) + xlab("Player's Risk Level") + ggtitle("Density Plot of Players' Risk Levels")

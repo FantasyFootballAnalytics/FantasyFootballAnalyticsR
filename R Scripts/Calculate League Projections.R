@@ -182,6 +182,12 @@ projectedPtsLatent <- factor.scores
 #Rescale the factor scores to have the same range as the average projections data
 projections$projectedPtsLatent <- as.vector(rescaleRange(variable=projectedPtsLatent, minOutput=0, maxOutput=max(projections$projectedPts)))
 
+#Convert Zeros to NA
+projections$projectedPts_espn[projections$projectedPts_espn == 0] <- NA
+projections$projectedPts_cbs[projections$projectedPts_cbs == 0] <- NA
+projections$projectedPts_nfl[projections$projectedPts_nfl == 0] <- NA
+
+#Correlations among projections
 cor(projections[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts","projectedPtsLatent")], use="pairwise.complete.obs")
 
 #Calculate overall rank

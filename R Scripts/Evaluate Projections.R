@@ -15,10 +15,6 @@ library("ggplot2")
 #Functions
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 
-#Website
-#http://fifthdown.blogs.nytimes.com/2010/11/12/how-accurate-are-yahoo-espn-and-cbs-fantasy-projections/
-#http://www.r-bloggers.com/dont-use-correlation-to-track-prediction-performance/
-
 #Load data
 load(paste(getwd(),"/Data/LeagueProjections-2012.RData", sep=""))
 actualPoints <- read.csv(paste(getwd(),"/Data/Yahoo-actualpoints-2012.csv", sep="")) 
