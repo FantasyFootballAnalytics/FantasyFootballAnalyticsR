@@ -9,3 +9,4 @@ player <- c(rep("Player A",dim(mydata)[1]),rep("Player B",dim(mydata)[1]),rep("P
 mydata2 <- data.frame(points,player)
 
 ggplot(mydata2, aes(x=points, fill=player)) + geom_density(alpha=.3) + xlab("Players' Projected Points") + ggtitle("Density Plot of Projected Points for 3 Players") + theme(legend.title=element_blank())
+ggsave(paste(getwd(),"/Figures/Understanding Risk.jpg", sep=""))
