@@ -74,13 +74,22 @@ optimizeTeam <- function(points=optimizeData$projectedPtsLatent, playerCost=opti
 }
 
 #Draft Day Optimization: Allows omitting unavailable (drafted) players and includes BidUpTo in summary table
-optimizeDraft <- function(points=removedPlayers$projectedPtsLatent, playerCost=removedPlayers$inflatedCost, maxRisk=maxRisk, omit=NULL){ #can change points, cost, or risk
-  if (length(omit) > 0){
-    for(i in 1:length(omit)){
-      removedPlayers <- removedPlayers[-which(removedPlayers$name==omit[i]),]
-    }
-  } else {}
+optimizeDraft <- function(points=removedPlayers$projectedPtsLatent, playerCost=removedPlayers$inflatedCost, maxRisk=maxRisk, omit=NULL, team=myteam){ #can change points, cost, or risk
+  #Omit players that have already been drafted
+  removedPlayers <- removedPlayers[! removedPlayers$name %in% omit,]
   
+  #Calculate how many players to draft at each position  
+  numQBsToDraft <- numQBstarters - sum(myteam$pos == "QB")
+  numRBsToDraft <- numRBstarters - sum(myteam$pos == "RB")
+  numWRsToDraft <- numWRstarters - sum(myteam$pos == "WR")
+  numTEsToDraft <- numTEstarters - sum(myteam$pos == "TE")
+  
+  numToDraft <- numTotalStarters - length(myteam$pos)
+  
+  #Calculate remaining cost
+  remainingCost <- maxCost - sum(myteam$cost)
+  
+  #Set up matrices  
   num.players <- length(removedPlayers$name)
   var.types <- rep("B", num.players)
   
@@ -89,8 +98,8 @@ optimizeDraft <- function(points=removedPlayers$projectedPtsLatent, playerCost=r
              as.numeric(removedPlayers$pos == "WR"), # num WR
              as.numeric(removedPlayers$pos == "TE"), # num TE
              diag(removedPlayers$risk),              # player's risk
-             playerCost,                           # total cost
-             rep(1,num.players))                   # num of players in starting lineup     
+             playerCost,                             # total cost
+             rep(1,num.players))                     # num of players in starting lineup     
   
   dir <- c("==",
            ">=",
@@ -100,13 +109,13 @@ optimizeDraft <- function(points=removedPlayers$projectedPtsLatent, playerCost=r
            "<=",
            "==")
   
-  b <- c(numQBstarters,
-         numRBstarters,
-         numWRstarters,
-         numTEstarters,
+  b <- c(numQBsToDraft,
+         numRBsToDraft,
+         numWRsToDraft,
+         numTEsToDraft,
          rep(maxRisk, num.players),
-         maxCost,
-         numTotalStarters)
+         remainingCost,
+         numToDraft)
   
   sol <- Rglpk_solve_LP(obj = points, mat = A, dir = dir, rhs = b,types = var.types, max = TRUE)
   sol$playerInfo <- as.data.frame(cbind(removedPlayers[sol$solution == 1,"name"],round(points[sol$solution == 1],2),round(removedPlayers[sol$solution == 1,"risk"],2),removedPlayers[sol$solution == 1,"avgCost"],playerCost[sol$solution == 1],removedPlayers[sol$solution == 1,"bidUpTo"]))

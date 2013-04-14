@@ -17,7 +17,7 @@ numTEstarters <- 1
 numTotalStarters <- 7
 numTotalPlayers <- 20
 
-maxRisk <- 3.8
+maxRisk <- 3.5
 
 #Library
 library("Rglpk")
@@ -32,18 +32,43 @@ load(paste(getwd(),"/Data/BidUpTo-2012.RData", sep=""))
 draftData <- projections[,c("name","pos","team","projectedPtsLatent","vor","sdPick","sdPts","risk","avgCost","inflatedCost","bidUpTo")]
 maxCost <- leagueCap - (numTotalPlayers - numTotalStarters)
 
-options(digits=1)
+options(digits=2)
 draftData
 
 #Day of Draft
-removedPlayers <- na.omit(draftData)
+removedPlayers <-  draftData[row.names(na.omit(draftData[,c("projectedPtsLatent","risk","inflatedCost")])),]
+row.names(removedPlayers) <- 1:dim(removedPlayers)[1]
 removedPlayers
 
-#Update with drafted (i.e., unavailable) players
-drafted <- c("Aaron Rodgers","Steven Jackson")
+#Example: Update with drafted (i.e., unavailable) players
+myteam <- data.frame(
+  player = c("Arian Foster", "Tom Brady", "Jacob Tamme"),
+  pos = c("RB", "QB", "TE"),
+  cost = c(64, 46, 5)
+)
+myteam$player <- as.character(myteam$player)
 
-optimizeDraft(maxRisk=3.8)
-optimizeDraft(maxRisk=3.8,omit=c("Aaron Rodgers","Steven Jackson"))
-optimizeDraft(maxRisk=3.8,omit=drafted)
+drafted <- c(myteam$player,"Aaron Rodgers","Steven Jackson")
+
+optimizeDraft(maxRisk=3.5)
+optimizeDraft(maxRisk=3.5, omit=c("Aaron Rodgers","Steven Jackson"))
+optimizeDraft(maxRisk=3.5, omit=drafted)
+
+draftData[!(draftData$name %in% drafted),]
+
+###Draft Dashboard
+
+###--UPDATE--###
+myteam <- data.frame(
+  player = c(),
+  position = c(),
+  cost = c()
+  )
+myteam$player <- as.character(myteam$player)
+
+drafted <- c(myteam$player,"")
+###----------###
+
+optimizeDraft(maxRisk=3.5,omit=drafted)
 
 draftData[!(draftData$name %in% drafted),]
