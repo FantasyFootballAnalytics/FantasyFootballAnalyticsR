@@ -83,7 +83,7 @@ ggsave(paste(getwd(),"/Figures/VOR-Boxplot 2012.jpg", sep=""))
 save(projections, file = paste(getwd(),"/Data/VOR-2012.RData", sep=""))
 
 #Subset data
-draftData <- projections[row.names(na.omit(draftData[,c("projectedPtsLatent","vor","risk")])),c("name","pos","team","projectedPtsLatent","vor","sdPick","sdPts","risk")]
+draftData <- projections[row.names(na.omit(projections[,c("projectedPtsLatent","vor","risk")])),c("name","pos","team","projectedPtsLatent","vor","sdPick","sdPts","risk")]
 row.names(draftData) <- 1:dim(draftData)[1]
 
 options(digits=2)

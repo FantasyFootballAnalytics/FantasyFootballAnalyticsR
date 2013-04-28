@@ -31,6 +31,7 @@ source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 load(paste(getwd(),"/Data/ESPN-Projections-2012.RData", sep=""))
 load(paste(getwd(),"/Data/CBS-Projections-2012.RData", sep=""))
 load(paste(getwd(),"/Data/NFL-Projections-2012.RData", sep=""))
+load(paste(getwd(),"/Data/FantasyPros-Projections-2012.RData", sep=""))
 
 #Merge projections from ESPN and CBS
 projections <- merge(projections_espn, projections_cbs, by=c("name","pos"), all=TRUE)
@@ -49,6 +50,15 @@ projections[duplicated(projections$name),]
 projections[projections$name=="Steve Smith",]
 
 projections[projections$name=="Steve Smith" & projections$team_espn=="STL",c("team_nfl","positionRank_nfl","overallRank_nfl","passYds_nfl","passTds_nfl","passInt_nfl","rushYds_nfl","rushTds_nfl","recYds_nfl","recTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")] <- NA
+
+#Merge projections with Fantasy Pros
+projections <- merge(projections, projections_fp, by=c("name","pos"), all=TRUE)
+
+#Remove duplicate cases
+projections[duplicated(projections$name),]
+projections[projections$name=="Steve Smith",]
+projections[projections$name=="Steve Smith",][c(1,4),] <- NA
+projections <- projections[!is.na(projections$name),]
 
 #Determine Team
 projections$team <- NA
@@ -78,7 +88,7 @@ for (i in 1:dim(projections)[1]){
   }
 }
 
-#Calculate ESPN and CBS projections
+#Calculate projections from each source
 projections$passYdsPts_espn <- projections$passYds_espn*passYdsMultiplier
 projections$passTdsPts_espn <- projections$passTds_espn*passTdsMultiplier
 projections$passIntPts_espn <- projections$passInt_espn*passIntMultiplier
@@ -109,20 +119,31 @@ projections$recTdsPts_nfl <- projections$recTds_nfl*recTdsMultiplier
 projections$twoPts_nfl <- projections$fumbles_nfl*twoPtsMultiplier
 projections$fumblesPts_nfl <- projections$fumbles_nfl*fumlMultiplier
 
+projections$passYdsPts_fp <- projections$passYds_fp*passYdsMultiplier
+projections$passTdsPts_fp <- projections$passTds_fp*passTdsMultiplier
+projections$passIntPts_fp <- projections$passInt_fp*passIntMultiplier
+projections$rushYdsPts_fp <- projections$rushYds_fp*rushYdsMultiplier
+projections$rushTdsPts_fp <- projections$rushTds_fp*rushTdsMultiplier
+projections$recYdsPts_fp <- projections$recYds_fp*recYdsMultiplier
+projections$recTdsPts_fp <- projections$recTds_fp*recTdsMultiplier
+projections$twoPts_fp <- projections$fumbles_fp*twoPtsMultiplier
+projections$fumblesPts_fp <- projections$fumbles_fp*fumlMultiplier
+
 projections$projectedPts_espn <- rowSums(projections[,c("passYdsPts_espn","passTdsPts_espn","passIntPts_espn","rushYdsPts_espn","rushTdsPts_espn","recYdsPts_espn","recTdsPts_espn","twoPts_espn","fumblesPts_espn")], na.rm=T)
 projections$projectedPts_cbs <- rowSums(projections[,c("passYdsPts_cbs","passTdsPts_cbs","passIntPts_cbs","rushYdsPts_cbs","rushTdsPts_cbs","recYdsPts_cbs","recTdsPts_cbs","twoPts_cbs","fumblesPts_cbs")], na.rm=T)
 projections$projectedPts_nfl <- rowSums(projections[,c("passYdsPts_nfl","passTdsPts_nfl","passIntPts_nfl","rushYdsPts_nfl","rushTdsPts_nfl","recYdsPts_nfl","recTdsPts_nfl","twoPts_nfl","fumblesPts_nfl")], na.rm=T)
+projections$projectedPts_fp <- rowSums(projections[,c("passYdsPts_fp","passTdsPts_fp","passIntPts_fp","rushYdsPts_fp","rushTdsPts_fp","recYdsPts_fp","recTdsPts_fp","twoPts_fp","fumblesPts_fp")], na.rm=T)
 
 #Calculate average of categories
-projections$passYds <- rowMeans(projections[,c("passYds_espn","passYds_cbs","passYds_nfl")], na.rm=TRUE)
-projections$passTds <- rowMeans(projections[,c("passTds_espn","passTds_cbs","passTds_nfl")], na.rm=TRUE)
-projections$passInt <- rowMeans(projections[,c("passInt_espn","passInt_cbs","passInt_nfl")], na.rm=TRUE)
-projections$rushYds <- rowMeans(projections[,c("rushYds_espn","rushYds_cbs","rushYds_nfl")], na.rm=TRUE)
-projections$rushTds <- rowMeans(projections[,c("rushTds_espn","rushTds_cbs","rushTds_nfl")], na.rm=TRUE)
-projections$recYds <- rowMeans(projections[,c("recYds_espn","recYds_cbs","recYds_nfl")], na.rm=TRUE)
-projections$recTds <- rowMeans(projections[,c("recTds_espn","recTds_cbs","recTds_nfl")], na.rm=TRUE)
-projections$twoPts <- rowMeans(projections[,c("twoPts_espn","twoPts_cbs","twoPts_nfl")], na.rm=TRUE)
-projections$fumbles <- rowMeans(projections[,c("fumbles_espn","fumbles_cbs","fumbles_nfl")], na.rm=TRUE)
+projections$passYds <- rowMeans(projections[,c("passYds_espn","passYds_cbs","passYds_nfl","passYds_fp")], na.rm=TRUE)
+projections$passTds <- rowMeans(projections[,c("passTds_espn","passTds_cbs","passTds_nfl","passTds_fp")], na.rm=TRUE)
+projections$passInt <- rowMeans(projections[,c("passInt_espn","passInt_cbs","passInt_nfl","passInt_fp")], na.rm=TRUE)
+projections$rushYds <- rowMeans(projections[,c("rushYds_espn","rushYds_cbs","rushYds_nfl","rushYds_fp")], na.rm=TRUE)
+projections$rushTds <- rowMeans(projections[,c("rushTds_espn","rushTds_cbs","rushTds_nfl","rushTds_fp")], na.rm=TRUE)
+projections$recYds <- rowMeans(projections[,c("recYds_espn","recYds_cbs","recYds_nfl","recYds_fp")], na.rm=TRUE)
+projections$recTds <- rowMeans(projections[,c("recTds_espn","recTds_cbs","recTds_nfl","recTds_fp")], na.rm=TRUE)
+projections$twoPts <- rowMeans(projections[,c("twoPts_espn","twoPts_cbs","twoPts_nfl","twoPts_fp")], na.rm=TRUE)
+projections$fumbles <- rowMeans(projections[,c("fumbles_espn","fumbles_cbs","fumbles_nfl","fumbles_fp")], na.rm=TRUE)
 
 #Convert NA to 0
 #projections[is.na(projections$passYds)==TRUE,"passYds"] <- 0
@@ -148,17 +169,17 @@ projections$fumbles <- rowMeans(projections[,c("fumbles_espn","fumbles_cbs","fum
 #}
 
 #Check projections
-projections[,c("name","passYds_espn","passYds_cbs","passYds_nfl","passYds")]
-projections[,c("name","passTds_espn","passTds_cbs","passTds_nfl","passTds")]
-projections[,c("name","passInt_espn","passInt_cbs","passInt_nfl","passInt")]
-projections[,c("name","rushYds_espn","rushYds_cbs","rushYds_nfl","rushYds")]
-projections[,c("name","rushTds_espn","rushTds_cbs","rushTds_nfl","rushTds")]
-projections[,c("name","recYds_espn","recYds_cbs","recYds_nfl","recYds")]
-projections[,c("name","recTds_espn","recTds_cbs","recTds_nfl","recTds")]
-projections[,c("name","twoPts_espn","twoPts_cbs","twoPts_nfl","twoPts")]
-projections[,c("name","fumbles_espn","fumbles_cbs","fumbles_nfl","fumbles")]
+projections[,c("name","passYds_espn","passYds_cbs","passYds_nfl","passYds_fp","passYds")]
+projections[,c("name","passTds_espn","passTds_cbs","passTds_nfl","passTds_fp","passTds")]
+projections[,c("name","passInt_espn","passInt_cbs","passInt_nfl","passInt_fp","passInt")]
+projections[,c("name","rushYds_espn","rushYds_cbs","rushYds_nfl","rushYds_fp","rushYds")]
+projections[,c("name","rushTds_espn","rushTds_cbs","rushTds_nfl","rushTds_fp","rushTds")]
+projections[,c("name","recYds_espn","recYds_cbs","recYds_nfl","recYds_fp","recYds")]
+projections[,c("name","recTds_espn","recTds_cbs","recTds_nfl","recTds_fp","recTds")]
+projections[,c("name","twoPts_espn","twoPts_cbs","twoPts_nfl","twoPts_fp","twoPts")]
+projections[,c("name","fumbles_espn","fumbles_cbs","fumbles_nfl","fumbles_fp","fumbles")]
 
-#Calculate projected points for your league (avg of ESPN, CBS, and NFL projections)
+#Calculate projected points for your league (avg of ESPN, CBS, NFL, and Fantasy Pros projections)
 projections$passYdsPts <- projections$passYds*passYdsMultiplier
 projections$passTdsPts <- projections$passTds*passTdsMultiplier
 projections$passIntPts <- projections$passInt*passIntMultiplier
@@ -171,9 +192,9 @@ projections$fumblesPts <- projections$fumbles*fumlMultiplier
 projections$projectedPts <- rowSums(projections[,c("passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recYdsPts","recTdsPts","twoPts","fumblesPts")], na.rm=T)
 
 #Calculate latent variable for projected points
-cor(projections[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts")], use="pairwise.complete.obs")
+cor(projections[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts_fp","projectedPts")], use="pairwise.complete.obs")
 
-factor.analysis <- factanal(~projectedPts_espn + projectedPts_cbs + projectedPts_nfl, factors = 1, scores = "Bartlett", data=projections) #regression
+factor.analysis <- factanal(~projectedPts_espn + projectedPts_cbs + projectedPts_nfl + projectedPts_fp, factors = 1, scores = "Bartlett", data=projections) #regression
 factor.scores <- factor.analysis$scores
 factor.loadings <- factor.analysis$loadings[,1]
 factor.loadings
@@ -188,7 +209,7 @@ projections$projectedPts_cbs[projections$projectedPts_cbs == 0] <- NA
 projections$projectedPts_nfl[projections$projectedPts_nfl == 0] <- NA
 
 #Correlations among projections
-cor(projections[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts","projectedPtsLatent")], use="pairwise.complete.obs")
+cor(projections[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts_fp","projectedPts","projectedPtsLatent")], use="pairwise.complete.obs")
 
 #Calculate overall rank
 projections$overallRank <- rank(-projections$projectedPtsLatent, ties.method="min")
@@ -198,14 +219,14 @@ projections <- projections[order(projections$overallRank),]
 row.names(projections) <- 1:dim(projections)[1]
 
 #Keep important variables
-projections <- projections[,c("name","pos","team","overallRank","projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts","projectedPtsLatent")]
+projections <- projections[,c("name","pos","team","overallRank","projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts_fp","projectedPts","projectedPtsLatent")]
 
 #View projections
 projections
 
 #Density Plot
-pointDensity <- c(projections$projectedPts_espn,projections$projectedPts_cbs,projections$projectedPts_nfl) #,projections$projectedPtsLatent
-sourceDensity <- c(rep("ESPN",dim(projections)[1]),rep("CBS",dim(projections)[1]),rep("NFL",dim(projections)[1])) #,rep("Latent",dim(projections)[1])
+pointDensity <- c(projections$projectedPts_espn,projections$projectedPts_cbs,projections$projectedPts_nfl,projections$projectedPts_fp) #,projections$projectedPtsLatent
+sourceDensity <- c(rep("ESPN",dim(projections)[1]),rep("CBS",dim(projections)[1]),rep("NFL",dim(projections)[1]),rep("FP",dim(projections)[1])) #,rep("Latent",dim(projections)[1])
 densityData <- data.frame(pointDensity,sourceDensity)
 
 ggplot(densityData, aes(x=pointDensity, fill=sourceDensity)) + geom_density(alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of Projected Points from 2012") + theme(legend.title=element_blank())

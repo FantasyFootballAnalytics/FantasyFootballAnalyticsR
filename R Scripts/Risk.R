@@ -54,7 +54,7 @@ projections$pick <- rowMeans(projections[,c("pick_experts","pick_crowd")], na.rm
 
 projections$sdPts <- NA
 for (i in 1:dim(projections)[1]){
-  projections$sdPts[i] <- sd(projections[i,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl")], na.rm=TRUE)
+  projections$sdPts[i] <- sd(projections[i,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts_fp")], na.rm=TRUE)
 }
 
 projections$sdPick <- rowMeans(projections[,c("sdPick_experts","sdPick_crowd")], na.rm=TRUE)

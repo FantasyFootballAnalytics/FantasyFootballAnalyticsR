@@ -32,8 +32,8 @@ riskData <- as.data.frame(cbind(riskLevel,projectedPoints))
 riskData[match(unique(riskData$projectedPoints),riskData$projectedPoints),c("riskLevel","projectedPoints")]
 
 optimizeTeam(maxRisk=3.3)
-optimizeTeam(maxRisk=3.4)
-optimizeTeam(maxRisk=3.5) #optimal
+optimizeTeam(maxRisk=3.4) #optimal
+optimizeTeam(maxRisk=3.5)
 optimizeTeam(maxRisk=3.7)
 optimizeTeam(maxRisk=4.6)
 

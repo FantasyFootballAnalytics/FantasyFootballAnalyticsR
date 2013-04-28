@@ -17,7 +17,7 @@ numTEstarters <- 1
 numTotalStarters <- 7
 numTotalPlayers <- 20
 
-maxRisk <- 3.5
+maxRisk <- 3.3
 
 #Library
 library("Rglpk")
@@ -50,9 +50,9 @@ myteam$player <- as.character(myteam$player)
 
 drafted <- c(myteam$player,"Aaron Rodgers","Steven Jackson")
 
-optimizeDraft(maxRisk=3.5)
-optimizeDraft(maxRisk=3.5, omit=c("Aaron Rodgers","Steven Jackson"))
-optimizeDraft(maxRisk=3.5, omit=drafted)
+optimizeDraft(maxRisk=3.4)
+optimizeDraft(maxRisk=3.4, omit=c("Aaron Rodgers","Steven Jackson"))
+optimizeDraft(maxRisk=3.4, omit=drafted)
 
 draftData[!(draftData$name %in% drafted),]
 
@@ -69,6 +69,6 @@ myteam$player <- as.character(myteam$player)
 drafted <- c(myteam$player,"")
 ###----------###
 
-optimizeDraft(maxRisk=3.5,omit=drafted)
+optimizeDraft(maxRisk=3.4,omit=drafted)
 
 draftData[!(draftData$name %in% drafted),]

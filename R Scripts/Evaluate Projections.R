@@ -43,12 +43,13 @@ projectedWithActualPts[projectedWithActualPts$name=="Steve Smith",][c(1,4),] <- 
 projectedWithActualPts <- projectedWithActualPts[!is.na(projectedWithActualPts$name),]
 
 #Correlation between projections and actual points
-cor(projectedWithActualPts[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts","projectedPtsLatent","actualPts")], use="pairwise.complete.obs")
+cor(projectedWithActualPts[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts_fp","projectedPts","projectedPtsLatent","actualPts")], use="pairwise.complete.obs")
 
 #R-squared
 summary(lm(actualPts ~ projectedPts_espn, data=projectedWithActualPts))$r.squared
 summary(lm(actualPts ~ projectedPts_cbs, data=projectedWithActualPts))$r.squared
 summary(lm(actualPts ~ projectedPts_nfl, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPts_fp, data=projectedWithActualPts))$r.squared
 summary(lm(actualPts ~ projectedPts, data=projectedWithActualPts))$r.squared
 summary(lm(actualPts ~ projectedPtsLatent, data=projectedWithActualPts))$r.squared
 
@@ -56,6 +57,7 @@ summary(lm(actualPts ~ projectedPtsLatent, data=projectedWithActualPts))$r.squar
 icc(projectedWithActualPts[,c("projectedPts_espn","actualPts")])$icc.agreement
 icc(projectedWithActualPts[,c("projectedPts_cbs","actualPts")])$icc.agreement
 icc(projectedWithActualPts[,c("projectedPts_nfl","actualPts")])$icc.agreement
+icc(projectedWithActualPts[,c("projectedPts_fp","actualPts")])$icc.agreement
 icc(projectedWithActualPts[,c("projectedPts","actualPts")])$icc.agreement
 icc(projectedWithActualPts[,c("projectedPtsLatent","actualPts")])$icc.agreement
 
@@ -63,6 +65,7 @@ icc(projectedWithActualPts[,c("projectedPtsLatent","actualPts")])$icc.agreement
 rcorrcens(actualPts ~ projectedPts_espn, data=projectedWithActualPts)
 rcorrcens(actualPts ~ projectedPts_cbs, data=projectedWithActualPts)
 rcorrcens(actualPts ~ projectedPts_nfl, data=projectedWithActualPts)
+rcorrcens(actualPts ~ projectedPts_fp, data=projectedWithActualPts)
 rcorrcens(actualPts ~ projectedPts, data=projectedWithActualPts)
 rcorrcens(actualPts ~ projectedPtsLatent, data=projectedWithActualPts)
 
@@ -70,12 +73,13 @@ rcorrcens(actualPts ~ projectedPtsLatent, data=projectedWithActualPts)
 projectedWithActualPtsNoZeros <- projectedWithActualPts[which(projectedWithActualPts$projectedPts!=0),]
 
 #Re-evaluate correlation between projections and actual points when cases with 0 projected points were excluded
-cor(projectedWithActualPtsNoZeros[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts","projectedPtsLatent","actualPts")], use="pairwise.complete.obs")
+cor(projectedWithActualPtsNoZeros[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts_fp","projectedPts","projectedPtsLatent","actualPts")], use="pairwise.complete.obs")
 
 #R-squared
 summary(lm(actualPts ~ projectedPts_espn, data=projectedWithActualPtsNoZeros))$r.squared
 summary(lm(actualPts ~ projectedPts_cbs, data=projectedWithActualPtsNoZeros))$r.squared
 summary(lm(actualPts ~ projectedPts_nfl, data=projectedWithActualPtsNoZeros))$r.squared
+summary(lm(actualPts ~ projectedPts_fp, data=projectedWithActualPtsNoZeros))$r.squared
 summary(lm(actualPts ~ projectedPts, data=projectedWithActualPtsNoZeros))$r.squared
 summary(lm(actualPts ~ projectedPtsLatent, data=projectedWithActualPtsNoZeros))$r.squared
 
@@ -83,6 +87,7 @@ summary(lm(actualPts ~ projectedPtsLatent, data=projectedWithActualPtsNoZeros))$
 icc(projectedWithActualPtsNoZeros[,c("projectedPts_espn","actualPts")])$icc.agreement
 icc(projectedWithActualPtsNoZeros[,c("projectedPts_cbs","actualPts")])$icc.agreement
 icc(projectedWithActualPtsNoZeros[,c("projectedPts_nfl","actualPts")])$icc.agreement
+icc(projectedWithActualPtsNoZeros[,c("projectedPts_fp","actualPts")])$icc.agreement
 icc(projectedWithActualPtsNoZeros[,c("projectedPts","actualPts")])$icc.agreement
 icc(projectedWithActualPtsNoZeros[,c("projectedPtsLatent","actualPts")])$icc.agreement
 
@@ -90,6 +95,7 @@ icc(projectedWithActualPtsNoZeros[,c("projectedPtsLatent","actualPts")])$icc.agr
 rcorrcens(actualPts ~ projectedPts_espn, data=projectedWithActualPtsNoZeros)
 rcorrcens(actualPts ~ projectedPts_cbs, data=projectedWithActualPtsNoZeros)
 rcorrcens(actualPts ~ projectedPts_nfl, data=projectedWithActualPtsNoZeros)
+rcorrcens(actualPts ~ projectedPts_fp, data=projectedWithActualPtsNoZeros)
 rcorrcens(actualPts ~ projectedPts, data=projectedWithActualPtsNoZeros)
 rcorrcens(actualPts ~ projectedPtsLatent, data=projectedWithActualPtsNoZeros)
 
