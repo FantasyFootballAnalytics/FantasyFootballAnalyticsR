@@ -7,10 +7,15 @@
 # -ESPN projections do not include fumbles!
 ###########################
 
+#Websites:
+http://people.duke.edu/~rnau/compare.htm
+http://otexts.com/fpp/2/5/
+
 #Library
 library("psy")
 library("psych")
 library("ggplot2")
+library("forecast")
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
@@ -53,7 +58,7 @@ summary(lm(actualPts ~ projectedPts_fp, data=projectedWithActualPts))$r.squared
 summary(lm(actualPts ~ projectedPts, data=projectedWithActualPts))$r.squared
 summary(lm(actualPts ~ projectedPtsLatent, data=projectedWithActualPts))$r.squared
 
-#Absolute agreement
+#Absolute agreement (ICC)
 icc(projectedWithActualPts[,c("projectedPts_espn","actualPts")])$icc.agreement
 icc(projectedWithActualPts[,c("projectedPts_cbs","actualPts")])$icc.agreement
 icc(projectedWithActualPts[,c("projectedPts_nfl","actualPts")])$icc.agreement
@@ -68,6 +73,22 @@ rcorrcens(actualPts ~ projectedPts_nfl, data=projectedWithActualPts)
 rcorrcens(actualPts ~ projectedPts_fp, data=projectedWithActualPts)
 rcorrcens(actualPts ~ projectedPts, data=projectedWithActualPts)
 rcorrcens(actualPts ~ projectedPtsLatent, data=projectedWithActualPts)
+
+#Mean Error (ME), Root Mean Squared Error (RMSE), Mean Absolute Error (MAE), Mean Percentage Error (MPE), Mean Absolute Percentage Error (MAPE)
+accuracy(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_espn")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_espn")])[[2]])
+accuracy(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_cbs")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_cbs")])[[2]])
+accuracy(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_nfl")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_nfl")])[[2]])
+accuracy(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fp")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fp")])[[2]])
+accuracy(na.omit(projectedWithActualPts[,c("actualPts","projectedPts")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts")])[[2]])
+accuracy(na.omit(projectedWithActualPts[,c("actualPts","projectedPtsLatent")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPtsLatent")])[[2]])
+
+#Mean Absolute Scaled Error (MASE)
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_espn")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_espn")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_cbs")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_cbs")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_nfl")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_nfl")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fp")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fp")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPtsLatent")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPtsLatent")])[[2]])
 
 #After removing cases with projected points of 0
 projectedWithActualPtsNoZeros <- projectedWithActualPts[which(projectedWithActualPts$projectedPts!=0),]
@@ -99,9 +120,25 @@ rcorrcens(actualPts ~ projectedPts_fp, data=projectedWithActualPtsNoZeros)
 rcorrcens(actualPts ~ projectedPts, data=projectedWithActualPtsNoZeros)
 rcorrcens(actualPts ~ projectedPtsLatent, data=projectedWithActualPtsNoZeros)
 
+#Mean Error (ME), Root Mean Squared Error (RMSE), Mean Absolute Error (MAE), Mean Percentage Error (MPE), Mean Absolute Percentage Error (MAPE)
+accuracy(na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts_espn")])[[1]], na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts_espn")])[[2]])
+accuracy(na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts_cbs")])[[1]], na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts_cbs")])[[2]])
+accuracy(na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts_nfl")])[[1]], na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts_nfl")])[[2]])
+accuracy(na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts_fp")])[[1]], na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts_fp")])[[2]])
+accuracy(na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts")])[[1]], na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts")])[[2]])
+accuracy(na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPtsLatent")])[[1]], na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPtsLatent")])[[2]])
+
+#Mean Absolute Scaled Error (MASE)
+calculateMASE(na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts_espn")])[[1]], na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts_espn")])[[2]])
+calculateMASE(na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts_cbs")])[[1]], na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts_cbs")])[[2]])
+calculateMASE(na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts_nfl")])[[1]], na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts_nfl")])[[2]])
+calculateMASE(na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts_fp")])[[1]], na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts_fp")])[[2]])
+calculateMASE(na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts")])[[1]], na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts")])[[2]])
+calculateMASE(na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPtsLatent")])[[1]], na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPtsLatent")])[[2]])
+
 #Plot
-ggplot(data=projectedWithActualPts, aes(x=projectedPtsLatent, y=actualPts)) + geom_point() + geom_smooth() + xlab("Projected Fantasy Football Points") + ylab("Actual Fantasy Football Points") + ggtitle("Association Between Projected Fantasy Points and Actual Points") +
-  annotate("text", x = 80, y = max(projectedWithActualPts$projectedPtsLatent), label = paste("R-Squared = ",round(summary(lm(actualPts ~ projectedPtsLatent, data=projectedWithActualPts))$r.squared,2),sep=""))
+ggplot(data=projectedWithActualPts, aes(x=projectedPts_fp, y=actualPts)) + geom_point() + geom_smooth() + xlab("Projected Fantasy Football Points") + ylab("Actual Fantasy Football Points") + ggtitle("Association Between Projected Fantasy Points and Actual Points") +
+  annotate("text", x = 80, y = max(projectedWithActualPts$projectedPts_fp), label = paste("R-Squared = ",round(summary(lm(actualPts ~ projectedPts_fp, data=projectedWithActualPts))$r.squared,2),sep=""))
 ggsave(paste(getwd(),"/Figures/Evaluate Projections 2012.jpg", sep=""))
 
 #Save data

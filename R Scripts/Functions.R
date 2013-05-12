@@ -8,6 +8,13 @@
 #Library
 library("Rglpk")
 
+#Function for calculating Mean Absolute Scaled Error (MASE)
+calculateMASE <- function(f,y) { # f = vector with forecasts, y = vector with actuals
+  if(length(f)!=length(y)){ stop("Vector length is not equal") }
+  n <- length(f)
+  return(mean(abs((y - f) / ((1/(n-1)) * sum(abs(y[2:n]-y[1:n-1]))))))
+}
+
 #Function for calculating the weighted standard deviation for mean/sd rescaling (below).
 weighted.sd <- function(x, w){
   sum.w <- sum(w)
