@@ -29,7 +29,7 @@ source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 load(paste(getwd(),"/Data/AvgCost-2012.RData", sep=""))
 
 #Roster Optimization
-optimizeData <- na.omit(projections[,c("name","pos","projectedPtsLatent","risk","inflatedCost")])
+optimizeData <- na.omit(projections[,c("name","pos","projections","risk","inflatedCost")]) #projectedPtsLatent
 maxCost <- leagueCap - (numTotalPlayers - numTotalStarters)
 
 #Calculate Optimum Roster

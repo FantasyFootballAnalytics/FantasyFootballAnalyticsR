@@ -73,8 +73,8 @@ projections[duplicated(projections$name),]
 projections <- projections[,!(names(projections) %in% c("pick_experts","sdPick_experts","pick_crowd","sdPick_crowd","sdPickZ","sdPtsZ"))]
 
 #Compare accuracy of projections while taking into account risk vs when not taking risk into account
-summary(lm(actualPts ~ projectedPtsLatent, data=projections))$r.squared #not considering risk
-summary(lm(actualPts ~ projectedPtsLatent + risk, data=projections))$r.squared #considering risk
+summary(lm(actualPts ~ projections, data=na.omit(projections[,c("actualPts","projections","risk")])))$r.squared #not considering risk #projectedPtsLatent
+summary(lm(actualPts ~ projections + risk, data=na.omit(projections[,c("actualPts","projections","risk")])))$r.squared #considering risk #projectedPtsLatent
 
 #Players with highest risk levels
 projections[rank(projections$risk, na.last="keep") %in% (max(rank(projections$risk, na.last="keep"), na.rm=TRUE)-5):max(rank(projections$risk, na.last="keep"), na.rm=TRUE) ,]

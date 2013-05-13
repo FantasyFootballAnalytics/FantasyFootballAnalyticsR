@@ -37,20 +37,20 @@ rb <- projections[projections$pos=="RB",][order(projections[projections$pos=="RB
 wr <- projections[projections$pos=="WR",][order(projections[projections$pos=="WR",]$overallRank),]
 te <- projections[projections$pos=="TE",][order(projections[projections$pos=="TE",]$overallRank),]
 
-qb$positionRank <- rank(-qb$projectedPtsLatent, ties.method="min")
-rb$positionRank <- rank(-rb$projectedPtsLatent, ties.method="min")
-wr$positionRank <- rank(-wr$projectedPtsLatent, ties.method="min")
-te$positionRank <- rank(-te$projectedPtsLatent, ties.method="min")
+qb$positionRank <- rank(-qb$projections, ties.method="min") #projectedPtsLatent
+rb$positionRank <- rank(-rb$projections, ties.method="min") #projectedPtsLatent
+wr$positionRank <- rank(-wr$projections, ties.method="min") #projectedPtsLatent
+te$positionRank <- rank(-te$projections, ties.method="min") #projectedPtsLatent
 
-qbValueOfReplacement <- print(mean(c(qb$projectedPtsLatent[qb$positionRank==qbReplacements],qb$projectedPtsLatent[qb$positionRank==(qbReplacements-1)],qb$projectedPtsLatent[qb$positionRank==(qbReplacements+1)])))
-rbValueOfReplacement <- print(mean(c(rb$projectedPtsLatent[rb$positionRank==rbReplacements],rb$projectedPtsLatent[rb$positionRank==(rbReplacements-1)],rb$projectedPtsLatent[rb$positionRank==(rbReplacements+1)])))
-wrValueOfReplacement <- print(mean(c(wr$projectedPtsLatent[wr$positionRank==wrReplacements],wr$projectedPtsLatent[wr$positionRank==(wrReplacements-1)],wr$projectedPtsLatent[wr$positionRank==(wrReplacements+1)])))
-teValueOfReplacement <- print(mean(c(te$projectedPtsLatent[te$positionRank==teReplacements],te$projectedPtsLatent[te$positionRank==(teReplacements-1)],te$projectedPtsLatent[te$positionRank==(teReplacements+1)])))
+qbValueOfReplacement <- print(mean(c(qb$projections[qb$positionRank==qbReplacements],qb$projections[qb$positionRank==(qbReplacements-1)],qb$projections[qb$positionRank==(qbReplacements+1)]))) #projectedPtsLatent
+rbValueOfReplacement <- print(mean(c(rb$projections[rb$positionRank==rbReplacements],rb$projections[rb$positionRank==(rbReplacements-1)],rb$projections[rb$positionRank==(rbReplacements+1)])))
+wrValueOfReplacement <- print(mean(c(wr$projections[wr$positionRank==wrReplacements],wr$projections[wr$positionRank==(wrReplacements-1)],wr$projections[wr$positionRank==(wrReplacements+1)])))
+teValueOfReplacement <- print(mean(c(te$projections[te$positionRank==teReplacements],te$projections[te$positionRank==(teReplacements-1)],te$projections[te$positionRank==(teReplacements+1)])))
 
-qb$vor <- qb$projectedPtsLatent - qbValueOfReplacement
-rb$vor <- rb$projectedPtsLatent - rbValueOfReplacement
-wr$vor <- wr$projectedPtsLatent - wrValueOfReplacement
-te$vor <- te$projectedPtsLatent - teValueOfReplacement
+qb$vor <- qb$projections - qbValueOfReplacement
+rb$vor <- rb$projections - rbValueOfReplacement
+wr$vor <- wr$projections - wrValueOfReplacement
+te$vor <- te$projections - teValueOfReplacement
 
 #Merge across positions
 projections <- rbind(qb,rb,wr,te)
@@ -63,7 +63,7 @@ projections <- projections[order(projections$overallRank),]
 row.names(projections) <- 1:dim(projections)[1]
 
 #Reorder variables
-projections <- projections[,c("name","pos","team","overallRank","pick","positionRank","projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts","projectedPtsLatent","vor","sdPick","sdPts","risk")]
+projections <- projections[,c("name","pos","team","overallRank","pick","positionRank","projections","projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts_fp","projectedPtsAvg","projectedPtsLatent","vor","sdPick","sdPts","risk")]
 
 #Starters (low risk)
 projections[which(projections$risk <= 5 & projections$vor >= 0),]
@@ -83,7 +83,7 @@ ggsave(paste(getwd(),"/Figures/VOR-Boxplot 2012.jpg", sep=""))
 save(projections, file = paste(getwd(),"/Data/VOR-2012.RData", sep=""))
 
 #Subset data
-draftData <- projections[row.names(na.omit(projections[,c("projectedPtsLatent","vor","risk")])),c("name","pos","team","projectedPtsLatent","vor","sdPick","sdPts","risk")]
+draftData <- projections[row.names(na.omit(projections[,c("projections","vor","risk")])),c("name","pos","team","projections","vor","sdPick","sdPts","risk")] #projectedPtsLatent
 row.names(draftData) <- 1:dim(draftData)[1]
 
 options(digits=2)

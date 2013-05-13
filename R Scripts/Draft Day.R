@@ -17,7 +17,7 @@ numTEstarters <- 1
 numTotalStarters <- 7
 numTotalPlayers <- 20
 
-maxRisk <- 3.3
+maxRisk <- 4.1
 
 #Library
 library("Rglpk")
@@ -29,14 +29,14 @@ source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 load(paste(getwd(),"/Data/BidUpTo-2012.RData", sep=""))
 
 #Subset data
-draftData <- projections[,c("name","pos","team","projectedPtsLatent","vor","sdPick","sdPts","risk","avgCost","inflatedCost","bidUpTo")]
+draftData <- projections[,c("name","pos","team","projections","vor","sdPick","sdPts","risk","avgCost","inflatedCost","bidUpTo")] #projectedPtsLatent
 maxCost <- leagueCap - (numTotalPlayers - numTotalStarters)
 
 options(digits=2)
 draftData
 
 #Day of Draft
-removedPlayers <-  draftData[row.names(na.omit(draftData[,c("projectedPtsLatent","risk","inflatedCost")])),]
+removedPlayers <-  draftData[row.names(na.omit(draftData[,c("projections","risk","inflatedCost")])),] #projectedPtsLatent
 row.names(removedPlayers) <- 1:dim(removedPlayers)[1]
 removedPlayers
 
@@ -48,11 +48,11 @@ myteam <- data.frame(
 )
 myteam$player <- as.character(myteam$player)
 
-drafted <- c(myteam$player,"Aaron Rodgers","Steven Jackson")
+drafted <- c(myteam$player,"Vincent Jackson","Eric Decker")
 
-optimizeDraft(maxRisk=3.4)
-optimizeDraft(maxRisk=3.4, omit=c("Aaron Rodgers","Steven Jackson"))
-optimizeDraft(maxRisk=3.4, omit=drafted)
+optimizeDraft(maxRisk=4.1)
+optimizeDraft(maxRisk=4.1, omit=c("Vincent Jackson","Eric Decker"))
+optimizeDraft(maxRisk=4.1, omit=drafted)
 
 draftData[!(draftData$name %in% drafted),]
 
@@ -69,6 +69,6 @@ myteam$player <- as.character(myteam$player)
 drafted <- c(myteam$player,"")
 ###----------###
 
-optimizeDraft(maxRisk=3.4,omit=drafted)
+optimizeDraft(maxRisk=4.1,omit=drafted)
 
 draftData[!(draftData$name %in% drafted),]

@@ -44,7 +44,7 @@ rescaleRange <- function(variable, minOutput, maxOutput){
 }
 
 #Create Optimization Function
-optimizeTeam <- function(points=optimizeData$projectedPtsLatent, playerCost=optimizeData$inflatedCost, maxRisk=maxRisk){ #can change points, cost, or risk
+optimizeTeam <- function(points=optimizeData$projections, playerCost=optimizeData$inflatedCost, maxRisk=maxRisk){ #can change points, cost, or risk #projectedPtsLatent
   num.players <- length(optimizeData$name)
   var.types <- rep("B", num.players)
   
@@ -81,7 +81,7 @@ optimizeTeam <- function(points=optimizeData$projectedPtsLatent, playerCost=opti
 }
 
 #Draft Day Optimization: Allows omitting unavailable (drafted) players and includes BidUpTo in summary table
-optimizeDraft <- function(points=removedPlayers$projectedPtsLatent, playerCost=removedPlayers$inflatedCost, maxRisk=maxRisk, omit=NULL, team=myteam){ #can change points, cost, or risk
+optimizeDraft <- function(points=removedPlayers$projections, playerCost=removedPlayers$inflatedCost, maxRisk=maxRisk, omit=NULL, team=myteam){ #can change points, cost, or risk #projectedPtsLatent
   #Omit players that have already been drafted
   removedPlayers <- removedPlayers[! removedPlayers$name %in% omit,]
   

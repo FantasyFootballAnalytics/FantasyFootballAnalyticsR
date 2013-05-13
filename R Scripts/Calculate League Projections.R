@@ -189,10 +189,10 @@ projections$recYdsPts <- projections$recYds*recYdsMultiplier
 projections$recTdsPts <- projections$recTds*recTdsMultiplier
 projections$fumblesPts <- projections$fumbles*fumlMultiplier
 
-projections$projectedPts <- rowSums(projections[,c("passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recYdsPts","recTdsPts","twoPts","fumblesPts")], na.rm=T)
+projections$projectedPtsAvg <- rowSums(projections[,c("passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recYdsPts","recTdsPts","twoPts","fumblesPts")], na.rm=T)
 
 #Calculate latent variable for projected points
-cor(projections[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts_fp","projectedPts")], use="pairwise.complete.obs")
+cor(projections[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts_fp","projectedPtsAvg")], use="pairwise.complete.obs")
 
 factor.analysis <- factanal(~projectedPts_espn + projectedPts_cbs + projectedPts_nfl + projectedPts_fp, factors = 1, scores = "Bartlett", data=projections) #regression
 factor.scores <- factor.analysis$scores
@@ -201,7 +201,7 @@ factor.loadings
 projectedPtsLatent <- factor.scores
 
 #Rescale the factor scores to have the same range as the average projections data
-projections$projectedPtsLatent <- as.vector(rescaleRange(variable=projectedPtsLatent, minOutput=0, maxOutput=max(projections$projectedPts)))
+projections$projectedPtsLatent <- as.vector(rescaleRange(variable=projectedPtsLatent, minOutput=0, maxOutput=max(projections$projectedPtsAvg)))
 
 #Convert Zeros to NA
 projections$projectedPts_espn[projections$projectedPts_espn == 0] <- NA
@@ -209,17 +209,20 @@ projections$projectedPts_cbs[projections$projectedPts_cbs == 0] <- NA
 projections$projectedPts_nfl[projections$projectedPts_nfl == 0] <- NA
 
 #Correlations among projections
-cor(projections[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts_fp","projectedPts","projectedPtsLatent")], use="pairwise.complete.obs")
+cor(projections[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts_fp","projectedPtsAvg","projectedPtsLatent")], use="pairwise.complete.obs")
+
+#Set criterion for projections based on whose projections are most accurate
+projections$projections <- projections$projectedPts_fp
 
 #Calculate overall rank
-projections$overallRank <- rank(-projections$projectedPtsLatent, ties.method="min")
+projections$overallRank <- rank(-projections$projections, ties.method="min") #projectedPtsLatent
 
 #Order players by overall rank
 projections <- projections[order(projections$overallRank),]
 row.names(projections) <- 1:dim(projections)[1]
 
 #Keep important variables
-projections <- projections[,c("name","pos","team","overallRank","projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts_fp","projectedPts","projectedPtsLatent")]
+projections <- projections[,c("name","pos","team","overallRank","projections","projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts_fp","projectedPtsAvg","projectedPtsLatent")]
 
 #View projections
 projections

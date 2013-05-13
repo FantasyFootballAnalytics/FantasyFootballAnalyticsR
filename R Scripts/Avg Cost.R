@@ -8,7 +8,7 @@
 ###########################
 
 #League settings
-leagueCap <- 225   #
+leagueCap <- 225
 defaultCap <- 200
 
 #Library

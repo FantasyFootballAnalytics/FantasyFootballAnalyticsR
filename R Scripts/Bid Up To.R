@@ -27,7 +27,7 @@ for(i in 1:length(optimizeData$name)){
   newCost <- optimizeData$inflatedCost
   while(!is.na(match(optimizeData$name[i],listOfPlayers))){
     newCost[i] <- j 
-    listOfPlayers <- optimizeTeam(points=optimizeData$projectedPts, playerCost=newCost, maxRisk=(max(optimizeData$risk)+1))$players  #UPDATE: maxrisk
+    listOfPlayers <- optimizeTeam(points=optimizeData$projections, playerCost=newCost, maxRisk=(max(optimizeData$risk)+1))$players  #UPDATE: maxrisk
     bidUpTo[i] <- j
     j <- j+1
   }
