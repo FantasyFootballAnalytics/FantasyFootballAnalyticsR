@@ -198,15 +198,24 @@ factor.analysis <- factanal(~projectedPts_espn + projectedPts_cbs + projectedPts
 factor.scores <- factor.analysis$scores
 factor.loadings <- factor.analysis$loadings[,1]
 factor.loadings
-projectedPtsLatent <- factor.scores
+#projectedPtsLatent <- factor.scores
+projectedPtsLatent <- as.vector(factor.scores)
 
 #Rescale the factor scores to have the same range as the average projections data
-projections$projectedPtsLatent <- as.vector(rescaleRange(variable=projectedPtsLatent, minOutput=0, maxOutput=max(projections$projectedPtsAvg)))
+#projections$projectedPtsLatent <- as.vector(rescaleRange(variable=projectedPtsLatent, minOutput=0, maxOutput=max(projections$projectedPtsAvg)))
+projectionVars <- projections[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts_fp")]
+projections$projectedPtsLatent <- rowMeans(projectionVars) + apply(projectionVars,1,sd)*projectedPtsLatent
+projections$projectedPtsLatent <- rescaleRange(variable=projections$projectedPtsLatent, minOutput=0, maxOutput=max(projections$projectedPtsAvg))
+projectionVars <- cbind(projectionVars,projections$projectedPtsLatent)
 
 #Convert Zeros to NA
 projections$projectedPts_espn[projections$projectedPts_espn == 0] <- NA
 projections$projectedPts_cbs[projections$projectedPts_cbs == 0] <- NA
 projections$projectedPts_nfl[projections$projectedPts_nfl == 0] <- NA
+projections$projectedPts_nfl[projections$projectedPts_fp == 0] <- NA
+
+#Describe
+describe(projectionVars)
 
 #Correlations among projections
 cor(projections[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts_fp","projectedPtsAvg","projectedPtsLatent")], use="pairwise.complete.obs")
