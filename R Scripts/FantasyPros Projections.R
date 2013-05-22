@@ -4,13 +4,13 @@
 # Date: 3/3/2013
 # Author: Isaac Petersen (isaactpetersen@gmail.com)
 # Notes:
-# -These projections are from last year (FantasyPros has not yet updated them for the upcoming season)
 ###########################
 
 #Load libraries
 library("XML")
 library("stringr")
 library("ggplot2")
+library("plyr")
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
@@ -24,7 +24,7 @@ te_fp <- readHTMLTable("http://www.fantasypros.com/nfl/projections/te.php", stri
 #Add variable names for each object
 names(qb_fp) <- c("player_fp","passAtt_fp","passComp_fp","passYds_fp","passTds_fp","passInt_fp","rushAtt_fp","rushYds_fp","rushTds_fp","fumbles_fp","pts_fp")
 names(rb_fp) <- c("player_fp","rushAtt_fp","rushYds_fp","rushTds_fp","rec_fp","recYds_fp","recTds_fp","fumbles_fp","pts_fp")
-names(wr_fp) <- c("player_fp","rec_fp","recYds_fp","recTds_fp","fumbles_fp","pts_fp")
+names(wr_fp) <- c("player_fp","rushAtt_fp","rushYds_fp","rushTds_fp","rec_fp","recYds_fp","recTds_fp","fumbles_fp","pts_fp")
 names(te_fp) <- c("player_fp","rec_fp","recYds_fp","recTds_fp","fumbles_fp","pts_fp")
 
 #Add variable for player position
@@ -57,16 +57,26 @@ projections_fp$pts_fp <- as.numeric(projections_fp$pts_fp)
 projections_fp$twoPts_fp <- NA
 
 #Player names
-projections_fp$name <- str_sub(projections_fp$player_fp, end=str_locate(string=projections_fp$player_fp, '\\(')[,1]-2)
+projections_fp <- adply(projections_fp, 1, function(x) {
+  if(is.na(str_locate(string=x$player_fp, '\\(')[,1]) == TRUE){
+    x$name <- x$player_fp
+  } else{
+    x$name <- str_sub(x$player_fp, end=str_locate(string=x$player_fp, '\\(')[,1]-2)
+  }
+  x
+}         
+)
 
-projections_fp[grep("Beanie", projections_fp$name),"name"] <- "Beanie Wells"
-projections_fp[is.na(projections_fp$name==TRUE),"name"] <- projections_fp[is.na(projections_fp$name==TRUE),"player_fp"]
+#projections_fp[grep("Beanie", projections_fp$name),"name"] <- "Beanie Wells"
+#projections_fp[is.na(projections_fp$name==TRUE),"name"] <- projections_fp[is.na(projections_fp$name==TRUE),"player_fp"]
 
 #Player teams
 projections_fp$team_fp <- str_sub(projections_fp$player_fp, start=str_locate(string=projections_fp$player_fp, '\\(')[,1]+1, end = str_locate(string=projections_fp$player_fp, ',')[,1]-1)
 
 #Remove duplicate cases
-projections_fp[duplicated(projections_fp$name),]
+#projections_fp[duplicated(projections_fp$name),]
+projections_fp[projections_fp$name %in% projections_fp[duplicated(projections_fp$name),"name"],]
+projections_fp <- projections_fp[-which(projections_fp$name=="Evan Rodriguez" & projections_fp$pos=="RB"),]
 
 #Calculate overall rank
 projections_fp$overallRank_fp <- rank(-projections_fp$pts_fp, ties.method="min")
@@ -81,8 +91,9 @@ projections_fp <- projections_fp[order(projections_fp$overallRank_fp),]
 row.names(projections_fp) <- 1:dim(projections_fp)[1]
 
 #Density Plot
-ggplot(projections_fp, aes(x=pts_fp)) + geom_density(fill="orange", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of FantasyPros Projected Points from 2012")
-ggsave(paste(getwd(),"/Figures/FantasyPros projections 2012.jpg", sep=""))
+ggplot(projections_fp, aes(x=pts_fp)) + geom_density(fill="orange", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of FantasyPros Projected Points from 2013")
+ggsave(paste(getwd(),"/Figures/FantasyPros projections 2013.jpg", sep=""))
+dev.off()
 
 #Save file
-save(projections_fp, file = paste(getwd(),"/Data/FantasyPros-Projections-2012.RData", sep=""))
+save(projections_fp, file = paste(getwd(),"/Data/FantasyPros-Projections-2013.RData", sep=""))

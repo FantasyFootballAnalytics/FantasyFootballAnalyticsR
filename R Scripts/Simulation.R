@@ -26,8 +26,8 @@ library("Rglpk")
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 
 #Load data
-load(paste(getwd(),"/Data/AvgCost-2012.RData", sep=""))
-load(paste(getwd(),"/Data/projectedWithActualPoints-2012.RData", sep=""))
+load(paste(getwd(),"/Data/AvgCost-2013.RData", sep=""))
+load(paste(getwd(),"/Data/projectedWithActualPoints-2013.RData", sep=""))
 
 #Roster Optimization
 optimizeData <- na.omit(projections[,c("name","pos","projections","risk","inflatedCost","sdPts")])
@@ -43,7 +43,11 @@ for (i in 1:iterations){
   solutionList[,i] <- optimizeTeam(points=optimizeData$simPts, maxRisk=100)$solution
 }
 
-solutionSum <- rowSums(solutionList)
+solutionSum <- rowSums(solutionList, na.rm=TRUE)
+plot(density(na.omit(solutionSum)))
+plot(density(na.omit(solutionSum ^ (1/3))))
+
+#best: solutionSum ^ (1/3)
 
 optimizeData$solutionSum <- solutionSum
 
@@ -92,7 +96,7 @@ pb <- txtProgressBar(min = 0, max = max(optimizeData$risk), style = 3)
 for (i in seq(0, max(optimizeData$risk), 0.1)){
   setTxtProgressBar(pb, i)
   #projectedPoints[j] <- optimizeTeam(maxRisk=i)$optimum
-  projectedPoints[j] <- sum(optimizeData[optimizeData$name %in% optimizeTeam(points=optimizeData$solutionSum, maxRisk=i)$players,"projections"])
+  projectedPoints[j] <- sum(optimizeData[optimizeData$name %in% optimizeTeam(points=(optimizeData$solutionSum ^ (1/3)), maxRisk=i)$players,"projections"]) #transform with cube root to not give so much weight to highest players
   riskLevel[j] <- i
   j <- j+1
 }

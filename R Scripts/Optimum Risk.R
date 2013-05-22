@@ -11,7 +11,7 @@
 library("Rglpk")
 
 #Load data
-load(paste(getwd(),"/Data/AvgCost-2012.RData", sep=""))
+load(paste(getwd(),"/Data/AvgCost-2013.RData", sep=""))
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
@@ -41,4 +41,4 @@ optimizeTeam(maxRisk=4.6)
 
 #Plot
 ggplot(data=riskData, aes(x=riskLevel, y=projectedPoints)) + geom_point(size=3) + xlab("Max Risk Level") + ylab("Total Projected Points") + ggtitle("Association Between Max Risk Level and Total Projected Points") # + geom_smooth()
-ggsave(paste(getwd(),"/Figures/Optimum Risk 2012.jpg", sep=""))
+ggsave(paste(getwd(),"/Figures/Optimum Risk 2013.jpg", sep=""))

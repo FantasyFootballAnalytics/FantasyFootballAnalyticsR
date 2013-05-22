@@ -101,6 +101,7 @@ row.names(projections_nfl) <- 1:dim(projections_nfl)[1]
 #Density Plot
 ggplot(projections_nfl, aes(x=pts_nfl), fill=pos) + geom_density(fill="green", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of NFL.com Projected Points from 2012")
 ggsave(paste(getwd(),"/Figures/NFL projections 2012.jpg", sep=""))
+dev.off()
 
 #Save file
 save(projections_nfl, file = paste(getwd(),"/Data/NFL-Projections-2012.RData", sep=""))

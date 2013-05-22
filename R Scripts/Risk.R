@@ -19,8 +19,8 @@ library("stringr")
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 
 #Load data
-#load(paste(getwd(),"/Data/LeagueProjections-2012.RData", sep=""))
-load(paste(getwd(),"/Data/projectedWithActualPoints-2012.RData", sep=""))
+#load(paste(getwd(),"/Data/LeagueProjections-2013.RData", sep=""))
+load(paste(getwd(),"/Data/projectedWithActualPoints-2013.RData", sep=""))
 
 projections <- projectedWithActualPts
 
@@ -84,4 +84,4 @@ ggplot(projections, aes(x=risk)) + geom_density(fill="red", alpha=.7) + xlab("Pl
 ggsave(paste(getwd(),"/Figures/Risk.jpg", sep=""))
 
 #Save file
-save(projections, file = paste(getwd(),"/Data/Risk-2012.RData", sep=""))
+save(projections, file = paste(getwd(),"/Data/Risk-2013.RData", sep=""))

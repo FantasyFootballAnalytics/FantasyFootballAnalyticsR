@@ -18,7 +18,7 @@ library("stringr")
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 
 #Load data
-load(paste(getwd(),"/Data/VOR-2012.RData", sep=""))
+load(paste(getwd(),"/Data/VOR-2013.RData", sep=""))
 
 #Avg & Projected Cost
 #readHTMLTable("http://football.fantasysports.yahoo.com/f1/24155/draftanalysis?tab=AD&pos=ALL&sort=DA_AP", stringsAsFactors = FALSE)
@@ -47,8 +47,8 @@ projections$inflatedCost[projections$overallRank >= 67] <- ceiling(projections$a
 projections$inflatedCost[is.na(projections$inflatedCost)==TRUE] <- 1
 
 #Density Plot
-ggplot(projections, aes(x=inflatedCost)) + geom_density(fill="green", alpha=.3) + xlab("Player's Intrinsic Value (Cost)") + ggtitle("Density Plot of Players' Values from 2012") + theme(legend.title=element_blank())
-ggsave(paste(getwd(),"/Figures/Inflated Cost 2012.jpg", sep=""))
+ggplot(projections, aes(x=inflatedCost)) + geom_density(fill="green", alpha=.3) + xlab("Player's Intrinsic Value (Cost)") + ggtitle("Density Plot of Players' Values from 2013") + theme(legend.title=element_blank())
+ggsave(paste(getwd(),"/Figures/Inflated Cost 2013.jpg", sep=""))
 
 #Save file
-save(projections, file = paste(getwd(),"/Data/AvgCost-2012.RData", sep=""))
+save(projections, file = paste(getwd(),"/Data/AvgCost-2013.RData", sep=""))

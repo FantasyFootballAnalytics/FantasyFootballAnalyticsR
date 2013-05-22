@@ -42,4 +42,4 @@ projections$bidUpTo[is.na(projections$bidUpTo)] <- 1
 row.names(projections) <- 1:max(as.numeric(row.names(projections)))
 
 #Save file
-save(projections, file = paste(getwd(),"/Data/BidUpTo-2012.RData", sep=""))
+save(projections, file = paste(getwd(),"/Data/BidUpTo-2013.RData", sep=""))

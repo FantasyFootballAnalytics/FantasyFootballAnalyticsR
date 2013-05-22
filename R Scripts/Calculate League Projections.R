@@ -28,18 +28,19 @@ library("reshape")
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 
 #Load data
-load(paste(getwd(),"/Data/ESPN-Projections-2012.RData", sep=""))
+load(paste(getwd(),"/Data/ESPN-Projections-2013.RData", sep=""))
 load(paste(getwd(),"/Data/CBS-Projections-2012.RData", sep=""))
 load(paste(getwd(),"/Data/NFL-Projections-2012.RData", sep=""))
-load(paste(getwd(),"/Data/FantasyPros-Projections-2012.RData", sep=""))
+load(paste(getwd(),"/Data/FantasyPros-Projections-2013.RData", sep=""))
 
 #Merge projections from ESPN and CBS
 projections <- merge(projections_espn, projections_cbs, by=c("name","pos"), all=TRUE)
 
 #Remove duplicate cases
 projections[duplicated(projections$name),]
+projections[projections$name %in% projections[duplicated(projections$name),"name"],]
 projections[projections$name=="Steve Smith",]
-projections[projections$name=="Steve Smith",][c(1,4),] <- NA
+projections[projections$name=="Steve Smith",][c(2),] <- NA
 projections <- projections[!is.na(projections$name),]
 
 #Merge projections with NFL.com
@@ -49,16 +50,14 @@ projections <- merge(projections, projections_nfl, by=c("name","pos"), all=TRUE)
 projections[duplicated(projections$name),]
 projections[projections$name=="Steve Smith",]
 
-projections[projections$name=="Steve Smith" & projections$team_espn=="STL",c("team_nfl","positionRank_nfl","overallRank_nfl","passYds_nfl","passTds_nfl","passInt_nfl","rushYds_nfl","rushTds_nfl","recYds_nfl","recTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")] <- NA
+#projections[projections$name=="Steve Smith" & projections$team_espn=="STL",c("team_nfl","positionRank_nfl","overallRank_nfl","passYds_nfl","passTds_nfl","passInt_nfl","rushYds_nfl","rushTds_nfl","recYds_nfl","recTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")] <- NA
 
 #Merge projections with Fantasy Pros
 projections <- merge(projections, projections_fp, by=c("name","pos"), all=TRUE)
 
 #Remove duplicate cases
 projections[duplicated(projections$name),]
-projections[projections$name=="Steve Smith",]
-projections[projections$name=="Steve Smith",][c(1,4),] <- NA
-projections <- projections[!is.na(projections$name),]
+projections[projections$name %in% projections[duplicated(projections$name),"name"],]
 
 #Determine Team
 projections$team <- NA
@@ -85,6 +84,8 @@ for (i in 1:dim(projections)[1]){
     projections[i,"team"] <- projections[i,"team_nfl"]
   } else if (projections[i,"team_cbs"] == projections[i,"team_nfl"]){
     projections[i,"team"] <- projections[i,"team_cbs"]
+  } else{
+    projections[i,"team"] <- projections[i,"team_fp"]
   }
 }
 
@@ -242,8 +243,9 @@ pointDensity <- c(projections$projectedPts_espn,projections$projectedPts_cbs,pro
 sourceDensity <- c(rep("ESPN",dim(projections)[1]),rep("CBS",dim(projections)[1]),rep("NFL",dim(projections)[1]),rep("FP",dim(projections)[1])) #,rep("Latent",dim(projections)[1])
 densityData <- data.frame(pointDensity,sourceDensity)
 
-ggplot(densityData, aes(x=pointDensity, fill=sourceDensity)) + geom_density(alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of Projected Points from 2012") + theme(legend.title=element_blank())
-ggsave(paste(getwd(),"/Figures/Calculate projections 2012.jpg", sep=""))
+ggplot(densityData, aes(x=pointDensity, fill=sourceDensity)) + geom_density(alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of Projected Points from 2013") + theme(legend.title=element_blank())
+ggsave(paste(getwd(),"/Figures/Calculate projections 2013.jpg", sep=""))
+dev.off()
 
 #Save file
-save(projections, file = paste(getwd(),"/Data/LeagueProjections-2012.RData", sep=""))
+save(projections, file = paste(getwd(),"/Data/LeagueProjections-2013.RData", sep=""))

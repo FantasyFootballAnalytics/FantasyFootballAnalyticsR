@@ -83,6 +83,9 @@ projections_cbs$twoPts_cbs <- NA
 #Player names
 projections_cbs$name <- str_sub(projections_cbs$player, end=str_locate(string=projections_cbs$player, ',')[,1]-1)
 
+#Remove Duplicates
+projections_cbs[projections_cbs$name == "James Casey","pos"] <- "TE"
+
 #Player teams
 projections_cbs$team_cbs <- str_trim(str_sub(projections_cbs$player, start= -3))
 
@@ -102,6 +105,7 @@ row.names(projections_cbs) <- 1:dim(projections_cbs)[1]
 #Density Plot
 ggplot(projections_cbs, aes(x=pts_cbs)) + geom_density(fill="red", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of CBS Projected Points from 2012")
 ggsave(paste(getwd(),"/Figures/CBS projections 2012.jpg", sep=""))
+dev.off()
 
 #Save file
 save(projections_cbs, file = paste(getwd(),"/Data/CBS-Projections-2012.RData", sep=""))

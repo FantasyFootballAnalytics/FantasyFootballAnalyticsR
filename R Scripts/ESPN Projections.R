@@ -17,14 +17,14 @@ library("ggplot2")
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 
 #Download fantasy football projections from ESPN.com
-qb_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2012&slotCategoryId=0", stringsAsFactors = FALSE)$playertable_0
-rb1_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2012&slotCategoryId=2", stringsAsFactors = FALSE)$playertable_0
-rb2_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2012&slotCategoryId=2&startIndex=40", stringsAsFactors = FALSE)$playertable_0
-rb3_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2012&slotCategoryId=2&startIndex=80", stringsAsFactors = FALSE)$playertable_0
-wr1_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2012&slotCategoryId=4", stringsAsFactors = FALSE)$playertable_0
-wr2_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2012&slotCategoryId=4&startIndex=40", stringsAsFactors = FALSE)$playertable_0
-wr3_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2012&slotCategoryId=4&startIndex=80", stringsAsFactors = FALSE)$playertable_0
-te_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2012&slotCategoryId=6", stringsAsFactors = FALSE)$playertable_0
+qb_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2013&slotCategoryId=0", stringsAsFactors = FALSE)$playertable_0
+rb1_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2013&slotCategoryId=2", stringsAsFactors = FALSE)$playertable_0
+rb2_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2013&slotCategoryId=2&startIndex=40", stringsAsFactors = FALSE)$playertable_0
+rb3_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2013&slotCategoryId=2&startIndex=80", stringsAsFactors = FALSE)$playertable_0
+wr1_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2013&slotCategoryId=4", stringsAsFactors = FALSE)$playertable_0
+wr2_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2013&slotCategoryId=4&startIndex=40", stringsAsFactors = FALSE)$playertable_0
+wr3_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2013&slotCategoryId=4&startIndex=80", stringsAsFactors = FALSE)$playertable_0
+te_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2013&slotCategoryId=6", stringsAsFactors = FALSE)$playertable_0
 
 #Add variable names for each object
 fileList <- c("qb_espn","rb1_espn","rb2_espn","rb3_espn","wr1_espn","wr2_espn","wr3_espn","te_espn")
@@ -48,6 +48,19 @@ te_espn$pos <- as.factor("TE")
 
 #Merge players across positions
 projections_espn <- rbind(qb_espn,rb_espn,wr_espn,te_espn)
+
+#Replace symbols with value of zero
+projections_espn$passCompAtt_espn[projections_espn$passCompAtt_espn == "--/--"] <- "0/0"
+projections_espn$passYds_espn[projections_espn$passYds_espn == "--"] <- "0"
+projections_espn$passTds_espn[projections_espn$passTds_espn == "--"] <- "0"
+projections_espn$passInt_espn[projections_espn$passInt_espn == "--"] <- "0"
+projections_espn$rush_espn[projections_espn$rush_espn == "--"] <- "0"
+projections_espn$rushYds_espn[projections_espn$rushYds_espn == "--"] <- "0"
+projections_espn$rushTds_espn[projections_espn$rushTds_espn == "--"] <- "0"
+projections_espn$rec_espn[projections_espn$rec_espn == "--"] <- "0"
+projections_espn$recYds_espn[projections_espn$recYds_espn == "--"] <- "0"
+projections_espn$recTds_espn[projections_espn$recTds_espn == "--"] <- "0"
+projections_espn$pts_espn[projections_espn$pts_espn == "--"] <- "0"
 
 #Separate pass completions from attempts
 projections_espn$passComp_espn <- as.numeric(str_sub(string=projections_espn$passCompAtt_espn, end=str_locate(string=projections_espn$passCompAtt_espn, '/')[,1]-1))
@@ -84,7 +97,7 @@ projections_espn$team_espn[projections_espn$team_espn=="WSH"] <- "WAS"
 
 #Remove duplicate cases
 projections_espn[duplicated(projections_espn$name),]
-projections_espn <- projections_espn[-which(projections_espn$name=="Dexter McCluster" & projections_espn$pos=="RB"),]
+#projections_espn <- projections_espn[-which(projections_espn$name=="Dexter McCluster" & projections_espn$pos=="RB"),]
 
 #Calculate overall rank
 projections_espn$overallRank_espn <- rank(-projections_espn$pts_espn, ties.method="min")
@@ -99,8 +112,9 @@ projections_espn <- projections_espn[order(projections_espn$overallRank_espn),]
 row.names(projections_espn) <- 1:dim(projections_espn)[1]
 
 #Density Plot
-ggplot(projections_espn, aes(x=pts_espn)) + geom_density(fill="blue", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of ESPN Projected Points from 2012")
-ggsave(paste(getwd(),"/Figures/ESPN projections 2012.jpg", sep=""))
+ggplot(projections_espn, aes(x=pts_espn)) + geom_density(fill="blue", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of ESPN Projected Points from 2013")
+ggsave(paste(getwd(),"/Figures/ESPN projections 2013.jpg", sep=""))
+dev.off()
 
 #Save file
-save(projections_espn, file = paste(getwd(),"/Data/ESPN-Projections-2012.RData", sep=""))
+save(projections_espn, file = paste(getwd(),"/Data/ESPN-Projections-2013.RData", sep=""))

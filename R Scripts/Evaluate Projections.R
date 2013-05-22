@@ -17,7 +17,7 @@ library("forecast")
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 
 #Load data
-load(paste(getwd(),"/Data/LeagueProjections-2012.RData", sep=""))
+load(paste(getwd(),"/Data/LeagueProjections-2013.RData", sep=""))
 actualPoints <- read.csv(paste(getwd(),"/Data/Yahoo-actualpoints-2012.csv", sep=""))
 
 #Cleanup Yahoo actual points data
@@ -135,7 +135,8 @@ calculateMASE(na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts
 #Plot
 ggplot(data=projectedWithActualPts, aes(x=projectedPts_fp, y=actualPts)) + geom_point() + geom_smooth() + xlab("Projected Fantasy Football Points") + ylab("Actual Fantasy Football Points") + ggtitle("Association Between Projected Fantasy Points and Actual Points") +
   annotate("text", x = 80, y = max(projectedWithActualPts$projections), label = paste("R-Squared = ",round(summary(lm(actualPts ~ projections, data=projectedWithActualPts))$r.squared,2),sep=""))
-ggsave(paste(getwd(),"/Figures/Evaluate Projections 2012.jpg", sep=""))
+ggsave(paste(getwd(),"/Figures/Evaluate Projections 2013.jpg", sep=""))
+dev.off()
 
 #Save data
-save(projectedWithActualPts, file = paste(getwd(),"/Data/projectedWithActualPoints-2012.RData", sep=""))
+save(projectedWithActualPts, file = paste(getwd(),"/Data/projectedWithActualPoints-2013.RData", sep=""))
