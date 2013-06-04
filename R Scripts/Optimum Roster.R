@@ -7,16 +7,7 @@
 # -These calculations are from last year (they have not yet been updated for the upcoming season)
 ###########################
 
-#League settings
-leagueCap <- 225
-
-numQBstarters <- 1
-numRBstarters <- 2
-numWRstarters <- 2
-numTEstarters <- 1
-numTotalStarters <- 7
-numTotalPlayers <- 20
-
+#Specify Maximum Risk
 maxRisk <- 3.8
 
 #Library
@@ -24,6 +15,7 @@ library("Rglpk")
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
+source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Load data
 load(paste(getwd(),"/Data/AvgCost-2013.RData", sep=""))

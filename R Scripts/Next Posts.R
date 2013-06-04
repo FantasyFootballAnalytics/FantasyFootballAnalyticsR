@@ -1,0 +1,7 @@
+#WAIT FOR AVG COST
+#1. Avg Cost
+
+#WAIT FOR UPDATED PROJECTIONS, RE-CALCULATE PROJECTIONS
+#2. Optimum Roster
+#3. Simulation
+#4. Bid Up To

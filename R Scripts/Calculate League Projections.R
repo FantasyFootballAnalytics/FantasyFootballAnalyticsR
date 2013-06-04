@@ -10,22 +10,12 @@
 #-Add FantasyPros Projections
 ###########################
 
-#Customize your league settings
-passYdsMultiplier <- (1/25) #1 pt per 25 pass yds
-passTdsMultiplier <- 4      #4 pts per pass td
-passIntMultiplier <- -3     #-3 pts per INT
-rushYdsMultiplier <- (1/10) #1 pt per 10 rush yds
-rushTdsMultiplier <- 6      #6 pts per rush td
-recYdsMultiplier <- (1/8)   #1 pt per 8 rec yds
-recTdsMultiplier <- 6       #6 pts per rec td
-twoPtsMultiplier <- 2       #2 pts per 2-point conversion (not included in ESPN or CBS projections)
-fumlMultiplier <- -3        #-3 pts per fumble lost (not included in ESPN projections)
-
 #Library
 library("reshape")
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
+source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Load data
 load(paste(getwd(),"/Data/ESPN-Projections-2013.RData", sep=""))

@@ -15,6 +15,7 @@ library("ggplot2")
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
+source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Download fantasy football projections from ESPN.com
 qb_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2013&slotCategoryId=0", stringsAsFactors = FALSE)$playertable_0

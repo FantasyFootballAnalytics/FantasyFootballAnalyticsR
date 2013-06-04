@@ -7,21 +7,19 @@
 # -These costs are from last year (they have not yet been updated for the upcoming season)
 ###########################
 
-#League settings
-leagueCap <- 225
-defaultCap <- 200
-
 #Library
 library("stringr")
+library("XML")
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
+source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Load data
 load(paste(getwd(),"/Data/VOR-2013.RData", sep=""))
 
 #Avg & Projected Cost
-#readHTMLTable("http://football.fantasysports.yahoo.com/f1/24155/draftanalysis?tab=AD&pos=ALL&sort=DA_AP", stringsAsFactors = FALSE)
+#readHTMLTable("http://football.fantasysports.yahoo.com/f1/35024/draftanalysis?tab=AD&pos=ALL&sort=DA_AP", stringsAsFactors = FALSE)
 avgcost <- read.csv(paste(path,"/Fantasy Football/Research/R/avgcost.csv",sep=""))
 
 avgcost2 <- avgcost[which(avgcost$Avg.Cost!=""),]

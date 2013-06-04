@@ -13,6 +13,7 @@ library("Rglpk")
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
+source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Bid Up To
 listOfPlayers <- vector(mode="character", length=numTotalStarters)

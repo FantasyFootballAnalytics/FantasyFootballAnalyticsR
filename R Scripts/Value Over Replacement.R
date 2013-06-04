@@ -27,6 +27,7 @@ teReplacements <- 13
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
+source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Load data
 load(paste(getwd(),"/Data/Risk-2013.RData", sep=""))

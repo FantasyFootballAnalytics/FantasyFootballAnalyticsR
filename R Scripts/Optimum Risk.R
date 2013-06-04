@@ -15,6 +15,7 @@ load(paste(getwd(),"/Data/AvgCost-2013.RData", sep=""))
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
+source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Optimum Risk
 projectedPoints <- vector(mode="numeric", length=length(seq(min(optimizeData$risk), max(optimizeData$risk), 0.1)))

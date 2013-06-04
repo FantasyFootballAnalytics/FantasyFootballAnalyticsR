@@ -15,6 +15,7 @@ library("forecast")
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
+source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Load data
 load(paste(getwd(),"/Data/LeagueProjections-2013.RData", sep=""))

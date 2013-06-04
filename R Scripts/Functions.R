@@ -75,7 +75,8 @@ optimizeTeam <- function(points=optimizeData$projections, playerCost=optimizeDat
   sol <- Rglpk_solve_LP(obj = points, mat = A, dir = dir, rhs = b,types = var.types, max = TRUE)
   sol$playerInfo <- as.data.frame(cbind(optimizeData[sol$solution == 1,"name"],round(points[sol$solution == 1],2),round(optimizeData[sol$solution == 1,"risk"],2),playerCost[sol$solution == 1]))
   names(sol$playerInfo) <- c("name","points","risk","cost")
-  sol$totalCost <- sum(optimizeData$inflatedCost * sol$solution)
+  #sol$totalCost <- sum(optimizeData$inflatedCost * sol$solution)
+  sol$totalCost <- sum(playerCost * sol$solution)
   sol$players <- optimizeData$name[sol$solution == 1]
   return(sol)
 }
