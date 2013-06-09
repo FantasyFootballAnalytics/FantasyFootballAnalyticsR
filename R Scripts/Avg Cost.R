@@ -19,20 +19,37 @@ source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 load(paste(getwd(),"/Data/VOR-2013.RData", sep=""))
 
 #Avg & Projected Cost
-avgcost <- read.csv(paste(getwd(),"/Data/Yahoo-avgcost-2013.csv",sep=""))
-
+avgcost_yahoo <- read.csv(paste(getwd(),"/Data/Yahoo-avgcost-2013.csv",sep=""))
+avgcost_fp <- readHTMLTable("http://www.fantasypros.com/nfl/auction-values/overall.php", stringsAsFactors = FALSE)$data
+  
+###Yahoo
 #readHTMLTable("http://football.fantasysports.yahoo.com/f1/35024/draftanalysis?tab=AD&pos=ALL&sort=DA_AP", stringsAsFactors = FALSE)
 #avgcost <- read.csv(paste(path,"/Fantasy Football/Research/R/avgcost.csv",sep=""))
-avgcost2 <- avgcost[which(avgcost$Avg.Cost!=""),]
-avgcost2$name <- as.character(avgcost2$Player)
-avgcost2$avgCost <- as.numeric((str_replace_all(avgcost2$Avg.Cost, "\\$", "")))
-avgcost3 <- avgcost2[,c("name","avgCost")]
-avgcost3$projectedCost <- ceiling(avgcost3$avgCost * (leagueCap/defaultCap))
+avgcost_yahoo2 <- avgcost_yahoo[which(avgcost$Avg.Cost!=""),]
+avgcost_yahoo2$name <- as.character(avgcost_yahoo2$Player)
+avgcost_yahoo2$avgCost <- as.numeric((str_replace_all(avgcost_yahoo2$Avg.Cost, "\\$", "")))
+avgcost_yahoo3 <- avgcost_yahoo2[,c("name","avgCost")]
+avgcost_yahoo3$projectedCost <- ceiling(avgcost_yahoo3$avgCost * (leagueCap/defaultCap))
 
 #Change names
-avgcost3$name[avgcost3$name=="Stevie Johnson"] <- "Steve Johnson"
+avgcost_yahoo3$name[avgcost_yahoo3$name=="Stevie Johnson"] <- "Steve Johnson"
 
-projections <- merge(projections, avgcost3, by="name", all.x=TRUE)
+###Fantasy Pros
+avgcost_fp$name <- str_sub(avgcost_fp[,c("Player (pos, team, bye)")], end=str_locate(avgcost_fp[,c("Player (pos, team, bye)")], ',')[,1]-1)
+avgcost_fp$avgCost <- as.numeric(sub("\\$","", avgcost_fp$Ave))
+avgcost_fp <- avgcost_fp[,c("name","avgCost")]
+avgcost_fp$projectedCost <- ceiling(avgcost_fp$avgCost * (leagueCap/defaultCap))
+
+#Rename Players
+avgcost_fp[grep("Beanie", avgcost_fp[,c("name")]),"name"] <- "Beanie Wells"
+avgcost_fp[grep("Ty Hilton", avgcost_fp[,c("name")]),"name"] <- "T.Y. Hilton"
+avgcost_fp[grep("Robert Housler", avgcost_fp[,c("name")]),"name"] <- "Rob Housler"
+avgcost_fp[grep("Reuben Randle", avgcost_fp[,c("name")]),"name"] <- "Rueben Randle"
+avgcost_fp[grep("Joseph Morgan", avgcost_fp[,c("name")]),"name"] <- "Joe Morgan"
+avgcost_fp[grep("Christopher Ivory", avgcost_fp[,c("name")]),"name"] <- "Chris Ivory"
+
+#Merge
+projections <- merge(projections, avgcost_yahoo3, by="name", all.x=TRUE)
 projections$projectedCost[is.na(projections$projectedCost)==TRUE] <- 1
 projections <- projections[order(projections$overallRank),]
 

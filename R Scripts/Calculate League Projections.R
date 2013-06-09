@@ -203,7 +203,7 @@ projectionVars <- cbind(projectionVars,projections[,c("projectedPtsAvg","project
 projections$projectedPts_espn[projections$projectedPts_espn == 0] <- NA
 projections$projectedPts_cbs[projections$projectedPts_cbs == 0] <- NA
 projections$projectedPts_nfl[projections$projectedPts_nfl == 0] <- NA
-projections$projectedPts_nfl[projections$projectedPts_fp == 0] <- NA
+projections$projectedPts_fp[projections$projectedPts_fp == 0] <- NA
 is.na(projectionVars) <- projectionVars==0
 
 #Describe
@@ -216,6 +216,8 @@ cor(projections[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","pr
 
 #Set criterion for projections based on whose projections are most accurate
 projections$projections <- projections$projectedPts_fp
+
+#If projections are zero, set them to be the avg projections
 
 #Calculate overall rank
 projections$overallRank <- rank(-projections$projections, ties.method="min") #projectedPtsLatent

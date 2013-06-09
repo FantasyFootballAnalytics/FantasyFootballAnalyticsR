@@ -21,7 +21,13 @@ source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 load(paste(getwd(),"/Data/BidUpToSimulation-2013.RData", sep=""))
 
 #Subset data
-draftData <- projections[,c("name","pos","team","projections","vor","sdPick","sdPts","risk","avgCost","inflatedCost","bidUpTo")] #projectedPtsLatent
+draftData <- projections[,c("name","pos","team","projections","vor","sdPick","sdPts","risk","avgCost","inflatedCost","bidUpTo","bidUpToSim")] #projectedPtsLatent
+
+#Save data
+save(draftData, file = paste(getwd(),"/Data/DraftDay-2013.RData", sep=""))
+write.csv(draftData, file=paste(getwd(),"/Data/CSV/DraftDay-2013.csv", sep=""), row.names=FALSE)
+
+
 maxCost <- leagueCap - (numTotalPlayers - numTotalStarters)
 
 options(digits=2)

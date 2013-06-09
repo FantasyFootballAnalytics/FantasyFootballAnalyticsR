@@ -70,6 +70,16 @@ for (i in 1:dim(bidUpTo)[1]){
 
 optimizeData
 
+#Merge with projections
+projections <- merge(projections, optimizeData[,c("name","pos","bidUpToSim")], by=c("name","pos"), all=TRUE)
+
+#Convert NAs to Zero
+projections$bidUpToSim[is.na(projections$bidUpToSim)] <- 1
+
+#Order players by projections
+projections <- projections[order(-projections$projections),]
+row.names(projections) <- 1:dim(projections)[1]
+
 #Save file
-save(optimizeData, file = paste(getwd(),"/Data/BidUpToSimulation-2013.RData", sep=""))
-write.csv(optimizeData, file=paste(getwd(),"/Data/CSV/BidUpToSimulation-2013.csv", sep=""), row.names=FALSE)
+save(projections, file = paste(getwd(),"/Data/BidUpToSimulation-2013.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/CSV/BidUpToSimulation-2013.csv", sep=""), row.names=FALSE)
