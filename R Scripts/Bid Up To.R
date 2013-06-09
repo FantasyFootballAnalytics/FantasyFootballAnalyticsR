@@ -15,6 +15,9 @@ library("Rglpk")
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
+#Load data
+load(paste(getwd(),"/Data/AvgCost-2013.RData", sep=""))
+
 #Bid Up To
 listOfPlayers <- vector(mode="character", length=numTotalStarters)
 bidUpTo <- vector(mode="numeric", length=length(optimizeData$name))
@@ -44,3 +47,4 @@ row.names(projections) <- 1:max(as.numeric(row.names(projections)))
 
 #Save file
 save(projections, file = paste(getwd(),"/Data/BidUpTo-2013.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/CSV/BidUpTo-2013.csv", sep=""), row.names=FALSE)

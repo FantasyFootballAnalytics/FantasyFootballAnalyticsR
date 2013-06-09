@@ -8,7 +8,7 @@
 ###########################
 
 #Specify Maximum Risk
-maxRisk <- 3.8
+#maxRisk <- 3.8
 
 #Library
 library("Rglpk")
@@ -18,7 +18,8 @@ source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Load data
-load(paste(getwd(),"/Data/AvgCost-2013.RData", sep=""))
+#load(paste(getwd(),"/Data/AvgCost-2013.RData", sep=""))
+load(paste(getwd(),"/Data/BidUpTo-2013.RData", sep=""))
 load(paste(getwd(),"/Data/projectedWithActualPoints-2013.RData", sep=""))
 
 #Roster Optimization
@@ -100,24 +101,35 @@ riskTable$PtsRiskRatio <- riskTable$projectedPoints / riskTable$riskLevel
 riskTable[order(riskTable$projectedPoints),]
 plot(riskTable$riskLevel, riskTable$projectedPoints)
 
+optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=3.3)
+optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=3.4)
+optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=3.5)
+optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=3.6)
+optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=3.7)
+optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=4.0)
+optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=4.8) #optimal
+optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=4.9)
+optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=6.8)
+
 optimizeTeam(points=optimizeData$solutionSum, maxRisk=3.3)
 optimizeTeam(points=optimizeData$solutionSum, maxRisk=3.4)
-optimizeTeam(points=optimizeData$solutionSum, maxRisk=3.5) #optimal
+optimizeTeam(points=optimizeData$solutionSum, maxRisk=3.5)
 optimizeTeam(points=optimizeData$solutionSum, maxRisk=3.6)
 optimizeTeam(points=optimizeData$solutionSum, maxRisk=3.7)
 optimizeTeam(points=optimizeData$solutionSum, maxRisk=4.0)
+optimizeTeam(points=optimizeData$solutionSum, maxRisk=4.8) #optimal
 optimizeTeam(points=optimizeData$solutionSum, maxRisk=4.9)
 optimizeTeam(points=optimizeData$solutionSum, maxRisk=6.8)
 
 #Set Optimal Risk
-optimalRisk <- 3.5
+optimalRisk <- 4.8
 
 #Determine Points for Team that Maximizes Log of Solution Sum with Risk < Optimal Risk
 optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=optimalRisk)
 optimizeData[optimizeData$name %in% optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=optimalRisk)$players, c("name","projections")]
-sum(optimizeData[optimizeData$name %in% optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=optimalRisk)$players, "projections"]) #projected pts: 1540
+sum(optimizeData[optimizeData$name %in% optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=optimalRisk)$players, "projections"]) #projected pts: 1500
 projectedWithActualPts[projectedWithActualPts$name %in% optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=optimalRisk)$players, c("name","projections","actualPts")]
-sum(projectedWithActualPts[projectedWithActualPts$name %in% optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=optimalRisk)$players, "actualPts"]) #actual points from last year: 1539
+sum(projectedWithActualPts[projectedWithActualPts$name %in% optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=optimalRisk)$players, "actualPts"]) #actual points from last year: 1339
 
 #Maximum Possible with Same Risk
-optimizeTeam(maxRisk=optimalRisk) #1557
+optimizeTeam(maxRisk=optimalRisk) #1528

@@ -29,8 +29,17 @@ projections <- projectedWithActualPts
 experts <- readHTMLTable("http://www.fantasypros.com/nfl/rankings/consensus-cheatsheets.php", stringsAsFactors = FALSE)$data
 experts$sdPick_experts <- as.numeric(experts[,"Std Dev"])
 experts$pick_experts <- as.numeric(experts$Ave)
-experts$name <- str_sub(experts[,c("Player (pos, team)")], end=str_locate(experts[,c("Player (pos, team)")], '\\(')[,1]-2)
-experts[grep("Beanie", experts[,c("Player (pos, team)")]),"name"] <- "Beanie Wells"
+#experts$name <- str_sub(experts[,c("Player, pos (team/bye)")], end=str_locate(experts[,c("Player, pos (team/bye)")], '\\(')[,1]-2)
+experts$name <- str_sub(experts[,c("Player, pos (team/bye)")], end=str_locate(experts[,c("Player, pos (team/bye)")], ',')[,1]-1)
+
+#Rename Players
+experts[grep("Beanie", experts[,c("Player, pos (team/bye)")]),"name"] <- "Beanie Wells"
+experts[grep("Ty Hilton", experts[,c("Player, pos (team/bye)")]),"name"] <- "T.Y. Hilton"
+experts[grep("Robert Housler", experts[,c("Player, pos (team/bye)")]),"name"] <- "Rob Housler"
+experts[grep("Reuben Randle", experts[,c("Player, pos (team/bye)")]),"name"] <- "Rueben Randle"
+experts[grep("Joseph Morgan", experts[,c("Player, pos (team/bye)")]),"name"] <- "Joe Morgan"
+experts[grep("Christopher Ivory", experts[,c("Player, pos (team/bye)")]),"name"] <- "Chris Ivory"
+
 experts <- experts[c("name","pick_experts","sdPick_experts")]
 
 #Risk - Wisdom of the Crowd
@@ -82,7 +91,9 @@ projections[rank(projections$risk, na.last="keep") %in% (max(rank(projections$ri
 
 #Density plot
 ggplot(projections, aes(x=risk)) + geom_density(fill="red", alpha=.7) + xlab("Player's Risk Level") + ggtitle("Density Plot of Players' Risk Levels")
-ggsave(paste(getwd(),"/Figures/Risk.jpg", sep=""))
+ggsave(paste(getwd(),"/Figures/Risk 2013.jpg", sep=""))
+dev.off()
 
 #Save file
 save(projections, file = paste(getwd(),"/Data/Risk-2013.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/CSV/Risk-2013.csv", sep=""), row.names=FALSE)

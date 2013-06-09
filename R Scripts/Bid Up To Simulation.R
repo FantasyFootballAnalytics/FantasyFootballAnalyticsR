@@ -15,7 +15,8 @@ source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Data
-load(paste(getwd(),"/Data/AvgCost-2013.RData", sep=""))
+#load(paste(getwd(),"/Data/AvgCost-2013.RData", sep=""))
+load(paste(getwd(),"/Data/BidUpTo-2013.RData", sep=""))
 
 #Roster Optimization
 optimizeData <- na.omit(projections[,c("name","pos","projections","risk","inflatedCost","sdPts")]) #projectedPtsLatent
@@ -64,10 +65,11 @@ bidUpTo[bidUpTo == (maxCost)] <- NA
 #optimizeData$bidUpTo <- rowMeans(bidUpTo)
 for (i in 1:dim(bidUpTo)[1]){ 
   error <- try(suppressWarnings(wilcox.test(bidUpTo[i,], conf.int=TRUE)$estimate), silent=T) 
-  ifelse(is(error,"try-error"), optimizeData$bidUpTo[i] <- max(ceiling(mean(bidUpTo[i,], na.rm=TRUE)), 1, na.rm=TRUE), optimizeData$bidUpTo[i] <- ceiling(suppressWarnings(wilcox.test(bidUpTo[i,], conf.int=TRUE)$estimate)))
+  ifelse(is(error,"try-error"), optimizeData$bidUpToSim[i] <- max(ceiling(mean(bidUpTo[i,], na.rm=TRUE)), 1, na.rm=TRUE), optimizeData$bidUpToSim[i] <- ceiling(suppressWarnings(wilcox.test(bidUpTo[i,], conf.int=TRUE)$estimate)))
 }
 
 optimizeData
 
 #Save file
 save(optimizeData, file = paste(getwd(),"/Data/BidUpToSimulation-2013.RData", sep=""))
+write.csv(optimizeData, file=paste(getwd(),"/Data/CSV/BidUpToSimulation-2013.csv", sep=""), row.names=FALSE)

@@ -100,6 +100,9 @@ projections_espn$team_espn[projections_espn$team_espn=="WSH"] <- "WAS"
 projections_espn[duplicated(projections_espn$name),]
 #projections_espn <- projections_espn[-which(projections_espn$name=="Dexter McCluster" & projections_espn$pos=="RB"),]
 
+#Rename players
+projections_espn[projections_espn$name=="EJ Manuel", "name"] <- "E.J. Manuel"
+
 #Calculate overall rank
 projections_espn$overallRank_espn <- rank(-projections_espn$pts_espn, ties.method="min")
 
@@ -119,3 +122,4 @@ dev.off()
 
 #Save file
 save(projections_espn, file = paste(getwd(),"/Data/ESPN-Projections-2013.RData", sep=""))
+write.csv(projections_espn, file=paste(getwd(),"/Data/CSV/ESPN-Projections-2013.csv", sep=""), row.names=FALSE)

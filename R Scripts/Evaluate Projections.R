@@ -39,9 +39,9 @@ projectedWithActualPts[duplicated(projectedWithActualPts$name),]
 projectedWithActualPts[projectedWithActualPts$name=="Alex Smith",]
 projectedWithActualPts[projectedWithActualPts$name=="Steve Smith",]
 
-projectedWithActualPts[projectedWithActualPts$name=="Alex Smith",][2,] <- NA
+projectedWithActualPts[projectedWithActualPts$name=="Alex Smith",][1,] <- NA
 projectedWithActualPts <- projectedWithActualPts[!is.na(projectedWithActualPts$name),]
-projectedWithActualPts[projectedWithActualPts$name=="Steve Smith",][c(1,4),] <- NA
+projectedWithActualPts[projectedWithActualPts$name=="Steve Smith",][2,] <- NA
 projectedWithActualPts <- projectedWithActualPts[!is.na(projectedWithActualPts$name),]
 
 #Correlation between projections and actual points
@@ -141,3 +141,4 @@ dev.off()
 
 #Save data
 save(projectedWithActualPts, file = paste(getwd(),"/Data/projectedWithActualPoints-2013.RData", sep=""))
+write.csv(projectedWithActualPts, file=paste(getwd(),"/Data/CSV/projectedWithActualPoints-2013.csv", sep=""), row.names=FALSE)

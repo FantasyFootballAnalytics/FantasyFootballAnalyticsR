@@ -19,9 +19,10 @@ source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 load(paste(getwd(),"/Data/VOR-2013.RData", sep=""))
 
 #Avg & Projected Cost
-#readHTMLTable("http://football.fantasysports.yahoo.com/f1/35024/draftanalysis?tab=AD&pos=ALL&sort=DA_AP", stringsAsFactors = FALSE)
-avgcost <- read.csv(paste(path,"/Fantasy Football/Research/R/avgcost.csv",sep=""))
+avgcost <- read.csv(paste(getwd(),"/Data/Yahoo-avgcost-2013.csv",sep=""))
 
+#readHTMLTable("http://football.fantasysports.yahoo.com/f1/35024/draftanalysis?tab=AD&pos=ALL&sort=DA_AP", stringsAsFactors = FALSE)
+#avgcost <- read.csv(paste(path,"/Fantasy Football/Research/R/avgcost.csv",sep=""))
 avgcost2 <- avgcost[which(avgcost$Avg.Cost!=""),]
 avgcost2$name <- as.character(avgcost2$Player)
 avgcost2$avgCost <- as.numeric((str_replace_all(avgcost2$Avg.Cost, "\\$", "")))
@@ -47,6 +48,8 @@ projections$inflatedCost[is.na(projections$inflatedCost)==TRUE] <- 1
 #Density Plot
 ggplot(projections, aes(x=inflatedCost)) + geom_density(fill="green", alpha=.3) + xlab("Player's Intrinsic Value (Cost)") + ggtitle("Density Plot of Players' Values from 2013") + theme(legend.title=element_blank())
 ggsave(paste(getwd(),"/Figures/Inflated Cost 2013.jpg", sep=""))
+dev.off()
 
 #Save file
 save(projections, file = paste(getwd(),"/Data/AvgCost-2013.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/CSV/AvgCost-2013.csv", sep=""), row.names=FALSE)

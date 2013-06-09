@@ -18,10 +18,10 @@ source(paste(getwd(),"/R Scripts/Calculate League Projections.R", sep=""), echo=
 #6. Evaluate league projections from last year
 source(paste(getwd(),"/R Scripts/Evaluate Projections.R", sep=""), echo=TRUE)
 
-#7. Calculate players' risk levels (http://www.drewconway.com/zia/?p=2305)
+#7. Calculate players' risk levels
 source(paste(getwd(),"/R Scripts/Risk.R", sep=""), echo=TRUE)
 
-#8. Calculate VOR for snake draft (https://harvardsportsanalysis.wordpress.com/2012/04/13/optimizing-draft-strategies-in-fantasy-football-abstract/)
+#8. Calculate VOR for snake draft
 source(paste(getwd(),"/R Scripts/Value Over Replacement.R", sep=""), echo=TRUE)
 
 #9. Download average auction values
@@ -36,5 +36,11 @@ source(paste(getwd(),"/R Scripts/Optimum Risk.R", sep=""), echo=TRUE)
 #12. Calculate Bid Up To
 source(paste(getwd(),"/R Scripts/Bid Up To.R", sep=""), echo=TRUE)
 
-#13. Draft Day (remove unavailable/drafted players)
+#13. Calculate optimal team via Simulation
+source(paste(getwd(),"/R Scripts/Optimum Roster.R", sep=""), echo=TRUE)
+
+#14. Calculate Bid Up To via Simulation
+source(paste(getwd(),"/R Scripts/Optimum Roster.R", sep=""), echo=TRUE)
+
+#15. Draft Day (remove unavailable/drafted players)
 source(paste(getwd(),"/R Scripts/Draft Day.R", sep=""), echo=TRUE)

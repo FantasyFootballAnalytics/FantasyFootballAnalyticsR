@@ -19,8 +19,8 @@ source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Load data
 load(paste(getwd(),"/Data/ESPN-Projections-2013.RData", sep=""))
-load(paste(getwd(),"/Data/CBS-Projections-2012.RData", sep=""))
-load(paste(getwd(),"/Data/NFL-Projections-2012.RData", sep=""))
+load(paste(getwd(),"/Data/CBS-Projections-2013.RData", sep=""))
+load(paste(getwd(),"/Data/NFL-Projections-2013.RData", sep=""))
 load(paste(getwd(),"/Data/FantasyPros-Projections-2013.RData", sep=""))
 
 #Merge projections from ESPN and CBS
@@ -28,17 +28,16 @@ projections <- merge(projections_espn, projections_cbs, by=c("name","pos"), all=
 
 #Remove duplicate cases
 projections[duplicated(projections$name),]
-projections[projections$name %in% projections[duplicated(projections$name),"name"],]
-projections[projections$name=="Steve Smith",]
-projections[projections$name=="Steve Smith",][c(2),] <- NA
-projections <- projections[!is.na(projections$name),]
+#projections[projections$name %in% projections[duplicated(projections$name),"name"],]
+#projections[projections$name=="Steve Smith",]
+#projections[projections$name=="Steve Smith",][c(2),] <- NA
+#projections <- projections[!is.na(projections$name),]
 
 #Merge projections with NFL.com
 projections <- merge(projections, projections_nfl, by=c("name","pos"), all=TRUE)
 
 #Remove duplicate cases
 projections[duplicated(projections$name),]
-projections[projections$name=="Steve Smith",]
 
 #projections[projections$name=="Steve Smith" & projections$team_espn=="STL",c("team_nfl","positionRank_nfl","overallRank_nfl","passYds_nfl","passTds_nfl","passInt_nfl","rushYds_nfl","rushTds_nfl","recYds_nfl","recTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")] <- NA
 
@@ -48,6 +47,8 @@ projections <- merge(projections, projections_fp, by=c("name","pos"), all=TRUE)
 #Remove duplicate cases
 projections[duplicated(projections$name),]
 projections[projections$name %in% projections[duplicated(projections$name),"name"],]
+projections[projections$name=="Steve Smith",][c(1),] <- NA
+projections <- projections[!is.na(projections$name),]
 
 #Determine Team
 projections$team <- NA
@@ -203,6 +204,7 @@ projections$projectedPts_espn[projections$projectedPts_espn == 0] <- NA
 projections$projectedPts_cbs[projections$projectedPts_cbs == 0] <- NA
 projections$projectedPts_nfl[projections$projectedPts_nfl == 0] <- NA
 projections$projectedPts_nfl[projections$projectedPts_fp == 0] <- NA
+is.na(projectionVars) <- projectionVars==0
 
 #Describe
 describe(projectionVars)
@@ -239,3 +241,4 @@ dev.off()
 
 #Save file
 save(projections, file = paste(getwd(),"/Data/LeagueProjections-2013.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/CSV/LeagueProjections-2013.csv", sep=""), row.names=FALSE)

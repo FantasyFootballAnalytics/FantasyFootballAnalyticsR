@@ -10,12 +10,12 @@
 #Library
 library("Rglpk")
 
-#Load data
-load(paste(getwd(),"/Data/AvgCost-2013.RData", sep=""))
-
 #Functions
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
+
+#Load data
+load(paste(getwd(),"/Data/AvgCost-2013.RData", sep=""))
 
 #Optimum Risk
 projectedPoints <- vector(mode="numeric", length=length(seq(min(optimizeData$risk), max(optimizeData$risk), 0.1)))
@@ -37,9 +37,10 @@ optimizeTeam(maxRisk=3.4)
 optimizeTeam(maxRisk=3.5)
 optimizeTeam(maxRisk=3.7)
 optimizeTeam(maxRisk=4.0)
-optimizeTeam(maxRisk=4.1) #optimal
-optimizeTeam(maxRisk=4.6)
+optimizeTeam(maxRisk=4.1) 
+optimizeTeam(maxRisk=4.6) #optimal
 
 #Plot
 ggplot(data=riskData, aes(x=riskLevel, y=projectedPoints)) + geom_point(size=3) + xlab("Max Risk Level") + ylab("Total Projected Points") + ggtitle("Association Between Max Risk Level and Total Projected Points") # + geom_smooth()
 ggsave(paste(getwd(),"/Figures/Optimum Risk 2013.jpg", sep=""))
+dev.off()

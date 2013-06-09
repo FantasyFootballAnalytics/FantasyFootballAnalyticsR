@@ -31,12 +31,12 @@ names(wr1_cbs) <- names(wr2_cbs) <- c("player_cbs","rec_cbs","recYds_cbs","recYd
 names(te_cbs) <- c("player_cbs","rec_cbs","recYds_cbs","recYdsPerRec_cbs","recTds_cbs","fumbles_cbs","pts_cbs")
 
 #Trim dimensions
-qb_cbs <- qb_cbs[4:(dim(qb_cbs)[1]-1),]
-rb1_cbs <- rb1_cbs[4:(dim(rb1_cbs)[1]-1),]
-rb2_cbs <- rb2_cbs[2:(dim(rb2_cbs)[1]-1),]
-wr1_cbs <- wr1_cbs[4:(dim(wr1_cbs)[1]-1),]
-wr2_cbs <- wr2_cbs[2:(dim(wr2_cbs)[1]-1),]
-te_cbs <- te_cbs[4:(dim(te_cbs)[1]-1),]
+qb_cbs <- qb_cbs[3:(dim(qb_cbs)[1]-1),]
+rb1_cbs <- rb1_cbs[3:(dim(rb1_cbs)[1]-1),]
+rb2_cbs <- rb2_cbs[1:(dim(rb2_cbs)[1]-1),]
+wr1_cbs <- wr1_cbs[3:(dim(wr1_cbs)[1]-1),]
+wr2_cbs <- wr2_cbs[1:(dim(wr2_cbs)[1]-1),]
+te_cbs <- te_cbs[3:(dim(te_cbs)[1]-1),]
 
 #Merge within position
 rb_cbs <- rbind(rb1_cbs,rb2_cbs)
@@ -85,7 +85,11 @@ projections_cbs$twoPts_cbs <- NA
 projections_cbs$name <- str_sub(projections_cbs$player, end=str_locate(string=projections_cbs$player, ',')[,1]-1)
 
 #Remove Duplicates
-projections_cbs[projections_cbs$name == "James Casey","pos"] <- "TE"
+projections_cbs[duplicated(projections_cbs$name),]
+#projections_cbs[projections_cbs$name == "James Casey","pos"] <- "TE"
+
+#Rename Players
+projections_cbs[projections_cbs$name=="EJ Manuel", "name"] <- "E.J. Manuel"
 
 #Player teams
 projections_cbs$team_cbs <- str_trim(str_sub(projections_cbs$player, start= -3))
@@ -104,9 +108,10 @@ projections_cbs <- projections_cbs[order(projections_cbs$overallRank_cbs),]
 row.names(projections_cbs) <- 1:dim(projections_cbs)[1]
 
 #Density Plot
-ggplot(projections_cbs, aes(x=pts_cbs)) + geom_density(fill="red", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of CBS Projected Points from 2012")
-ggsave(paste(getwd(),"/Figures/CBS projections 2012.jpg", sep=""))
+ggplot(projections_cbs, aes(x=pts_cbs)) + geom_density(fill="red", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of CBS Projected Points from 2013")
+ggsave(paste(getwd(),"/Figures/CBS projections 2013.jpg", sep=""))
 dev.off()
 
 #Save file
-save(projections_cbs, file = paste(getwd(),"/Data/CBS-Projections-2012.RData", sep=""))
+save(projections_cbs, file = paste(getwd(),"/Data/CBS-Projections-2013.RData", sep=""))
+write.csv(projections_cbs, file=paste(getwd(),"/Data/CSV/CBS-Projections-2013.csv", sep=""), row.names=FALSE)

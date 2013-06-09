@@ -77,7 +77,17 @@ projections_fp$team_fp <- str_sub(projections_fp$player_fp, start=str_locate(str
 #Remove duplicate cases
 #projections_fp[duplicated(projections_fp$name),]
 projections_fp[projections_fp$name %in% projections_fp[duplicated(projections_fp$name),"name"],]
+projections_fp <- projections_fp[-which(projections_fp$name=="Charles Clay" & projections_fp$pos=="RB"),]
+projections_fp <- projections_fp[-which(projections_fp$name=="Dexter McCluster" & projections_fp$pos=="RB"),]
+projections_fp <- projections_fp[-which(projections_fp$name=="Dorin Dickerson" & projections_fp$pos=="TE"),]
 projections_fp <- projections_fp[-which(projections_fp$name=="Evan Rodriguez" & projections_fp$pos=="RB"),]
+
+#Rename Players
+projections_fp[projections_fp$name=="Christopher Ivory", "name"] <- "Chris Ivory"
+projections_fp[projections_fp$name=="Ty Hilton", "name"] <- "T.Y. Hilton"
+projections_fp[projections_fp$name=="Robert Housler", "name"] <- "Rob Housler"
+projections_fp[projections_fp$name=="Reuben Randle", "name"] <- "Rueben Randle"
+projections_fp[projections_fp$name=="Joseph Morgan", "name"] <- "Joe Morgan"
 
 #Calculate overall rank
 projections_fp$overallRank_fp <- rank(-projections_fp$pts_fp, ties.method="min")
@@ -98,3 +108,4 @@ dev.off()
 
 #Save file
 save(projections_fp, file = paste(getwd(),"/Data/FantasyPros-Projections-2013.RData", sep=""))
+write.csv(projections_fp, file=paste(getwd(),"/Data/CSV/FantasyPros-Projections-2013.csv", sep=""), row.names=FALSE)

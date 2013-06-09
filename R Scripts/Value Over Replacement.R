@@ -75,13 +75,16 @@ projections[which(projections$risk >=5 & projections$vor >= 0),]
 #Density Plot
 ggplot(projections[which(projections$vor >= 0),], aes(x=vor, fill=pos)) + geom_density(alpha=.3) + xlab("Player's Value Over Replacement") + ggtitle("Density Plot of Projected VOR from 2013") + theme(legend.title=element_blank())
 ggsave(paste(getwd(),"/Figures/VOR-Density 2013.jpg", sep=""))
+dev.off()
 
 #Boxplot
 qplot(pos, vor, data=projections[which(projections$vor >= 0),], geom=c("boxplot", "jitter"), fill=pos, main="Value Over Replacement By Position", xlab="", ylab="Value Over Replacement")
 ggsave(paste(getwd(),"/Figures/VOR-Boxplot 2013.jpg", sep=""))
+dev.off()
 
 #Save file
 save(projections, file = paste(getwd(),"/Data/VOR-2013.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/CSV/VOR-2013.csv", sep=""), row.names=FALSE)
 
 #Subset data
 draftData <- projections[row.names(na.omit(projections[,c("projections","vor","risk")])),c("name","pos","team","projections","vor","sdPick","sdPts","risk")] #projectedPtsLatent
