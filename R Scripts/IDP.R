@@ -23,6 +23,7 @@ IDP$team <- str_sub(IDP[,c("Player, pos (team/bye)")], start=str_locate(IDP[,c("
 
 IDP$pos <- str_sub(IDP[,c("Player, pos (team/bye)")], start=str_locate(IDP[,c("Player, pos (team/bye)")], ',')[,1]+2, end=str_locate(IDP[,c("Player, pos (team/bye)")], ',')[,1]+3)
 IDP$pos <- gsub(" ","",IDP$pos)
+IDP$pos <- gsub("\\)","",IDP$pos)
 
 IDP$rank <- as.numeric(IDP[,"Ave"])
 IDP$risk <- as.numeric(IDP[,"Std Dev"])
