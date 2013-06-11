@@ -4,6 +4,8 @@
 # Date: 6/10/2013
 # Author: Isaac Petersen (isaactpetersen@gmail.com)
 # Notes:
+# Put function within server functon
+# Add user inputs for league settings
 ###########################
 
 #Libraries
@@ -11,7 +13,7 @@ library(shiny)
 library(Rglpk)
 
 #Load Data
-load("./shinyData.RData")
+shinyData <- read.csv("./shinyData.csv")
 
 #Create Optimization Function
 optimizeTeam <- function(points=shinyData$projections, playerCost=NA, maxRisk=NA, maxCost=NA, numTotalStarters=NA, minQBstarters=NA, maxQBstarters=NA, minRBstarters=NA, maxRBstarters=NA, minWRstarters=NA, maxWRstarters=NA, minTEstarters=NA, maxTEstarters=NA){

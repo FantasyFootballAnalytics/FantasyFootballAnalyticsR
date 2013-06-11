@@ -12,7 +12,7 @@
 library("shiny")
 
 #Load Data
-load("./shinyData.RData")
+shinyData <- read.csv("./shinyData.csv")
 
 # Define UI for miles per gallon application
 shinyUI(pageWithSidebar(
@@ -22,63 +22,32 @@ shinyUI(pageWithSidebar(
   
   sidebarPanel(
     numericInput("leagueCap", "League Cap:", 200),
-    
     numericInput("numTotalPlayers", "Total Number of Players on Roster:", 20),
     
-    sliderInput("maxRisk", 
-                "Max Player Risk Tolerance:", 
+    numericInput("passYdsMultiplier", "Passing Yards Per Point:", 25),
+    numericInput("passTdsMultiplier", "Points Per Passing TD:", 4),
+    numericInput("passIntMultiplier", "Points Per Passing INT:", -2),
+    numericInput("rushYdsMultiplier", "Rushing Yards Per Point:", 10),
+    numericInput("rushTdsMultiplier", "Points Per Rushing TD:", 6),
+    numericInput("recMultiplier", "Points Per Reception:", 0),
+    numericInput("recYdsMultiplier", "Receiving Yards Per Point:", 10),
+    numericInput("recTdsMultiplier", "Points Per Receiving TD:", 6),
+    numericInput("twoPtsMultiplier", "Points Per 2-Pt Conversions:", 0),
+    numericInput("fumbleMulitplier", "Points Per Fumble:", -2),
+    
+    sliderInput("maxRisk", "Max Player Risk Tolerance:", 
                 min = ceiling(min(shinyData$risk, na.rm=TRUE)), 
                 max = ceiling(max(shinyData$risk, na.rm=TRUE)),
-                step=.1,
-                value = 5),
+                step=.1, value = 5),
 
-    sliderInput("numQBs",
-                "Number of Quarterbacks:",
-                min = 0,
-                max = 4,
-                value = 1),
-    
-    sliderInput("numRBs",
-                "Number of Running Backs:",
-                min = 0,
-                max = 4,
-                value = 2),
-    
-    sliderInput("numWRs",
-                "Number of Wide Receivers:",
-                min = 0,
-                max = 4,
-                value = 2),
-    
-    sliderInput("numTEs",
-                "Number of Tight Ends:",
-                min = 0,
-                max = 4,
-                value = 1),
-    
-    sliderInput("numWRTEs",
-                "Number of WR/TEs:",
-                min = 0,
-                max = 4,
-                value = 0),
-    
-    sliderInput("numWRRBs",
-                "Number of WR/RBs:",
-                min = 0,
-                max = 4,
-                value = 0),
-    
-    sliderInput("numWRRBTEs",
-                "Number of WR/RB/TEs:",
-                min = 0,
-                max = 4,
-                value = 1),
-    
-    sliderInput("numQBWRRBTEs",
-                "Number of QB/WR/RB/TEs:",
-                min = 0,
-                max = 4,
-                value = 0)
+    sliderInput("numQBs", "Number of Starting Quarterbacks:", min = 0, max = 4, value = 1),
+    sliderInput("numRBs", "Number of Starting Running Backs:", min = 0, max = 4, value = 2),
+    sliderInput("numWRs", "Number of Starting Wide Receivers:", min = 0, max = 4, value = 2),
+    sliderInput("numTEs", "Number of Starting Tight Ends:", min = 0, max = 4, value = 1),
+    sliderInput("numWRTEs", "Number of Starting WR/TEs:", min = 0, max = 4, value = 0),
+    sliderInput("numWRRBs", "Number of Starting WR/RBs:", min = 0, max = 4, value = 0),
+    sliderInput("numWRRBTEs", "Number of Starting WR/RB/TEs:", min = 0, max = 4, value = 1),
+    sliderInput("numQBWRRBTEs", "Number of Starting QB/WR/RB/TEs:", min = 0, max = 4, value = 0)
     ),
   
   mainPanel(
