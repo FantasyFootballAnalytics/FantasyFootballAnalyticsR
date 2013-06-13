@@ -1,11 +1,17 @@
+### Libraries
+library(shiny)
+library(Rglpk)
 
 ### Load Data
 shinyData <- read.csv(paste(getwd(),"/shinyapp/shinyData.csv", sep=""))
 
 ### Run
-setwd("./shinyapp")
-runApp("~/shinyapp")
-runApp()
+runApp("./shinyapp")
+
+#setwd("./shinyapp")
+#setwd(""C:/Users/Isaac/Documents/GitHub/FantasyFootballAnalyticsR/")
+#runApp("~/shinyapp")
+#runApp()
 
 ### Inputs
 numericInput("leagueCap", "League Cap:", 200),
@@ -19,7 +25,7 @@ numericInput("rushTdsMultiplier", "Points Per Rushing TD:", 6),
 numericInput("recMultiplier", "Points Per Reception:", 0),
 numericInput("recYdsMultiplier", "Receiving Yards Per Point:", 10),
 numericInput("recTdsMultiplier", "Points Per Receiving TD:", 6),
-numericInput("twoPtsMultiplier", "Points Per 2-Pt Conversions:", 0),
+#numericInput("twoPtsMultiplier", "Points Per 2-Pt Conversions:", 0),
 numericInput("fumbleMulitplier", "Points Per Fumble:", -2),
 
 sliderInput("maxRisk", "Max Player Risk Tolerance:", 
@@ -40,19 +46,19 @@ sliderInput("numQBWRRBTEs", "Number of Starting QB/WR/RB/TEs:", min = 0, max = 4
 ### Calculations
 
 #Default inputs
-leagueCap <- 200
+leagueCap <- 225 #200
 numTotalPlayers <- 20
 
 passYdsMultiplier <- 25
 passTdsMultiplier <- 4
-passIntMultiplier <- -2
+passIntMultiplier <- -3 #-2
 rushYdsMultiplier <- 10
 rushTdsMultiplier <- 6
 recMultiplier <- 0
-recYdsMultiplier <- 10
+recYdsMultiplier <- 8 #10
 recTdsMultiplier <- 6
-twoPtsMultiplier <- 2
-fumbleMulitplier <- -2
+#twoPtsMultiplier <- 2
+fumbleMulitplier <- -3 #-2
 
 maxRisk <- 5
 
@@ -64,6 +70,15 @@ numWRTEs <- 0
 numWRRBs <- 0
 numWRRBTEs <- 1
 numQBWRRBTEs <- 0
+
+#Calculate Position Rank
+shinyData$positionRank[shinyData$pos=="QB"] <- rank(-shinyData$projectedPts[shinyData$pos=="QB"], ties.method="min")
+shinyData$positionRank[shinyData$pos=="RB"] <- rank(-shinyData$projectedPts[shinyData$pos=="RB"], ties.method="min")
+shinyData$positionRank[shinyData$pos=="WR"] <- rank(-shinyData$projectedPts[shinyData$pos=="WR"], ties.method="min")
+shinyData$positionRank[shinyData$pos=="TE"] <- rank(-shinyData$projectedPts[shinyData$pos=="TE"], ties.method="min")
+
+#Calculate Overall Rank
+shinyData$overallRank <- rank(-shinyData$projectedPts, ties.method="min")
 
 #Apply 10% price premium to 33 players with highest projected points, apply 10% price premium for players lower than rank 66
 shinyData$projectedCost[shinyData$overallRank <= 33] <- ceiling(shinyData$cost[shinyData$overallRank <= 33] * (leagueCap/200) * 1.1)
@@ -96,10 +111,12 @@ shinyData$rushTdsPts <- shinyData$rushTds*rushTdsMultiplier
 shinyData$recPts <- shinyData$rec*recMultiplier
 shinyData$recYdsPts <- shinyData$recYds*recYdsMultiplier
 shinyData$recTdsPts <- shinyData$recTds*recTdsMultiplier
-shinyData$twoPtsPts <- shinyData$twoPts*twoPtsMultiplier
+#shinyData$twoPtsPts <- shinyData$twoPts*twoPtsMultiplier
 shinyData$fumblesPts <- shinyData$fumbles*fumbleMulitplier
 
-shinyData$projectedPts <- rowSums(shinyData[,c("passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","twoPtsPts","fumblesPts")], na.rm=T)
+shinyData$projectedPts <- rowSums(shinyData[,c("passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","fumblesPts")], na.rm=T) #,"twoPtsPts"
+
+#merge(projections[,c("name","projections")], shinyData[,c("name","projectedPts")], by="name", all=TRUE)
 
 num.players <- length(shinyData$name)
 var.types <- rep("B", num.players)
@@ -142,19 +159,10 @@ b <- c(minQBs,
 
 sol <- Rglpk_solve_LP(obj = shinyData$projectedPts, mat = A, dir = dir, rhs = b,types = var.types, max = TRUE)
 sol$playerInfo <- as.data.frame(merge(shinyData[shinyData$name %in% shinyData[sol$solution == 1,"name"],c("name","pos","team")], shinyData[sol$solution == 1,c("name","projectedPts","risk","projectedCost")], by="name"))
-#sol$playerInfo[,"cost"] <- as.integer(sol$playerInfo[,"cost"])
+sol$playerInfo[,"projectedCost"] <- as.integer(sol$playerInfo[,"projectedCost"])
 sol$totalCost <- sum(shinyData$projectedCost * sol$solution)
 #sol$totalCost <- sum(sol$playerInfo$cost)
-sol$players <- shinyData$name[sol$solution == 1]
+sol$players <- as.character(shinyData$name[sol$solution == 1])
 
-#Other
-projections$passYdsPts_espn <- projections$passYds_espn*passYdsMultiplier
-projections$passTdsPts_espn <- projections$passTds_espn*passTdsMultiplier
-projections$passIntPts_espn <- projections$passInt_espn*passIntMultiplier
-projections$rushYdsPts_espn <- projections$rushYds_espn*rushYdsMultiplier
-projections$rushTdsPts_espn <- projections$rushTds_espn*rushTdsMultiplier
-projections$recYdsPts_espn <- projections$recYds_espn*recYdsMultiplier
-projections$recTdsPts_espn <- projections$recTds_espn*recTdsMultiplier
-projections$twoPts_espn <- projections$fumbles_espn*twoPtsMultiplier
-projections$fumblesPts_espn <- projections$fumbles_espn*fumlMultiplier
-
+sol
+shinyData[,c("name","projectedPts","projectedCost")]

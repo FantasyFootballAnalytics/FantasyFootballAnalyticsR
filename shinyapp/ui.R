@@ -21,6 +21,7 @@ shinyUI(pageWithSidebar(
   headerPanel("Optimal Fantasy Football Draft"),
   
   sidebarPanel(
+    downloadButton("downloadData", "Download Data as .csv"),
     numericInput("leagueCap", "League Cap:", 200),
     numericInput("numTotalPlayers", "Total Number of Players on Roster:", 20),
     
@@ -32,7 +33,7 @@ shinyUI(pageWithSidebar(
     numericInput("recMultiplier", "Points Per Reception:", 0),
     numericInput("recYdsMultiplier", "Receiving Yards Per Point:", 10),
     numericInput("recTdsMultiplier", "Points Per Receiving TD:", 6),
-    numericInput("twoPtsMultiplier", "Points Per 2-Pt Conversions:", 0),
+    #numericInput("twoPtsMultiplier", "Points Per 2-Pt Conversions:", 0),
     numericInput("fumbleMulitplier", "Points Per Fumble:", -2),
     
     sliderInput("maxRisk", "Max Player Risk Tolerance:", 
@@ -54,7 +55,7 @@ shinyUI(pageWithSidebar(
     tableOutput("bestTeam"),
     h3(textOutput("totalPoints")),
     h3(textOutput("totalCost")),
-    h3(textOutput("maxCost")),
+    h3(textOutput("capAvailable")),
     h3(textOutput("numStarters"))
     )
 ))

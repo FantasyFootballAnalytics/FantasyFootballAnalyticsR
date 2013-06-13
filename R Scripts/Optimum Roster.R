@@ -5,6 +5,7 @@
 # Author: Isaac Petersen (isaactpetersen@gmail.com)
 # Notes:
 # -These calculations are from last year (they have not yet been updated for the upcoming season)
+# -Cost is based on Yahoo Avg Cost
 ###########################
 
 #Specify Maximum Risk
