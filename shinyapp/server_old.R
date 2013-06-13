@@ -68,15 +68,6 @@ shinyServer(function(input, output) {
     return(shinyData)
   })
   
-  #Removed drafted players
-  drafted <- reactive({
-    c(input$yourDrafted, input$otherDrafted)
-  })
-  
-  removedPlayers <- reactive({
-    newData()[! newData()$name %in% drafted(),]
-  })
-  
   #Determine number of starters at each position
   minQBs <- reactive({
     input$numQBs
@@ -115,57 +106,9 @@ shinyServer(function(input, output) {
     input$numQBs + input$numRBs + input$numWRs + input$numTEs + input$numWRTEs + input$numWRRBs + input$numWRRBTEs + input$numQBWRRBTEs
   })
   
-  #Determine drafted team
-  draftedTeam <- reactive({
-    newData()[newData()$name %in% input$yourDrafted,]
-  })
-  
-  #Calculate how many players to draft at each position
-  minQBsToDraft <- reactive({
-    minQBs() - sum(draftedTeam()$pos == "QB")
-  })
-  
-  maxQBsToDraft <- reactive({
-    maxQBs() - sum(draftedTeam()$pos == "QB")
-  })
-  
-  minRBsToDraft <- reactive({
-    minRBs() - sum(draftedTeam()$pos == "RB")
-  })
-  
-  maxRBsToDraft <- reactive({
-    maxRBs() - sum(draftedTeam()$pos == "RB")
-  })
-  
-  minWRsToDraft <- reactive({
-    minWRs() - sum(draftedTeam()$pos == "WR")
-  })
-  
-  maxWRsToDraft <- reactive({
-    maxWRs() - sum(draftedTeam()$pos == "WR")
-  })
-  
-  minTEsToDraft <- reactive({
-    minTEs() - sum(draftedTeam()$pos == "TE")
-  })
-  
-  maxTEsToDraft <- reactive({
-    maxTEs() - sum(draftedTeam()$pos == "TE")
-  })
-  
-  #Calculate total number of players to draft
-  numToDraft <- reactive({
-    numStarters() - length(input$yourDrafted)
-  })
-  
   #Calculate cap available for bidding on starters (assumes $1 for each bench player)
-  maxCost <- reactive({
-    input$leagueCap - (input$numTotalPlayers - numStarters())
-  })
-  
-  #Calculate remaining cost
   capAvailable <- reactive({
-    maxCost() - input$capSpent
+    input$leagueCap - (input$numTotalPlayers - numStarters())
   })
   
   #Determine maximum risk of individual players
@@ -173,9 +116,10 @@ shinyServer(function(input, output) {
     input$maxRisk
   })
   
-  #Calculate best team  
+  #Calculate best team
+  
   num.players <- reactive({
-    length(removedPlayers()$name)
+    length(newData()$name)
   })
   
   var.types <- reactive({
@@ -183,16 +127,16 @@ shinyServer(function(input, output) {
   })
   
   A <- reactive({
-    rbind(as.numeric(removedPlayers()$pos == "QB"),
-          as.numeric(removedPlayers()$pos == "QB"),
-          as.numeric(removedPlayers()$pos == "RB"),
-          as.numeric(removedPlayers()$pos == "RB"),
-          as.numeric(removedPlayers()$pos == "WR"),
-          as.numeric(removedPlayers()$pos == "WR"),
-          as.numeric(removedPlayers()$pos == "TE"),
-          as.numeric(removedPlayers()$pos == "TE"),
-          diag(removedPlayers()$risk),                 # player's risk
-          removedPlayers()$projectedCost,              # total cost
+    rbind(as.numeric(newData()$pos == "QB"),
+          as.numeric(newData()$pos == "QB"),
+          as.numeric(newData()$pos == "RB"),
+          as.numeric(newData()$pos == "RB"),
+          as.numeric(newData()$pos == "WR"),
+          as.numeric(newData()$pos == "WR"),
+          as.numeric(newData()$pos == "TE"),
+          as.numeric(newData()$pos == "TE"),
+          diag(newData()$risk),                 # player's risk
+          newData()$projectedCost,              # total cost
           rep(1,num.players()))                 # num of players in starting lineup   
   })
   
@@ -211,25 +155,25 @@ shinyServer(function(input, output) {
   })
   
   b <- reactive({
-    c(minQBsToDraft(),
-      maxQBsToDraft(),
-      minRBsToDraft(),
-      maxRBsToDraft(),
-      minWRsToDraft(),
-      maxWRsToDraft(),
-      minTEsToDraft(),
-      maxTEsToDraft(),
+    c(minQBs(),
+      maxQBs(),
+      minRBs(),
+      maxRBs(),
+      minWRs(),
+      maxWRs(),
+      minTEs(),
+      maxTEs(),
       rep(maxRisk(), num.players()),
       capAvailable(),
-      numToDraft())
+      numStarters())
   })
   
   bestTeam <- reactive({
-    sol <- Rglpk_solve_LP(obj = removedPlayers()$projectedPts, mat = A(), dir = dir(), rhs = b(),types = var.types(), max = TRUE)
-    sol$playerInfo <- as.data.frame(merge(removedPlayers()[removedPlayers()$name %in% removedPlayers()[sol$solution == 1,"name"],c("name","pos","team")], removedPlayers()[sol$solution == 1,c("name","projectedPts","risk","projectedCost")], by="name"))
+    sol <- Rglpk_solve_LP(obj = newData()$projectedPts, mat = A(), dir = dir(), rhs = b(),types = var.types(), max = TRUE)
+    sol$playerInfo <- as.data.frame(merge(newData()[newData()$name %in% newData()[sol$solution == 1,"name"],c("name","pos","team")], newData()[sol$solution == 1,c("name","projectedPts","risk","projectedCost")], by="name"))
     sol$playerInfo[,"projectedCost"] <- as.integer(sol$playerInfo[,"projectedCost"])
-    sol$totalCost <- sum(removedPlayers()$projectedCost * sol$solution)
-    sol$players <- as.character(removedPlayers()$name[sol$solution == 1])
+    sol$totalCost <- sum(newData()$projectedCost * sol$solution)
+    sol$players <- as.character(newData()$name[sol$solution == 1])
     
     return(sol)
   })
@@ -259,16 +203,17 @@ shinyServer(function(input, output) {
     paste("Number of Starters: ", numStarters())
   })
   
-  #Output: TEST
-  output$test <- renderText({
-    paste("TEST: ", minQBsToDraft())
-  })
-  
   #Output: Download data
   output$downloadData <- downloadHandler(
     filename = function() { "projections.csv" },
     content = function(file) {
       write.csv(newData(), file)
     }
-  )  
+  )
+  
+  #Output: Drafted
+  output$Drafted <- renderText({
+    paste("Drafted: ", input$drafted)
+  })
+  
 })

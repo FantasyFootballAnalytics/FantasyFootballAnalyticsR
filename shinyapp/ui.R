@@ -36,6 +36,10 @@ shinyUI(pageWithSidebar(
     #numericInput("twoPtsMultiplier", "Points Per 2-Pt Conversions:", 0),
     numericInput("fumbleMulitplier", "Points Per Fumble:", -2),
     
+    selectInput("yourDrafted", "Players You Drafted:", sort(shinyData$name), multiple=TRUE),
+    numericInput("capSpent", "Cap Spent:", 0),
+    selectInput("otherDrafted", "Players Others Drafted:", sort(shinyData$name), multiple=TRUE),
+    
     sliderInput("maxRisk", "Max Player Risk Tolerance:", 
                 min = ceiling(min(shinyData$risk, na.rm=TRUE)), 
                 max = ceiling(max(shinyData$risk, na.rm=TRUE)),
@@ -56,7 +60,8 @@ shinyUI(pageWithSidebar(
     h3(textOutput("totalPoints")),
     h3(textOutput("totalCost")),
     h3(textOutput("capAvailable")),
-    h3(textOutput("numStarters"))
+    h3(textOutput("numStarters")),
+    h3(textOutput("test"))
     )
 ))
 
