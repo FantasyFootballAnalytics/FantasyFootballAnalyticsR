@@ -259,11 +259,6 @@ shinyServer(function(input, output) {
     paste("Number of Starters: ", numStarters())
   })
   
-  #Output: TEST
-  output$test <- renderText({
-    paste("TEST: ", minQBsToDraft())
-  })
-  
   #Output: Download data
   output$downloadData <- downloadHandler(
     filename = function() { "projections.csv" },

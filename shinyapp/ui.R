@@ -60,8 +60,7 @@ shinyUI(pageWithSidebar(
     h3(textOutput("totalPoints")),
     h3(textOutput("totalCost")),
     h3(textOutput("capAvailable")),
-    h3(textOutput("numStarters")),
-    h3(textOutput("test"))
+    h3(textOutput("numStarters"))
     )
 ))
 
