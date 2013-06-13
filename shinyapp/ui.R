@@ -6,8 +6,6 @@
 # Notes:
 ###########################
 
-#setwd("./shinyapp")
-
 #Library
 library("shiny")
 
@@ -18,10 +16,13 @@ shinyData <- read.csv("./shinyData.csv")
 shinyUI(pageWithSidebar(
   
   # Application title
-  headerPanel("Optimal Fantasy Football Draft"),
+  headerPanel("Fantasy Football Draft Optimizer"),
   
   sidebarPanel(
-    downloadButton("downloadData", "Download Data as .csv"),
+    p("For directions on how to use optimizer, see ",
+      a("here.", href="http://fantasyfootballanalyticsr.blogspot.com/")
+    ),
+    
     numericInput("leagueCap", "League Cap:", 200),
     numericInput("numTotalPlayers", "Total Number of Players on Roster:", 20),
     
@@ -38,13 +39,13 @@ shinyUI(pageWithSidebar(
     
     selectInput("yourDrafted", "Players You Drafted:", sort(shinyData$name), multiple=TRUE),
     numericInput("capSpent", "Cap Spent:", 0),
-    selectInput("otherDrafted", "Players Others Drafted:", sort(shinyData$name), multiple=TRUE),
+    selectInput("otherDrafted", "Other Players Drafted:", sort(shinyData$name), multiple=TRUE),
     
     sliderInput("maxRisk", "Max Player Risk Tolerance:", 
                 min = ceiling(min(shinyData$risk, na.rm=TRUE)), 
                 max = ceiling(max(shinyData$risk, na.rm=TRUE)),
                 step=.1, value = 5),
-
+    
     sliderInput("numQBs", "Number of Starting Quarterbacks:", min = 0, max = 4, value = 1),
     sliderInput("numRBs", "Number of Starting Running Backs:", min = 0, max = 4, value = 2),
     sliderInput("numWRs", "Number of Starting Wide Receivers:", min = 0, max = 4, value = 2),
@@ -52,8 +53,11 @@ shinyUI(pageWithSidebar(
     sliderInput("numWRTEs", "Number of Starting WR/TEs:", min = 0, max = 4, value = 0),
     sliderInput("numWRRBs", "Number of Starting WR/RBs:", min = 0, max = 4, value = 0),
     sliderInput("numWRRBTEs", "Number of Starting WR/RB/TEs:", min = 0, max = 4, value = 1),
-    sliderInput("numQBWRRBTEs", "Number of Starting QB/WR/RB/TEs:", min = 0, max = 4, value = 0)
-    ),
+    sliderInput("numQBWRRBTEs", "Number of Starting QB/WR/RB/TEs:", min = 0, max = 4, value = 0),
+    
+    br(),
+    downloadButton("downloadData", "Download Data as .csv")
+  ),
   
   mainPanel(
     tableOutput("bestTeam"),
@@ -61,8 +65,5 @@ shinyUI(pageWithSidebar(
     h3(textOutput("totalCost")),
     h3(textOutput("capAvailable")),
     h3(textOutput("numStarters"))
-    )
+  )
 ))
-
-#runApp("~/shinyapp")
-#runApp()

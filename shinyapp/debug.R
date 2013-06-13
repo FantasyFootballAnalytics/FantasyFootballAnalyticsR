@@ -9,7 +9,7 @@ shinyData <- read.csv(paste(getwd(),"/shinyapp/shinyData.csv", sep=""))
 runApp("./shinyapp")
 
 #setwd("./shinyapp")
-#setwd(""C:/Users/Isaac/Documents/GitHub/FantasyFootballAnalyticsR/")
+#setwd("C:/Users/Isaac/Documents/GitHub/FantasyFootballAnalyticsR/")
 #runApp("~/shinyapp")
 #runApp()
 
