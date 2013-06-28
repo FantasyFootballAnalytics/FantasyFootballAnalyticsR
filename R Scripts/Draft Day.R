@@ -8,7 +8,7 @@
 ###########################
 
 #Specify Maximum Risk
-maxRisk <- 4.1
+maxRisk <- 4.6
 
 #Library
 library("Rglpk")
@@ -37,6 +37,8 @@ removedPlayers <-  draftData[row.names(na.omit(draftData[,c("projections","risk"
 row.names(removedPlayers) <- 1:dim(removedPlayers)[1]
 removedPlayers
 
+### RUN TO HERE ###
+
 #Example: Update with drafted (i.e., unavailable) players
 myteam <- data.frame(
   player = c("Arian Foster", "Tom Brady", "Jacob Tamme"),
@@ -47,13 +49,15 @@ myteam$player <- as.character(myteam$player)
 
 drafted <- c(myteam$player,"Vincent Jackson","Eric Decker")
 
-optimizeDraft(maxRisk=4.1)
-optimizeDraft(maxRisk=4.1, omit=c("Vincent Jackson","Eric Decker"))
-optimizeDraft(maxRisk=4.1, omit=drafted)
+optimizeDraft(maxRisk=4.6)
+optimizeDraft(maxRisk=4.6, omit=c("Vincent Jackson","Eric Decker"))
+optimizeDraft(maxRisk=4.6, omit=drafted)
 
 draftData[!(draftData$name %in% drafted),]
 
-###Draft Dashboard
+###################
+### Draft Dashboard
+###################
 
 ###--UPDATE--###
 myteam <- data.frame(
@@ -66,17 +70,62 @@ myteam$player <- as.character(myteam$player)
 drafted <- c(myteam$player,"")
 ###----------###
 
-#Optimize Team
-optimizeDraft(maxRisk=4.1,omit=drafted)
+### Optimize Team ###
+optimizeDraft(maxRisk=4.6, omit=drafted)
+optimizeDraft(maxRisk=100, omit=drafted)
 
-#Show remaining players
+### Remaining Players ###
+#All
 draftData[!(draftData$name %in% drafted),]
 
-#Sleepers
+#QB
+draftData[!(draftData$name %in% drafted) & draftData$pos=="QB",]
+
+#RB
+draftData[!(draftData$name %in% drafted) & draftData$pos=="RB",]
+
+#WR
+draftData[!(draftData$name %in% drafted) & draftData$pos=="WR",]
+
+#TE
+draftData[!(draftData$name %in% drafted) & draftData$pos=="TE",]
+
+### Starters ###
+#All
+draftData[!(draftData$name %in% drafted) & draftData$vor>0 & draftData$risk < 5,]
+
+#QB
+draftData[!(draftData$name %in% drafted) & draftData$vor>0 & draftData$risk < 5 & draftData$pos=="QB",]
+
+#RB
+draftData[!(draftData$name %in% drafted) & draftData$vor>0 & draftData$risk < 5 & draftData$pos=="RB",]
+
+#WR
+draftData[!(draftData$name %in% drafted) & draftData$vor>0 & draftData$risk < 5 & draftData$pos=="WR",]
+
+#TE
+draftData[!(draftData$name %in% drafted) & draftData$vor>0 & draftData$risk < 5 & draftData$pos=="TE",]
+
+### Sleepers ###
+#All
 draftData[!(draftData$name %in% drafted) & draftData$risk >=6 & !(is.na(draftData$risk)),]
 
-#Kickers
+#QB
+draftData[!(draftData$name %in% drafted) & draftData$risk >=6 & !(is.na(draftData$risk)) & draftData$pos=="QB",]
+
+#RB
+draftData[!(draftData$name %in% drafted) & draftData$risk >=6 & !(is.na(draftData$risk)) & draftData$pos=="RB",]
+
+#WR
+draftData[!(draftData$name %in% drafted) & draftData$risk >=6 & !(is.na(draftData$risk)) & draftData$pos=="WR",]
+
+#TE
+draftData[!(draftData$name %in% drafted) & draftData$risk >=6 & !(is.na(draftData$risk)) & draftData$pos=="TE",]
+
+### Kickers ###
 kickers[!(kickers$name %in% drafted),]
+
+### Defensive Players ###
 
 #D
 IDP[!(IDP$name %in% drafted),]

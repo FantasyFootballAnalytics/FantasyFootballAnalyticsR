@@ -76,8 +76,8 @@ projections <- merge(projections, optimizeData[,c("name","pos","bidUpToSim")], b
 #Convert NAs to Zero
 projections$bidUpToSim[is.na(projections$bidUpToSim)] <- 1
 
-#Order players by projections
-projections <- projections[order(-projections$projections),]
+#Order players by vor #projections
+projections <- projections[order(-projections$vor),] #projections$projections
 row.names(projections) <- 1:dim(projections)[1]
 
 #Save file

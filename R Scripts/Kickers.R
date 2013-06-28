@@ -31,6 +31,8 @@ kickers$risk <- as.numeric(kickers[,"Std Dev"])
 
 kickers <- kickers[,c("name","team","rank","risk")]
 
+kickers <- kickers[order(kickers$rank),]
+
 #View Rankings
 kickers
 

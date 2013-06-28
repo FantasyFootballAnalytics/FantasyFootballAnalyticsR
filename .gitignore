@@ -168,3 +168,4 @@ pip-log.txt
 #############
 
 *.Rhistory
+.Rhistory

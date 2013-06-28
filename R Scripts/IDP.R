@@ -30,6 +30,8 @@ IDP$risk <- as.numeric(IDP[,"Std Dev"])
 
 IDP <- IDP[,c("name","pos","team","rank","risk")]
 
+IDP <- IDP[order(IDP$rank),]
+
 #View Rankings
 IDP
 
