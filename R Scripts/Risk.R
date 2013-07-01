@@ -85,6 +85,7 @@ projections <- projections[,!(names(projections) %in% c("pick_experts","sdPick_e
 #Compare accuracy of projections while taking into account risk vs when not taking risk into account
 summary(lm(actualPts ~ projections, data=na.omit(projections[,c("actualPts","projections","risk")])))$r.squared #not considering risk #projectedPtsLatent
 summary(lm(actualPts ~ projections + risk, data=na.omit(projections[,c("actualPts","projections","risk")])))$r.squared #considering risk #projectedPtsLatent
+summary(lm(actualPts ~ projections + risk, data=na.omit(projections[,c("actualPts","projections","risk")])))
 
 #Players with highest risk levels
 projections[rank(projections$risk, na.last="keep") %in% (max(rank(projections$risk, na.last="keep"), na.rm=TRUE)-5):max(rank(projections$risk, na.last="keep"), na.rm=TRUE) ,]

@@ -9,7 +9,7 @@
 ###########################
 
 #Specify Maximum Risk
-maxRisk <- 3.8
+maxRisk <- 4.6
 
 #Library
 library("Rglpk")

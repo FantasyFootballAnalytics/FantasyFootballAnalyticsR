@@ -15,8 +15,7 @@ source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Data
-#load(paste(getwd(),"/Data/AvgCost-2013.RData", sep=""))
-load(paste(getwd(),"/Data/BidUpTo-2013.RData", sep=""))
+load(paste(getwd(),"/Data/simulation-2013.RData", sep=""))
 
 #Roster Optimization
 optimizeData <- na.omit(projections[,c("name","pos","projections","risk","inflatedCost","sdPts")]) #projectedPtsLatent

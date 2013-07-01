@@ -77,10 +77,16 @@ projections_fp$team_fp <- str_sub(projections_fp$player_fp, start=str_locate(str
 #Remove duplicate cases
 #projections_fp[duplicated(projections_fp$name),]
 projections_fp[projections_fp$name %in% projections_fp[duplicated(projections_fp$name),"name"],]
+
+projections_fp[projections_fp$name=="Alex Smith",][1,] <- NA
 projections_fp <- projections_fp[-which(projections_fp$name=="Charles Clay" & projections_fp$pos=="RB"),]
 projections_fp <- projections_fp[-which(projections_fp$name=="Dexter McCluster" & projections_fp$pos=="RB"),]
-projections_fp <- projections_fp[-which(projections_fp$name=="Dorin Dickerson" & projections_fp$pos=="TE"),]
-projections_fp <- projections_fp[-which(projections_fp$name=="Evan Rodriguez" & projections_fp$pos=="RB"),]
+projections_fp <- projections_fp[-which(projections_fp$name=="Zach Miller" & projections_fp$team_fp=="TB"),]
+#projections_fp <- projections_fp[-which(projections_fp$name=="Dorin Dickerson" & projections_fp$pos=="TE"),]
+#projections_fp <- projections_fp[-which(projections_fp$name=="Evan Rodriguez" & projections_fp$pos=="RB"),]
+
+#Remove rows with all NAs
+projections_fp <- projections_fp[apply(projections_fp, 1, function(x) any(!is.na(x))),]
 
 #Rename Players
 projections_fp[projections_fp$name=="Christopher Ivory", "name"] <- "Chris Ivory"

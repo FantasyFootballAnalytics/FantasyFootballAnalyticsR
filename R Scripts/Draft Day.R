@@ -23,7 +23,9 @@ load(paste(getwd(),"/Data/IDP-2013.RData", sep=""))
 load(paste(getwd(),"/Data/kickers-2013.RData", sep=""))
 
 #Subset data
-draftData <- projections[,c("name","pos","team","projections","vor","sdPick","sdPts","risk","avgCost","inflatedCost","bidUpTo","bidUpToSim")] #projectedPtsLatent
+draftData <- projections[,c("name","pos","team","projections","vor","simulation","sdPick","sdPts","risk","avgCost","inflatedCost","bidUpTo","bidUpToSim")] #projectedPtsLatent
+draftData <- draftData[order(-draftData$vor),]
+row.names(draftData) <- 1:dim(draftData)[1]
 
 #Save data
 save(draftData, file = paste(getwd(),"/Data/DraftDay-2013.RData", sep=""))
@@ -33,7 +35,7 @@ options(digits=2)
 draftData
 
 #Day of Draft
-removedPlayers <-  draftData[row.names(na.omit(draftData[,c("projections","risk","inflatedCost")])),] #projectedPtsLatent
+removedPlayers <-  draftData[row.names(na.omit(draftData[,c("projections","simulation","risk","inflatedCost")])),] #projectedPtsLatent
 row.names(removedPlayers) <- 1:dim(removedPlayers)[1]
 removedPlayers
 
@@ -71,56 +73,68 @@ drafted <- c(myteam$player,"")
 ###----------###
 
 ### Optimize Team ###
-optimizeDraft(maxRisk=4.6, omit=drafted)
+# Projected Points
+optimizeDraft(maxRisk=3.5, omit=drafted) #From Optimum Risk.R
+optimizeDraft(maxRisk=4.4, omit=drafted) #From Simulation.R
 optimizeDraft(maxRisk=100, omit=drafted)
+
+# Simulated Points
+optimizeDraft(maxRisk=3.5, omit=drafted, points=removedPlayers$simulation) #From Optimum Risk.R
+sum(draftData[draftData$name %in% optimizeDraft(maxRisk=3.5, omit=drafted, points=removedPlayers$simulation)$players, "projections"]) #1528
+
+optimizeDraft(maxRisk=4.4, omit=drafted, points=removedPlayers$simulation) #From Simulation.R
+sum(draftData[draftData$name %in% optimizeDraft(maxRisk=4.4, omit=drafted, points=removedPlayers$simulation)$players, "projections"]) #1540
+
+optimizeDraft(maxRisk=100, omit=drafted, points=removedPlayers$simulation)
+sum(draftData[draftData$name %in% optimizeDraft(maxRisk=100, omit=drafted, points=removedPlayers$simulation)$players, "projections"]) #1536
 
 ### Remaining Players ###
 #All
-draftData[!(draftData$name %in% drafted),]
+draftData[!(draftData$name %in% drafted) & !is.na(draftData$projections),]
 
 #QB
-draftData[!(draftData$name %in% drafted) & draftData$pos=="QB",]
+draftData[!(draftData$name %in% drafted) & !is.na(draftData$projections) & draftData$pos=="QB",]
 
 #RB
-draftData[!(draftData$name %in% drafted) & draftData$pos=="RB",]
+draftData[!(draftData$name %in% drafted) & !is.na(draftData$projections) & draftData$pos=="RB",]
 
 #WR
-draftData[!(draftData$name %in% drafted) & draftData$pos=="WR",]
+draftData[!(draftData$name %in% drafted) & !is.na(draftData$projections) & draftData$pos=="WR",]
 
 #TE
-draftData[!(draftData$name %in% drafted) & draftData$pos=="TE",]
+draftData[!(draftData$name %in% drafted) & !is.na(draftData$projections) & draftData$pos=="TE",]
 
 ### Starters ###
 #All
-draftData[!(draftData$name %in% drafted) & draftData$vor>0 & draftData$risk < 5,]
+draftData[!(draftData$name %in% drafted) & draftData$vor>0 & draftData$risk < 5 & !is.na(draftData$projections),]
 
 #QB
-draftData[!(draftData$name %in% drafted) & draftData$vor>0 & draftData$risk < 5 & draftData$pos=="QB",]
+draftData[!(draftData$name %in% drafted) & draftData$vor>0 & draftData$risk < 5 & !is.na(draftData$projections) & draftData$pos=="QB",]
 
 #RB
-draftData[!(draftData$name %in% drafted) & draftData$vor>0 & draftData$risk < 5 & draftData$pos=="RB",]
+draftData[!(draftData$name %in% drafted) & draftData$vor>0 & draftData$risk < 5 & !is.na(draftData$projections) & draftData$pos=="RB",]
 
 #WR
-draftData[!(draftData$name %in% drafted) & draftData$vor>0 & draftData$risk < 5 & draftData$pos=="WR",]
+draftData[!(draftData$name %in% drafted) & draftData$vor>0 & draftData$risk < 5 & !is.na(draftData$projections) & draftData$pos=="WR",]
 
 #TE
-draftData[!(draftData$name %in% drafted) & draftData$vor>0 & draftData$risk < 5 & draftData$pos=="TE",]
+draftData[!(draftData$name %in% drafted) & draftData$vor>0 & draftData$risk < 5 & !is.na(draftData$projections) & draftData$pos=="TE",]
 
 ### Sleepers ###
 #All
-draftData[!(draftData$name %in% drafted) & draftData$risk >=6 & !(is.na(draftData$risk)),]
+draftData[!(draftData$name %in% drafted) & draftData$risk >=6 & !(is.na(draftData$risk)) & !is.na(draftData$projections),]
 
 #QB
-draftData[!(draftData$name %in% drafted) & draftData$risk >=6 & !(is.na(draftData$risk)) & draftData$pos=="QB",]
+draftData[!(draftData$name %in% drafted) & draftData$risk >=6 & !(is.na(draftData$risk)) & !is.na(draftData$projections) & draftData$pos=="QB",]
 
 #RB
-draftData[!(draftData$name %in% drafted) & draftData$risk >=6 & !(is.na(draftData$risk)) & draftData$pos=="RB",]
+draftData[!(draftData$name %in% drafted) & draftData$risk >=6 & !(is.na(draftData$risk)) & !is.na(draftData$projections) & draftData$pos=="RB",]
 
 #WR
-draftData[!(draftData$name %in% drafted) & draftData$risk >=6 & !(is.na(draftData$risk)) & draftData$pos=="WR",]
+draftData[!(draftData$name %in% drafted) & draftData$risk >=6 & !(is.na(draftData$risk)) & !is.na(draftData$projections) & draftData$pos=="WR",]
 
 #TE
-draftData[!(draftData$name %in% drafted) & draftData$risk >=6 & !(is.na(draftData$risk)) & draftData$pos=="TE",]
+draftData[!(draftData$name %in% drafted) & draftData$risk >=6 & !(is.na(draftData$risk)) & !is.na(draftData$projections) & draftData$pos=="TE",]
 
 ### Kickers ###
 kickers[!(kickers$name %in% drafted),]

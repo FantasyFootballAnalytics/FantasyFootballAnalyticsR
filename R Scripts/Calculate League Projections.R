@@ -47,7 +47,8 @@ projections <- merge(projections, projections_fp, by=c("name","pos"), all=TRUE)
 #Remove duplicate cases
 projections[duplicated(projections$name),]
 projections[projections$name %in% projections[duplicated(projections$name),"name"],]
-projections[projections$name=="Steve Smith",][c(1),] <- NA
+
+#projections[projections$name=="Steve Smith",][c(1),] <- NA
 projections <- projections[!is.na(projections$name),]
 
 #Determine Team
