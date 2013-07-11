@@ -38,7 +38,8 @@ optimizeTeam(maxRisk=3.5)
 optimizeTeam(maxRisk=3.7)
 optimizeTeam(maxRisk=4.0)
 optimizeTeam(maxRisk=4.1) 
-optimizeTeam(maxRisk=4.4) #optimal
+optimizeTeam(maxRisk=4.4)
+optimizeTeam(maxRisk=5.4) #optimal
 
 #Plot
 ggplot(data=riskData, aes(x=riskLevel, y=projectedPoints)) + geom_point(size=3) + xlab("Max Risk Level") + ylab("Total Projected Points") + ggtitle("Association Between Max Risk Level and Total Projected Points") # + geom_smooth()

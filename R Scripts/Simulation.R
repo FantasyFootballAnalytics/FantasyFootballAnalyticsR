@@ -80,13 +80,13 @@ projectedWithActualPts[projectedWithActualPts$name == "Reggie Wayne",]
 
 #Optimize Solution Sum for Cost
 optimizeTeam(points=optimizeData$solutionSum, maxRisk=100)
-sum(optimizeData[optimizeData$name %in% optimizeTeam(points=optimizeData$solutionSum, maxRisk=100)$players,"projections"]) #pts: 1593
+sum(optimizeData[optimizeData$name %in% optimizeTeam(points=optimizeData$solutionSum, maxRisk=100)$players,"projections"]) #pts: 1567
 
 optimizeTeam(points=optimizeData$solutionSum, maxRisk=5.0)
-sum(optimizeData[optimizeData$name %in% optimizeTeam(points=optimizeData$solutionSum, maxRisk=5.0)$players,"projections"]) #pts: 1567
+sum(optimizeData[optimizeData$name %in% optimizeTeam(points=optimizeData$solutionSum, maxRisk=5.0)$players,"projections"]) #pts: 1553
 
 optimizeTeam(points=optimizeData$solutionSum, maxRisk=3.8)
-sum(optimizeData[optimizeData$name %in% optimizeTeam(points=optimizeData$solutionSum, maxRisk=3.8)$players,"projections"]) #pts: 1530
+sum(optimizeData[optimizeData$name %in% optimizeTeam(points=optimizeData$solutionSum, maxRisk=3.8)$players,"projections"]) #pts: 1526
 
 #Iterate solutions
 projectedPoints <- vector(mode="numeric", length=length(seq(min(optimizeData$risk), max(optimizeData$risk), 0.1)))
@@ -108,8 +108,8 @@ plot(riskTable$riskLevel, riskTable$projectedPoints)
 
 optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=3.3)
 optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=3.4)
-optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=3.5) #optimal
-optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=3.6)
+optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=3.5)
+optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=3.6) #optimal
 optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=3.7)
 optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=4.0)
 optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=4.6)
@@ -119,8 +119,8 @@ optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=6.8)
 
 optimizeTeam(points=optimizeData$solutionSum, maxRisk=3.3)
 optimizeTeam(points=optimizeData$solutionSum, maxRisk=3.4)
-optimizeTeam(points=optimizeData$solutionSum, maxRisk=3.5) #optimal
-optimizeTeam(points=optimizeData$solutionSum, maxRisk=3.6)
+optimizeTeam(points=optimizeData$solutionSum, maxRisk=3.5)
+optimizeTeam(points=optimizeData$solutionSum, maxRisk=3.6) #optimal
 optimizeTeam(points=optimizeData$solutionSum, maxRisk=3.7)
 optimizeTeam(points=optimizeData$solutionSum, maxRisk=4.0)
 optimizeTeam(points=optimizeData$solutionSum, maxRisk=4.4)
@@ -129,19 +129,19 @@ optimizeTeam(points=optimizeData$solutionSum, maxRisk=4.9)
 optimizeTeam(points=optimizeData$solutionSum, maxRisk=6.8)
 
 #Set Optimal Risk
-optimalRisk <- 3.5
+optimalRisk <- 3.6
 
 ###Determine Points for Team that Maximizes Log of Solution Sum with Risk < Optimal Risk
 #Solution
 optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=optimalRisk)
 #Roster + Projections
 optimizeData[optimizeData$name %in% optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=optimalRisk)$players, c("name","projections")]
-#Sum of Projected Points: 1528
+#Sum of Projected Points: 1530
 sum(optimizeData[optimizeData$name %in% optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=optimalRisk)$players, "projections"])
 #Projected Points vs Actual Points
 projectedWithActualPts[projectedWithActualPts$name %in% optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=optimalRisk)$players, c("name","projections","actualPts")]
-#Sum of Actual Points from last year: 1467
+#Sum of Actual Points from last year: 1421
 sum(projectedWithActualPts[projectedWithActualPts$name %in% optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=optimalRisk)$players, "actualPts"])
 
-#Maximum Possible Projected Points with Same Risk: 1528
+#Maximum Possible Projected Points with Same Risk: 1539
 optimizeTeam(maxRisk=optimalRisk)

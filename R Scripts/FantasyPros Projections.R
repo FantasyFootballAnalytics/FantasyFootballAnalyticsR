@@ -82,8 +82,12 @@ projections_fp[projections_fp$name=="Alex Smith",][1,] <- NA
 projections_fp <- projections_fp[-which(projections_fp$name=="Charles Clay" & projections_fp$pos=="RB"),]
 projections_fp <- projections_fp[-which(projections_fp$name=="Dexter McCluster" & projections_fp$pos=="RB"),]
 projections_fp <- projections_fp[-which(projections_fp$name=="Zach Miller" & projections_fp$team_fp=="TB"),]
-#projections_fp <- projections_fp[-which(projections_fp$name=="Dorin Dickerson" & projections_fp$pos=="TE"),]
-#projections_fp <- projections_fp[-which(projections_fp$name=="Evan Rodriguez" & projections_fp$pos=="RB"),]
+projections_fp <- projections_fp[-which(projections_fp$name=="Dorin Dickerson" & projections_fp$pos=="WR"),]
+projections_fp <- projections_fp[-which(projections_fp$name=="Dorin Dickerson" & projections_fp$pos=="RB"),]
+projections_fp <- projections_fp[-which(projections_fp$name=="Evan Rodriguez" & projections_fp$pos=="RB"),]
+projections_fp <- projections_fp[-which(projections_fp$name=="Niles Paul" & projections_fp$pos=="WR"),]
+projections_fp <- projections_fp[-which(projections_fp$name=="Steve Smith" & is.na(projections_fp$team_fp)),]
+projections_fp <- projections_fp[-which(projections_fp$name=="David Johnson" & projections_fp$pos=="TE"),]
 
 #Remove rows with all NAs
 projections_fp <- projections_fp[apply(projections_fp, 1, function(x) any(!is.na(x))),]

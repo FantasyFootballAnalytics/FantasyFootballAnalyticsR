@@ -30,15 +30,16 @@ experts <- readHTMLTable("http://www.fantasypros.com/nfl/rankings/consensus-chea
 experts$sdPick_experts <- as.numeric(experts[,"Std Dev"])
 experts$pick_experts <- as.numeric(experts$Ave)
 #experts$name <- str_sub(experts[,c("Player, pos (team/bye)")], end=str_locate(experts[,c("Player, pos (team/bye)")], '\\(')[,1]-2)
-experts$name <- str_sub(experts[,c("Player, pos (team/bye)")], end=str_locate(experts[,c("Player, pos (team/bye)")], ',')[,1]-1)
+#experts$name <- str_sub(experts[,c("Player, pos (team/bye)")], end=str_locate(experts[,c("Player, pos (team/bye)")], ',')[,1]-1)
+experts$name <- str_sub(experts[,c("Player (team/bye)")], end=str_locate(experts[,c("Player (team/bye)")], '\\(')[,1]-2)
 
 #Rename Players
-experts[grep("Beanie", experts[,c("Player, pos (team/bye)")]),"name"] <- "Beanie Wells"
-experts[grep("Ty Hilton", experts[,c("Player, pos (team/bye)")]),"name"] <- "T.Y. Hilton"
-experts[grep("Robert Housler", experts[,c("Player, pos (team/bye)")]),"name"] <- "Rob Housler"
-experts[grep("Reuben Randle", experts[,c("Player, pos (team/bye)")]),"name"] <- "Rueben Randle"
-experts[grep("Joseph Morgan", experts[,c("Player, pos (team/bye)")]),"name"] <- "Joe Morgan"
-experts[grep("Christopher Ivory", experts[,c("Player, pos (team/bye)")]),"name"] <- "Chris Ivory"
+experts[grep("Beanie", experts[,c("Player (team/bye)")]),"name"] <- "Beanie Wells"
+experts[grep("Ty Hilton", experts[,c("Player (team/bye)")]),"name"] <- "T.Y. Hilton"
+experts[grep("Robert Housler", experts[,c("Player (team/bye)")]),"name"] <- "Rob Housler"
+experts[grep("Reuben Randle", experts[,c("Player (team/bye)")]),"name"] <- "Rueben Randle"
+experts[grep("Joseph Morgan", experts[,c("Player (team/bye)")]),"name"] <- "Joe Morgan"
+experts[grep("Christopher Ivory", experts[,c("Player (team/bye)")]),"name"] <- "Chris Ivory"
 
 experts <- experts[c("name","pick_experts","sdPick_experts")]
 
