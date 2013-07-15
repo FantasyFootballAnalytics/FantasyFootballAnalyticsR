@@ -8,7 +8,7 @@
 ###########################
 
 #Specify Maximum Risk
-maxRisk <- 4.6
+maxRisk <- 5.4
 
 #Library
 library("Rglpk")
@@ -74,16 +74,16 @@ drafted <- c(myteam$player,"")
 
 ### Optimize Team ###
 # Projected Points
-optimizeDraft(maxRisk=3.5, omit=drafted) #From Optimum Risk.R
-optimizeDraft(maxRisk=4.4, omit=drafted) #From Simulation.R
+optimizeDraft(maxRisk=5.4, omit=drafted) #From Optimum Risk.R
+optimizeDraft(maxRisk=3.6, omit=drafted) #From Simulation.R
 optimizeDraft(maxRisk=100, omit=drafted)
 
 # Simulated Points
-optimizeDraft(maxRisk=3.5, omit=drafted, points=removedPlayers$simulation) #From Optimum Risk.R
-sum(draftData[draftData$name %in% optimizeDraft(maxRisk=3.5, omit=drafted, points=removedPlayers$simulation)$players, "projections"]) #1528
+optimizeDraft(maxRisk=5.4, omit=drafted, points=removedPlayers$simulation) #From Optimum Risk.R
+sum(draftData[draftData$name %in% optimizeDraft(maxRisk=5.4, omit=drafted, points=removedPlayers$simulation)$players, "projections"]) #1528
 
-optimizeDraft(maxRisk=4.4, omit=drafted, points=removedPlayers$simulation) #From Simulation.R
-sum(draftData[draftData$name %in% optimizeDraft(maxRisk=4.4, omit=drafted, points=removedPlayers$simulation)$players, "projections"]) #1540
+optimizeDraft(maxRisk=3.6, omit=drafted, points=removedPlayers$simulation) #From Simulation.R
+sum(draftData[draftData$name %in% optimizeDraft(maxRisk=3.6, omit=drafted, points=removedPlayers$simulation)$players, "projections"]) #1540
 
 optimizeDraft(maxRisk=100, omit=drafted, points=removedPlayers$simulation)
 sum(draftData[draftData$name %in% optimizeDraft(maxRisk=100, omit=drafted, points=removedPlayers$simulation)$players, "projections"]) #1536

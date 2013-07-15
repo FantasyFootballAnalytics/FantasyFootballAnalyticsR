@@ -80,7 +80,7 @@ shinyData <- shinyData[order(-shinyData$points),]
 row.names(shinyData) <- 1:dim(shinyData)[1]
 
 #Select Variables to Keep
-shinyData <- shinyData[,c("name","pos","team","overallRank","positionRank","passYds","passTds","passInt","rushYds","rushTds","rec","recYds","recTds","twoPts","fumbles","points","cost","risk")]
+shinyData <- shinyData[,c("name","pos","team","overallRank","positionRank","passYds","passTds","passInt","rushYds","rushTds","rec","recYds","recTds","twoPts","fumbles","cost","risk")] #,"points"
 
 #Save file
 save(shinyData, file = paste(getwd(),"/Data/shinyData-2013.RData", sep=""))

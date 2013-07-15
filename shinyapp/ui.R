@@ -10,7 +10,8 @@
 library("shiny")
 
 #Load Data
-shinyData <- read.csv("./shinyData.csv")
+#shinyData <- read.csv("./shinyData.csv")
+shinyData <- read.csv("/home/dadrivr/ShinyApps/FantasyFootballDraftOptimizer/shinyData.csv")
 
 # Define UI for miles per gallon application
 shinyUI(pageWithSidebar(

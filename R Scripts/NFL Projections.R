@@ -79,11 +79,16 @@ projections_nfl$fumbles_nfl <- as.numeric(projections_nfl$fumbles_nfl)
 projections_nfl$pts_nfl <- as.numeric(projections_nfl$pts_nfl)
 
 #Player names
-qbnames <- str_sub(projections_nfl$player_nfl, end=str_locate(string=projections_nfl$player_nfl, c("QB -"))[,1]-2)
-rbnames <- str_sub(projections_nfl$player_nfl, end=str_locate(string=projections_nfl$player_nfl, c("RB -"))[,1]-2)
-wrnames <- str_sub(projections_nfl$player_nfl, end=str_locate(string=projections_nfl$player_nfl, c("WR -"))[,1]-2)
-tenames <- str_sub(projections_nfl$player_nfl, end=str_locate(string=projections_nfl$player_nfl, c("TE -"))[,1]-2)
+qbnames <- str_sub(projections_nfl$player_nfl, end=str_locate(string=projections_nfl$player_nfl, c("QB"))[,1]-2) #"QB -"
+rbnames <- str_sub(projections_nfl$player_nfl, end=str_locate(string=projections_nfl$player_nfl, c("RB"))[,1]-2) #"RB -"
+wrnames <- str_sub(projections_nfl$player_nfl, end=str_locate(string=projections_nfl$player_nfl, c("WR"))[,1]-2) #"WR -"
+tenames <- str_sub(projections_nfl$player_nfl, end=str_locate(string=projections_nfl$player_nfl, c("TE"))[,1]-2) #"TE -"
 
+qbnames <- qbnames[1:length(projections_nfl[which(projections_nfl$pos == "QB"),"pos"])]
+rbnames <- rbnames[(length(projections_nfl[which(projections_nfl$pos == "QB"),"pos"]) + 1):(length(projections_nfl[which(projections_nfl$pos == "QB"),"pos"]) + length(projections_nfl[which(projections_nfl$pos == "RB"),"pos"]))]
+wrnames <- wrnames[(length(projections_nfl[which(projections_nfl$pos == "QB"),"pos"]) + length(projections_nfl[which(projections_nfl$pos == "RB"),"pos"]) + 1):(length(projections_nfl[which(projections_nfl$pos == "QB"),"pos"]) + length(projections_nfl[which(projections_nfl$pos == "RB"),"pos"]) + length(projections_nfl[which(projections_nfl$pos == "WR"),"pos"]))]
+tenames <- tenames[(length(projections_nfl[which(projections_nfl$pos == "QB"),"pos"]) + length(projections_nfl[which(projections_nfl$pos == "RB"),"pos"]) + length(projections_nfl[which(projections_nfl$pos == "WR"),"pos"]) + 1):(length(projections_nfl[which(projections_nfl$pos == "QB"),"pos"]) + length(projections_nfl[which(projections_nfl$pos == "RB"),"pos"]) + length(projections_nfl[which(projections_nfl$pos == "WR"),"pos"]) + length(projections_nfl[which(projections_nfl$pos == "TE"),"pos"]))]
+  
 projections_nfl$name <- c(na.omit(qbnames),na.omit(rbnames),na.omit(wrnames),na.omit(tenames))
 
 #Player teams

@@ -35,11 +35,13 @@ actualPoints[which(actualPoints$name=="Stevie Johnson"),"name"] <- "Steve Johnso
 projectedWithActualPts <- merge(projections, actualPoints, by="name", all.x=TRUE)
 
 #Remove duplicate cases
-projectedWithActualPts[duplicated(projectedWithActualPts$name),]
-projectedWithActualPts[projectedWithActualPts$name=="Alex Smith",]
-projectedWithActualPts[projectedWithActualPts$name=="Steve Smith",]
+projectedWithActualPts[projectedWithActualPts$name %in% projectedWithActualPts[duplicated(projectedWithActualPts$name),"name"],]
 
-projectedWithActualPts[projectedWithActualPts$name=="Alex Smith",][1,] <- NA
+#projectedWithActualPts[duplicated(projectedWithActualPts$name),]
+#projectedWithActualPts[projectedWithActualPts$name=="Alex Smith",]
+#projectedWithActualPts[projectedWithActualPts$name=="Steve Smith",]
+
+projectedWithActualPts[projectedWithActualPts$name=="Alex Smith",][2,] <- NA
 projectedWithActualPts <- projectedWithActualPts[!is.na(projectedWithActualPts$name),]
 projectedWithActualPts[projectedWithActualPts$name=="Steve Smith",][2,] <- NA
 projectedWithActualPts <- projectedWithActualPts[!is.na(projectedWithActualPts$name),]

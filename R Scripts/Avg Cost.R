@@ -35,11 +35,9 @@ avgcost_yahoo3$name[avgcost_yahoo3$name=="Stevie Johnson"] <- "Steve Johnson"
 
 #Merge
 projections <- merge(projections, avgcost_yahoo3, by="name", all.x=TRUE)
-projections$avgCost[is.na(projections$avgCost)==TRUE] <- 1
-projections$projectedCost[is.na(projections$projectedCost)==TRUE] <- 1
 
+#Calculate Overall Rank
 projections$overallRank <- rank(-projections$projections, ties.method="min")
-projections <- projections[order(projections$overallRank),]
 
 #Remove duplicate cases
 projections[duplicated(projections$name),]
@@ -51,6 +49,13 @@ projections$inflatedCost[projections$overallRank >= 34 & projections$overallRank
 projections$inflatedCost[projections$overallRank >= 67] <- ceiling(projections$avgCost[projections$overallRank >= 67] * (leagueCap/defaultCap) * 0.9)
 projections$inflatedCost[is.na(projections$inflatedCost)==TRUE] <- 1
 projections$inflatedCost[projections$inflatedCost==0] <- 1
+
+projections$avgCost[is.na(projections$avgCost)==TRUE] <- 1
+projections$projectedCost[is.na(projections$projectedCost)==TRUE] <- 1
+projections$inflatedCost[is.na(projections$inflatedCost)==TRUE] <- 1
+
+#Order data
+projections <- projections[order(projections$overallRank),]
 
 #Density Plot
 ggplot(projections, aes(x=inflatedCost)) + geom_density(fill="green", alpha=.3) + xlab("Player's Intrinsic Value (Cost)") + ggtitle("Density Plot of Players' Values from 2013") + theme(legend.title=element_blank())

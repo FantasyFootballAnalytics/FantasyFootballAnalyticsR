@@ -37,7 +37,8 @@ projections[duplicated(projections$name),]
 projections <- merge(projections, projections_nfl, by=c("name","pos"), all=TRUE)
 
 #Remove duplicate cases
-projections[duplicated(projections$name),]
+projections[projections$name %in% projections[duplicated(projections$name),"name"],]
+#projections[duplicated(projections$name),]
 
 #projections[projections$name=="Steve Smith" & projections$team_espn=="STL",c("team_nfl","positionRank_nfl","overallRank_nfl","passYds_nfl","passTds_nfl","passInt_nfl","rushYds_nfl","rushTds_nfl","recYds_nfl","recTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")] <- NA
 
@@ -45,24 +46,48 @@ projections[duplicated(projections$name),]
 projections <- merge(projections, projections_fp, by=c("name","pos"), all=TRUE)
 
 #Remove duplicate cases
-projections[duplicated(projections$name),]
+
 projections[projections$name %in% projections[duplicated(projections$name),"name"],]
+#projections[duplicated(projections$name),]
 
 #projections[projections$name=="Steve Smith",][c(1),] <- NA
-projections <- projections[!is.na(projections$name),]
+#projections <- projections[!is.na(projections$name),]
 
 #Determine Team
 projections$team <- NA
 for (i in 1:dim(projections)[1]){
-  if(is.na(projections[i,"team_espn"])==TRUE & is.na(projections[i,"team_cbs"])==TRUE & is.na(projections[i,"team_nfl"])==TRUE){
+  #If all are NA, set to NA
+  if(is.na(projections[i,"team_espn"])==TRUE & is.na(projections[i,"team_cbs"])==TRUE & is.na(projections[i,"team_nfl"])==TRUE & is.na(projections[i,"team_fp"])==TRUE){
     projections[i,"team"] <- NA
-  } else if (is.na(projections[i,"team_espn"])==TRUE & is.na(projections[i,"team_cbs"])==TRUE){
+  }
+  
+  #If all but one is NA, set to only one available
+  else if (is.na(projections[i,"team_espn"])==TRUE & is.na(projections[i,"team_cbs"])==TRUE & is.na(projections[i,"team_nfl"])==TRUE){
+    projections[i,"team"] <- projections[i,"team_fp"]
+  } else if (is.na(projections[i,"team_espn"])==TRUE & is.na(projections[i,"team_cbs"])==TRUE & is.na(projections[i,"team_fp"])==TRUE){
+    projections[i,"team"] <- projections[i,"team_nfl"]
+  } else if (is.na(projections[i,"team_espn"])==TRUE & is.na(projections[i,"team_nfl"])==TRUE & is.na(projections[i,"team_fp"])==TRUE){
+    projections[i,"team"] <- projections[i,"team_cbs"]
+  } else if (is.na(projections[i,"team_cbs"])==TRUE & is.na(projections[i,"team_nfl"])==TRUE & is.na(projections[i,"team_fp"])==TRUE){
+    projections[i,"team"] <- projections[i,"team_espn"]
+  }
+  
+  #If FantasyPros available, set as FantasyPros
+  else if (is.na(projections[i,"team_nfl"])==FALSE){
+    projections[i,"team"] <- projections[i,"team_fp"]
+  }
+  
+  #If FantasyPros is not available, and only one is available, set as only one available
+  else if (is.na(projections[i,"team_espn"])==TRUE & is.na(projections[i,"team_cbs"])==TRUE){
     projections[i,"team"] <- projections[i,"team_nfl"]
   } else if (is.na(projections[i,"team_espn"])==TRUE & is.na(projections[i,"team_nfl"])==TRUE){
     projections[i,"team"] <- projections[i,"team_cbs"]
   } else if (is.na(projections[i,"team_cbs"])==TRUE & is.na(projections[i,"team_nfl"])==TRUE){
     projections[i,"team"] <- projections[i,"team_espn"]
-  } else if (is.na(projections[i,"team_espn"])==TRUE){
+  }
+  
+  #Settle conflicts
+  else if (is.na(projections[i,"team_espn"])==TRUE){
     ifelse(length(unique(c(projections[i,"team_cbs"],projections[i,"team_nfl"])))==1, projections[i,"team"] <- unique(c(projections[i,"team_cbs"],projections[i,"team_nfl"])), projections[i,"team"] <- paste(projections[i,"team_cbs"], projections[i,"team_nfl"], sep="/"))
   } else if (is.na(projections[i,"team_cbs"])==TRUE){
     ifelse(length(unique(c(projections[i,"team_espn"],projections[i,"team_nfl"])))==1, projections[i,"team"] <- unique(c(projections[i,"team_espn"],projections[i,"team_nfl"])), projections[i,"team"] <- paste(projections[i,"team_espn"], projections[i,"team_nfl"], sep="/"))
@@ -76,10 +101,16 @@ for (i in 1:dim(projections)[1]){
     projections[i,"team"] <- projections[i,"team_nfl"]
   } else if (projections[i,"team_cbs"] == projections[i,"team_nfl"]){
     projections[i,"team"] <- projections[i,"team_cbs"]
-  } else{
+  }
+  
+  #Otherwise set to FantasyPros
+  else{
     projections[i,"team"] <- projections[i,"team_fp"]
   }
 }
+
+#Check teams
+projections[,c("name","pos","team_espn","team_cbs","team_nfl","team_fp","team")]
 
 #Calculate projections from each source
 projections$passYdsPts_espn <- projections$passYds_espn*passYdsMultiplier

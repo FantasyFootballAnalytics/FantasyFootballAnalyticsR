@@ -13,7 +13,8 @@ library(shiny)
 library(Rglpk)
 
 #Load Data
-shinyData <- read.csv("./shinyData.csv")
+#shinyData <- read.csv("./shinyData.csv")
+shinyData <- read.csv("/home/dadrivr/ShinyApps/FantasyFootballDraftOptimizer/shinyData.csv")
 
 # Define server logic
 shinyServer(function(input, output) {
