@@ -17,13 +17,16 @@ shinyData <- read.csv("/home/dadrivr/ShinyApps/FantasyFootballDraftOptimizer/shi
 shinyUI(pageWithSidebar(
   
   # Application title
-  headerPanel("Fantasy Football Draft Optimizer"),
+  headerPanel("Fantasy Football Auction Draft Optimizer"),
   
   sidebarPanel(
     p("For directions on how to use optimizer, see ",
-      a("here.", href="http://fantasyfootballanalyticsr.blogspot.com/")
+      a("here.", href="http://fantasyfootballanalyticsr.blogspot.com/2013/06/win-your-fantasy-football-auction-draft.html")
     ),
     
+    p("Projections from ", a("FantasyPros.", href="http://www.fantasypros.com/nfl/projections/qb.php")),
+    
+    numericInput("numTeams", "Number of Teams:", 10),
     numericInput("leagueCap", "League Cap:", 200),
     numericInput("numTotalPlayers", "Total Number of Players on Roster:", 20),
     

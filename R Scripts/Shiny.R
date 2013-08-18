@@ -10,8 +10,13 @@
 library("stringr")
 library("XML")
 
-#Download FantasyPros
+#Source Files
+source(paste(getwd(),"/R Scripts/ESPN Projections.R", sep=""), echo=TRUE) #need for calculating risk (sd)
+source(paste(getwd(),"/R Scripts/CBS Projections.R", sep=""), echo=TRUE) #need for calculating risk (sd)
+source(paste(getwd(),"/R Scripts/NFL Projections.R", sep=""), echo=TRUE) #need for calculating risk (sd)
 source(paste(getwd(),"/R Scripts/FantasyPros Projections.R", sep=""), echo=TRUE)
+source(paste(getwd(),"/R Scripts/Calculate League Projections.R", sep=""), echo=TRUE) #for Risk.R
+source(paste(getwd(),"/R Scripts/Evaluate Projections.R", sep=""), echo=TRUE) #for Risk.R
 source(paste(getwd(),"/R Scripts/Risk.R", sep=""), echo=TRUE)
 
 #Load data
@@ -25,15 +30,16 @@ avgcost <- readHTMLTable("http://www.fantasypros.com/nfl/auction-values/overall.
 
 ###Fantasy Pros
 avgcost$name <- str_sub(avgcost[,c("Player (pos, team, bye)")], end=str_locate(avgcost[,c("Player (pos, team, bye)")], ',')[,1]-1)
-avgcost$cost <- as.numeric(sub("\\$","", avgcost$Ave))
+#avgcost$cost <- as.numeric(sub("\\$","", avgcost$Ave)) ###IMPORTANT: Avg cost for FantasyPros is messed up bc they have a source with cost of zeros for all players -- use max instead
+avgcost$cost <- as.numeric(sub("\\$","", avgcost$Max))
 avgcost <- avgcost[,c("name","cost")]
 
 #Rename Players
 avgcost[grep("Beanie", avgcost[,c("name")]),"name"] <- "Beanie Wells"
 avgcost[grep("Ty Hilton", avgcost[,c("name")]),"name"] <- "T.Y. Hilton"
 avgcost[grep("Robert Housler", avgcost[,c("name")]),"name"] <- "Rob Housler"
-avgcost[grep("Reuben Randle", avgcost[,c("name")]),"name"] <- "Rueben Randle"
-avgcost[grep("Joseph Morgan", avgcost[,c("name")]),"name"] <- "Joe Morgan"
+#avgcost[grep("Reuben Randle", avgcost[,c("name")]),"name"] <- "Rueben Randle"
+#avgcost[grep("Joseph Morgan", avgcost[,c("name")]),"name"] <- "Joe Morgan"
 avgcost[grep("Christopher Ivory", avgcost[,c("name")]),"name"] <- "Chris Ivory"
 
 #Merge

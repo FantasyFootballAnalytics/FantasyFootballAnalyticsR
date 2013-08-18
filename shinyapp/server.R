@@ -14,10 +14,13 @@ library(Rglpk)
 
 #Load Data
 #shinyData <- read.csv("./shinyData.csv")
-shinyData <- read.csv("/home/dadrivr/ShinyApps/FantasyFootballDraftOptimizer/shinyData.csv")
+#shinyData <- read.csv("/home/dadrivr/ShinyApps/FantasyFootballDraftOptimizer/shinyData.csv")
 
 # Define server logic
 shinyServer(function(input, output) {
+  
+  #Load Data
+  shinyData <- read.csv("/home/dadrivr/ShinyApps/FantasyFootballDraftOptimizer/shinyData.csv")
   
   #Calculate inverse multipliers
   passYdsMultiplierInv <- reactive({
@@ -60,9 +63,9 @@ shinyServer(function(input, output) {
     shinyData$overallRank <- rank(-shinyData$projectedPts, ties.method="min")
     
     #Calculate projected cost
-    shinyData$projectedCost[shinyData$overallRank <= 33] <- ceiling(shinyData$cost[shinyData$overallRank <= 33] * (input$leagueCap/200) * 1.1)
-    shinyData$projectedCost[shinyData$overallRank >= 34 & shinyData$overallRank <= 66] <- ceiling(shinyData$cost[shinyData$overallRank >= 34 & shinyData$overallRank <= 66] * (input$leagueCap/200) * 1.0)
-    shinyData$projectedCost[shinyData$overallRank >= 67] <- ceiling(shinyData$cost[shinyData$overallRank >= 67] * (input$leagueCap/200) * 0.9)
+    shinyData$projectedCost[shinyData$overallRank <= 33] <- ceiling(shinyData$cost[shinyData$overallRank <= 33] * (input$numTeams/10) * (input$leagueCap/200) * 1.1)
+    shinyData$projectedCost[shinyData$overallRank >= 34 & shinyData$overallRank <= 66] <- ceiling(shinyData$cost[shinyData$overallRank >= 34 & shinyData$overallRank <= 66] * (input$numTeams/10) * (input$leagueCap/200) * 1.0)
+    shinyData$projectedCost[shinyData$overallRank >= 67] <- ceiling(shinyData$cost[shinyData$overallRank >= 67] * (input$numTeams/10) * (input$leagueCap/200) * 0.9)
     shinyData$projectedCost[is.na(shinyData$projectedCost)==TRUE] <- 1
     shinyData$projectedCost[shinyData$projectedCost==0] <- 1
     

@@ -72,7 +72,8 @@ projections_fp <- adply(projections_fp, 1, function(x) {
 #projections_fp[is.na(projections_fp$name==TRUE),"name"] <- projections_fp[is.na(projections_fp$name==TRUE),"player_fp"]
 
 #Player teams
-projections_fp$team_fp <- str_sub(projections_fp$player_fp, start=str_locate(string=projections_fp$player_fp, '\\(')[,1]+1, end = str_locate(string=projections_fp$player_fp, ',')[,1]-1)
+#projections_fp$team_fp <- str_sub(projections_fp$player_fp, start=str_locate(string=projections_fp$player_fp, '\\(')[,1]+1, end = str_locate(string=projections_fp$player_fp, ',')[,1]-1)
+projections_fp$team_fp <- str_sub(projections_fp$player_fp, start=str_locate(string=projections_fp$player_fp, '\\(')[,1]+1, end = str_locate(string=projections_fp$player_fp, '\\)')[,1]-1)
 
 #Remove duplicate cases
 #projections_fp[duplicated(projections_fp$name),]
@@ -81,13 +82,14 @@ projections_fp[projections_fp$name %in% projections_fp[duplicated(projections_fp
 #projections_fp[projections_fp$name=="Alex Smith",][1,] <- NA
 projections_fp <- projections_fp[-which(projections_fp$name=="Alex Smith" & projections_fp$pos=="TE"),]
 projections_fp <- projections_fp[-which(projections_fp$name=="Charles Clay" & projections_fp$pos=="RB"),]
-projections_fp <- projections_fp[-which(projections_fp$name=="Chris Givens" & projections_fp$team_fp=="NO"),]
+#projections_fp <- projections_fp[-which(projections_fp$name=="Chris Givens" & projections_fp$team_fp=="NO"),]
+projections_fp <- projections_fp[-which(projections_fp$name=="Clay Harbor" & projections_fp$pos=="WR"),]
 projections_fp <- projections_fp[-which(projections_fp$name=="David Johnson" & projections_fp$pos=="TE"),]
 projections_fp <- projections_fp[-which(projections_fp$name=="Dexter McCluster" & projections_fp$pos=="RB"),]
 projections_fp <- projections_fp[-which(projections_fp$name=="Dorin Dickerson" & projections_fp$pos=="WR"),]
 projections_fp <- projections_fp[-which(projections_fp$name=="Dorin Dickerson" & projections_fp$pos=="RB"),]
 projections_fp <- projections_fp[-which(projections_fp$name=="Evan Rodriguez" & projections_fp$pos=="RB"),]
-projections_fp <- projections_fp[-which(projections_fp$name=="James Casey" & projections_fp$pos=="RB"),]
+#projections_fp <- projections_fp[-which(projections_fp$name=="James Casey" & projections_fp$pos=="RB"),]
 projections_fp <- projections_fp[-which(projections_fp$name=="Niles Paul" & projections_fp$pos=="WR"),]
 projections_fp <- projections_fp[-which(projections_fp$name=="Steve Smith" & is.na(projections_fp$team_fp)),]
 projections_fp <- projections_fp[-which(projections_fp$name=="Zach Miller" & projections_fp$team_fp=="TB"),]
