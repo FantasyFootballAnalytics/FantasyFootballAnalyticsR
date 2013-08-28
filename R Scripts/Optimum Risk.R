@@ -32,14 +32,15 @@ for (i in seq(0, max(optimizeData$risk), 0.1)){
 riskData <- as.data.frame(cbind(riskLevel,projectedPoints))
 riskData[match(unique(riskData$projectedPoints),riskData$projectedPoints),c("riskLevel","projectedPoints")]
 
-optimizeTeam(maxRisk=3.3)
+optimizeTeam(maxRisk=3.3) #optimal
 optimizeTeam(maxRisk=3.4)
 optimizeTeam(maxRisk=3.5)
 optimizeTeam(maxRisk=3.7)
 optimizeTeam(maxRisk=4.0)
-optimizeTeam(maxRisk=4.1) 
+optimizeTeam(maxRisk=4.1) #optimal
 optimizeTeam(maxRisk=4.4)
-optimizeTeam(maxRisk=5.4) #optimal
+optimizeTeam(maxRisk=5.4)
+optimizeTeam(maxRisk=100)
 
 #Plot
 ggplot(data=riskData, aes(x=riskLevel, y=projectedPoints)) + geom_point(size=3) + xlab("Max Risk Level") + ylab("Total Projected Points") + ggtitle("Association Between Max Risk Level and Total Projected Points") # + geom_smooth()

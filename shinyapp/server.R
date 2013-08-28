@@ -20,7 +20,8 @@ library(Rglpk)
 shinyServer(function(input, output) {
   
   #Load Data
-  shinyData <- read.csv("/home/dadrivr/ShinyApps/FantasyFootballDraftOptimizer/shinyData.csv")
+  #shinyData <- read.csv("/home/dadrivr/ShinyApps/FantasyFootballDraftOptimizer/shinyData.csv")
+  shinyData <- read.csv("./shinyData.csv")
   
   #Calculate inverse multipliers
   passYdsMultiplierInv <- reactive({
@@ -228,29 +229,65 @@ shinyServer(function(input, output) {
       numToDraft())
   })
   
+  #Error handling
+  possibleError <- reactive({
+    tryCatch(
+      Rglpk_solve_LP(obj = removedPlayers()$projectedPts, mat = A(), dir = dir(), rhs = b(),types = var.types(), max = TRUE),
+      error=function(e) e
+    )
+  })
+  
   bestTeam <- reactive({
-    sol <- Rglpk_solve_LP(obj = removedPlayers()$projectedPts, mat = A(), dir = dir(), rhs = b(),types = var.types(), max = TRUE)
-    sol$playerInfo <- as.data.frame(merge(removedPlayers()[removedPlayers()$name %in% removedPlayers()[sol$solution == 1,"name"],c("name","pos","team")], removedPlayers()[sol$solution == 1,c("name","projectedPts","risk","projectedCost")], by="name"))
-    sol$playerInfo[,"projectedCost"] <- as.integer(sol$playerInfo[,"projectedCost"])
-    sol$totalCost <- sum(removedPlayers()$projectedCost * sol$solution)
-    sol$players <- as.character(removedPlayers()$name[sol$solution == 1])
+    #Error handling
+    #possibleError <- tryCatch(
+    #  Rglpk_solve_LP(obj = removedPlayers()$projectedPts, mat = A(), dir = dir(), rhs = b(),types = var.types(), max = TRUE),
+    #  error=function(e) e
+    #)
+    
+    if(!inherits(possibleError(), "error")){
+      sol <- Rglpk_solve_LP(obj = removedPlayers()$projectedPts, mat = A(), dir = dir(), rhs = b(),types = var.types(), max = TRUE)
+      sol$playerInfo <- as.data.frame(merge(removedPlayers()[removedPlayers()$name %in% removedPlayers()[sol$solution == 1,"name"],c("name","pos","team")], removedPlayers()[sol$solution == 1,c("name","projectedPts","risk","projectedCost")], by="name"))
+      sol$playerInfo[,"projectedCost"] <- as.integer(sol$playerInfo[,"projectedCost"])
+      sol$totalCost <- sum(removedPlayers()$projectedCost * sol$solution)
+      sol$players <- as.character(removedPlayers()$name[sol$solution == 1])
+    } else{
+      sol$playerInfo <- as.data.frame("No available players meet the chosen criteria")
+      sol$totalCost <- 0
+      sol$players <- "No available players meet the chosen criteria"
+      sol$optimum <- 0
+    }
+    
+    #tryCatch(, error=function(e) median(as.numeric(as.vector(itemDiscriminabilitySummary[i, 3:dim(itemDiscriminabilitySummary)[2]])), na.rm=TRUE))
+    
+    #sol <- Rglpk_solve_LP(obj = removedPlayers()$projectedPts, mat = A(), dir = dir(), rhs = b(),types = var.types(), max = TRUE)
+    #sol$playerInfo <- as.data.frame(merge(removedPlayers()[removedPlayers()$name %in% removedPlayers()[sol$solution == 1,"name"],c("name","pos","team")], removedPlayers()[sol$solution == 1,c("name","projectedPts","risk","projectedCost")], by="name"))
+    #sol$playerInfo[,"projectedCost"] <- as.integer(sol$playerInfo[,"projectedCost"])
+    #sol$totalCost <- sum(removedPlayers()$projectedCost * sol$solution)
+    #sol$players <- as.character(removedPlayers()$name[sol$solution == 1])
     
     return(sol)
   })
   
   #Output: best team
   output$bestTeam <- renderTable({
-    bestTeam()$playerInfo
+    if(dim(bestTeam()$playerInfo)[1] != 0){
+    #if(!is.null(bestTeam()$playerInfo)){
+      bestTeam()$playerInfo
+    }
   })
   
   #Output: sum of projected points
   output$totalPoints <- renderText({
-    paste("Projected Points: ", bestTeam()$optimum)
+    if(!is.null(bestTeam()$optimum)){
+      paste("Projected Points: ", bestTeam()$optimum)
+    }
   })
   
   #Output: sum of projected cost
   output$totalCost <- renderText({
-    paste("Total Cost: ", bestTeam()$totalCost)
+    if(!is.null(bestTeam()$totalCost)){
+      paste("Total Cost: ", bestTeam()$totalCost)
+    }
   })
   
   #Output: cap available (max cost) for starters

@@ -10,8 +10,8 @@
 library("shiny")
 
 #Load Data
-#shinyData <- read.csv("./shinyData.csv")
-shinyData <- read.csv("/home/dadrivr/ShinyApps/FantasyFootballDraftOptimizer/shinyData.csv")
+shinyData <- read.csv("./shinyData.csv")
+#shinyData <- read.csv("/home/dadrivr/ShinyApps/FantasyFootballDraftOptimizer/shinyData.csv")
 
 # Define UI for miles per gallon application
 shinyUI(pageWithSidebar(
@@ -41,12 +41,22 @@ shinyUI(pageWithSidebar(
     #numericInput("twoPtsMultiplier", "Points Per 2-Pt Conversions:", 0),
     numericInput("fumbleMulitplier", "Points Per Fumble:", -2),
     
+    #wellPanel(uiOutput("var"),tags$style(type='text/css', "#var { height: 400px;}")),
+    
+    #tags$head(
+    #tags$style(type="text/css", "select { height: 400px; }")
+    #),
+    
+    tags$style(type='text/css', "#yourDrafted { height: 400px; }"),
+    tags$style(type='text/css', "#otherDrafted { height: 400px; }"),
+    
     selectInput("yourDrafted", "Players You Drafted:", sort(shinyData$name), multiple=TRUE),
     numericInput("capSpent", "Cap Spent:", 0),
     selectInput("otherDrafted", "Other Players Drafted:", sort(shinyData$name), multiple=TRUE),
     
     sliderInput("maxRisk", "Max Player Risk Tolerance:", 
-                min = ceiling(min(shinyData$risk, na.rm=TRUE)), 
+                #min = ceiling(min(shinyData$risk, na.rm=TRUE)),
+                min = floor(min(shinyData$risk, na.rm=TRUE)), 
                 max = ceiling(max(shinyData$risk, na.rm=TRUE)),
                 step=.1, value = 5),
     

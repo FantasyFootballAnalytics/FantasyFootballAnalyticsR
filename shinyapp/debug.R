@@ -1,11 +1,18 @@
 ### Libraries
+install.packages('httpuv')
+install.packages('devtools')  # Install devtools if needed
+devtools::install_github('shiny', 'rstudio')
+
+load_or_install(c("shiny","Rglpk"))
 library(shiny)
 library(Rglpk)
 
 ### Load Data
-shinyData <- read.csv(paste(getwd(),"/shinyapp/shinyData.csv", sep=""))
+shinyData <- read.csv(paste(path, "/GitHub/FantasyFootballAnalyticsR/shinyapp/shinyData.csv", sep=""))
+#shinyData <- read.csv(paste(getwd(),"/shinyapp/shinyData.csv", sep=""))
 
 ### Run
+runApp(paste(path, "/GitHub/FantasyFootballAnalyticsR/shinyapp", sep=""))
 runApp("./shinyapp")
 
 #setwd("./shinyapp")

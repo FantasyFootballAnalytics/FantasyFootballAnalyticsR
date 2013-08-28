@@ -30,8 +30,8 @@ avgcost <- readHTMLTable("http://www.fantasypros.com/nfl/auction-values/overall.
 
 ###Fantasy Pros
 avgcost$name <- str_sub(avgcost[,c("Player (pos, team, bye)")], end=str_locate(avgcost[,c("Player (pos, team, bye)")], ',')[,1]-1)
-#avgcost$cost <- as.numeric(sub("\\$","", avgcost$Ave)) ###IMPORTANT: Avg cost for FantasyPros is messed up bc they have a source with cost of zeros for all players -- use max instead
-avgcost$cost <- as.numeric(sub("\\$","", avgcost$Max))
+avgcost$cost <- as.numeric(sub("\\$","", avgcost$Ave))
+#avgcost$cost <- as.numeric(sub("\\$","", avgcost$Max)) ###IMPORTANT: Avg cost for FantasyPros is messed up bc they have a source with cost of zeros for all players -- use max instead
 avgcost <- avgcost[,c("name","cost")]
 
 #Rename Players

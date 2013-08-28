@@ -89,8 +89,9 @@ projections_fp <- projections_fp[-which(projections_fp$name=="Dexter McCluster" 
 projections_fp <- projections_fp[-which(projections_fp$name=="Dorin Dickerson" & projections_fp$pos=="WR"),]
 projections_fp <- projections_fp[-which(projections_fp$name=="Dorin Dickerson" & projections_fp$pos=="RB"),]
 projections_fp <- projections_fp[-which(projections_fp$name=="Evan Rodriguez" & projections_fp$pos=="RB"),]
+projections_fp <- projections_fp[-which(projections_fp$name=="Jamie McCoy" & projections_fp$pos=="RB"),]
 #projections_fp <- projections_fp[-which(projections_fp$name=="James Casey" & projections_fp$pos=="RB"),]
-projections_fp <- projections_fp[-which(projections_fp$name=="Niles Paul" & projections_fp$pos=="WR"),]
+#projections_fp <- projections_fp[-which(projections_fp$name=="Niles Paul" & projections_fp$pos=="WR"),]
 projections_fp <- projections_fp[-which(projections_fp$name=="Steve Smith" & is.na(projections_fp$team_fp)),]
 projections_fp <- projections_fp[-which(projections_fp$name=="Zach Miller" & projections_fp$team_fp=="TB"),]
 
