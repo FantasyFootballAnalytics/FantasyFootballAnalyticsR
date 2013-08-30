@@ -1,7 +1,6 @@
 ###########################
 # File: League Settings.R
 # Description: User sets league settings
-# i.e., the maximum bid up to which the player is still on the best team (the team that maximizes your possible points)
 # Date: 6/1/2013
 # Author: Isaac Petersen (isaactpetersen@gmail.com)
 # Notes:

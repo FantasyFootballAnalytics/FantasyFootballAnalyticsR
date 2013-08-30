@@ -15,7 +15,7 @@ calculateMASE <- function(f,y) { # f = vector with forecasts, y = vector with ac
   return(mean(abs((y - f) / ((1/(n-1)) * sum(abs(y[2:n]-y[1:n-1]))))))
 }
 
-#Function for calculating the weighted standard deviation for mean/sd rescaling (below).
+#Function for calculating the weighted standard deviation for mean/sd rescaling (used in the function below)
 weighted.sd <- function(x, w){
   sum.w <- sum(w)
   sum.w2 <- sum(w^2)
