@@ -26,7 +26,11 @@ avgcost_yahoo <- read.csv(paste(getwd(),"/Data/Yahoo-avgcost-2013.csv",sep=""))
 #avgcost <- read.csv(paste(path,"/Fantasy Football/Research/R/avgcost.csv",sep=""))
 avgcost_yahoo2 <- avgcost_yahoo[which(avgcost_yahoo$Avg.Cost!=""),]
 avgcost_yahoo2$name <- as.character(avgcost_yahoo2$Player)
-avgcost_yahoo2$avgCost <- as.numeric((str_replace_all(avgcost_yahoo2$Avg.Cost, "\\$", "")))
+avgcost_yahoo2$avg <- as.numeric((str_replace_all(avgcost_yahoo2$Avg.Cost, "\\$", "")))
+avgcost_yahoo2$projected <- as.numeric((str_replace_all(avgcost_yahoo2$Proj.Value, "\\$", "")))
+
+#avgcost_yahoo2$avgCost <- apply(avgcost_yahoo2[,c("avg","projected")], 1, max, na.rm=TRUE) #Take larger of projected value and average cost
+avgcost_yahoo2$avgCost <- rowMeans(avgcost_yahoo2[,c("avg","projected")], na.rm=TRUE) #Take mean of projected value and average cost
 avgcost_yahoo3 <- avgcost_yahoo2[,c("name","avgCost")]
 avgcost_yahoo3$projectedCost <- ceiling(avgcost_yahoo3$avgCost * (leagueCap/defaultCap))
 

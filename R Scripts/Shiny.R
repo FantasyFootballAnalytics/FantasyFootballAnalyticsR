@@ -21,9 +21,10 @@ source(paste(getwd(),"/R Scripts/Risk.R", sep=""), echo=TRUE)
 
 #Load data
 load(paste(getwd(),"/Data/FantasyPros-Projections-2013.RData", sep=""))
+load(paste(getwd(),"/Data/Risk-2013.RData", sep=""))
 
 #Risk Data
-riskData <- projections[,c("name","risk")]
+riskData <- projections[,c("name","risk","sdPts")]
 
 #Avg & Projected Cost
 avgcost <- readHTMLTable("http://www.fantasypros.com/nfl/auction-values/overall.php", stringsAsFactors = FALSE)$data
@@ -66,7 +67,7 @@ projections$fumbles <- projections$fumbles_fp
 projections$points <- projections$pts_fp
 
 #Subset data to keep players with no missing values for name/pos/points/risk/cost
-shinyData1 <- projections[,c("name","pos","team","passYds","passTds","passInt","rushYds","rushTds","rec","recYds","recTds","twoPts","fumbles","points","cost","risk")]
+shinyData1 <- projections[,c("name","pos","team","passYds","passTds","passInt","rushYds","rushTds","rec","recYds","recTds","twoPts","fumbles","points","cost","risk","sdPts")]
 
 shinyData2 <- na.omit(projections[,c("name","pos","points","cost","risk")])
 
@@ -86,7 +87,7 @@ shinyData <- shinyData[order(-shinyData$points),]
 row.names(shinyData) <- 1:dim(shinyData)[1]
 
 #Select Variables to Keep
-shinyData <- shinyData[,c("name","pos","team","overallRank","positionRank","passYds","passTds","passInt","rushYds","rushTds","rec","recYds","recTds","twoPts","fumbles","cost","risk")] #,"points"
+shinyData <- shinyData[,c("name","pos","team","overallRank","positionRank","passYds","passTds","passInt","rushYds","rushTds","rec","recYds","recTds","twoPts","fumbles","cost","risk","sdPts")] #,"points"
 
 #Save file
 save(shinyData, file = paste(getwd(),"/Data/shinyData-2013.RData", sep=""))

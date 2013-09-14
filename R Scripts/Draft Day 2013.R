@@ -63,18 +63,49 @@ draftData[!(draftData$name %in% drafted),]
 
 ###--UPDATE--###
 myteam <- data.frame(
-  player = c(),
-  position = c(),
-  cost = c()
-  )
+  player = c("Adrian Peterson","Aaron Rodgers","Brandon Marshall",
+             "DeMarco Murray","Lamar Miller","Antonio Gates",
+             "Mike Williams"), #,"Darren Sproles","Jason Witten"
+  position = c("RB","QB","WR","RB","RB","TE","WR"), #,"RB","TE"
+  cost = c(70,55,40,15,21,2,6) #,5,10
+)
 myteam$player <- as.character(myteam$player)
 
-drafted <- c(myteam$player)
+drafted <- c(myteam$player,
+             "Russell Wilson","Arian Foster","Doug Martin","LeSean McCoy","Dez Bryant","J.J. Watt",
+             "Marshawn Lynch","Drew Brees","Larry Fitzgerald","C.J. Spiller","Calvin Johnson",
+             "Cam Newton","Chris Johnson","Jimmy Graham","Matt Forte","Cameron Wake","Steven Jackson",
+             "Jamaal Charles","Jordy Nelson","Ray Rice","Victor Cruz","Rob Gronkowski",
+             "Maurice Jones-Drew","Julius Peppers","Andre Johnson","Morgan Burnett","Trent Richardson",
+             "Luke Kuechly","Brandon Marshall","Alfred Morris","Tom Brady","Darren McFadden",
+             "Stephen Gostkowski","Reggie Bush","Frank Gore","Eric Berry","Justin Houston",
+             "Lavonte David","A.J. Green","Stevan Ridley","Colin Kaepernick","Peyton Manning",
+             "David Wilson","Jacquizz Rodgers","Le'Veon Bell","Eric Weddle","Blair Walsh","Aldon Smith",
+             "Demaryius Thomas","Paul Posluszny","Randall Cobb","Matt Ryan","Matt Bryant","Hakeem Nicks",
+             "Vincent Jackson","Tyvon Branch","Wes Welker","Janoris Jenkins","Dan Bailey","Vernon Davis",
+             "Julio Jones","Robert Griffin III","Patrick Peterson","James Jones","Marques Colston",
+             "James Laurinaitis","Montee Ball","Geno Atkins","DeMarco Murray","Tony Gonzalez",
+             "Dwayne Bowe","Matthew Stafford","Ryan Mathews","Danny Amendola","Mike Wallace",
+             "NaVorro Bowman","Richard Sherman","Roddy White","Jason Witten","Darren Sproles",
+             "Reggie Wayne","Eric Decker","Eddie Lacy","Miles Austin","Derrick Johnson","Pierre Garcon",
+             "Andrew Luck","Randy Bullock","Greg Olsen","Bryce Brown","Bobby Wagner","Fred Jackson",
+             "Matt Prater","Rashard Mendenhall","Sean Lee","DeSean Jackson","Jerod Mayo","Curtis Lofton",
+             "Jermichael Finley","Sidney Rice","D'Qwell Jackson","Lamar Miller","Jason Pierre-Paul",
+             "Jonathon Stewart","Patrick Willis","Eli Manning","Justin Tucker","William Moore",
+             "Giovani Bernard","Ahmad Bradshaw","Daryl Richardson","Dashon Goldson","Mark Ingram",
+             "Chad Greenway","Greg Jennings","Stevie Johnson","Charles Johnson","Phil Dawson",
+             "Mario Williams","Lawrence Timmons","Owen Daniels","Kenbrell Thompkins",
+             "BenJarvus Green-Ellis","London Fletcher","Ben Roethlisberger","Jared Allen","Lance Moore",
+             "Tavon Austin","Chris Ivory","Daryl Washington","Shane Vereen","Michael Vick",
+             "Brian Cushing","Antonio Gates","Steve Smith","Torrey Smith","Cecil Shorts","Jared Cook",
+             "Aaron Dobson","TY Hilton","T.Y. Hilton","Antonio Brown","Steve Johnson","Martellus Bennett",
+             "Anquan Boldin","DeAngelo Williams","Josh Gordon","Mike Williams")
 ###----------###
 
 ### Optimize Team ###
 # Projected Points
 optimizeDraft(maxRisk=5.0, omit=drafted)
+optimizeDraft(maxRisk=7.0, omit=drafted)
 optimizeDraft(maxRisk=4.1, omit=drafted) #From Optimum Risk.R #1554
 optimizeDraft(maxRisk=3.3, omit=drafted) #From Simulation.R   #1532
 optimizeDraft(maxRisk=100, omit=drafted)                      #1568
