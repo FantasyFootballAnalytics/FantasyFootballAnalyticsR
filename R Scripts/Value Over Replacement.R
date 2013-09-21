@@ -2,7 +2,7 @@
 # File: Value Over Replacement.R
 # Description: Calculates a Player's Value Over a Typical Replacement Starter (for Snake Drafts)
 # Date: 3/3/2013
-# Author: Isaac Petersen (isaactpetersen@gmail.com)
+# Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
 # -These projections are from last year (they have not yet been updated for the upcoming season)
 ###########################

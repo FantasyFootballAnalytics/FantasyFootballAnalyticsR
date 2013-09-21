@@ -2,7 +2,7 @@
 # File: IDP.R
 # Description: IDP rankings
 # Date: 6/9/2013
-# Author: Isaac Petersen (isaactpetersen@gmail.com)
+# Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
 # To do:
 ###########################

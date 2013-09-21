@@ -1,3 +1,11 @@
+###########################
+# File: eVORP.R
+# Description: Calculates Expected Values by Position
+# Date: 3/3/2013
+# Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
+# Notes:
+###########################
+
 #Libraries
 
 #Data

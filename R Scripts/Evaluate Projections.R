@@ -2,7 +2,7 @@
 # File: Evaluate Projections.R
 # Description: Compares ESPN and CBS projections to actual values
 # Date: 3/3/2013
-# Author: Isaac Petersen (isaactpetersen@gmail.com)
+# Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
 # -ESPN projections do not include fumbles!
 ###########################

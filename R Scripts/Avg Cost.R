@@ -2,7 +2,7 @@
 # File: Avg Cost.R
 # Description: Downloads a Player's Avg Cost in Yahoo Auction Drafts
 # Date: 3/3/2013
-# Author: Isaac Petersen (isaactpetersen@gmail.com)
+# Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
 # -These costs are from last year (they have not yet been updated for the upcoming season)
 ###########################

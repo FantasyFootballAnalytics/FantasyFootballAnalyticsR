@@ -2,7 +2,7 @@
 # File: Draft Day.R
 # Description: Continually recalculates optimal team given which players are available
 # Date: 3/3/2013
-# Author: Isaac Petersen (isaactpetersen@gmail.com)
+# Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
 # -These calculations are from last year (they have not yet been updated for the upcoming season)
 ###########################

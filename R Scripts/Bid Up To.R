@@ -3,7 +3,7 @@
 # Description: Determines intrinsic value (in cost) of a player to bid up to
 # i.e., the maximum bid up to which the player is still on the best team (the team that maximizes your possible points)
 # Date: 3/3/2013
-# Author: Isaac Petersen (isaactpetersen@gmail.com)
+# Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
 # -These calculations are from last year (they have not yet been updated for the upcoming season)
 ###########################

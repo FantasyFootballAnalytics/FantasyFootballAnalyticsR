@@ -2,7 +2,7 @@
 # File: Functions.R
 # Description: Fantasy Football Functions
 # Date: 3/3/2013
-# Author: Isaac Petersen (isaactpetersen@gmail.com)
+# Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 ###########################
 
 #Library

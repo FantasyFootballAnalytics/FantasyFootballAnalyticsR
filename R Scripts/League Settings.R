@@ -2,7 +2,7 @@
 # File: League Settings.R
 # Description: User sets league settings
 # Date: 6/1/2013
-# Author: Isaac Petersen (isaactpetersen@gmail.com)
+# Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
 ###########################
 

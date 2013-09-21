@@ -2,7 +2,7 @@
 # File: Calculate League Projections.R
 # Description: Calculates league projections based on league settings
 # Date: 3/2/2013
-# Author: Isaac Petersen (isaactpetersen@gmail.com)
+# Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
 # -These projections are from last year (ESPN and CBS have not yet updated them for the upcoming season)
 # -ESPN projections do not include fumbles!

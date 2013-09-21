@@ -2,7 +2,7 @@
 # File: ESPN Projections.R
 # Description: Downloads Fantasy Football Projections from ESPN.com
 # Date: 3/3/2013
-# Author: Isaac Petersen (isaactpetersen@gmail.com)
+# Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
 # -These projections are from last year (ESPN has not yet updated them for the upcoming season)
 # -ESPN projections do not include fumbles!

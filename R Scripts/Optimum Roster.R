@@ -2,7 +2,7 @@
 # File: Optimum Roster.R
 # Description: Determines Optimum Roster to Maximize Projected Points and Minimize Risk
 # Date: 3/3/2013
-# Author: Isaac Petersen (isaactpetersen@gmail.com)
+# Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
 # -These calculations are from last year (they have not yet been updated for the upcoming season)
 # -Cost is based on Yahoo Avg Cost

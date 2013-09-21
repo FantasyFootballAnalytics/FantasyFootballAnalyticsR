@@ -2,7 +2,7 @@
 # File: Simulation.R
 # Description: Determines Optimum Roster to Maximize Projected Points and Minimize Risk Based on Simulation
 # Date: 5/15/2013
-# Author: Isaac Petersen (isaactpetersen@gmail.com)
+# Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
 # -These calculations are from last year (they have not yet been updated for the upcoming season)
 ###########################

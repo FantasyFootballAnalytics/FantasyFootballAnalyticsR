@@ -2,7 +2,7 @@
 # File: FantasyPros Projections.R
 # Description: Downloads Fantasy Football Projections from FantasyPros.com
 # Date: 3/3/2013
-# Author: Isaac Petersen (isaactpetersen@gmail.com)
+# Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
 ###########################
 

@@ -1,3 +1,11 @@
+###########################
+# File: Historical Actual.R
+# Description: Scrapes Historical Performance of Players
+# Date: 3/3/2013
+# Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
+# Notes:
+###########################
+
 #Libraries
 load_or_install(c("XML","stringr","plyr"))
 

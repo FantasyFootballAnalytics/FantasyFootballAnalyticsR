@@ -1,3 +1,11 @@
+###########################
+# File: Historical.R
+# Description: Scrapes Historical ADP of Players
+# Date: 3/3/2013
+# Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
+# Notes:
+###########################
+
 #Info
 #ADP (from 1999): http://football.myfantasyleague.com/1999/adp?COUNT=500&POS=*&CUTOFF=5&FRANCHISES=-1&IS_PPR=-1&IS_KEEPER=0&IS_MOCK=-1&TIME=
 #Actual (from 1999): http://www.pro-football-reference.com/years/1999/fantasy.htm
