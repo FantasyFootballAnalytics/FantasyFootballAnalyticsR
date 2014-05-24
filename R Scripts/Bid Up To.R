@@ -5,7 +5,7 @@
 # Date: 3/3/2013
 # Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
-# -These calculations are from last year (they have not yet been updated for the upcoming season)
+# To do:
 ###########################
 
 #Library
@@ -16,7 +16,7 @@ source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Load data
-load(paste(getwd(),"/Data/AvgCost-2013.RData", sep=""))
+load(paste(getwd(),"/Data/AvgCost-2014.RData", sep=""))
 
 #Bid Up To
 listOfPlayers <- vector(mode="character", length=numTotalStarters)
@@ -46,5 +46,5 @@ projections$bidUpTo[is.na(projections$bidUpTo)] <- 1
 row.names(projections) <- 1:max(as.numeric(row.names(projections)))
 
 #Save file
-save(projections, file = paste(getwd(),"/Data/BidUpTo-2013.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/CSV/BidUpTo-2013.csv", sep=""), row.names=FALSE)
+save(projections, file = paste(getwd(),"/Data/BidUpTo-2014.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/CSV/BidUpTo-2014.csv", sep=""), row.names=FALSE)

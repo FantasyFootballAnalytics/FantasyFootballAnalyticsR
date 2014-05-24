@@ -4,8 +4,8 @@
 # Date: 3/3/2013
 # Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
-# -These projections are from last year (ESPN has not yet updated them for the upcoming season)
 # -ESPN projections do not include fumbles!
+# To do:
 ###########################
 
 #Load libraries
@@ -18,14 +18,14 @@ source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Download fantasy football projections from ESPN.com
-qb_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2013&slotCategoryId=0", stringsAsFactors = FALSE)$playertable_0
-rb1_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2013&slotCategoryId=2", stringsAsFactors = FALSE)$playertable_0
-rb2_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2013&slotCategoryId=2&startIndex=40", stringsAsFactors = FALSE)$playertable_0
-rb3_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2013&slotCategoryId=2&startIndex=80", stringsAsFactors = FALSE)$playertable_0
-wr1_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2013&slotCategoryId=4", stringsAsFactors = FALSE)$playertable_0
-wr2_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2013&slotCategoryId=4&startIndex=40", stringsAsFactors = FALSE)$playertable_0
-wr3_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2013&slotCategoryId=4&startIndex=80", stringsAsFactors = FALSE)$playertable_0
-te_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2013&slotCategoryId=6", stringsAsFactors = FALSE)$playertable_0
+qb_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2014&slotCategoryId=0", stringsAsFactors = FALSE)$playertable_0
+rb1_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2014&slotCategoryId=2", stringsAsFactors = FALSE)$playertable_0
+rb2_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2014&slotCategoryId=2&startIndex=40", stringsAsFactors = FALSE)$playertable_0
+rb3_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2014&slotCategoryId=2&startIndex=80", stringsAsFactors = FALSE)$playertable_0
+wr1_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2014&slotCategoryId=4", stringsAsFactors = FALSE)$playertable_0
+wr2_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2014&slotCategoryId=4&startIndex=40", stringsAsFactors = FALSE)$playertable_0
+wr3_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2014&slotCategoryId=4&startIndex=80", stringsAsFactors = FALSE)$playertable_0
+te_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2014&slotCategoryId=6", stringsAsFactors = FALSE)$playertable_0
 
 #Add variable names for each object
 fileList <- c("qb_espn","rb1_espn","rb2_espn","rb3_espn","wr1_espn","wr2_espn","wr3_espn","te_espn")
@@ -116,10 +116,10 @@ projections_espn <- projections_espn[order(projections_espn$overallRank_espn),]
 row.names(projections_espn) <- 1:dim(projections_espn)[1]
 
 #Density Plot
-ggplot(projections_espn, aes(x=pts_espn)) + geom_density(fill="blue", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of ESPN Projected Points from 2013")
-ggsave(paste(getwd(),"/Figures/ESPN projections 2013.jpg", sep=""))
+ggplot(projections_espn, aes(x=pts_espn)) + geom_density(fill="blue", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of ESPN Projected Points from 2014")
+ggsave(paste(getwd(),"/Figures/ESPN projections 2014.jpg", sep=""))
 dev.off()
 
 #Save file
-save(projections_espn, file = paste(getwd(),"/Data/ESPN-Projections-2013.RData", sep=""))
-write.csv(projections_espn, file=paste(getwd(),"/Data/CSV/ESPN-Projections-2013.csv", sep=""), row.names=FALSE)
+save(projections_espn, file = paste(getwd(),"/Data/ESPN-Projections-2014.RData", sep=""))
+write.csv(projections_espn, file=paste(getwd(),"/Data/CSV/ESPN-Projections-2014.csv", sep=""), row.names=FALSE)

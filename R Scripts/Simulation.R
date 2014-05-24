@@ -4,7 +4,7 @@
 # Date: 5/15/2013
 # Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
-# -These calculations are from last year (they have not yet been updated for the upcoming season)
+# To do:
 ###########################
 
 #Specify Maximum Risk
@@ -18,8 +18,8 @@ source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Load data
-load(paste(getwd(),"/Data/BidUpTo-2013.RData", sep=""))
-load(paste(getwd(),"/Data/projectedWithActualPoints-2013.RData", sep=""))
+load(paste(getwd(),"/Data/BidUpTo-2014.RData", sep=""))
+load(paste(getwd(),"/Data/projectedWithActualPoints-2014.RData", sep=""))
 
 #Roster Optimization
 optimizeData <- na.omit(projections[,c("name","pos","projections","risk","inflatedCost","sdPts")])
@@ -50,8 +50,8 @@ optimizeData$simulation <- log(optimizeData$solutionSum + 1)
 projections <- merge(projections, optimizeData[,c("name","simulation")], by="name", all.x=TRUE)
 
 #Save file
-save(projections, file = paste(getwd(),"/Data/simulation-2013.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/CSV/simulation-2013.csv", sep=""), row.names=FALSE)
+save(projections, file = paste(getwd(),"/Data/simulation-2014.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/CSV/simulation-2014.csv", sep=""), row.names=FALSE)
 
 #View Data
 optimizeData

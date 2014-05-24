@@ -4,7 +4,6 @@
 # Date: 3/3/2013
 # Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
-# -These projections are from last year (ESPN and CBS have not yet updated them for the upcoming season)
 # -ESPN projections do not include fumbles!
 # To do:
 # -Evaluate accuracy of projections while taking into account risk
@@ -20,8 +19,8 @@ source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Load data
-#load(paste(getwd(),"/Data/LeagueProjections-2013.RData", sep=""))
-load(paste(getwd(),"/Data/projectedWithActualPoints-2013.RData", sep=""))
+#load(paste(getwd(),"/Data/LeagueProjections-2014.RData", sep=""))
+load(paste(getwd(),"/Data/projectedWithActualPoints-2014.RData", sep=""))
 
 projections <- projectedWithActualPts
 
@@ -93,9 +92,9 @@ projections[rank(projections$risk, na.last="keep") %in% (max(rank(projections$ri
 
 #Density plot
 ggplot(projections, aes(x=risk)) + geom_density(fill="red", alpha=.7) + xlab("Player's Risk Level") + ggtitle("Density Plot of Players' Risk Levels")
-ggsave(paste(getwd(),"/Figures/Risk 2013.jpg", sep=""))
+ggsave(paste(getwd(),"/Figures/Risk 2014.jpg", sep=""))
 dev.off()
 
 #Save file
-save(projections, file = paste(getwd(),"/Data/Risk-2013.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/CSV/Risk-2013.csv", sep=""), row.names=FALSE)
+save(projections, file = paste(getwd(),"/Data/Risk-2014.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/CSV/Risk-2014.csv", sep=""), row.names=FALSE)

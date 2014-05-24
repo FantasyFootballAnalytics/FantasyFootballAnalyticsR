@@ -4,7 +4,7 @@
 # Date: 3/3/2013
 # Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
-# -These calculations are from last year (they have not yet been updated for the upcoming season)
+# To do:
 ###########################
 
 #Library
@@ -15,7 +15,7 @@ source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Load data
-load(paste(getwd(),"/Data/AvgCost-2013.RData", sep=""))
+load(paste(getwd(),"/Data/AvgCost-2014.RData", sep=""))
 
 #Optimum Risk
 projectedPoints <- vector(mode="numeric", length=length(seq(min(optimizeData$risk), max(optimizeData$risk), 0.1)))
@@ -44,5 +44,5 @@ optimizeTeam(maxRisk=100)
 
 #Plot
 ggplot(data=riskData, aes(x=riskLevel, y=projectedPoints)) + geom_point(size=3) + xlab("Max Risk Level") + ylab("Total Projected Points") + ggtitle("Association Between Max Risk Level and Total Projected Points") # + geom_smooth()
-ggsave(paste(getwd(),"/Figures/Optimum Risk 2013.jpg", sep=""))
+ggsave(paste(getwd(),"/Figures/Optimum Risk 2014.jpg", sep=""))
 dev.off()

@@ -4,8 +4,8 @@
 # Date: 3/3/2013
 # Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
-# -These calculations are from last year (they have not yet been updated for the upcoming season)
 # -Cost is based on Yahoo Avg Cost
+# To do:
 ###########################
 
 #Specify Maximum Risk
@@ -19,7 +19,7 @@ source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Load data
-load(paste(getwd(),"/Data/AvgCost-2013.RData", sep=""))
+load(paste(getwd(),"/Data/AvgCost-2014.RData", sep=""))
 
 #Roster Optimization
 optimizeData <- na.omit(projections[,c("name","pos","projections","risk","inflatedCost")]) #projectedPtsLatent

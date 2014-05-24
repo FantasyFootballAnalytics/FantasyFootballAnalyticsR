@@ -24,6 +24,7 @@ IDP$team <- str_sub(IDP[,c("Player (team/bye)")], start=str_locate(IDP[,c("Playe
 #IDP$team <- str_sub(IDP[,c("Player, pos (team/bye)")], start=str_locate(IDP[,c("Player, pos (team/bye)")], '\\(')[,1]+1, end=str_locate(IDP[,c("Player, pos (team/bye)")], '\\/')[,1]-1)
 
 IDP$pos <- IDP$Pos
+IDP$pos <- gsub("\\d", "", IDP$pos)
 #IDP$pos <- str_sub(IDP[,c("Player, pos (team/bye)")], start=str_locate(IDP[,c("Player, pos (team/bye)")], ',')[,1]+2, end=str_locate(IDP[,c("Player, pos (team/bye)")], ',')[,1]+3)
 #IDP$pos <- gsub(" ","",IDP$pos)
 #IDP$pos <- gsub("\\)","",IDP$pos)
@@ -39,5 +40,5 @@ IDP <- IDP[order(IDP$rank),]
 IDP
 
 #Save file
-save(IDP, file = paste(getwd(),"/Data/IDP-2013.RData", sep=""))
-write.csv(IDP, file=paste(getwd(),"/Data/CSV/IDP-2013.csv", sep=""), row.names=FALSE)
+save(IDP, file = paste(getwd(),"/Data/IDP-2014.RData", sep=""))
+write.csv(IDP, file=paste(getwd(),"/Data/CSV/IDP-2014.csv", sep=""), row.names=FALSE)

@@ -4,7 +4,7 @@
 # Date: 3/3/2013
 # Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
-# -These costs are from last year (they have not yet been updated for the upcoming season)
+# To do:
 ###########################
 
 #Library
@@ -16,10 +16,10 @@ source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Load data
-load(paste(getwd(),"/Data/VOR-2013.RData", sep=""))
+load(paste(getwd(),"/Data/VOR-2014.RData", sep=""))
 
 #Avg & Projected Cost
-avgcost_yahoo <- read.csv(paste(getwd(),"/Data/Yahoo-avgcost-2013.csv",sep=""))
+avgcost_yahoo <- read.csv(paste(getwd(),"/Data/Yahoo-avgcost-2014.csv",sep=""))
   
 ###Yahoo
 #readHTMLTable("http://football.fantasysports.yahoo.com/f1/35024/draftanalysis?tab=AD&pos=ALL&sort=DA_AP", stringsAsFactors = FALSE)
@@ -62,10 +62,10 @@ projections$inflatedCost[is.na(projections$inflatedCost)==TRUE] <- 1
 projections <- projections[order(projections$overallRank),]
 
 #Density Plot
-ggplot(projections, aes(x=inflatedCost)) + geom_density(fill="green", alpha=.3) + xlab("Player's Intrinsic Value (Cost)") + ggtitle("Density Plot of Players' Values from 2013") + theme(legend.title=element_blank())
-ggsave(paste(getwd(),"/Figures/Inflated Cost 2013.jpg", sep=""))
+ggplot(projections, aes(x=inflatedCost)) + geom_density(fill="green", alpha=.3) + xlab("Player's Intrinsic Value (Cost)") + ggtitle("Density Plot of Players' Values from 2014") + theme(legend.title=element_blank())
+ggsave(paste(getwd(),"/Figures/Inflated Cost 2014.jpg", sep=""))
 dev.off()
 
 #Save file
-save(projections, file = paste(getwd(),"/Data/AvgCost-2013.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/CSV/AvgCost-2013.csv", sep=""), row.names=FALSE)
+save(projections, file = paste(getwd(),"/Data/AvgCost-2014.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/CSV/AvgCost-2014.csv", sep=""), row.names=FALSE)
