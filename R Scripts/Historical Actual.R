@@ -11,7 +11,7 @@
 load_or_install(c("XML","stringr","plyr"))
 
 #Data
-years <- 1999:2012
+years <- 1986:2013
 
 #Typical replacement/baseline player for VORP
 qbReplacements <- 15
@@ -59,7 +59,10 @@ substrRight <- function(x, n){
 #Loop to import, process, merge, and save historical actual data
 actualList <- list()
 
+pb <- txtProgressBar(min = 1, max = length(years), style = 3)
 for(i in 1:length(years)){
+  setTxtProgressBar(pb, i)
+  
   actual <- readHTMLTable(paste("http://www.pro-football-reference.com/years/", years[i], "/fantasy.htm", sep=""), stringsAsFactors = FALSE)$fantasy
   
   names(actual) <- c("overall_rank", "name_info", "team", "age", "games", "games_start", "pass_comp", "pass_att", "pass_yds", "pass_td", "pass_int", "rush_att", 
@@ -352,8 +355,14 @@ for(i in 1:length(years)){
   merged <- merged[order(-merged$vor),]
   row.names(merged) <- 1:dim(merged)[1]
   
+  #Name for merging
+  merged$nameMerge <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", merged$name)))
+  
+  #Order variables in data set
+  merged <- merged[,c("name","nameMerge","pos","team","year","points","overallRank","positionRank","vor")]
+  
   #Save data
-  write.csv(merged, file=paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/actual_", years[i], ".csv", sep=""), row.names=FALSE)
+  write.csv(merged, file=paste(getwd(),"/Data/Historical Actual Points/actual_", years[i], ".csv", sep=""), row.names=FALSE)
   
   #Merge in List
   actualList[[i]] <- merged
@@ -363,4 +372,4 @@ for(i in 1:length(years)){
 actualMerged <- merge_recurse(actualList)
 
 #Save data
-write.csv(actualMerged, file=paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/actual.csv", sep=""), row.names=FALSE)
+write.csv(actualMerged, file=paste(getwd(),"/Data/Historical Actual Points/actual.csv", sep=""), row.names=FALSE)

@@ -106,8 +106,11 @@ projections_espn[projections_espn$name=="EJ Manuel", "name"] <- "E.J. Manuel"
 #Calculate overall rank
 projections_espn$overallRank_espn <- rank(-projections_espn$pts_espn, ties.method="min")
 
+#Name for merging
+projections_espn$nameMerge <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", projections_espn$name)))
+
 #Order variables in data set
-projections_espn <- projections_espn[,c("name","pos","team_espn","positionRank_espn","overallRank_espn",
+projections_espn <- projections_espn[,c("name","nameMerge","pos","team_espn","positionRank_espn","overallRank_espn",
                                         "passAtt_espn","passComp_espn","passYds_espn","passTds_espn","passInt_espn",
                                         "rushYds_espn","rushTds_espn","recYds_espn","recTds_espn","twoPts_espn","fumbles_espn","pts_espn")]
 

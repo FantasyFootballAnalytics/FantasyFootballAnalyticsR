@@ -7,6 +7,13 @@
 # To do:
 ###########################
 
+##############
+#IMPORTANT:
+#-First have to download 'adp' and 'players' data manually: http://football.myfantasyleague.com/2013/adp
+#-Save as .xml from: http://football.myfantasyleague.com/2013/export
+#-Save as adp_year.xml and players_year.xml in: F:/Documents/GitHub/FantasyFootballAnalyticsR/Data/Historical ADP/
+##############
+
 #Info
 #ADP (from 1999): http://football.myfantasyleague.com/1999/adp?COUNT=500&POS=*&CUTOFF=5&FRANCHISES=-1&IS_PPR=-1&IS_KEEPER=0&IS_MOCK=-1&TIME=
 #Actual (from 1999): http://www.pro-football-reference.com/years/1999/fantasy.htm
@@ -18,19 +25,22 @@
 load_or_install(c("XML","stringr"))
 
 #Data
-years <- 1999:2012
+years <- 1999:2013
 
 #Loop to import, process, merge, and save historical ADP data
 adpList <- list()
 
+pb <- txtProgressBar(min = 1, max = length(years), style = 3)
 for(i in 1:length(years)){
+  setTxtProgressBar(pb, i)
+  
   adp <- players <- NULL
   #adp <- readHTMLTable(paste("http://football.myfantasyleague.com/", i, "/adp?COUNT=500&POS=*&CUTOFF=5&FRANCHISES=-1&IS_PPR=-1&IS_KEEPER=0&IS_MOCK=-1&TIME=", sep=""), header=TRUE)[[2]] #to scrape
-  adp <- xmlToList(xmlParse(paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/adp_", years[i], ".xml", sep="")))
+  adp <- xmlToList(xmlParse(paste(getwd(), "/Data/Historical ADP/adp_", years[i], ".xml", sep="")))
   adp$.attrs <- NULL
   adp <- data.frame(do.call(rbind, adp))
   
-  players <- xmlToList(xmlParse(paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/players_", years[i], ".xml", sep="")))
+  players <- xmlToList(xmlParse(paste(getwd(), "/Data/Historical ADP/players_", years[i], ".xml", sep="")))
   players$.attrs <- NULL
   players <- data.frame(do.call(rbind, players))
   
@@ -80,11 +90,14 @@ for(i in 1:length(years)){
   #Add year variable
   merged$year <- years[i]
   
+  #Name for merging
+  merged$nameMerge <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", merged$name)))
+  
   #Subset data
-  merged <- merged[,c("name","year","pos","team","pick","overallRank","positionRank")]
+  merged <- merged[,c("name","nameMerge","year","pos","team","pick","overallRank","positionRank")]
   
   #Save data
-  write.csv(merged, file=paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/adp_", years[i], ".csv", sep=""), row.names=FALSE)
+  write.csv(merged, file=paste(getwd(), "/Data/Historical ADP/adp_", years[i], ".csv", sep=""), row.names=FALSE)
 
   #Merge in List
   adpList[[i]] <- merged
@@ -94,4 +107,4 @@ for(i in 1:length(years)){
 adpMerged <- merge_recurse(adpList)
 
 #Save data
-write.csv(adpMerged, file=paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/adp.csv", sep=""), row.names=FALSE)
+write.csv(adpMerged, file=paste(getwd(), "/Data/Historical ADP/adp.csv", sep=""), row.names=FALSE)

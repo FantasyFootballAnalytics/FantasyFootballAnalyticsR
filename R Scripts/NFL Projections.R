@@ -104,10 +104,13 @@ projections_nfl[projections_nfl$name=="EJ Manuel", "name"] <- "E.J. Manuel"
 #Calculate overall rank
 projections_nfl$overallRank_nfl <- rank(-projections_nfl$pts_nfl, ties.method="min")
 
+#Name for merging
+projections_nfl$nameMerge <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", projections_nfl$name)))
+
 #Order variables in data set
-projections_nfl <- projections_nfl[,c("name","pos","team_nfl","positionRank_nfl","overallRank_nfl",
-                                        "passYds_nfl","passTds_nfl","passInt_nfl",
-                                        "rushYds_nfl","rushTds_nfl","recYds_nfl","recTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")]
+projections_nfl <- projections_nfl[,c("name","nameMerge","pos","team_nfl","positionRank_nfl","overallRank_nfl",
+                                      "passYds_nfl","passTds_nfl","passInt_nfl",
+                                      "rushYds_nfl","rushTds_nfl","recYds_nfl","recTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")]
 
 #Order players by overall rank
 projections_nfl <- projections_nfl[order(projections_nfl$overallRank_nfl),]

@@ -74,12 +74,12 @@ teLinearAll <- lm(points ~ projectedPositionRank, data=taskTE)
 kLinearAll <- lm(points ~ projectedPositionRank, data=taskK)
 defLinearAll <- lm(points ~ projectedPositionRank, data=taskDef)
 
-summary(qbLinearAll)$r.squared  #r-squared = .34 #best (0.3395624)
-summary(rbLinearAll)$r.squared  #r-squared = .38
+summary(qbLinearAll)$r.squared  #r-squared = .33 #best (0.3292071)
+summary(rbLinearAll)$r.squared  #r-squared = .37
 summary(wrLinearAll)$r.squared  #r-squared = .29
-summary(teLinearAll)$r.squared  #r-squared = .19
-summary(kLinearAll)$r.squared   #r-squared = .07 #best (0.07450332)
-summary(defLinearAll)$r.squared #r-squared = .13 #best (0.1267398)
+summary(teLinearAll)$r.squared  #r-squared = .20
+summary(kLinearAll)$r.squared   #r-squared = .08 #best (0.08494553)
+summary(defLinearAll)$r.squared #r-squared = .11 #best (0.1103911)
 
 #Exponential Regression
 qbExpAll <- nls(points ~ exponentialRegression(projectedPositionRank,a,b), start=c(a=1, b=1), data=taskQB)
@@ -89,7 +89,7 @@ teExpAll <- nls(points ~ exponentialRegression(projectedPositionRank,a,b), start
 kExpAll <- nls(points ~ exponentialRegression(projectedPositionRank,a,b), start=c(a=1, b=1), data=taskK)
 defExpAll <- nls(points ~ exponentialRegression(projectedPositionRank,a,b), start=c(a=1, b=1), data=taskDef)
 
-1-(deviance(teExpAll)/sum((task[task$pos == "TE",]$points-mean(task[task$pos == "TE",]$points))^2)) #r-squared = .21
+1-(deviance(teExpAll)/sum((task[task$pos == "TE",]$points-mean(task[task$pos == "TE",]$points))^2)) #r-squared = .23
 
 #Logarithmic Regression
 qbLogAll <- nls(points ~ logRegression(projectedPositionRank,a,b), start=c(a=1, b=1), data=taskQB)
@@ -99,12 +99,12 @@ teLogAll <- nls(points ~ logRegression(projectedPositionRank,a,b), start=c(a=1, 
 kLogAll <- nls(points ~ logRegression(projectedPositionRank,a,b), start=c(a=1, b=1), data=taskK)
 defLogAll <- nls(points ~ logRegression(projectedPositionRank,a,b), start=c(a=1, b=1), data=taskDef)
 
-1-(deviance(qbLogAll)/sum((task[task$pos == "QB",]$points-mean(task[task$pos == "QB",]$points))^2))    #r-squared = .31
-1-(deviance(rbLogAll)/sum((task[task$pos == "RB",]$points-mean(task[task$pos == "RB",]$points))^2))    #r-squared = .40 #best (0.4012861)
-1-(deviance(wrLogAll)/sum((task[task$pos == "WR",]$points-mean(task[task$pos == "WR",]$points))^2))    #r-squared = .31 #best (0.3132296)
-1-(deviance(teLogAll)/sum((task[task$pos == "TE",]$points-mean(task[task$pos == "TE",]$points))^2))    #r-squared = .23 #best (0.2326401)
-1-(deviance(kLogAll)/sum((task[task$pos == "K",]$points-mean(task[task$pos == "K",]$points))^2))       #r-squared = .06
-1-(deviance(defLogAll)/sum((task[task$pos == "Def",]$points-mean(task[task$pos == "Def",]$points))^2)) #r-squared = .02
+1-(deviance(qbLogAll)/sum((task[task$pos == "QB",]$points-mean(task[task$pos == "QB",]$points))^2))    #r-squared = .30
+1-(deviance(rbLogAll)/sum((task[task$pos == "RB",]$points-mean(task[task$pos == "RB",]$points))^2))    #r-squared = .39 #best (0.3919525)
+1-(deviance(wrLogAll)/sum((task[task$pos == "WR",]$points-mean(task[task$pos == "WR",]$points))^2))    #r-squared = .32 #best (0.320939)
+1-(deviance(teLogAll)/sum((task[task$pos == "TE",]$points-mean(task[task$pos == "TE",]$points))^2))    #r-squared = .25 #best (0.2517075)
+1-(deviance(kLogAll)/sum((task[task$pos == "K",]$points-mean(task[task$pos == "K",]$points))^2))       #r-squared = .07
+1-(deviance(defLogAll)/sum((task[task$pos == "Def",]$points-mean(task[task$pos == "Def",]$points))^2)) #r-squared = .09
 
 #Predictability
 qbPredictabilityAll <- summary(qbLinearAll)$r.squared
@@ -290,12 +290,12 @@ teLinear <- lm(eVORP ~ rank, data=teExpected)
 kLinear <- lm(eVORP ~ rank, data=kExpected)
 defLinear <- lm(eVORP ~ rank, data=defExpected)
 
-summary(qbLinear)$r.squared  #r-squared = .89 #best
+summary(qbLinear)$r.squared  #r-squared = .90 #best
 summary(rbLinear)$r.squared  #r-squared = .82
 summary(wrLinear)$r.squared  #r-squared = .72
 summary(teLinear)$r.squared  #r-squared = .67
 summary(kLinear)$r.squared   #r-squared = .51 #best
-summary(defLinear)$r.squared #r-squared = .49 #best
+summary(defLinear)$r.squared #r-squared = .47 #best
 
 #Exponential Regression
 qbExp <- nls(eVORP ~ exponentialRegression(rank,a,b), start=c(a=1, b=1), data=qbExpected)
@@ -305,7 +305,7 @@ teExp <- nls(eVORP ~ exponentialRegression(rank,a,b), start=c(a=1, b=1), data=te
 kExp <- nls(eVORP ~ exponentialRegression(rank,a,b), start=c(a=1, b=1), data=kExpected)
 defExp <- nls(eVORP ~ exponentialRegression(rank,a,b), start=c(a=1, b=1), data=defExpected)
 
-1-(deviance(teExp)/sum((teExpected$eVORP-mean(teExpected$eVORP))^2)) #r-squared = .75
+1-(deviance(teExp)/sum((teExpected$eVORP-mean(teExpected$eVORP))^2)) #r-squared = .76
 
 #Logarithmic Regression
 qbLog <- nls(eVORP ~ logRegression(rank,a,b), start=c(a=1, b=1), data=qbExpected)
@@ -316,11 +316,11 @@ kLog <- nls(eVORP ~ logRegression(rank,a,b), start=c(a=1, b=1), data=kExpected)
 defLog <- nls(eVORP ~ logRegression(rank,a,b), start=c(a=1, b=1), data=defExpected)
 
 1-(deviance(qbLog)/sum((qbExpected$eVORP-mean(qbExpected$eVORP))^2))    #r-squared = .79
-1-(deviance(rbLog)/sum((rbExpected$eVORP-mean(rbExpected$eVORP))^2))    #r-squared = .86 #best
+1-(deviance(rbLog)/sum((rbExpected$eVORP-mean(rbExpected$eVORP))^2))    #r-squared = .85 #best
 1-(deviance(wrLog)/sum((wrExpected$eVORP-mean(wrExpected$eVORP))^2))    #r-squared = .80 #best
-1-(deviance(teLog)/sum((teExpected$eVORP-mean(teExpected$eVORP))^2))    #r-squared = .85 #best
+1-(deviance(teLog)/sum((teExpected$eVORP-mean(teExpected$eVORP))^2))    #r-squared = .86 #best
 1-(deviance(kLog)/sum((kExpected$eVORP-mean(kExpected$eVORP))^2))       #r-squared = .42
-1-(deviance(defLog)/sum((defExpected$eVORP-mean(defExpected$eVORP))^2)) #r-squared = .37
+1-(deviance(defLog)/sum((defExpected$eVORP-mean(defExpected$eVORP))^2)) #r-squared = .39
 
 #Plots
 jpeg(paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/Plots/QB Expected Values.jpg", sep=""), width=1000, height=1000, pointsize=24)
