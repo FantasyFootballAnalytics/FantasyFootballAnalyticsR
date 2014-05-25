@@ -44,12 +44,14 @@ projections[projections$name %in% projections[duplicated(projections$name),"name
 projections <- merge(projections, projections_fp, by=c("name","pos"), all=TRUE)
 
 #Remove duplicate cases
-
 projections[projections$name %in% projections[duplicated(projections$name),"name"],]
 #projections[duplicated(projections$name),]
 
 #projections[projections$name=="Steve Smith",][c(1),] <- NA
 #projections <- projections[!is.na(projections$name),]
+
+#Add player name
+projections$player <- projections$name_fp
 
 #Determine Team
 projections$team <- NA
@@ -257,7 +259,7 @@ projections <- projections[order(projections$overallRank),]
 row.names(projections) <- 1:dim(projections)[1]
 
 #Keep important variables
-projections <- projections[,c("name","pos","team","overallRank","projections","projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts_fp","projectedPtsAvg","projectedPtsLatent")]
+projections <- projections[,c("name","player","pos","team","overallRank","projections","projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts_fp","projectedPtsAvg","projectedPtsLatent")]
 
 #View projections
 projections

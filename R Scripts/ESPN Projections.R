@@ -85,10 +85,10 @@ projections_espn$fumbles_espn <- NA
 projections_espn$twoPts_espn <- NA
 
 #Player names
-projections_espn$name <- str_sub(projections_espn$player_espn, end=str_locate(string=projections_espn$player_espn, ',')[,1]-1)
-projections_espn$name <- str_replace_all(projections_espn$name, "\\*", "")
+projections_espn$name_espn <- str_sub(projections_espn$player_espn, end=str_locate(string=projections_espn$player_espn, ',')[,1]-1)
+projections_espn$name_espn <- str_replace_all(projections_espn$name_espn, "\\*", "")
 
-#projections_espn[which(projections_espn$name=="Steve Johnson"),"name"] <- "Stevie Johnson"
+#projections_espn[which(projections_espn$name_espn=="Steve Johnson"),"name_espn"] <- "Stevie Johnson"
 
 #Player teams
 projections_espn$team_espn <- str_sub(projections_espn$player_espn, start=str_locate(string=projections_espn$player_espn, ',')[,1]+2, end = str_locate(string=projections_espn$player_espn, ',')[,1]+4)
@@ -97,20 +97,20 @@ projections_espn$team_espn <- toupper(projections_espn$team_espn)
 projections_espn$team_espn[projections_espn$team_espn=="WSH"] <- "WAS"
 
 #Remove duplicate cases
-projections_espn[duplicated(projections_espn$name),]
-#projections_espn <- projections_espn[-which(projections_espn$name=="Dexter McCluster" & projections_espn$pos=="RB"),]
+projections_espn[duplicated(projections_espn$name_espn),]
+#projections_espn <- projections_espn[-which(projections_espn$name_espn=="Dexter McCluster" & projections_espn$pos=="RB"),]
 
 #Rename players
-projections_espn[projections_espn$name=="EJ Manuel", "name"] <- "E.J. Manuel"
+projections_espn[projections_espn$name_espn=="EJ Manuel", "name_espn"] <- "E.J. Manuel"
 
 #Calculate overall rank
 projections_espn$overallRank_espn <- rank(-projections_espn$pts_espn, ties.method="min")
 
 #Name for merging
-projections_espn$nameMerge <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", projections_espn$name)))
+projections_espn$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", projections_espn$name_espn)))
 
 #Order variables in data set
-projections_espn <- projections_espn[,c("name","nameMerge","pos","team_espn","positionRank_espn","overallRank_espn",
+projections_espn <- projections_espn[,c("name","name_espn","pos","team_espn","positionRank_espn","overallRank_espn",
                                         "passAtt_espn","passComp_espn","passYds_espn","passTds_espn","passInt_espn",
                                         "rushYds_espn","rushTds_espn","recYds_espn","recTds_espn","twoPts_espn","fumbles_espn","pts_espn")]
 

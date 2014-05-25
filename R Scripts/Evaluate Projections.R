@@ -24,7 +24,8 @@ actualPoints <- read.csv(paste(getwd(),"/Data/Yahoo-actualpoints.csv", sep=""))
 
 #Cleanup Yahoo actual points data
 actualPoints <- actualPoints[which(actualPoints$Fan.Pts!=""),]
-actualPoints$name <- as.character(actualPoints$Player)
+actualPoints$player <- as.character(actualPoints$Player)
+actualPoints$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", actualPoints$player)))
 actualPoints$actualPts <- actualPoints$Fan.Pts
 actualPoints <- actualPoints[,c("name","actualPts")]
 row.names(actualPoints) <- 1:dim(actualPoints)[1]

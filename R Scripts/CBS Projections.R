@@ -82,14 +82,14 @@ projections_cbs$passYdsPerAtt_cbs <- as.numeric(projections_cbs$passYdsPerAtt_cb
 projections_cbs$twoPts_cbs <- NA
 
 #Player names
-projections_cbs$name <- str_sub(projections_cbs$player, end=str_locate(string=projections_cbs$player, ',')[,1]-1)
+projections_cbs$name_cbs <- str_sub(projections_cbs$player, end=str_locate(string=projections_cbs$player, ',')[,1]-1)
 
 #Remove Duplicates
-projections_cbs[duplicated(projections_cbs$name),]
-#projections_cbs[projections_cbs$name == "James Casey","pos"] <- "TE"
+projections_cbs[duplicated(projections_cbs$name_cbs),]
+#projections_cbs[projections_cbs$name_cbs == "James Casey","pos"] <- "TE"
 
 #Rename Players
-projections_cbs[projections_cbs$name=="EJ Manuel", "name"] <- "E.J. Manuel"
+projections_cbs[projections_cbs$name_cbs=="EJ Manuel", "name_cbs"] <- "E.J. Manuel"
 
 #Player teams
 projections_cbs$team_cbs <- str_trim(str_sub(projections_cbs$player, start= -3))
@@ -98,10 +98,10 @@ projections_cbs$team_cbs <- str_trim(str_sub(projections_cbs$player, start= -3))
 projections_cbs$overallRank_cbs <- rank(-projections_cbs$pts_cbs, ties.method="min")
 
 #Name for merging
-projections_cbs$nameMerge <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", projections_cbs$name)))
+projections_cbs$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", projections_cbs$name_cbs)))
 
 #Order variables in data set
-projections_cbs <- projections_cbs[,c("name","nameMerge","pos","team_cbs","positionRank_cbs","overallRank_cbs",
+projections_cbs <- projections_cbs[,c("name","name_cbs","pos","team_cbs","positionRank_cbs","overallRank_cbs",
                                       "passAtt_cbs","passComp_cbs","passYds_cbs","passTds_cbs","passInt_cbs","passCompPct_cbs","passYdsPerAtt_cbs",
                                       "rushAtt_cbs","rushYds_cbs","rushYdsPerAtt_cbs","rushTds_cbs",
                                       "rec_cbs","recYds_cbs","recYdsPerRec_cbs","recTds_cbs","twoPts_cbs","fumbles_cbs","pts_cbs")]

@@ -112,9 +112,9 @@ drafts.stats <- ddply(drafts.df, .(Player, Position, Team), summarise, mean=mean
                     sd=sd(Order), freq=length(Order)/length(draft.data), mad=mad(Order), median=median(Order))
 
 #Clean up
-drafts.stats$name <- as.character(drafts.stats$Player)
-drafts.stats$name <- gsub("DefenseD", "", drafts.stats$name)
-drafts.stats$nameMerge <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", drafts.stats$name)))
+drafts.stats$name_ffc <- as.character(drafts.stats$Player)
+drafts.stats$name_ffc <- gsub("DefenseD", "", drafts.stats$name_ffc)
+drafts.stats$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", drafts.stats$name_ffc)))
 drafts.stats$pos <- as.character(drafts.stats$Position)
 drafts.stats$pos[which(drafts.stats$pos == "EF")] <- "DEF"
 drafts.stats$pos[which(drafts.stats$pos == "PK")] <- "K"
@@ -124,14 +124,14 @@ drafts.stats$team_ffc <- as.character(drafts.stats$Team)
 drafts.stats <- drafts.stats[with(drafts.stats, order(mean)),]
 
 #Subset data
-sleepers <- drafts.stats[,c("name","pos","team_ffc","mean","sd","freq","mad","median","nameMerge")]
+sleepers <- drafts.stats[,c("name","name_ffc","pos","team_ffc","mean","sd","freq","mad","median")]
 
 #Plot
 plotTitle <- paste("Sleepers from", dates[2], "to", dates[1], sep=" ")
 ex.mad <- quantile(drafts.stats$mad, .95)
 
 value.plot <- ggplot(subset(drafts.stats, drafts.stats$mad >= ex.mad), aes(median, mad)) +
-  geom_text(aes(label = name, alpha=.85, colour="red", size=3.5), position=position_jitter(w=4,h=2)) +
+  geom_text(aes(label = name_ffc, alpha=.85, colour="red", size=3.5), position=position_jitter(w=4,h=2)) +
   geom_point(data=subset(drafts.stats, drafts.stats$mad < ex.mad)) +
   stat_smooth(data=drafts.stats, aes(median, mad)) +
   xlab("Median Player Draft Position") +
