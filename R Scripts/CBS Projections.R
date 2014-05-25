@@ -111,10 +111,10 @@ projections_cbs <- projections_cbs[order(projections_cbs$overallRank_cbs),]
 row.names(projections_cbs) <- 1:dim(projections_cbs)[1]
 
 #Density Plot
-ggplot(projections_cbs, aes(x=pts_cbs)) + geom_density(fill="red", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of CBS Projected Points from 2014")
-ggsave(paste(getwd(),"/Figures/CBS projections 2014.jpg", sep=""))
+ggplot(projections_cbs, aes(x=pts_cbs)) + geom_density(fill="red", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of CBS Projected Points from")
+ggsave(paste(getwd(),"/Figures/CBS projections.jpg", sep=""))
 dev.off()
 
 #Save file
-save(projections_cbs, file = paste(getwd(),"/Data/CBS-Projections-2014.RData", sep=""))
-write.csv(projections_cbs, file=paste(getwd(),"/Data/CSV/CBS-Projections-2014.csv", sep=""), row.names=FALSE)
+save(projections_cbs, file = paste(getwd(),"/Data/CBS-Projections.RData", sep=""))
+write.csv(projections_cbs, file=paste(getwd(),"/Data/CBS-Projections.csv", sep=""), row.names=FALSE)

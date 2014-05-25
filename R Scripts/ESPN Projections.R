@@ -119,10 +119,10 @@ projections_espn <- projections_espn[order(projections_espn$overallRank_espn),]
 row.names(projections_espn) <- 1:dim(projections_espn)[1]
 
 #Density Plot
-ggplot(projections_espn, aes(x=pts_espn)) + geom_density(fill="blue", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of ESPN Projected Points from 2014")
-ggsave(paste(getwd(),"/Figures/ESPN projections 2014.jpg", sep=""))
+ggplot(projections_espn, aes(x=pts_espn)) + geom_density(fill="blue", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of ESPN Projected Points")
+ggsave(paste(getwd(),"/Figures/ESPN projections.jpg", sep=""))
 dev.off()
 
 #Save file
-save(projections_espn, file = paste(getwd(),"/Data/ESPN-Projections-2014.RData", sep=""))
-write.csv(projections_espn, file=paste(getwd(),"/Data/CSV/ESPN-Projections-2014.csv", sep=""), row.names=FALSE)
+save(projections_espn, file = paste(getwd(),"/Data/ESPN-Projections.RData", sep=""))
+write.csv(projections_espn, file=paste(getwd(),"/Data/ESPN-Projections.csv", sep=""), row.names=FALSE)

@@ -141,11 +141,11 @@ value.plot <- ggplot(subset(drafts.stats, drafts.stats$mad >= ex.mad), aes(media
   scale_color_manual(values=c("red"="darkred")) +
   theme(legend.position="none")
 
-pdf(paste(getwd(),"/Figures/Sleepers 2014.pdf", sep=""), width=10, height=6)
-#jpeg(paste(getwd(),"/Figures/Sleepers 2014.jpg", sep=""))
+pdf(paste(getwd(),"/Figures/Sleepers.pdf", sep=""), width=10, height=6)
+#jpeg(paste(getwd(),"/Figures/Sleepers.jpg", sep=""))
 value.plot
 dev.off()
 
 #Save file
-save(sleepers, file = paste(getwd(),"/Data/sleepers-2014.RData", sep=""))
-write.csv(sleepers, file=paste(getwd(),"/Data/CSV/sleepers-2014.csv", sep=""), row.names=FALSE)
+save(sleepers, file = paste(getwd(),"/Data/sleepers.RData", sep=""))
+write.csv(sleepers, file=paste(getwd(),"/Data/sleepers.csv", sep=""), row.names=FALSE)

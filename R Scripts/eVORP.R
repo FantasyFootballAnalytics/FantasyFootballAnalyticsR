@@ -10,8 +10,8 @@
 #Libraries
 
 #Data
-adp <- read.csv(paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/adp.csv", sep=""))
-actual <- read.csv(paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/actual.csv", sep=""))
+adp <- read.csv(paste(getwd(), "/Data/Historical ADP/adp.csv", sep=""))
+actual <- read.csv(getwd(),"/Data/Historical Actual Points/actual.csv", sep=""))
 
 #Merge
 task <- merge(adp, actual, by=c("year","name"), all=TRUE)
@@ -38,7 +38,7 @@ task <- task[-which(task$pos == "Def" & task$points==0),]
 task <- task[order(-task$year, -task$points),]
 
 #Save Data
-write.csv(task, file=paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/adpPlusActual.csv", sep=""), row.names=FALSE)
+write.csv(task, file=paste(getwd(), "/Data/Historical ADP/adpPlusActual.csv", sep=""), row.names=FALSE)
 
 ### All Data Points
 taskQB <- task[task$pos == "QB",]
@@ -127,37 +127,37 @@ predictability = data.frame(qbPredictabilityAllInverse, rbPredictabilityAllInver
 predictability <- predictability - min(predictability)
 
 #Plots
-jpeg(paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/Plots/QB Expected Values All.jpg", sep=""), width=1000, height=1000, pointsize=24)
+jpeg(paste(getwd(), "/Figures/QB Expected Values All.jpg", sep=""), width=1000, height=1000, pointsize=24)
 plot(task[task$pos == "QB","projectedPositionRank"], task[task$pos == "QB","points"], xlab="Position Rank", ylab="Expected Points", main="QB Expected Values", ylim=c(0,300))
 abline(qbLinearAll, col="blue", lwd=2)
 text(50,250, paste("R-squared = ", round(summary(qbLinearAll)$r.squared, 3), sep=""))
 dev.off()
 
-jpeg(paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/Plots/RB Expected Values All.jpg", sep=""), width=1000, height=1000, pointsize=24)
+jpeg(paste(getwd(), "/Figures/RB Expected Values All.jpg", sep=""), width=1000, height=1000, pointsize=24)
 plot(task[task$pos == "RB","projectedPositionRank"], task[task$pos == "RB","points"], xlab="Position Rank", ylab="Expected Points", main="RB Expected Values", ylim=c(0,300))
 curve(logRegression(x, a=coef(rbLogAll)[1], b=coef(rbLogAll)[2]), add = TRUE, col="red", lwd=2)
 text(90,250, paste("R-squared = ", round(1-(deviance(rbLogAll)/sum((task[task$pos == "RB",]$points-mean(task[task$pos == "RB",]$points))^2)), 3), sep=""))
 dev.off()
 
-jpeg(paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/Plots/WR Expected Values All.jpg", sep=""), width=1000, height=1000, pointsize=24)
+jpeg(paste(pgetwd(), "/Figures/WR Expected Values All.jpg", sep=""), width=1000, height=1000, pointsize=24)
 plot(task[task$pos == "WR","projectedPositionRank"], task[task$pos == "WR","points"], xlab="Position Rank", ylab="Expected Points", main="WR Expected Values", ylim=c(0,300))
 curve(logRegression(x, a=coef(wrLogAll)[1], b=coef(wrLogAll)[2]), add = TRUE, col="green", lwd=2)
 text(90,250, paste("R-squared = ", round(1-(deviance(wrLogAll)/sum((task[task$pos == "WR",]$points-mean(task[task$pos == "WR",]$points))^2)), 3), sep=""))
 dev.off()
 
-jpeg(paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/Plots/TE Expected Values All.jpg", sep=""), width=1000, height=1000, pointsize=24)
+jpeg(paste(getwd(), "/Figures/TE Expected Values All.jpg", sep=""), width=1000, height=1000, pointsize=24)
 plot(task[task$pos == "TE","projectedPositionRank"], task[task$pos == "TE","points"], xlab="Position Rank", ylab="Expected Points", main="TE Expected Values", ylim=c(0,300))
 curve(logRegression(x, a=coef(teLogAll)[1], b=coef(teLogAll)[2]), add = TRUE, col="purple", lwd=2)
 text(30,250, paste("R-squared = ", round(1-(deviance(teLogAll)/sum((task[task$pos == "TE",]$points-mean(task[task$pos == "TE",]$points))^2)), 3), sep=""))
 dev.off()
 
-jpeg(paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/Plots/K Expected Values All.jpg", sep=""), width=1000, height=1000, pointsize=24)
+jpeg(paste(getwd(), "/Figures/K Expected Values All.jpg", sep=""), width=1000, height=1000, pointsize=24)
 plot(task[task$pos == "K","projectedPositionRank"], task[task$pos == "K","points"], xlab="Position Rank", ylab="Expected Points", main="K Expected Values", ylim=c(0,300))
 abline(kLinearAll, col="black", lwd=2)
 text(25,250, paste("R-squared = ", round(summary(kLinearAll)$r.squared, 3), sep=""))
 dev.off()
 
-jpeg(paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/Plots/Def Expected Values All.jpg", sep=""), width=1000, height=1000, pointsize=24)
+jpeg(paste(getwd(), "/Figures/Def Expected Values All.jpg", sep=""), width=1000, height=1000, pointsize=24)
 plot(task[task$pos == "Def","projectedPositionRank"], task[task$pos == "Def","points"], xlab="Position Rank", ylab="Expected Points", main="Defense Expected Values", ylim=c(0,300))
 abline(defLinearAll, col="orange", lwd=2)
 text(25,250, paste("R-squared = ", round(summary(defLinearAll)$r.squared, 3), sep=""))
@@ -171,7 +171,7 @@ teAll <- predict(teLogAll, newdata=tePositions)
 kAll <- predict(kLinearAll, newdata=kPositions)
 defAll <- predict(defLinearAll, newdata=defPositions)
 
-jpeg(paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/Plots/Expected Values.jpg", sep=""), width=1000, height=1000, pointsize=24)
+jpeg(paste(getwd(), "/Figures/Expected Values.jpg", sep=""), width=1000, height=1000, pointsize=24)
 plot(qbEVORP, xlab="Position Rank", ylab="Expected Points", main="Expected Values", xlim=c(0,110), ylim=c(0,300), col="white")
 lines(x=qbExpected$rank, y=na.omit(qbAll), col="blue", lwd=5)
 lines(x=rbExpected$rank, y=na.omit(rbAll), col="red", lwd=5)
@@ -323,37 +323,37 @@ defLog <- nls(eVORP ~ logRegression(rank,a,b), start=c(a=1, b=1), data=defExpect
 1-(deviance(defLog)/sum((defExpected$eVORP-mean(defExpected$eVORP))^2)) #r-squared = .39
 
 #Plots
-jpeg(paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/Plots/QB Expected Values.jpg", sep=""), width=1000, height=1000, pointsize=24)
+jpeg(paste(getwd(), "/Figures/QB Expected Values.jpg", sep=""), width=1000, height=1000, pointsize=24)
 plot(qbEVORP, xlab="Position Rank", ylab="Expected Points", main="QB Expected Values", ylim=c(0,300))
 abline(qbLinear, col="blue", lwd=2)
 text(40,250, paste("R-squared = ", round(summary(qbLinear)$r.squared, 3), sep=""))
 dev.off()
 
-jpeg(paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/Plots/RB Expected Values.jpg", sep=""), width=1000, height=1000, pointsize=24)
+jpeg(paste(getwd(), "/Figures/RB Expected Values.jpg", sep=""), width=1000, height=1000, pointsize=24)
 plot(rbEVORP, xlab="Position Rank", ylab="Expected Points", main="RB Expected Values", ylim=c(0,300))
 curve(logRegression(x, a=coef(rbLog)[1], b=coef(rbLog)[2]), add = TRUE, col="red", lwd=2)
 text(80,250, paste("R-squared = ", round(1-(deviance(rbLog)/sum((rbExpected$eVORP-mean(rbExpected$eVORP))^2)), 3), sep=""))
 dev.off()
 
-jpeg(paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/Plots/WR Expected Values.jpg", sep=""), width=1000, height=1000, pointsize=24)
+jpeg(paste(getwd(), "/Figures/WR Expected Values.jpg", sep=""), width=1000, height=1000, pointsize=24)
 plot(wrEVORP, xlab="Position Rank", ylab="Expected Points", main="WR Expected Values", ylim=c(0,300))
 curve(logRegression(x, a=coef(wrLog)[1], b=coef(wrLog)[2]), add = TRUE, col="green", lwd=2)
 text(90,250, paste("R-squared = ", round(1-(deviance(wrLog)/sum((wrExpected$eVORP-mean(wrExpected$eVORP))^2)), 3), sep=""))
 dev.off()
 
-jpeg(paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/Plots/TE Expected Values.jpg", sep=""), width=1000, height=1000, pointsize=24)
+jpeg(paste(getwd(), "/Figures/TE Expected Values.jpg", sep=""), width=1000, height=1000, pointsize=24)
 plot(teEVORP, xlab="Position Rank", ylab="Expected Points", main="TE Expected Values", ylim=c(0,300))
 curve(logRegression(x, a=coef(teLog)[1], b=coef(teLog)[2]), add = TRUE, col="purple", lwd=2)
 text(30,250, paste("R-squared = ", round(1-(deviance(teLog)/sum((teExpected$eVORP-mean(teExpected$eVORP))^2)), 3), sep=""))
 dev.off()
 
-jpeg(paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/Plots/K Expected Values.jpg", sep=""), width=1000, height=1000, pointsize=24)
+jpeg(paste(getwd(), "/Figures/K Expected Values.jpg", sep=""), width=1000, height=1000, pointsize=24)
 plot(kEVORP, xlab="Position Rank", ylab="Expected Points", main="K Expected Values", ylim=c(0,300))
 abline(kLinear, col="black", lwd=2)
 text(25,250, paste("R-squared = ", round(summary(kLinear)$r.squared, 3), sep=""))
 dev.off()
 
-jpeg(paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/Plots/Def Expected Values.jpg", sep=""), width=1000, height=1000, pointsize=24)
+jpeg(paste(getwd(), "/Figures/Def Expected Values.jpg", sep=""), width=1000, height=1000, pointsize=24)
 plot(defEVORP, xlab="Position Rank", ylab="Expected Points", main="Defense Expected Values", ylim=c(0,300))
 abline(defLinear, col="orange", lwd=2)
 text(25,250, paste("R-squared = ", round(summary(defLinear)$r.squared, 3), sep=""))
@@ -367,7 +367,7 @@ te <- predict(teLog, newdata=teExpected)
 k <- predict(kLinear, newdata=kExpected)
 def <- predict(defLinear, newdata=defExpected)
 
-jpeg(paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/Plots/Expected Values.jpg", sep=""), width=1000, height=1000, pointsize=24)
+jpeg(paste(getwd(), "/Figures/Expected Values.jpg", sep=""), width=1000, height=1000, pointsize=24)
 plot(qbEVORP, xlab="Position Rank", ylab="Expected Points", main="Expected Values", xlim=c(0,110), ylim=c(0,300), col="white")
 lines(x=qbExpected$rank, y=na.omit(qb), col="blue", lwd=5)
 lines(x=rbExpected$rank, y=na.omit(rb), col="red", lwd=5)
@@ -477,5 +477,5 @@ min(discount[,2:7], na.rm=TRUE)
 max(discount[,2:7], na.rm=TRUE)
 
 #Save data
-write.csv(expectedValues, file=paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/expectedValues.csv", sep=""), row.names=FALSE)
-write.csv(discount, file=paste(path, "/Fantasy Football/Research/FantasyPros/Expected VBD/discount.csv", sep=""), row.names=FALSE)
+write.csv(expectedValues, file=paste(getwd(), "/Data/expectedValues.csv", sep=""), row.names=FALSE)
+write.csv(discount, file=paste(getwd(), "/Data/discount.csv", sep=""), row.names=FALSE)

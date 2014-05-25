@@ -16,10 +16,10 @@ source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Load data
-load(paste(getwd(),"/Data/ESPN-Projections-2014.RData", sep=""))
-load(paste(getwd(),"/Data/CBS-Projections-2014.RData", sep=""))
-load(paste(getwd(),"/Data/NFL-Projections-2014.RData", sep=""))
-load(paste(getwd(),"/Data/FantasyPros-Projections-2014.RData", sep=""))
+load(paste(getwd(),"/Data/ESPN-Projections.RData", sep=""))
+load(paste(getwd(),"/Data/CBS-Projections.RData", sep=""))
+load(paste(getwd(),"/Data/NFL-Projections.RData", sep=""))
+load(paste(getwd(),"/Data/FantasyPros-Projections.RData", sep=""))
 
 #Merge projections from ESPN and CBS
 projections <- merge(projections_espn, projections_cbs, by=c("name","pos"), all=TRUE)
@@ -267,10 +267,10 @@ pointDensity <- c(projections$projectedPts_espn,projections$projectedPts_cbs,pro
 sourceDensity <- c(rep("ESPN",dim(projections)[1]),rep("CBS",dim(projections)[1]),rep("NFL",dim(projections)[1]),rep("FP",dim(projections)[1])) #,rep("Latent",dim(projections)[1])
 densityData <- data.frame(pointDensity,sourceDensity)
 
-ggplot(densityData, aes(x=pointDensity, fill=sourceDensity)) + geom_density(alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of Projected Points from 2014") + theme(legend.title=element_blank())
-ggsave(paste(getwd(),"/Figures/Calculate projections 2014.jpg", sep=""))
+ggplot(densityData, aes(x=pointDensity, fill=sourceDensity)) + geom_density(alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of Projected Points") + theme(legend.title=element_blank())
+ggsave(paste(getwd(),"/Figures/Calculate projections.jpg", sep=""))
 dev.off()
 
 #Save file
-save(projections, file = paste(getwd(),"/Data/LeagueProjections-2014.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/CSV/LeagueProjections-2014.csv", sep=""), row.names=FALSE)
+save(projections, file = paste(getwd(),"/Data/LeagueProjections.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/LeagueProjections.csv", sep=""), row.names=FALSE)

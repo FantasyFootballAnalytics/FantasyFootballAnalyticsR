@@ -122,10 +122,10 @@ projections_fp <- projections_fp[order(projections_fp$overallRank_fp),]
 row.names(projections_fp) <- 1:dim(projections_fp)[1]
 
 #Density Plot
-ggplot(projections_fp, aes(x=pts_fp)) + geom_density(fill="orange", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of FantasyPros Projected Points from 2014")
-ggsave(paste(getwd(),"/Figures/FantasyPros projections 2014.jpg", sep=""))
+ggplot(projections_fp, aes(x=pts_fp)) + geom_density(fill="orange", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of FantasyPros Projected Points")
+ggsave(paste(getwd(),"/Figures/FantasyPros projections.jpg", sep=""))
 dev.off()
 
 #Save file
-save(projections_fp, file = paste(getwd(),"/Data/FantasyPros-Projections-2014.RData", sep=""))
-write.csv(projections_fp, file=paste(getwd(),"/Data/CSV/FantasyPros-Projections-2014.csv", sep=""), row.names=FALSE)
+save(projections_fp, file = paste(getwd(),"/Data/FantasyPros-Projections.RData", sep=""))
+write.csv(projections_fp, file=paste(getwd(),"/Data/FantasyPros-Projections.csv", sep=""), row.names=FALSE)

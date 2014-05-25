@@ -16,7 +16,7 @@ source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Data
-load(paste(getwd(),"/Data/simulation-2014.RData", sep=""))
+load(paste(getwd(),"/Data/simulation.RData", sep=""))
 
 #Roster Optimization
 optimizeData <- na.omit(projections[,c("name","pos","projections","risk","inflatedCost","sdPts")]) #projectedPtsLatent
@@ -81,5 +81,5 @@ projections <- projections[order(-projections$vor),] #projections$projections
 row.names(projections) <- 1:dim(projections)[1]
 
 #Save file
-save(projections, file = paste(getwd(),"/Data/BidUpToSimulation-2014.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/CSV/BidUpToSimulation-2014.csv", sep=""), row.names=FALSE)
+save(projections, file = paste(getwd(),"/Data/BidUpToSimulation.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/BidUpToSimulation.csv", sep=""), row.names=FALSE)

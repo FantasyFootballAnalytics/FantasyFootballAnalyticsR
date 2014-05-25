@@ -18,8 +18,8 @@ source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Load data
-load(paste(getwd(),"/Data/BidUpTo-2014.RData", sep=""))
-load(paste(getwd(),"/Data/projectedWithActualPoints-2014.RData", sep=""))
+load(paste(getwd(),"/Data/BidUpTo.RData", sep=""))
+load(paste(getwd(),"/Data/projectedWithActualPoints.RData", sep=""))
 
 #Roster Optimization
 optimizeData <- na.omit(projections[,c("name","pos","projections","risk","inflatedCost","sdPts")])
@@ -50,8 +50,8 @@ optimizeData$simulation <- log(optimizeData$solutionSum + 1)
 projections <- merge(projections, optimizeData[,c("name","simulation")], by="name", all.x=TRUE)
 
 #Save file
-save(projections, file = paste(getwd(),"/Data/simulation-2014.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/CSV/simulation-2014.csv", sep=""), row.names=FALSE)
+save(projections, file = paste(getwd(),"/Data/simulation.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/simulation.csv", sep=""), row.names=FALSE)
 
 #View Data
 optimizeData
