@@ -134,3 +134,13 @@ optimizeDraft <- function(points=removedPlayers$projections, playerCost=removedP
   sol$players <- removedPlayers$name[sol$solution == 1]
   return(sol)
 }
+
+#Convert type of multiple columns of a dataframe at once
+convert.magic <- function(obj, type){
+  FUN1 <- switch(type,
+                 character = as.character,
+                 numeric = as.numeric,
+                 factor = as.factor)
+  out <- lapply(obj, FUN1)
+  as.data.frame(out)
+}

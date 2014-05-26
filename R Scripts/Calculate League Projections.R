@@ -15,47 +15,64 @@ library("reshape")
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
-#Load data
-load(paste(getwd(),"/Data/CBS-Projections.RData", sep=""))
-load(paste(getwd(),"/Data/ESPN-Projections.RData", sep=""))
-load(paste(getwd(),"/Data/FantasySharks-Projections.RData", sep=""))
-load(paste(getwd(),"/Data/NFL-Projections.RData", sep=""))
-load(paste(getwd(),"/Data/FantasyPros-Projections.RData", sep=""))
+#Projections
+sourcesOfProjections <- c("Accuscore", "CBS", "ESPN", "FantasyPros", "FantasySharks", "NFL")
+sourcesOfProjectionsAbbreviation <- c("accu", "cbs", "espn", "fp", "fs", "nfl")
 
-#Merge projections from ESPN and CBS
-projections <- merge(projections_espn, projections_cbs, by=c("name","pos"), all=TRUE)
+#Import projections data
+filenames <- paste(getwd(),"/Data/", sourcesOfProjections, "-Projections.RData", sep="")
+lapply(filenames, load, envir=.GlobalEnv)
 
-#Remove duplicate cases
-projections[duplicated(projections$name),]
+listProjections <- list(projections_accu, projections_cbs, projections_espn, projections_fp, projections_fs, projections_nfl)
+  
+#######OLD#######
+#load(paste(getwd(),"/Data/Accuscore-Projections.RData", sep=""))
+#load(paste(getwd(),"/Data/CBS-Projections.RData", sep=""))
+#load(paste(getwd(),"/Data/ESPN-Projections.RData", sep=""))
+#load(paste(getwd(),"/Data/FantasySharks-Projections.RData", sep=""))
+#load(paste(getwd(),"/Data/NFL-Projections.RData", sep=""))
+#load(paste(getwd(),"/Data/FantasyPros-Projections.RData", sep=""))
+#################
+
+#Merge projections data
+projections <- merge_recurse(listProjections, by=c("name","pos")) #, all=TRUE
+
+#######OLD#######
+##Merge projections from ESPN and CBS
+#projections <- merge(projections_espn, projections_cbs, by=c("name","pos"), all=TRUE)
+#
+##Remove duplicate cases
+#projections[duplicated(projections$name),]
+##projections[projections$name %in% projections[duplicated(projections$name),"name"],]
+##projections[projections$name=="Steve Smith",]
+##projections[projections$name=="Steve Smith",][c(2),] <- NA
+##projections <- projections[!is.na(projections$name),]
+#
+##Merge projections with NFL.com
+#projections <- merge(projections, projections_nfl, by=c("name","pos"), all=TRUE)
+#
+##Remove duplicate cases
 #projections[projections$name %in% projections[duplicated(projections$name),"name"],]
-#projections[projections$name=="Steve Smith",]
-#projections[projections$name=="Steve Smith",][c(2),] <- NA
-#projections <- projections[!is.na(projections$name),]
-
-#Merge projections with NFL.com
-projections <- merge(projections, projections_nfl, by=c("name","pos"), all=TRUE)
-
-#Remove duplicate cases
-projections[projections$name %in% projections[duplicated(projections$name),"name"],]
-#projections[duplicated(projections$name),]
-
-#projections[projections$name=="Steve Smith" & projections$team_espn=="STL",c("team_nfl","positionRank_nfl","overallRank_nfl","passYds_nfl","passTds_nfl","passInt_nfl","rushYds_nfl","rushTds_nfl","recYds_nfl","recTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")] <- NA
-
-#Merge projections with FantasySharks
-projections <- merge(projections, projections_fs, by=c("name","pos"), all=TRUE)
-
-#Remove duplicate cases
-projections[projections$name %in% projections[duplicated(projections$name),"name"],]
-
-#Merge projections with Fantasy Pros
-projections <- merge(projections, projections_fp, by=c("name","pos"), all=TRUE)
-
-#Remove duplicate cases
-projections[projections$name %in% projections[duplicated(projections$name),"name"],]
-#projections[duplicated(projections$name),]
-
-#projections[projections$name=="Steve Smith",][c(1),] <- NA
-#projections <- projections[!is.na(projections$name),]
+##projections[duplicated(projections$name),]
+#
+##projections[projections$name=="Steve Smith" & projections$team_espn=="STL",c("team_nfl","positionRank_nfl","overallRank_nfl","passYds_nfl","passTds_nfl","passInt_nfl","rushYds_nfl","rushTds_nfl","recYds_nfl","recTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")] <- NA
+#
+##Merge projections with FantasySharks
+#projections <- merge(projections, projections_fs, by=c("name","pos"), all=TRUE)
+#
+##Remove duplicate cases
+#projections[projections$name %in% projections[duplicated(projections$name),"name"],]
+#
+##Merge projections with Fantasy Pros
+#projections <- merge(projections, projections_fp, by=c("name","pos"), all=TRUE)
+#
+##Remove duplicate cases
+#projections[projections$name %in% projections[duplicated(projections$name),"name"],]
+##projections[duplicated(projections$name),]
+#
+##projections[projections$name=="Steve Smith",][c(1),] <- NA
+##projections <- projections[!is.na(projections$name),]
+#################
 
 #Add player name
 projections$player <- projections$name_fp
