@@ -108,8 +108,11 @@ drafts.df$Order <- as.numeric(drafts.df$Order)
 #write.csv(drafts.df, raw.output, row.names=FALSE)    # Output raw data
 
 #Compute draft statistics  
-drafts.stats <- ddply(drafts.df, .(Player, Position, Team), summarise, mean=mean(Order),
-                    sd=sd(Order), freq=length(Order)/length(draft.data), mad=mad(Order), median=median(Order))
+drafts.stats <- ddply(drafts.df, .(Player, Position, Team), summarise, mean=mean(Order, na.rm=TRUE),
+                    sd=sd(Order, na.rm=TRUE), freq=length(Order)/length(draft.data), mad=mad(Order, na.rm=TRUE), median=median(Order, na.rm=TRUE))
+
+#If mad=0, change to SD
+drafts.stats[which(drafts.stats$mad == 0), "mad"] <- drafts.stats[which(drafts.stats$mad == 0), "sd"]
 
 #Clean up
 drafts.stats$name_ffc <- as.character(drafts.stats$Player)
@@ -149,3 +152,6 @@ dev.off()
 #Save file
 save(sleepers, file = paste(getwd(),"/Data/sleepers.RData", sep=""))
 write.csv(sleepers, file=paste(getwd(),"/Data/sleepers.csv", sep=""), row.names=FALSE)
+
+save(sleepers, file = paste(getwd(),"/Data/Historical Files/sleepers-2014.RData", sep=""))
+write.csv(sleepers, file=paste(getwd(),"/Data/Historical Files/sleepers-2014.csv", sep=""), row.names=FALSE)

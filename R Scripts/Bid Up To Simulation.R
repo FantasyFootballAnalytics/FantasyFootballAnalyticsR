@@ -83,3 +83,7 @@ row.names(projections) <- 1:dim(projections)[1]
 #Save file
 save(projections, file = paste(getwd(),"/Data/BidUpToSimulation.RData", sep=""))
 write.csv(projections, file=paste(getwd(),"/Data/BidUpToSimulation.csv", sep=""), row.names=FALSE)
+
+save(projections, file = paste(getwd(),"/Data/Historical Files/BidUpToSimulation-2014.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/Historical Files/BidUpToSimulation-2014.csv", sep=""), row.names=FALSE)
+

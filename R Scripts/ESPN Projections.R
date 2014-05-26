@@ -126,3 +126,6 @@ dev.off()
 #Save file
 save(projections_espn, file = paste(getwd(),"/Data/ESPN-Projections.RData", sep=""))
 write.csv(projections_espn, file=paste(getwd(),"/Data/ESPN-Projections.csv", sep=""), row.names=FALSE)
+
+save(projections_espn, file = paste(getwd(),"/Data/Historical Projections/ESPN-Projections-2014.RData", sep=""))
+write.csv(projections_espn, file=paste(getwd(),"/Data/Historical Projections/ESPN-Projections-2014.csv", sep=""), row.names=FALSE)

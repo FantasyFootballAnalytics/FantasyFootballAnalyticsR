@@ -98,3 +98,6 @@ dev.off()
 #Save file
 save(projections, file = paste(getwd(),"/Data/Risk.RData", sep=""))
 write.csv(projections, file=paste(getwd(),"/Data/Risk.csv", sep=""), row.names=FALSE)
+
+save(projections, file = paste(getwd(),"/Data/Historical Files/Risk-2014.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/Historical Files/Risk-2014.csv", sep=""), row.names=FALSE)

@@ -124,3 +124,6 @@ dev.off()
 #Save file
 save(projections_nfl, file = paste(getwd(),"/Data/NFL-Projections.RData", sep=""))
 write.csv(projections_nfl, file=paste(getwd(),"/Data/NFL-Projections.csv", sep=""), row.names=FALSE)
+
+save(projections_nfl, file = paste(getwd(),"/Data/Historical Projections/NFL-Projections-2014.RData", sep=""))
+write.csv(projections_nfl, file=paste(getwd(),"/Data/Historical Projections/NFL-Projections-2014.csv", sep=""), row.names=FALSE)

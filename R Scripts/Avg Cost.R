@@ -69,3 +69,7 @@ dev.off()
 #Save file
 save(projections, file = paste(getwd(),"/Data/AvgCost.RData", sep=""))
 write.csv(projections, file=paste(getwd(),"/Data/AvgCost.csv", sep=""), row.names=FALSE)
+
+save(projections, file = paste(getwd(),"/Data/Historical Cost/AvgCost-2014.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/Historical Cost/AvgCost-2014.csv", sep=""), row.names=FALSE)
+

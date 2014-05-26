@@ -146,3 +146,6 @@ dev.off()
 #Save data
 save(projectedWithActualPts, file = paste(getwd(),"/Data/projectedWithActualPoints.RData", sep=""))
 write.csv(projectedWithActualPts, file=paste(getwd(),"/Data/projectedWithActualPoints.csv", sep=""), row.names=FALSE)
+
+save(projectedWithActualPts, file = paste(getwd(),"/Data/Historical Files/projectedWithActualPoints-2014.RData", sep=""))
+write.csv(projectedWithActualPts, file=paste(getwd(),"/Data/Historical Files/projectedWithActualPoints-2014.csv", sep=""), row.names=FALSE)

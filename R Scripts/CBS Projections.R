@@ -118,3 +118,6 @@ dev.off()
 #Save file
 save(projections_cbs, file = paste(getwd(),"/Data/CBS-Projections.RData", sep=""))
 write.csv(projections_cbs, file=paste(getwd(),"/Data/CBS-Projections.csv", sep=""), row.names=FALSE)
+
+save(projections_cbs, file = paste(getwd(),"/Data/Historical Projections/CBS-Projections-2014.RData", sep=""))
+write.csv(projections_cbs, file=paste(getwd(),"/Data/Historical Projections/CBS-Projections-2014.csv", sep=""), row.names=FALSE)

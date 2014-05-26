@@ -42,3 +42,7 @@ IDP
 #Save file
 save(IDP, file = paste(getwd(),"/Data/IDP.RData", sep=""))
 write.csv(IDP, file=paste(getwd(),"/Data/IDP.csv", sep=""), row.names=FALSE)
+
+save(IDP, file = paste(getwd(),"/Data/Historical Rankings/IDP-2014.RData", sep=""))
+write.csv(IDP, file=paste(getwd(),"/Data/Historical Rankings/IDP-2014.csv", sep=""), row.names=FALSE)
+

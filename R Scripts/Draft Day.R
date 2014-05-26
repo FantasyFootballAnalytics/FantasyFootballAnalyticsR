@@ -28,8 +28,11 @@ draftData <- draftData[order(-draftData$vor),]
 row.names(draftData) <- 1:dim(draftData)[1]
 
 #Save data
-save(draftData, file = paste(getwd(),"/Data/DraftDay-2014.RData", sep=""))
-write.csv(draftData, file=paste(getwd(),"/Data/CSV/DraftDay-2014.csv", sep=""), row.names=FALSE)
+save(draftData, file = paste(getwd(),"/Data/DraftDay.RData", sep=""))
+write.csv(draftData, file=paste(getwd(),"/Data/DraftDay.csv", sep=""), row.names=FALSE)
+
+save(draftData, file = paste(getwd(),"/Data/Historical Files/DraftDay-2014.RData", sep=""))
+write.csv(draftData, file=paste(getwd(),"/Data/Historical Files/DraftDay-2014.csv", sep=""), row.names=FALSE)
 
 options(digits=2)
 draftData

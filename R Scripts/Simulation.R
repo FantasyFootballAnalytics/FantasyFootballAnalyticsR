@@ -53,6 +53,9 @@ projections <- merge(projections, optimizeData[,c("name","simulation")], by="nam
 save(projections, file = paste(getwd(),"/Data/simulation.RData", sep=""))
 write.csv(projections, file=paste(getwd(),"/Data/simulation.csv", sep=""), row.names=FALSE)
 
+save(projections, file = paste(getwd(),"/Data/Historical Files/simulation-2014.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/Historical Files/simulation-2014.csv", sep=""), row.names=FALSE)
+
 #View Data
 optimizeData
 
