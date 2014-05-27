@@ -39,7 +39,7 @@ te$pos <- as.factor("TE")
 projections_accu <- rbind.fill(qb, rb, wr, te)
 
 #Convert NAs to 0
-projections_accu[is.na(projections_accu)] <- 0
+#projections_accu[is.na(projections_accu)] <- 0
 
 #Convert variable types to numeric
 projections_accu[,c("pts_accu",
