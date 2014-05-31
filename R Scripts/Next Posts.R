@@ -5,4 +5,10 @@
 #2. Optimum Roster
 #3. Simulation
 #4. Bid Up To
-#4. Sleepers
+#5. Sleepers
+#6. Re-evaluating projections
+
+#Other sources of projections:
+http://www.fftoday.com/rankings/playerproj.php?PosID=10&LeagueID=1
+http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx
+http://www.fftoolbox.com/football/2014/cheatsheets.cfm

@@ -19,22 +19,59 @@ source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Load data
-load(paste(getwd(),"/Data/LeagueProjections.RData", sep=""))
-actualPoints <- read.csv(paste(getwd(),"/Data/Yahoo-actualpoints.csv", sep=""))
+#load(paste(getwd(),"/Data/LeagueProjections.RData", sep=""))
+#actualPoints <- read.csv(paste(getwd(),"/Data/Yahoo-actualpoints.csv", sep=""))
+
+#####################
+# 2012
+#####################
+load(paste(getwd(),"/Data/Historical Projections/LeagueProjections-2012.RData", sep=""))
+projections$name_fp <- projections$name
+projections$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", projections$name)))
+
+actualPoints <- read.csv(paste(getwd(),"/Data/Historical Actual Points/Yahoo-actualpoints-2012.csv", sep=""))
+
+actualPoints$pos[!is.na(actualPoints$Fan.Pts)] <- as.character(actualPoints$Player[which(is.na(actualPoints$Fan.Pts) == FALSE) + 1])
+actualPoints$pos <- str_sub(actualPoints$pos, start=str_locate(actualPoints$pos, "-")[,1]+2, end=str_locate(actualPoints$pos, "-")[,1]+3) #str_locate(actualPoints$pos, "\\)")[,1]
 
 #Cleanup Yahoo actual points data
 actualPoints <- actualPoints[which(actualPoints$Fan.Pts!=""),]
-actualPoints$player <- as.character(actualPoints$Player)
-actualPoints$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", actualPoints$player)))
-actualPoints$actualPts <- actualPoints$Fan.Pts
-actualPoints <- actualPoints[,c("name","actualPts")]
-row.names(actualPoints) <- 1:dim(actualPoints)[1]
+actualPoints$name_yahoo <- as.character(actualPoints$Player)
 
 #Change player names
-actualPoints[which(actualPoints$name=="Stevie Johnson"),"name"] <- "Steve Johnson"
+actualPoints[which(actualPoints$name_yahoo=="Stevie Johnson"),"name_yahoo"] <- "Steve Johnson"
+
+actualPoints$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", actualPoints$name_yahoo)))
+actualPoints$actualPts <- actualPoints$Fan.Pts
+actualPoints <- actualPoints[,c("name","name_yahoo","pos","actualPts")]
+row.names(actualPoints) <- 1:dim(actualPoints)[1]
+
+write.csv(actualPoints, file=paste(getwd(),"/Data/Historical Actual Points/Yahoo-actualpoints-2012-formatted.csv", sep=""), row.names=FALSE)
+
+#####################
+# 2013
+#####################
+load(paste(getwd(),"/Data/Historical Projections/LeagueProjections-2013.RData", sep=""))
+projections$name_fp <- projections$name
+projections$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", projections$name)))
+
+actualPoints <- read.csv(paste(getwd(),"/Data/Historical Actual Points/Yahoo-actualpoints-2013.csv", sep=""))
+
+names(actualPoints) <- c("notes","player","owner","team","actualPts","ownedPct","proj","actual","passYds","passTds","passInt","rushYds","yushTds","recYds","rushTds","returnYds","returnTds","twoPts","fumbles")
+
+actualPoints$player[!is.na(actualPoints$actualPts)] <- actualPoints$player[which(is.na(actualPoints$actualPts) == FALSE) + 1]
+actualPoints <- actualPoints[!is.na(actualPoints$actualPts),]
+actualPoints$pos <- str_trim(str_sub(actualPoints$player, start= -2))
+actualPoints$name_yahoo <- str_trim(str_sub(actualPoints$player, start=0, end=str_locate(actualPoints$player, "-")[,1]-5))
+actualPoints$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", actualPoints$name_yahoo)))
+actualPoints$actualPts <- as.numeric(actualPoints$actualPts)
+actualPoints <- actualPoints[,c("name","name_yahoo","pos","actualPts")]
+row.names(actualPoints) <- 1:dim(actualPoints)[1]
+
+write.csv(actualPoints, file=paste(getwd(),"/Data/Historical Actual Points/Yahoo-actualpoints-2013-formatted.csv", sep=""), row.names=FALSE)
 
 #Merge projections with Yahoo actual points
-projectedWithActualPts <- merge(projections, actualPoints, by="name", all.x=TRUE)
+projectedWithActualPts <- merge(projections, actualPoints, by=c("name","pos"), all.x=TRUE)
 
 #Remove duplicate cases
 projectedWithActualPts[projectedWithActualPts$name %in% projectedWithActualPts[duplicated(projectedWithActualPts$name),"name"],]
@@ -43,10 +80,10 @@ projectedWithActualPts[projectedWithActualPts$name %in% projectedWithActualPts[d
 #projectedWithActualPts[projectedWithActualPts$name=="Alex Smith",]
 #projectedWithActualPts[projectedWithActualPts$name=="Steve Smith",]
 
-projectedWithActualPts[projectedWithActualPts$name=="Alex Smith",][2,] <- NA
-projectedWithActualPts <- projectedWithActualPts[!is.na(projectedWithActualPts$name),]
-projectedWithActualPts[projectedWithActualPts$name=="Steve Smith",][2,] <- NA
-projectedWithActualPts <- projectedWithActualPts[!is.na(projectedWithActualPts$name),]
+#projectedWithActualPts[projectedWithActualPts$name=="Alex Smith",][2,] <- NA
+#projectedWithActualPts <- projectedWithActualPts[!is.na(projectedWithActualPts$name),]
+#projectedWithActualPts[projectedWithActualPts$name=="Steve Smith",][2,] <- NA
+#projectedWithActualPts <- projectedWithActualPts[!is.na(projectedWithActualPts$name),]
 
 #Correlation between projections and actual points
 cor(projectedWithActualPts[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts_fp","projectedPtsAvg","projectedPtsLatent","actualPts")], use="pairwise.complete.obs")
