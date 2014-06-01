@@ -32,64 +32,10 @@ projections <- merge_recurse(listProjections, by=c("name","pos")) #, all=TRUE
 #Add player name
 projections$player <- projections$name_fp
 
-#Determine Team
-projections$team <- NA
-for (i in 1:dim(projections)[1]){
-  #If all are NA, set to NA
-  if(is.na(projections[i,"team_espn"])==TRUE & is.na(projections[i,"team_cbs"])==TRUE & is.na(projections[i,"team_nfl"])==TRUE & is.na(projections[i,"team_fp"])==TRUE){
-    projections[i,"team"] <- NA
-  }
-  
-  #If all but one is NA, set to only one available
-  else if (is.na(projections[i,"team_espn"])==TRUE & is.na(projections[i,"team_cbs"])==TRUE & is.na(projections[i,"team_nfl"])==TRUE){
-    projections[i,"team"] <- projections[i,"team_fp"]
-  } else if (is.na(projections[i,"team_espn"])==TRUE & is.na(projections[i,"team_cbs"])==TRUE & is.na(projections[i,"team_fp"])==TRUE){
-    projections[i,"team"] <- projections[i,"team_nfl"]
-  } else if (is.na(projections[i,"team_espn"])==TRUE & is.na(projections[i,"team_nfl"])==TRUE & is.na(projections[i,"team_fp"])==TRUE){
-    projections[i,"team"] <- projections[i,"team_cbs"]
-  } else if (is.na(projections[i,"team_cbs"])==TRUE & is.na(projections[i,"team_nfl"])==TRUE & is.na(projections[i,"team_fp"])==TRUE){
-    projections[i,"team"] <- projections[i,"team_espn"]
-  }
-  
-  #If FantasyPros available, set as FantasyPros
-  else if (is.na(projections[i,"team_nfl"])==FALSE){
-    projections[i,"team"] <- projections[i,"team_fp"]
-  }
-  
-  #If FantasyPros is not available, and only one is available, set as only one available
-  else if (is.na(projections[i,"team_espn"])==TRUE & is.na(projections[i,"team_cbs"])==TRUE){
-    projections[i,"team"] <- projections[i,"team_nfl"]
-  } else if (is.na(projections[i,"team_espn"])==TRUE & is.na(projections[i,"team_nfl"])==TRUE){
-    projections[i,"team"] <- projections[i,"team_cbs"]
-  } else if (is.na(projections[i,"team_cbs"])==TRUE & is.na(projections[i,"team_nfl"])==TRUE){
-    projections[i,"team"] <- projections[i,"team_espn"]
-  }
-  
-  #Settle conflicts
-  else if (is.na(projections[i,"team_espn"])==TRUE){
-    ifelse(length(unique(c(projections[i,"team_cbs"],projections[i,"team_nfl"])))==1, projections[i,"team"] <- unique(c(projections[i,"team_cbs"],projections[i,"team_nfl"])), projections[i,"team"] <- paste(projections[i,"team_cbs"], projections[i,"team_nfl"], sep="/"))
-  } else if (is.na(projections[i,"team_cbs"])==TRUE){
-    ifelse(length(unique(c(projections[i,"team_espn"],projections[i,"team_nfl"])))==1, projections[i,"team"] <- unique(c(projections[i,"team_espn"],projections[i,"team_nfl"])), projections[i,"team"] <- paste(projections[i,"team_espn"], projections[i,"team_nfl"], sep="/"))
-  } else if (is.na(projections[i,"team_nfl"])==TRUE){
-    ifelse(length(unique(c(projections[i,"team_espn"],projections[i,"team_cbs"])))==1, projections[i,"team"] <- unique(c(projections[i,"team_espn"],projections[i,"team_cbs"])), projections[i,"team"] <- paste(projections[i,"team_espn"], projections[i,"team_cbs"], sep="/"))
-  } else if (projections[i,"team_espn"] == projections[i,"team_cbs"] && projections[i,"team_espn"] == projections[i,"team_nfl"]){
-    projections[i,"team"] <- projections[i,"team_espn"]
-  } else if (projections[i,"team_espn"] == projections[i,"team_cbs"]){
-    projections[i,"team"] <- projections[i,"team_espn"]
-  } else if (projections[i,"team_espn"] == projections[i,"team_nfl"]){
-    projections[i,"team"] <- projections[i,"team_nfl"]
-  } else if (projections[i,"team_cbs"] == projections[i,"team_nfl"]){
-    projections[i,"team"] <- projections[i,"team_cbs"]
-  }
-  
-  #Otherwise set to FantasyPros
-  else{
-    projections[i,"team"] <- projections[i,"team_fp"]
-  }
-}
-
-#Check teams
-projections[,c("name","pos","team_espn","team_cbs","team_nfl","team_fp","team_fs","team_yahoo","team")]
+#Set team name as most common instance across sources
+mytable <- apply(projections[,c("team_accu","team_espn","team_cbs","team_nfl","team_fp","team_fs","team_yahoo")], 1, table)
+projections$team <- names(sapply(mytable,`[`,1) )
+projections$team[which(projections$team == "")] <- NA
 
 #Calculate projections for each source
 for(i in 1:length(sourcesOfProjectionsAbbreviation)){
@@ -228,6 +174,7 @@ projections <- projections[,c("name","player","pos","team","overallRank","projec
 
 #View projections
 projections
+projections[,c("name","pos","team","projectedPts_fp","projectedPtsAvg","projectedPtsLatent")]
 
 #Density Plot
 pointDensity <- c(projections$projectedPts_accu, projections$projectedPts_espn, projections$projectedPts_cbs, projections$projectedPts_nfl, projections$projectedPts_fs, projections$projectedPts_fp, projections$projectedPts_yahoo, projections$projectedPtsAvg) #,projections$projectedPtsLatent

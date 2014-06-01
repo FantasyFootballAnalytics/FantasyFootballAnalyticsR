@@ -26,35 +26,38 @@ source(paste(getwd(),"/R Scripts/FantasySharks Projections.R", sep=""), echo=TRU
 #8. Download NFL.com projections
 source(paste(getwd(),"/R Scripts/NFL Projections.R", sep=""), echo=TRUE)
 
-#9. Calculate projections for your league
+#9. Download Yahoo.com projections
+source(paste(getwd(),"/R Scripts/Yahoo Projections.R", sep=""), echo=TRUE)
+
+#10. Calculate projections for your league
 source(paste(getwd(),"/R Scripts/Calculate League Projections.R", sep=""), echo=TRUE)
 
-#10. Evaluate league projections from last year
+#11. Evaluate league projections from last year
 source(paste(getwd(),"/R Scripts/Evaluate Projections.R", sep=""), echo=TRUE)
 
-#11. Calculate players' risk levels
+#12. Calculate players' risk levels
 source(paste(getwd(),"/R Scripts/Risk.R", sep=""), echo=TRUE)
 
-#12. Calculate VOR for snake draft
+#13. Calculate VOR for snake draft
 source(paste(getwd(),"/R Scripts/Value Over Replacement.R", sep=""), echo=TRUE)
 
-#13. Download average auction values
+#14. Download average auction values
 source(paste(getwd(),"/R Scripts/Avg Cost.R", sep=""), echo=TRUE)
 
-#14. Calculate optimal team
+#15. Calculate optimal team
 source(paste(getwd(),"/R Scripts/Optimum Roster.R", sep=""), echo=TRUE)
 
-#15. Calculate optimal risk
+#16. Calculate optimal risk
 source(paste(getwd(),"/R Scripts/Optimum Risk.R", sep=""), echo=TRUE)
 
-#16. Calculate Bid Up To
+#17. Calculate Bid Up To
 source(paste(getwd(),"/R Scripts/Bid Up To.R", sep=""), echo=TRUE)
 
-#17. Calculate optimal team via simulation
+#18. Calculate optimal team via simulation
 source(paste(getwd(),"/R Scripts/Simulation.R", sep=""), echo=TRUE)
 
-#18. Calculate Bid Up To via simulation
+#19. Calculate Bid Up To via simulation
 source(paste(getwd(),"/R Scripts/Bid Up To Simulation.R", sep=""), echo=TRUE)
 
-#19. Draft Day (remove unavailable/drafted players)
+#20. Draft Day (remove unavailable/drafted players)
 source(paste(getwd(),"/R Scripts/Draft Day.R", sep=""), echo=TRUE)

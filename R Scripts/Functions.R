@@ -10,6 +10,9 @@
 #Library
 library("Rglpk")
 
+#Options
+options(scipen=999)
+
 #Function for calculating Mean Absolute Scaled Error (MASE)
 calculateMASE <- function(f,y) { # f = vector with forecasts, y = vector with actuals
   if(length(f)!=length(y)){ stop("Vector length is not equal") }
