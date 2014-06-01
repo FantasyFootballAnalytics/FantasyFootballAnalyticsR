@@ -8,11 +8,19 @@
 # To do:
 ###########################
 
+#####################
+# UPDATE
+#####################
+year <- 2013
+yahooLeagueID <- 39345
+pagesToGrab <- 15
+
 #Library
 library("psy")
 library("psych")
 library("ggplot2")
 library("forecast")
+library("XML")
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
@@ -23,52 +31,62 @@ source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 #actualPoints <- read.csv(paste(getwd(),"/Data/Yahoo-actualpoints.csv", sep=""))
 
 #####################
-# 2012
+# Import and Process Historical Projections
 #####################
-load(paste(getwd(),"/Data/Historical Projections/LeagueProjections-2012.RData", sep=""))
+load(paste(getwd(), "/Data/Historical Projections/LeagueProjections-", year, ".RData", sep=""))
 projections$name_fp <- projections$name
 projections$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", projections$name)))
 
-actualPoints <- read.csv(paste(getwd(),"/Data/Historical Actual Points/Yahoo-actualpoints-2012.csv", sep=""))
-
-actualPoints$pos[!is.na(actualPoints$Fan.Pts)] <- as.character(actualPoints$Player[which(is.na(actualPoints$Fan.Pts) == FALSE) + 1])
-actualPoints$pos <- str_sub(actualPoints$pos, start=str_locate(actualPoints$pos, "-")[,1]+2, end=str_locate(actualPoints$pos, "-")[,1]+3) #str_locate(actualPoints$pos, "\\)")[,1]
-
-#Cleanup Yahoo actual points data
-actualPoints <- actualPoints[which(actualPoints$Fan.Pts!=""),]
-actualPoints$name_yahoo <- as.character(actualPoints$Player)
-
-#Change player names
-actualPoints[which(actualPoints$name_yahoo=="Stevie Johnson"),"name_yahoo"] <- "Steve Johnson"
-
-actualPoints$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", actualPoints$name_yahoo)))
-actualPoints$actualPts <- actualPoints$Fan.Pts
-actualPoints <- actualPoints[,c("name","name_yahoo","pos","actualPts")]
-row.names(actualPoints) <- 1:dim(actualPoints)[1]
-
-write.csv(actualPoints, file=paste(getwd(),"/Data/Historical Actual Points/Yahoo-actualpoints-2012-formatted.csv", sep=""), row.names=FALSE)
-
 #####################
-# 2013
+# Scrape and Process Historical Actual Points
 #####################
-load(paste(getwd(),"/Data/Historical Projections/LeagueProjections-2013.RData", sep=""))
-projections$name_fp <- projections$name
-projections$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", projections$name)))
 
-actualPoints <- read.csv(paste(getwd(),"/Data/Historical Actual Points/Yahoo-actualpoints-2013.csv", sep=""))
+pb <- txtProgressBar(min = 0, max = pagesToGrab, style = 3)
+for(i in 1:pagesToGrab){
+  setTxtProgressBar(pb, i)
+  if(i > 1){
+    count <- 25*(i-1)
+    assign(paste("yahoo", i, sep=""), readHTMLTable(paste("http://football.fantasysports.yahoo.com/f1/", yahooLeagueID, "/players?status=A&pos=O&cut_type=9&stat1=S_S_", year, "&myteam=0&sort=PTS&sdir=1&count=", count, sep=""), stringsAsFactors = FALSE)[2]$'NULL')
+  } else if(i == 1){
+    assign(paste("yahoo", i, sep=""), readHTMLTable(paste("http://football.fantasysports.yahoo.com/f1/", yahooLeagueID, "/players?&sort=PTS&sdir=1&status=A&pos=O&stat1=S_S_", year, "&jsenabled=1&jsenabled=1", sep=""), stringsAsFactors = FALSE)[2]$'NULL')
+  }
+}
 
-names(actualPoints) <- c("notes","player","owner","team","actualPts","ownedPct","proj","actual","passYds","passTds","passInt","rushYds","yushTds","recYds","rushTds","returnYds","returnTds","twoPts","fumbles")
+#Merge
+actualPoints <- rbind(yahoo1,yahoo2,yahoo3,yahoo4,yahoo5,yahoo6,yahoo7,yahoo8,yahoo9,yahoo10,yahoo11,yahoo12,yahoo13,yahoo14,yahoo15)
 
-actualPoints$player[!is.na(actualPoints$actualPts)] <- actualPoints$player[which(is.na(actualPoints$actualPts) == FALSE) + 1]
-actualPoints <- actualPoints[!is.na(actualPoints$actualPts),]
+#Variable Names
+names(actualPoints) <- c("star","player","add","owner","pts","ownedPct","proj","actual","passYds","passTds","passInt","rushYds","rushTds","recYds","recTds","returnTDs","twoPts","fumbles","missing")
+
+#Remove special characters(commas)
+actualPoints[,c("passYds","passTds","passInt","rushYds","rushTds","recYds","recTds","returnTDs","twoPts","fumbles","pts")] <-
+  apply(actualPoints[,c("passYds","passTds","passInt","rushYds","rushTds","recYds","recTds","returnTDs","twoPts","fumbles","pts")], 2, function(x) gsub("\\,", "", x))
+
+#Convert variables from character strings to numeric
+actualPoints[,c("passYds","passTds","passInt","rushYds","rushTds","recYds","recTds","returnTDs","twoPts","fumbles","pts")] <- 
+  convert.magic(actualPoints[,c("passYds","passTds","passInt","rushYds","rushTds","recYds","recTds","returnTDs","twoPts","fumbles","pts")], "numeric")
+
+#Player name, position, and team
+actualPoints$player <- str_trim(sapply(str_split(actualPoints$player, "\n"), "[[", 2))
 actualPoints$pos <- str_trim(str_sub(actualPoints$player, start= -2))
 actualPoints$name_yahoo <- str_trim(str_sub(actualPoints$player, start=0, end=str_locate(actualPoints$player, "-")[,1]-5))
 actualPoints$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", actualPoints$name_yahoo)))
-actualPoints$actualPts <- as.numeric(actualPoints$actualPts)
-actualPoints <- actualPoints[,c("name","name_yahoo","pos","actualPts")]
+actualPoints$team_yahoo <- toupper(str_trim(str_sub(actualPoints$player, start=str_locate(actualPoints$player, "-")[,1]-4, end=str_locate(actualPoints$player, "-")[,1]-2)))
+
+actualPoints$actualPts <- as.numeric(actualPoints$pts)
+actualPoints <- actualPoints[,c("name","name_yahoo","pos","team_yahoo","actualPts")]
 row.names(actualPoints) <- 1:dim(actualPoints)[1]
 
-write.csv(actualPoints, file=paste(getwd(),"/Data/Historical Actual Points/Yahoo-actualpoints-2013-formatted.csv", sep=""), row.names=FALSE)
+write.csv(actualPoints, file=paste(getwd(),"/Data/Historical Actual Points/Yahoo-actualpoints-", year, "-formatted.csv", sep=""), row.names=FALSE)
+
+#####################
+# Import Historical Actual Points
+#####################
+actualPoints <- read.csv(paste(getwd(),"/Data/Historical Actual Points/Yahoo-actualpoints-", year, "-formatted.csv", sep=""))
+
+#####################
+# Merge/Process Projected & Actual Points
+#####################
 
 #Merge projections with Yahoo actual points
 projectedWithActualPts <- merge(projections, actualPoints, by=c("name","pos"), all.x=TRUE)
@@ -84,6 +102,10 @@ projectedWithActualPts[projectedWithActualPts$name %in% projectedWithActualPts[d
 #projectedWithActualPts <- projectedWithActualPts[!is.na(projectedWithActualPts$name),]
 #projectedWithActualPts[projectedWithActualPts$name=="Steve Smith",][2,] <- NA
 #projectedWithActualPts <- projectedWithActualPts[!is.na(projectedWithActualPts$name),]
+
+#####################
+# Compare Projections
+#####################
 
 #Correlation between projections and actual points
 cor(projectedWithActualPts[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts_fp","projectedPtsAvg","projectedPtsLatent","actualPts")], use="pairwise.complete.obs")
@@ -184,5 +206,5 @@ dev.off()
 save(projectedWithActualPts, file = paste(getwd(),"/Data/projectedWithActualPoints.RData", sep=""))
 write.csv(projectedWithActualPts, file=paste(getwd(),"/Data/projectedWithActualPoints.csv", sep=""), row.names=FALSE)
 
-save(projectedWithActualPts, file = paste(getwd(),"/Data/Historical Files/projectedWithActualPoints-2014.RData", sep=""))
-write.csv(projectedWithActualPts, file=paste(getwd(),"/Data/Historical Files/projectedWithActualPoints-2014.csv", sep=""), row.names=FALSE)
+save(projectedWithActualPts, file = paste(getwd(),"/Data/Historical Files/projectedWithActualPoints-", year, ".RData", sep=""))
+write.csv(projectedWithActualPts, file=paste(getwd(),"/Data/Historical Files/projectedWithActualPoints-", year, ".csv", sep=""), row.names=FALSE)
