@@ -215,7 +215,7 @@ calculateMASE(na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts
 
 #Plot
 ggplot(data=projectedWithActualPts, aes(x=projectedPts_fp, y=actualPts)) + geom_point() + geom_smooth() + xlab("Projected Fantasy Football Points") + ylab("Actual Fantasy Football Points") + ggtitle("Association Between Projected Fantasy Points and Actual Points") +
-  annotate("text", x = 80, y = max(projectedWithActualPts$projections), label = paste("R-Squared = ",round(summary(lm(actualPts ~ projections, data=projectedWithActualPts))$r.squared,2),sep=""))
+  annotate("text", x = 80, y = max(projectedWithActualPts$projections, na.rm=TRUE), label = paste("R-Squared = ",round(summary(lm(actualPts ~ projectedPts_fp, data=projectedWithActualPts))$r.squared,2),sep=""))
 ggsave(paste(getwd(),"/Figures/Evaluate Projections.jpg", sep=""))
 dev.off()
 
