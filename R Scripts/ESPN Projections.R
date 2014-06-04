@@ -112,7 +112,7 @@ projections_espn$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", projectio
 #Order variables in data set
 projections_espn <- projections_espn[,c("name","name_espn","pos","team_espn","positionRank_espn","overallRank_espn",
                                         "passAtt_espn","passComp_espn","passYds_espn","passTds_espn","passInt_espn",
-                                        "rushYds_espn","rushTds_espn","recYds_espn","recTds_espn","twoPts_espn","fumbles_espn","pts_espn")]
+                                        "rushYds_espn","rushTds_espn","rec_espn","recYds_espn","recTds_espn","twoPts_espn","fumbles_espn","pts_espn")]
 
 #Order players by overall rank
 projections_espn <- projections_espn[order(projections_espn$overallRank_espn),]

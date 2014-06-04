@@ -71,6 +71,7 @@ projections_nfl$passTds_nfl <- as.numeric(projections_nfl$passTds_nfl)
 projections_nfl$passInt_nfl <- as.numeric(projections_nfl$passInt_nfl)
 projections_nfl$rushYds_nfl <- as.numeric(projections_nfl$rushYds_nfl)
 projections_nfl$rushTds_nfl <- as.numeric(projections_nfl$rushTds_nfl)
+projections_nfl$rec_nfl <- NA
 projections_nfl$recYds_nfl <- as.numeric(projections_nfl$recYds_nfl)
 projections_nfl$recTds_nfl <- as.numeric(projections_nfl$recTds_nfl)
 projections_nfl$fumbleTds_nfl <- as.numeric(projections_nfl$fumbleTds_nfl)
@@ -110,7 +111,7 @@ projections_nfl$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", projection
 #Order variables in data set
 projections_nfl <- projections_nfl[,c("name","name_nfl","pos","team_nfl","positionRank_nfl","overallRank_nfl",
                                       "passYds_nfl","passTds_nfl","passInt_nfl",
-                                      "rushYds_nfl","rushTds_nfl","recYds_nfl","recTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")]
+                                      "rushYds_nfl","rushTds_nfl","rec_nfl","recYds_nfl","recTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")]
 
 #Order players by overall rank
 projections_nfl <- projections_nfl[order(projections_nfl$overallRank_nfl),]

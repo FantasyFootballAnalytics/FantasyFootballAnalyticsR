@@ -55,6 +55,9 @@ projections_yahoo$name_yahoo <- str_trim(str_sub(projections_yahoo$player, start
 projections_yahoo$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", projections_yahoo$name_yahoo)))
 projections_yahoo$team_yahoo <- toupper(str_trim(str_sub(projections_yahoo$player, start=str_locate(projections_yahoo$player, "-")[,1]-4, end=str_locate(projections_yahoo$player, "-")[,1]-2)))
 
+#Add missing variables
+projections_yahoo$rec_yahoo <- NA
+
 #Remove duplicate cases
 projections_yahoo[duplicated(projections_yahoo$name_yahoo),]
 #projections_yahoo <- projections_yahoo[-which(projections_yahoo$name_yahoo=="Dexter McCluster" & projections_yahoo$pos=="RB"),]
@@ -74,7 +77,7 @@ projections_yahoo[which(projections_yahoo$pos == "TE"), "positionRank_yahoo"] <-
 
 #Order variables in data set
 projections_yahoo <- projections_yahoo[,c("name","name_yahoo","pos","team_yahoo","positionRank_yahoo","overallRank_yahoo",
-                                          "passYds_yahoo","passTds_yahoo","passInt_yahoo","rushYds_yahoo","rushTds_yahoo","recYds_yahoo","recTds_yahoo",
+                                          "passYds_yahoo","passTds_yahoo","passInt_yahoo","rushYds_yahoo","rushTds_yahoo","rec_yahoo","recYds_yahoo","recTds_yahoo",
                                           "twoPts_yahoo","fumbles_yahoo","pts_yahoo")]
 
 #Order players by overall rank

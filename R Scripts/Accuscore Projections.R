@@ -79,7 +79,7 @@ projections_accu[which(projections_accu$pos == "TE"), "positionRank_accu"] <- ra
 #Order variables in data set
 projections_accu <- projections_accu[,c("name","name_accu","pos","team_accu","positionRank_accu","overallRank_accu",
                                         "passAtt_accu","passComp_accu","passYds_accu","passTds_accu","passInt_accu",
-                                        "rushYds_accu","rushTds_accu","recYds_accu","recTds_accu","twoPts_accu","fumbles_accu","pts_accu")]
+                                        "rushYds_accu","rushTds_accu","rec_accu","recYds_accu","recTds_accu","twoPts_accu","fumbles_accu","pts_accu")]
 
 #Order players by overall rank
 projections_accu <- projections_accu[order(projections_accu$overallRank_accu),]

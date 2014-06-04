@@ -26,6 +26,7 @@ passTdsMultiplier <- 4      #4 pts per pass td
 passIntMultiplier <- -3     #-3 pts per INT
 rushYdsMultiplier <- (1/10) #1 pt per 10 rush yds
 rushTdsMultiplier <- 6      #6 pts per rush td
+recMultiplier <- 0          #0 pts per rec
 recYdsMultiplier <- (1/8)   #1 pt per 8 rec yds
 recTdsMultiplier <- 6       #6 pts per rec td
 twoPtsMultiplier <- 2       #2 pts per 2-point conversion (not included in ESPN or CBS projections)

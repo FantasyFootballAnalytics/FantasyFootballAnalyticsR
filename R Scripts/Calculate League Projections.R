@@ -39,13 +39,14 @@ projections$team[which(projections$team == "")] <- NA
 
 #Calculate projections for each source
 for(i in 1:length(sourcesOfProjectionsAbbreviation)){
-  projections[,paste(c("passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recYdsPts","recTdsPts","twoPts","fumblesPts"), sourcesOfProjectionsAbbreviation[i], sep="_")] <- NA
+  projections[,paste(c("passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","twoPts","fumblesPts"), sourcesOfProjectionsAbbreviation[i], sep="_")] <- NA
   
   projections[,paste("passYdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passYds", sourcesOfProjectionsAbbreviation[i], sep="_")] * passYdsMultiplier
   projections[,paste("passTdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passTds", sourcesOfProjectionsAbbreviation[i], sep="_")] * passTdsMultiplier
   projections[,paste("passIntPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passInt", sourcesOfProjectionsAbbreviation[i], sep="_")] * passIntMultiplier
   projections[,paste("rushYdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("rushYds", sourcesOfProjectionsAbbreviation[i], sep="_")] * rushYdsMultiplier
   projections[,paste("rushTdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("rushTds", sourcesOfProjectionsAbbreviation[i], sep="_")] * rushTdsMultiplier
+  projections[,paste("recPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("rec", sourcesOfProjectionsAbbreviation[i], sep="_")] * recMultiplier
   projections[,paste("recYdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("recYds", sourcesOfProjectionsAbbreviation[i], sep="_")] * recYdsMultiplier
   projections[,paste("recTdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("recTds", sourcesOfProjectionsAbbreviation[i], sep="_")] * recTdsMultiplier
   projections[,paste("twoPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("twoPts", sourcesOfProjectionsAbbreviation[i], sep="_")] * twoPtsMultiplier
@@ -53,7 +54,7 @@ for(i in 1:length(sourcesOfProjectionsAbbreviation)){
   
   projections[,paste("projectedPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- NA
   
-  projections[,paste("projectedPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- rowSums(projections[,paste(c("passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recYdsPts","recTdsPts","twoPts","fumblesPts"), sourcesOfProjectionsAbbreviation[i], sep="_")], na.rm=T)
+  projections[,paste("projectedPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- rowSums(projections[,paste(c("passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","twoPts","fumblesPts"), sourcesOfProjectionsAbbreviation[i], sep="_")], na.rm=T)
 }
 
 #Calculate average of categories
@@ -62,6 +63,7 @@ projections$passTds <- rowMeans(projections[,paste("passTds", sourcesOfProjectio
 projections$passInt <- rowMeans(projections[,paste("passInt", sourcesOfProjectionsAbbreviation, sep="_")], na.rm=TRUE)
 projections$rushYds <- rowMeans(projections[,paste("rushYds", sourcesOfProjectionsAbbreviation, sep="_")], na.rm=TRUE)
 projections$rushTds <- rowMeans(projections[,paste("rushTds", sourcesOfProjectionsAbbreviation, sep="_")], na.rm=TRUE)
+projections$rec <- rowMeans(projections[,paste("rec", sourcesOfProjectionsAbbreviation, sep="_")], na.rm=TRUE)
 projections$recYds <- rowMeans(projections[,paste("recYds", sourcesOfProjectionsAbbreviation, sep="_")], na.rm=TRUE)
 projections$recTds <- rowMeans(projections[,paste("recTds", sourcesOfProjectionsAbbreviation, sep="_")], na.rm=TRUE)
 projections$twoPts <- rowMeans(projections[,paste("twoPts", sourcesOfProjectionsAbbreviation, sep="_")], na.rm=TRUE)
@@ -73,6 +75,7 @@ projections$fumbles <- rowMeans(projections[,paste("fumbles", sourcesOfProjectio
 #projections[is.na(projections$passInt)==TRUE,"passInt"] <- 0
 #projections[is.na(projections$rushYds)==TRUE,"rushYds"] <- 0
 #projections[is.na(projections$rushTds)==TRUE,"rushTds"] <- 0
+#projections[is.na(projections$rec)==TRUE,"rec"] <- 0
 #projections[is.na(projections$recYds)==TRUE,"recYds"] <- 0
 #projections[is.na(projections$recTds)==TRUE,"recTds"] <- 0
 #projections[is.na(projections$twoPts)==TRUE,"twoPts"] <- 0
@@ -96,6 +99,7 @@ projections[,c("name",paste("passTds", sourcesOfProjectionsAbbreviation, sep="_"
 projections[,c("name",paste("passInt", sourcesOfProjectionsAbbreviation, sep="_"),"passInt")]
 projections[,c("name",paste("rushYds", sourcesOfProjectionsAbbreviation, sep="_"),"rushYds")]
 projections[,c("name",paste("rushTds", sourcesOfProjectionsAbbreviation, sep="_"),"rushTds")]
+projections[,c("name",paste("rec", sourcesOfProjectionsAbbreviation, sep="_"),"rec")]
 projections[,c("name",paste("recYds", sourcesOfProjectionsAbbreviation, sep="_"),"recYds")]
 projections[,c("name",paste("recTds", sourcesOfProjectionsAbbreviation, sep="_"),"recTds")]
 projections[,c("name",paste("twoPts", sourcesOfProjectionsAbbreviation, sep="_"),"twoPts")]
@@ -107,11 +111,12 @@ projections$passTdsPts <- projections$passTds * passTdsMultiplier
 projections$passIntPts <- projections$passInt * passIntMultiplier
 projections$rushYdsPts <- projections$rushYds * rushYdsMultiplier
 projections$rushTdsPts <- projections$rushTds * rushTdsMultiplier
+projections$recPts <- projections$rec * recMultiplier
 projections$recYdsPts <- projections$recYds * recYdsMultiplier
 projections$recTdsPts <- projections$recTds * recTdsMultiplier
 projections$fumblesPts <- projections$fumbles * fumlMultiplier
 
-projections$projectedPtsAvg <- rowSums(projections[,c("passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recYdsPts","recTdsPts","twoPts","fumblesPts")], na.rm=T)
+projections$projectedPtsAvg <- rowSums(projections[,c("passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","twoPts","fumblesPts")], na.rm=T)
 
 #Calculate latent variable for projected points
 cor(projections[,c(paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"),"projectedPtsAvg")], use="pairwise.complete.obs")
