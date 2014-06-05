@@ -213,6 +213,11 @@ calculateMASE(na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPts
 calculateMASE(na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPtsAvg")])[[1]], na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPtsAvg")])[[2]])
 calculateMASE(na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPtsLatent")])[[1]], na.omit(projectedWithActualPtsNoZeros[,c("actualPts","projectedPtsLatent")])[[2]])
 
+#Compare accuracy of projections while taking into account risk vs when not taking risk into account
+summary(lm(actualPts ~ projections, data=na.omit(projections[,c("actualPts","projections","risk")])))$r.squared #not considering risk #projectedPtsLatent
+summary(lm(actualPts ~ projections + risk, data=na.omit(projections[,c("actualPts","projections","risk")])))$r.squared #considering risk #projectedPtsLatent
+summary(lm(actualPts ~ projections + risk, data=na.omit(projections[,c("actualPts","projections","risk")])))
+
 #Plot
 ggplot(data=projectedWithActualPts, aes(x=projectedPts_fp, y=actualPts)) + geom_point() + geom_smooth() + xlab("Projected Fantasy Football Points") + ylab("Actual Fantasy Football Points") + ggtitle("Association Between Projected Fantasy Points and Actual Points") +
   annotate("text", x = 80, y = max(projectedWithActualPts$projections, na.rm=TRUE), label = paste("R-Squared = ",round(summary(lm(actualPts ~ projectedPts_fp, data=projectedWithActualPts))$r.squared,2),sep=""))

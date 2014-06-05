@@ -22,29 +22,39 @@ load(paste(getwd(),"/Data/VOR.RData", sep=""))
 avgcost_yahoo <- read.csv(paste(getwd(),"/Data/Yahoo-avgcost.csv",sep=""))
   
 ###Yahoo
-#readHTMLTable("http://football.fantasysports.yahoo.com/f1/35024/draftanalysis?tab=AD&pos=ALL&sort=DA_AP", stringsAsFactors = FALSE)
-#avgcost <- read.csv(paste(path,"/Fantasy Football/Research/R/avgcost.csv",sep=""))
-avgcost_yahoo2 <- avgcost_yahoo[which(avgcost_yahoo$Avg.Cost!=""),]
-avgcost_yahoo2$name <- as.character(avgcost_yahoo2$Player)
-avgcost_yahoo2$avg <- as.numeric((str_replace_all(avgcost_yahoo2$Avg.Cost, "\\$", "")))
-avgcost_yahoo2$projected <- as.numeric((str_replace_all(avgcost_yahoo2$Proj.Value, "\\$", "")))
 
-#avgcost_yahoo2$avgCost <- apply(avgcost_yahoo2[,c("avg","projected")], 1, max, na.rm=TRUE) #Take larger of projected value and average cost
-avgcost_yahoo2$avgCost <- rowMeans(avgcost_yahoo2[,c("avg","projected")], na.rm=TRUE) #Take mean of projected value and average cost
-avgcost_yahoo3 <- avgcost_yahoo2[,c("name","avgCost")]
-avgcost_yahoo3$projectedCost <- ceiling(avgcost_yahoo3$avgCost * (leagueCap/defaultCap))
+#Variable Names
+names(avgcost_yahoo) <- c("star","player","add","projected","avg","draftedPct")
+
+#Remove special characters($, spaces, and dashes)
+avgcost_yahoo[,c("projected","avg")] <- apply(avgcost_yahoo[,c("projected","avg")], 2, function(x) gsub("\\$", "", gsub(" ", "", gsub("-", "", x))))
+
+#Convert variables from character strings to numeric
+avgcost_yahoo[,c("projected","avg")] <- convert.magic(avgcost_yahoo[,c("projected","avg")], "numeric")
+
+#Player name, position, and team
+avgcost_yahoo$player[which(!is.na(avgcost_yahoo$avg))] <- avgcost_yahoo$player[which(!is.na(avgcost_yahoo$avg)) + 1]
+avgcost_yahoo <- avgcost_yahoo[which(!is.na(avgcost_yahoo$avg)),]
+avgcost_yahoo$name_yahoo <- str_trim(str_sub(avgcost_yahoo$player, start=0, end=str_locate(avgcost_yahoo$player, "-")[,1]-5))
+avgcost_yahoo$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", avgcost_yahoo$name_yahoo)))
+avgcost_yahoo$team_yahoo <- toupper(str_trim(str_sub(avgcost_yahoo$player, start=str_locate(avgcost_yahoo$player, "-")[,1]-4, end=str_locate(avgcost_yahoo$player, "-")[,1]-2)))
+
+#avgcost_yahoo$avgCost <- apply(avgcost_yahoo[,c("avg","projected")], 1, max, na.rm=TRUE) #Take larger of projected value and average cost
+avgcost_yahoo$avgCost <- rowMeans(avgcost_yahoo[,c("avg","projected")], na.rm=TRUE) #Take mean of projected value and average cost
+avgcost_yahoo <- avgcost_yahoo[,c("name","avgCost")]
+avgcost_yahoo$projectedCost <- ceiling(avgcost_yahoo$avgCost * (leagueCap/defaultCap))
 
 #Change names
-avgcost_yahoo3$name[avgcost_yahoo3$name=="Stevie Johnson"] <- "Steve Johnson"
+#avgcost_yahoo$name[avgcost_yahoo$name=="Stevie Johnson"] <- "Steve Johnson"
 
 #Merge
-projections <- merge(projections, avgcost_yahoo3, by="name", all.x=TRUE)
+projections <- merge(projections, avgcost_yahoo, by="name", all.x=TRUE)
 
 #Calculate Overall Rank
 projections$overallRank <- rank(-projections$projections, ties.method="min")
 
 #Remove duplicate cases
-projections[duplicated(projections$name),]
+projections[projections$name %in% projections$name[duplicated(projections$name)],]
 
 #Apply 10% price premium to 33 players with highest projected points, apply 10% price premium for players lower than rank 66
 projections$inflatedCost <- ceiling(projections$avgCost * (leagueCap/defaultCap) * 1.0)
@@ -60,9 +70,10 @@ projections$inflatedCost[is.na(projections$inflatedCost)==TRUE] <- 1
 
 #Order data
 projections <- projections[order(projections$overallRank),]
+row.names(projections) <- 1:dim(projections)[1]
 
 #Density Plot
-ggplot(projections, aes(x=inflatedCost)) + geom_density(fill="green", alpha=.3) + xlab("Player's Intrinsic Value (Cost)") + ggtitle("Density Plot of Players' Values") + theme(legend.title=element_blank())
+ggplot(projections, aes(x=inflatedCost)) + geom_density(fill="green", alpha=.3) + xlab("Player's Intrinsic Value (Cost)") + ggtitle("Density Plot of Players' Intrinsic Value") + theme(legend.title=element_blank())
 ggsave(paste(getwd(),"/Figures/Inflated Cost.jpg", sep=""))
 dev.off()
 

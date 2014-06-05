@@ -16,15 +16,9 @@ library("MASS")
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
-#Projections
-sourcesOfProjections <- c("Accuscore", "CBS", "ESPN", "FantasyPros", "FantasySharks", "NFL", "Yahoo")
-sourcesOfProjectionsAbbreviation <- c("accu", "cbs", "espn", "fp", "fs", "nfl", "yahoo")
-
 #Import projections data
 filenames <- paste(getwd(),"/Data/", sourcesOfProjections, "-Projections.RData", sep="")
-lapply(filenames, load, envir=.GlobalEnv)
-
-listProjections <- list(projections_accu, projections_cbs, projections_espn, projections_fp, projections_fs, projections_nfl, projections_yahoo)
+listProjections <- sapply(filenames, function(x) get(load(x)), simplify = FALSE) #listProjections <- sapply(filenames, function(x) mget(load(x)), simplify = FALSE) ##lapply(filenames, load, envir=.GlobalEnv) #listProjections <- list(projections_accu, projections_cbs, projections_espn, projections_fp, projections_fs, projections_nfl, projections_yahoo)
 
 #Merge projections data
 projections <- merge_recurse(listProjections, by=c("name","pos")) #, all=TRUE
@@ -33,9 +27,12 @@ projections <- merge_recurse(listProjections, by=c("name","pos")) #, all=TRUE
 projections$player <- projections$name_fp
 
 #Set team name as most common instance across sources
-mytable <- apply(projections[,c("team_accu","team_espn","team_cbs","team_nfl","team_fp","team_fs","team_yahoo")], 1, table)
+mytable <- apply(projections[,paste("team", sourcesOfProjectionsAbbreviation, sep="_")], 1, table)  
 projections$team <- names(sapply(mytable,`[`,1) )
 projections$team[which(projections$team == "")] <- NA
+
+#Remove duplicate cases
+projections[projections$name %in% projections$name[duplicated(projections$name)],]
 
 #Calculate projections for each source
 for(i in 1:length(sourcesOfProjectionsAbbreviation)){

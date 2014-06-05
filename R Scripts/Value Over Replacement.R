@@ -7,24 +7,6 @@
 # To do:
 ###########################
 
-#Number of players at each position drafted in Top 100 (adjust for your league)
-qbReplacements <- 17
-rbReplacements <- 35
-wrReplacements <- 35
-teReplacements <- 13
-
-#Alternative way of calculating the number of players at each position drafted in Top 100 based on league settings
-#numTeams <- 10  #number of teams in league
-#numQB <- 1      #number of avg QBs in starting lineup
-#numRB <- 2.5    #number of avg RBs in starting lineup
-#numWR <- 2.5    #number of avg WRs in starting lineup
-#numTE <- 1      #number of avg TEs in starting lineup
-
-#qbReplacements <- print(ceiling(numQB*numTeams*1.7))
-#rbReplacements <- print(ceiling(numRB*numTeams*1.4))
-#wrReplacements <- print(ceiling(numWR*numTeams*1.4))
-#teReplacements <- print(ceiling(numTE*numTeams*1.3))
-
 #Functions
 source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
@@ -64,7 +46,7 @@ projections <- projections[order(projections$overallRank),]
 row.names(projections) <- 1:dim(projections)[1]
 
 #Reorder variables
-projections <- projections[,c("name","pos","team","overallRank","pick","positionRank","projections","projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts_fp","projectedPtsAvg","projectedPtsLatent","vor","sdPick","sdPts","risk")]
+projections <- projections[,c("name","player","pos","team","overallRank","pick","positionRank","projections",paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"),"projectedPtsMean","projectedPtsMedian","projectedPtsLatent","vor","sdPick","sdPts","risk")]
 
 #Starters (low risk)
 projections[which(projections$risk <= 5 & projections$vor >= 0),]

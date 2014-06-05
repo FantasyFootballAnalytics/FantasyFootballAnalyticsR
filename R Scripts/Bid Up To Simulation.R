@@ -19,7 +19,7 @@ source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 load(paste(getwd(),"/Data/simulation.RData", sep=""))
 
 #Roster Optimization
-optimizeData <- na.omit(projections[,c("name","pos","projections","risk","inflatedCost","sdPts")]) #projectedPtsLatent
+optimizeData <- na.omit(projections[,c("name","player","pos","projections","risk","inflatedCost","sdPts")]) #projectedPtsLatent
 maxCost <- leagueCap - (numTotalPlayers - numTotalStarters)
 
 #Set iterations
@@ -40,14 +40,14 @@ for(i in 1:iterations){
 pb <- txtProgressBar(min = 0, max = length(optimizeData$name), style = 3)
 for(i in 1:length(optimizeData$name)){
   setTxtProgressBar(pb, i)
-  listOfPlayers <- rep(optimizeData$name[i],numTotalStarters)
+  listOfPlayers <- rep(optimizeData$player[i],numTotalStarters)
   newCost <- optimizeData$inflatedCost    
   
   for (k in 1:iterations){
     j <- 1
-    listOfPlayers <- optimizeData$name[i]
+    listOfPlayers <- optimizeData$player[i]
       
-    while(!is.na(match(optimizeData$name[i],listOfPlayers)) & j < maxCost){
+    while(!is.na(match(optimizeData$player[i],listOfPlayers)) & j < maxCost){
       newCost[i] <- j
       
       listOfPlayers <- optimizeTeam(points=simulatedPoints[,k], playerCost=newCost, maxRisk=(max(optimizeData$risk)+1))$players

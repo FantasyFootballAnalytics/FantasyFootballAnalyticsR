@@ -32,8 +32,8 @@ source(paste(getwd(),"/R Scripts/Yahoo Projections.R", sep=""), echo=TRUE)
 #10. Calculate projections for your league
 source(paste(getwd(),"/R Scripts/Calculate League Projections.R", sep=""), echo=TRUE)
 
-#11. Evaluate league projections from last year
-source(paste(getwd(),"/R Scripts/Evaluate Projections.R", sep=""), echo=TRUE)
+#11. Wisdom of the Crowd
+source(paste(getwd(),"/R Scripts/Wisdom of the Crowd.R", sep=""), echo=TRUE)
 
 #12. Calculate players' risk levels
 source(paste(getwd(),"/R Scripts/Risk.R", sep=""), echo=TRUE)
@@ -61,3 +61,10 @@ source(paste(getwd(),"/R Scripts/Bid Up To Simulation.R", sep=""), echo=TRUE)
 
 #20. Draft Day (remove unavailable/drafted players)
 source(paste(getwd(),"/R Scripts/Draft Day.R", sep=""), echo=TRUE)
+
+##########
+# Other
+##########
+
+#Evaluate league projections from last year
+source(paste(getwd(),"/R Scripts/Evaluate Projections.R", sep=""), echo=TRUE)

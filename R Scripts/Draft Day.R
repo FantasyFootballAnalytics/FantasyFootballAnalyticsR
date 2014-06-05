@@ -23,7 +23,7 @@ load(paste(getwd(),"/Data/IDP-2014.RData", sep=""))
 load(paste(getwd(),"/Data/kickers-2014.RData", sep=""))
 
 #Subset data
-draftData <- projections[,c("name","pos","team","projections","vor","simulation","sdPick","sdPts","risk","avgCost","inflatedCost","bidUpTo","bidUpToSim")] #projectedPtsLatent
+draftData <- projections[,c("name","player","pos","team","projections","vor","simulation","sdPick","sdPts","risk","avgCost","inflatedCost","bidUpTo","bidUpToSim")] #projectedPtsLatent
 draftData <- draftData[order(-draftData$vor),]
 row.names(draftData) <- 1:dim(draftData)[1]
 

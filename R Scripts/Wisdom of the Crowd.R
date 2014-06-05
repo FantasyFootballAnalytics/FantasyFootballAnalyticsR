@@ -1,6 +1,6 @@
 ###########################
-# File: Sleepers.R
-# Description: Identify Sleepers
+# File: Wisdom of the Crowd.R
+# Description: Identify Sleepers Based on Wisdom of the Crowd
 # Date: 5/24/2014
 # Author: Isaac Petersen (isaac@fantasyfootballanalytics.net) -- adapted from Drew Conway (http://www.r-bloggers.com/leveraging-the-wisdom-of-crowds-for-fantasy-football/)
 # Notes:
@@ -127,7 +127,7 @@ drafts.stats$team_ffc <- as.character(drafts.stats$Team)
 drafts.stats <- drafts.stats[with(drafts.stats, order(mean)),]
 
 #Subset data
-sleepers <- drafts.stats[,c("name","name_ffc","pos","team_ffc","mean","sd","freq","mad","median")]
+wisdomOfTheCrowd <- drafts.stats[,c("name","name_ffc","pos","team_ffc","mean","sd","freq","mad","median")]
 
 #Plot
 plotTitle <- paste("Sleepers from", dates[2], "to", dates[1], sep=" ")
@@ -150,8 +150,8 @@ value.plot
 dev.off()
 
 #Save file
-save(sleepers, file = paste(getwd(),"/Data/sleepers.RData", sep=""))
-write.csv(sleepers, file=paste(getwd(),"/Data/sleepers.csv", sep=""), row.names=FALSE)
+save(wisdomOfTheCrowd, file = paste(getwd(),"/Data/wisdomOfTheCrowd.RData", sep=""))
+write.csv(wisdomOfTheCrowd, file=paste(getwd(),"/Data/wisdomOfTheCrowd.csv", sep=""), row.names=FALSE)
 
-save(sleepers, file = paste(getwd(),"/Data/Historical Files/sleepers-2014.RData", sep=""))
-write.csv(sleepers, file=paste(getwd(),"/Data/Historical Files/sleepers-2014.csv", sep=""), row.names=FALSE)
+save(wisdomOfTheCrowd, file = paste(getwd(),"/Data/Historical Files/wisdomOfTheCrowd-2014.RData", sep=""))
+write.csv(wisdomOfTheCrowd, file=paste(getwd(),"/Data/Historical Files/wisdomOfTheCrowd-2014.csv", sep=""), row.names=FALSE)

@@ -78,18 +78,19 @@ optimizeTeam <- function(points=optimizeData$projections, playerCost=optimizeDat
          numTotalStarters)
   
   sol <- Rglpk_solve_LP(obj = points, mat = A, dir = dir, rhs = b,types = var.types, max = TRUE)
-  sol$playerInfo <- as.data.frame(cbind(optimizeData[sol$solution == 1,"name"],round(points[sol$solution == 1],2),round(optimizeData[sol$solution == 1,"risk"],2),playerCost[sol$solution == 1]))
-  names(sol$playerInfo) <- c("name","points","risk","cost")
+  sol$playerInfo <- as.data.frame(cbind(optimizeData[sol$solution == 1,"player"],round(points[sol$solution == 1],2),round(optimizeData[sol$solution == 1,"risk"],2),playerCost[sol$solution == 1]))
+  names(sol$playerInfo) <- c("player","points","risk","cost")
   #sol$totalCost <- sum(optimizeData$inflatedCost * sol$solution)
   sol$totalCost <- sum(playerCost * sol$solution)
-  sol$players <- optimizeData$name[sol$solution == 1]
+  sol$players <- optimizeData$player[sol$solution == 1]
   return(sol)
 }
 
 #Draft Day Optimization: Allows omitting unavailable (drafted) players and includes BidUpTo in summary table
 optimizeDraft <- function(points=removedPlayers$projections, playerCost=removedPlayers$inflatedCost, maxRisk=maxRisk, omit=NULL, team=myteam){ #can change points, cost, or risk #projectedPtsLatent
   #Omit players that have already been drafted
-  removedPlayers <- removedPlayers[! removedPlayers$name %in% omit,]
+  omitName <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", omit)))
+  removedPlayers <- removedPlayers[! removedPlayers$name %in% omitName,]
   
   #Calculate how many players to draft at each position  
   numQBsToDraft <- numQBstarters - sum(myteam$pos == "QB")
@@ -131,10 +132,10 @@ optimizeDraft <- function(points=removedPlayers$projections, playerCost=removedP
          numToDraft)
   
   sol <- Rglpk_solve_LP(obj = points, mat = A, dir = dir, rhs = b,types = var.types, max = TRUE)
-  sol$playerInfo <- as.data.frame(cbind(removedPlayers[sol$solution == 1,"name"],round(points[sol$solution == 1],2),round(removedPlayers[sol$solution == 1,"risk"],2),removedPlayers[sol$solution == 1,"avgCost"],playerCost[sol$solution == 1],removedPlayers[sol$solution == 1,"bidUpTo"]))
-  names(sol$playerInfo) <- c("name","points","risk","avgCost","inflatedCost","bidUpTo")
+  sol$playerInfo <- as.data.frame(cbind(removedPlayers[sol$solution == 1,"player"],round(points[sol$solution == 1],2),round(removedPlayers[sol$solution == 1,"risk"],2),removedPlayers[sol$solution == 1,"avgCost"],playerCost[sol$solution == 1],removedPlayers[sol$solution == 1,"bidUpTo"]))
+  names(sol$playerInfo) <- c("player","points","risk","avgCost","inflatedCost","bidUpTo")
   sol$totalCost <- sum(removedPlayers$inflatedCost * sol$solution)
-  sol$players <- removedPlayers$name[sol$solution == 1]
+  sol$players <- removedPlayers$player[sol$solution == 1]
   return(sol)
 }
 

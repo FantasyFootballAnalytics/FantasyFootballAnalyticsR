@@ -19,10 +19,10 @@ source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Load data
 load(paste(getwd(),"/Data/BidUpTo.RData", sep=""))
-load(paste(getwd(),"/Data/projectedWithActualPoints.RData", sep=""))
+#load(paste(getwd(),"/Data/projectedWithActualPoints.RData", sep=""))
 
 #Roster Optimization
-optimizeData <- na.omit(projections[,c("name","pos","projections","risk","inflatedCost","sdPts")])
+optimizeData <- na.omit(projections[,c("name","player","pos","projections","risk","inflatedCost","sdPts")])
 maxCost <- leagueCap - (numTotalPlayers - numTotalStarters)
 
 #Roster Optimization Simulation
@@ -45,7 +45,7 @@ plot(density(log(solutionSum + 1)))
 optimizeData$solutionSum <- solutionSum
 optimizeData$percentage <- (optimizeData$solutionSum / iterations) * 100
 
-optimizeData <- optimizeData[order(-optimizeData$solutionSum),c("name","pos","projections","risk","inflatedCost","sdPts","solutionSum","percentage")]
+optimizeData <- optimizeData[order(-optimizeData$solutionSum),c("name","player","pos","projections","risk","inflatedCost","sdPts","solutionSum","percentage")]
 optimizeData$simulation <- log(optimizeData$solutionSum + 1)
 projections <- merge(projections, optimizeData[,c("name","simulation")], by="name", all.x=TRUE)
 
@@ -76,20 +76,20 @@ head(optimizeData[which(optimizeData$pos == "TE"),])
 head(optimizeData[which(optimizeData$pos == "TE" & optimizeData$risk < 5),])
 
 #View Specific Players
-projectedWithActualPts[projectedWithActualPts$name == "Shonn Greene",]
-projectedWithActualPts[projectedWithActualPts$name == "Ray Rice",]
-projectedWithActualPts[projectedWithActualPts$name == "Jermaine Gresham",]
-projectedWithActualPts[projectedWithActualPts$name == "Reggie Wayne",]
+projectedWithActualPts[projectedWithActualPts$player == "Shonn Greene",]
+projectedWithActualPts[projectedWithActualPts$player == "Ray Rice",]
+projectedWithActualPts[projectedWithActualPts$player == "Jermaine Gresham",]
+projectedWithActualPts[projectedWithActualPts$player == "Reggie Wayne",]
 
 #Optimize Solution Sum for Cost
 optimizeTeam(points=optimizeData$solutionSum, maxRisk=100)
-sum(optimizeData[optimizeData$name %in% optimizeTeam(points=optimizeData$solutionSum, maxRisk=100)$players,"projections"]) #pts: 1567
+sum(optimizeData[optimizeData$player %in% optimizeTeam(points=optimizeData$solutionSum, maxRisk=100)$players,"projections"]) #pts: 1567
 
 optimizeTeam(points=optimizeData$solutionSum, maxRisk=5.0)
-sum(optimizeData[optimizeData$name %in% optimizeTeam(points=optimizeData$solutionSum, maxRisk=5.0)$players,"projections"]) #pts: 1553
+sum(optimizeData[optimizeData$player %in% optimizeTeam(points=optimizeData$solutionSum, maxRisk=5.0)$players,"projections"]) #pts: 1553
 
 optimizeTeam(points=optimizeData$solutionSum, maxRisk=3.8)
-sum(optimizeData[optimizeData$name %in% optimizeTeam(points=optimizeData$solutionSum, maxRisk=3.8)$players,"projections"]) #pts: 1526
+sum(optimizeData[optimizeData$player %in% optimizeTeam(points=optimizeData$solutionSum, maxRisk=3.8)$players,"projections"]) #pts: 1526
 
 #Iterate solutions
 projectedPoints <- vector(mode="numeric", length=length(seq(min(optimizeData$risk), max(optimizeData$risk), 0.1)))
@@ -98,7 +98,7 @@ j <- 1
 pb <- txtProgressBar(min = 0, max = max(optimizeData$risk), style = 3)
 for (i in seq(0, max(optimizeData$risk), 0.1)){
   setTxtProgressBar(pb, i)
-  projectedPoints[j] <- sum(optimizeData[optimizeData$name %in% optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=i)$players,"projections"]) #transform with log or cube root to not give so much weight to highest players
+  projectedPoints[j] <- sum(optimizeData[optimizeData$player %in% optimizeTeam(points=log(optimizeData$solutionSum + 1), maxRisk=i)$players,"projections"]) #transform with log or cube root to not give so much weight to highest players
   riskLevel[j] <- i
   j <- j+1
 }
@@ -166,16 +166,16 @@ optimalRisk <- 3.3
 optimizeTeam(points=simulation, maxRisk=optimalRisk)
 
 #Roster + Projections
-optimizeData[optimizeData$name %in% optimizeTeam(points=simulation, maxRisk=optimalRisk)$players, c("name","projections")]
+optimizeData[optimizeData$player %in% optimizeTeam(points=simulation, maxRisk=optimalRisk)$players, c("name","projections")]
 
 #Sum of Projected Points: 1514
-sum(optimizeData[optimizeData$name %in% optimizeTeam(points=simulation, maxRisk=optimalRisk)$players, "projections"])
+sum(optimizeData[optimizeData$player %in% optimizeTeam(points=simulation, maxRisk=optimalRisk)$players, "projections"])
 
 #Projected Points vs Actual Points
-projectedWithActualPts[projectedWithActualPts$name %in% optimizeTeam(points=simulation, maxRisk=optimalRisk)$players, c("name","projections","actualPts")]
+projectedWithActualPts[projectedWithActualPts$player %in% optimizeTeam(points=simulation, maxRisk=optimalRisk)$players, c("name","projections","actualPts")]
 
 #Sum of Actual Points from last year: 1413
-sum(projectedWithActualPts[projectedWithActualPts$name %in% optimizeTeam(points=simulation, maxRisk=optimalRisk)$players, "actualPts"])
+sum(projectedWithActualPts[projectedWithActualPts$player %in% optimizeTeam(points=simulation, maxRisk=optimalRisk)$players, "actualPts"])
 
 #Maximum Possible Projected Points with Same Risk: 1532
 optimizeTeam(maxRisk=optimalRisk)

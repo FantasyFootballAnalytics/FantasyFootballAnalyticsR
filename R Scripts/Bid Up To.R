@@ -18,6 +18,9 @@ source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 #Load data
 load(paste(getwd(),"/Data/AvgCost.RData", sep=""))
 
+#Subset data
+optimizeData <- na.omit(projections[,c("name","player","pos","projections","risk","inflatedCost")])
+
 #Bid Up To
 listOfPlayers <- vector(mode="character", length=numTotalStarters)
 bidUpTo <- vector(mode="numeric", length=length(optimizeData$name))
@@ -27,9 +30,9 @@ pb <- txtProgressBar(min = 0, max = length(optimizeData$name), style = 3)
 for(i in 1:length(optimizeData$name)){
   setTxtProgressBar(pb, i)
   j <- 1
-  listOfPlayers <- rep(optimizeData$name[i],numTotalStarters)
+  listOfPlayers <- rep(optimizeData$player[i],numTotalStarters)
   newCost <- optimizeData$inflatedCost
-  while(!is.na(match(optimizeData$name[i],listOfPlayers))){
+  while(!is.na(match(optimizeData$player[i],listOfPlayers))){
     newCost[i] <- j 
     listOfPlayers <- optimizeTeam(points=optimizeData$projections, playerCost=newCost, maxRisk=(max(optimizeData$risk)+1))$players  #UPDATE: maxrisk
     bidUpTo[i] <- j
