@@ -1,7 +1,7 @@
 ###########################
 # File: FFtoday Projections.R
 # Description: Downloads Fantasy Football Projections from fftoday.com
-# Date: 5/31/2014
+# Date: 6/7/2014
 # Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
 # To do:
