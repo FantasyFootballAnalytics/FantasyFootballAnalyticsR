@@ -53,8 +53,7 @@ for(i in 1:length(years)){
                                     function(x) paste(x[1:length(x) %% 2 == 0], 
                                                       x[1:length(x) %% 2 != 0])))
   
-  merged$name <- str_replace_all(merged$name, "[[:punct:]]", "")
-  merged$name <- toupper(merged$name)
+  merged$name <- nameMerge(merged$name)
   
   #Keep only QBs, RBs, WRs, TEs, Ks, and Defs
   merged$pos <- as.character(merged$position)
@@ -90,11 +89,8 @@ for(i in 1:length(years)){
   #Add year variable
   merged$year <- years[i]
   
-  #Name for merging
-  merged$nameMerge <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", merged$name)))
-  
   #Subset data
-  merged <- merged[,c("name","nameMerge","year","pos","team","pick","overallRank","positionRank")]
+  merged <- merged[,c("name","year","pos","team","pick","overallRank","positionRank")]
   
   #Save data
   write.csv(merged, file=paste(getwd(), "/Data/Historical ADP/adp_", years[i], ".csv", sep=""), row.names=FALSE)

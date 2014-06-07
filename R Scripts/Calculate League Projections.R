@@ -18,7 +18,7 @@ source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 
 #Import projections data
 filenames <- paste(getwd(),"/Data/", sourcesOfProjections, "-Projections.RData", sep="")
-listProjections <- sapply(filenames, function(x) get(load(x)), simplify = FALSE) #listProjections <- sapply(filenames, function(x) mget(load(x)), simplify = FALSE) ##lapply(filenames, load, envir=.GlobalEnv) #listProjections <- list(projections_accu, projections_cbs, projections_espn, projections_fp, projections_fs, projections_nfl, projections_yahoo)
+listProjections <- sapply(filenames, function(x) get(load(x)), simplify = FALSE)
 
 #Merge projections data
 projections <- merge_recurse(listProjections, by=c("name","pos")) #, all=TRUE
@@ -210,8 +210,8 @@ projections
 projections[,c("name","pos","team","projectedPts_fp","projectedPtsMean","projectedPtsMedian","projectedPtsLatent")]
 
 #Density Plot
-pointDensity <- c(projections$projectedPts_accu, projections$projectedPts_espn, projections$projectedPts_cbs, projections$projectedPts_nfl, projections$projectedPts_fs, projections$projectedPts_fp, projections$projectedPts_yahoo, projections$projectedPtsMean) #,projections$projectedPtsLatent
-sourceDensity <- c(rep("Accuscore",dim(projections)[1]), rep("ESPN",dim(projections)[1]), rep("CBS",dim(projections)[1]), rep("NFL",dim(projections)[1]), rep("FS",dim(projections)[1]), rep("FP",dim(projections)[1]), rep("Yahoo",dim(projections)[1]), rep("Average",dim(projections)[1])) #,rep("Latent",dim(projections)[1])
+pointDensity <- c(projections$projectedPts_accu, projections$projectedPts_espn, projections$projectedPts_cbs, projections$projectedPts_nfl, projections$projectedPts_fs, projections$projectedPts_fp, projections$projectedPts_fftoday, projections$projectedPts_yahoo, projections$projectedPtsMean) #,projections$projectedPtsLatent
+sourceDensity <- c(rep("Accuscore",dim(projections)[1]), rep("ESPN",dim(projections)[1]), rep("CBS",dim(projections)[1]), rep("NFL",dim(projections)[1]), rep("FS",dim(projections)[1]), rep("FP",dim(projections)[1]), rep("FFtoday",dim(projections)[1]), rep("Yahoo",dim(projections)[1]), rep("Average",dim(projections)[1])) #,rep("Latent",dim(projections)[1])
 densityData <- data.frame(pointDensity, sourceDensity)
 
 ggplot(densityData, aes(x=pointDensity, fill=sourceDensity)) + geom_density(alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of Projected Points") + theme(legend.title=element_blank())

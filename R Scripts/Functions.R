@@ -10,8 +10,24 @@
 #Library
 library("Rglpk")
 
-#Options
+#No scientific notation
 options(scipen=999)
+
+#Convert type of multiple columns of a dataframe at once
+convert.magic <- function(obj, type){
+  FUN1 <- switch(type,
+                 character = as.character,
+                 numeric = as.numeric,
+                 factor = as.factor)
+  out <- lapply(obj, FUN1)
+  as.data.frame(out)
+}
+
+#Convert to name for merging by removing all spaces and punctuation and converting to all caps
+nameMerge <- function(name){
+  newName <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", name)))
+  return(newName)
+}
 
 #Function for calculating Mean Absolute Scaled Error (MASE)
 calculateMASE <- function(f,y) { # f = vector with forecasts, y = vector with actuals
@@ -137,14 +153,4 @@ optimizeDraft <- function(points=removedPlayers$projections, playerCost=removedP
   sol$totalCost <- sum(removedPlayers$inflatedCost * sol$solution)
   sol$players <- removedPlayers$player[sol$solution == 1]
   return(sol)
-}
-
-#Convert type of multiple columns of a dataframe at once
-convert.magic <- function(obj, type){
-  FUN1 <- switch(type,
-                 character = as.character,
-                 numeric = as.numeric,
-                 factor = as.factor)
-  out <- lapply(obj, FUN1)
-  as.data.frame(out)
 }

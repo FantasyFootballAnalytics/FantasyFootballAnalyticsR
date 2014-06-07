@@ -36,7 +36,7 @@ avgcost_yahoo[,c("projected","avg")] <- convert.magic(avgcost_yahoo[,c("projecte
 avgcost_yahoo$player[which(!is.na(avgcost_yahoo$avg))] <- avgcost_yahoo$player[which(!is.na(avgcost_yahoo$avg)) + 1]
 avgcost_yahoo <- avgcost_yahoo[which(!is.na(avgcost_yahoo$avg)),]
 avgcost_yahoo$name_yahoo <- str_trim(str_sub(avgcost_yahoo$player, start=0, end=str_locate(avgcost_yahoo$player, "-")[,1]-5))
-avgcost_yahoo$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", avgcost_yahoo$name_yahoo)))
+avgcost_yahoo$name <- nameMerge(avgcost_yahoo$name_yahoo)
 avgcost_yahoo$team_yahoo <- toupper(str_trim(str_sub(avgcost_yahoo$player, start=str_locate(avgcost_yahoo$player, "-")[,1]-4, end=str_locate(avgcost_yahoo$player, "-")[,1]-2)))
 
 #avgcost_yahoo$avgCost <- apply(avgcost_yahoo[,c("avg","projected")], 1, max, na.rm=TRUE) #Take larger of projected value and average cost

@@ -87,8 +87,7 @@ projections_espn$twoPts_espn <- NA
 #Player names
 projections_espn$name_espn <- str_sub(projections_espn$player_espn, end=str_locate(string=projections_espn$player_espn, ',')[,1]-1)
 projections_espn$name_espn <- str_replace_all(projections_espn$name_espn, "\\*", "")
-
-#projections_espn[which(projections_espn$name_espn=="Steve Johnson"),"name_espn"] <- "Stevie Johnson"
+projections_espn$name <- nameMerge(projections_espn$name_espn)
 
 #Player teams
 projections_espn$team_espn <- str_sub(projections_espn$player_espn, start=str_locate(string=projections_espn$player_espn, ',')[,1]+2, end = str_locate(string=projections_espn$player_espn, ',')[,1]+4)
@@ -97,17 +96,14 @@ projections_espn$team_espn <- toupper(projections_espn$team_espn)
 projections_espn$team_espn[projections_espn$team_espn=="WSH"] <- "WAS"
 
 #Remove duplicate cases
-projections_espn[duplicated(projections_espn$name_espn),]
+projections_espn[projections_espn$name %in% projections_espn[duplicated(projections_espn$name),"name"],]
 #projections_espn <- projections_espn[-which(projections_espn$name_espn=="Dexter McCluster" & projections_espn$pos=="RB"),]
 
 #Rename players
-projections_espn[projections_espn$name_espn=="EJ Manuel", "name_espn"] <- "E.J. Manuel"
+#projections_espn[projections_espn$name_espn=="EJ Manuel", "name_espn"] <- "E.J. Manuel"
 
 #Calculate overall rank
 projections_espn$overallRank_espn <- rank(-projections_espn$pts_espn, ties.method="min")
-
-#Name for merging
-projections_espn$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", projections_espn$name_espn)))
 
 #Order variables in data set
 projections_espn <- projections_espn[,c("name","name_espn","pos","team_espn","positionRank_espn","overallRank_espn",

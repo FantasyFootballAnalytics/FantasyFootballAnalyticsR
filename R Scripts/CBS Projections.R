@@ -65,9 +65,10 @@ projections_cbs$twoPts_cbs <- NA
 
 #Player names
 projections_cbs$name_cbs <- str_sub(projections_cbs$player, end=str_locate(string=projections_cbs$player, ',')[,1]-1)
+projections_cbs$name <- nameMerge(projections_cbs$name_cbs)
 
 #Remove Duplicates
-projections_cbs[duplicated(projections_cbs$name_cbs),]
+projections_cbs[projections_cbs$name %in% projections_cbs[duplicated(projections_cbs$name),"name"],]
 #projections_cbs[projections_cbs$name_cbs == "James Casey","pos"] <- "TE"
 
 #Rename Players
@@ -85,9 +86,6 @@ projections_cbs[which(projections_cbs$pos == "QB"), "positionRank_cbs"] <- rank(
 projections_cbs[which(projections_cbs$pos == "RB"), "positionRank_cbs"] <- rank(-projections_cbs[which(projections_cbs$pos == "RB"), "pts_cbs"], ties.method="min")
 projections_cbs[which(projections_cbs$pos == "WR"), "positionRank_cbs"] <- rank(-projections_cbs[which(projections_cbs$pos == "WR"), "pts_cbs"], ties.method="min")
 projections_cbs[which(projections_cbs$pos == "TE"), "positionRank_cbs"] <- rank(-projections_cbs[which(projections_cbs$pos == "TE"), "pts_cbs"], ties.method="min")
-
-#Name for merging
-projections_cbs$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", projections_cbs$name_cbs)))
 
 #Order variables in data set
 projections_cbs <- projections_cbs[,c("name","name_cbs","pos","team_cbs","positionRank_cbs","overallRank_cbs",

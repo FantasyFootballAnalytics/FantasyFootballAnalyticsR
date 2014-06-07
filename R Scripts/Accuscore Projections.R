@@ -53,13 +53,12 @@ projections_accu[,c("pts_accu",
                                                                           "fumbles_accu")], "numeric")
 
 #Player names
-projections_accu$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", projections_accu$name_accu)))
+projections_accu$name <- nameMerge(projections_accu$name_accu)
 
 #Variables
 projections_accu$twoPts_accu <- NA
 
 #Remove duplicate cases
-projections_accu[duplicated(projections_accu$name_accu),]
 projections_accu[projections_accu$name %in% projections_accu[duplicated(projections_accu$name),"name"],]
 #projections_accu <- projections_accu[-which(projections_accu$name_accu=="Dexter McCluster" & projections_accu$pos=="RB"),]
 

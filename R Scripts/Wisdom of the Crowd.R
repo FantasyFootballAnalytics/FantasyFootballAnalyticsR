@@ -18,6 +18,9 @@ library("XML")
 library("ggplot2")
 
 #Functions
+source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
+source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
+
 base.url <- "http://fantasyfootballcalculator.com/draft/"
 seed.url <- paste("http://fantasyfootballcalculator.com/completed_drafts.php?format=standard&teams=",num.teams,sep="")
 
@@ -117,7 +120,7 @@ drafts.stats[which(drafts.stats$mad == 0), "mad"] <- drafts.stats[which(drafts.s
 #Clean up
 drafts.stats$name_ffc <- as.character(drafts.stats$Player)
 drafts.stats$name_ffc <- gsub("DefenseD", "", drafts.stats$name_ffc)
-drafts.stats$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", drafts.stats$name_ffc)))
+drafts.stats$name <- nameMerge(drafts.stats$name_ffc)
 drafts.stats$pos <- as.character(drafts.stats$Position)
 drafts.stats$pos[which(drafts.stats$pos == "EF")] <- "DEF"
 drafts.stats$pos[which(drafts.stats$pos == "PK")] <- "K"

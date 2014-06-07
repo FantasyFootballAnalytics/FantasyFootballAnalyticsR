@@ -52,14 +52,14 @@ projections_yahoo[,c("passYds_yahoo","passTds_yahoo","passInt_yahoo","rushYds_ya
 projections_yahoo$player <- str_trim(sapply(str_split(projections_yahoo$player, "\n"), "[[", 2))
 projections_yahoo$pos <- str_trim(str_sub(projections_yahoo$player, start= -2))
 projections_yahoo$name_yahoo <- str_trim(str_sub(projections_yahoo$player, start=0, end=str_locate(projections_yahoo$player, "-")[,1]-5))
-projections_yahoo$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", projections_yahoo$name_yahoo)))
+projections_yahoo$name <- nameMerge(projections_yahoo$name_yahoo)
 projections_yahoo$team_yahoo <- toupper(str_trim(str_sub(projections_yahoo$player, start=str_locate(projections_yahoo$player, "-")[,1]-4, end=str_locate(projections_yahoo$player, "-")[,1]-2)))
 
 #Add missing variables
 projections_yahoo$rec_yahoo <- NA
 
 #Remove duplicate cases
-projections_yahoo[duplicated(projections_yahoo$name_yahoo),]
+projections_yahoo[projections_yahoo$name %in% projections_yahoo[duplicated(projections_yahoo$name),"name"],]
 #projections_yahoo <- projections_yahoo[-which(projections_yahoo$name_yahoo=="Dexter McCluster" & projections_yahoo$pos=="RB"),]
 
 #Rename players

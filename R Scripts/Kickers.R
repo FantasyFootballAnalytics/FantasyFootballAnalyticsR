@@ -23,13 +23,14 @@ name2 <- str_sub(kickers[,c("Player (team/bye)")], end=str_locate(kickers[,c("Pl
 
 name1[is.na(name1)] <- name2[is.na(name1)]
 
-kickers$name <- name1
+kickers$player <- name1
+kickers$name <- nameMerge(kickers$player)
 kickers$team <- str_sub(kickers[,c("Player (team/bye)")], start=str_locate(kickers[,c("Player (team/bye)")], '\\(')[,1]+1, end=str_locate(kickers[,c("Player (team/bye)")], '\\/')[,1]-1)
 
 kickers$rank <- as.numeric(kickers[,"Ave"])
 kickers$risk <- as.numeric(kickers[,"Std Dev"])
 
-kickers <- kickers[,c("name","team","rank","risk")]
+kickers <- kickers[,c("name","player","team","rank","risk")]
 
 kickers <- kickers[order(kickers$rank),]
 

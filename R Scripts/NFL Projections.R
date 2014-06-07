@@ -91,22 +91,20 @@ wrnames <- wrnames[(length(projections_nfl[which(projections_nfl$pos == "QB"),"p
 tenames <- tenames[(length(projections_nfl[which(projections_nfl$pos == "QB"),"pos"]) + length(projections_nfl[which(projections_nfl$pos == "RB"),"pos"]) + length(projections_nfl[which(projections_nfl$pos == "WR"),"pos"]) + 1):(length(projections_nfl[which(projections_nfl$pos == "QB"),"pos"]) + length(projections_nfl[which(projections_nfl$pos == "RB"),"pos"]) + length(projections_nfl[which(projections_nfl$pos == "WR"),"pos"]) + length(projections_nfl[which(projections_nfl$pos == "TE"),"pos"]))]
   
 projections_nfl$name_nfl <- c(na.omit(qbnames),na.omit(rbnames),na.omit(wrnames),na.omit(tenames))
+projections_nfl$name <- nameMerge(projections_nfl$name_nfl)
 
 #Player teams
 projections_nfl$team_nfl <- str_trim(str_sub(projections_nfl$player_nfl, start=str_locate(string=projections_nfl$player_nfl, c(" - "))[,1]+3, end=str_locate(string=projections_nfl$player_nfl, c(" - "))[,1]+6)) #, end=str_locate(string=projections_nfl$player_nfl, c("-"))[,1]+5
 
 #Remove duplicate cases
-projections_nfl[duplicated(projections_nfl$name_nfl),]
+projections_nfl[projections_nfl$name %in% projections_nfl[duplicated(projections_nfl$name),"name"],]
 #projections_nfl[which(projections_nfl$name_nfl=="Charles Clay"),"pos"] <- "TE"
 
 #Rename Players
-projections_nfl[projections_nfl$name_nfl=="EJ Manuel", "name_nfl"] <- "E.J. Manuel"
+#projections_nfl[projections_nfl$name_nfl=="EJ Manuel", "name_nfl"] <- "E.J. Manuel"
 
 #Calculate overall rank
 projections_nfl$overallRank_nfl <- rank(-projections_nfl$pts_nfl, ties.method="min")
-
-#Name for merging
-projections_nfl$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", projections_nfl$name_nfl)))
 
 #Order variables in data set
 projections_nfl <- projections_nfl[,c("name","name_nfl","pos","team_nfl","positionRank_nfl","overallRank_nfl",

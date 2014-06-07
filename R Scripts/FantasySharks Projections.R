@@ -26,7 +26,7 @@ projections_fs <- projections_fs[which(projections_fs$pos %in% c("QB","RB","WR",
 
 #Player names
 projections_fs$name_fs <- paste(projections_fs$FirstName, projections_fs$LastName, sep=" ")
-projections_fs$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", projections_fs$name_fs)))
+projections_fs$name <- nameMerge(projections_fs$name_fs)
 
 #Team
 projections_fs$team_fs <- as.character(projections_fs$Team)
@@ -47,7 +47,6 @@ projections_fs$twoPts_fs <- NA
 projections_fs$pts_fs <- projections_fs$FantasyPts
 
 #Remove duplicate cases
-projections_fs[duplicated(projections_fs$name_fs),]
 projections_fs[projections_fs$name %in% projections_fs[duplicated(projections_fs$name),"name"],]
 #projections_fs <- projections_fs[-which(projections_fs$name_fs=="Dexter McCluster" & projections_fs$pos=="RB"),]
 

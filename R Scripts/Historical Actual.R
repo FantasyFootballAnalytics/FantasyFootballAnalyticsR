@@ -7,8 +7,18 @@
 # To do:
 ###########################
 
+#Info
+#ADP (from 1999): http://football.myfantasyleague.com/1999/adp?COUNT=500&POS=*&CUTOFF=5&FRANCHISES=-1&IS_PPR=-1&IS_KEEPER=0&IS_MOCK=-1&TIME=
+#Actual (from 1999): http://www.pro-football-reference.com/years/1999/fantasy.htm
+#Actual - Kickers (from 1999): http://www.pro-football-reference.com/years/1999/kicking.htm
+#Actual - Defense (from 2003): http://www.fantasyplaymakers.com/historical_fantasy_pts.php?year=2003&position=8
+#Standard Scoring Settings: http://www.fantasypros.com/scoring-settings/
+
 #Libraries
 load_or_install(c("XML","stringr","plyr"))
+
+#Functions
+source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
 
 #Data
 years <- 1986:2013
@@ -73,13 +83,12 @@ for(i in 1:length(years)){
   actual <- actual[which(actual$name_info!="Passing"), ]
   
   #Clean-up name field
-  actual$name <- str_replace_all(actual$name_info, "[[:punct:]]", "")
-  actual$name <- toupper(actual$name)
+  actual$name <- nameMerge(actual$name_info)
   
   #Rename players
-  ifelse(length(which(actual$name == "Chris Wells")) > 0, actual$name[actual$name == "Chris Wells"] <- "Beanie Wells", doNothing <- 0)
-  ifelse(length(which(actual$name == "Chad Johnson")) > 0, actual$name[actual$name == "Chad Johnson"] <- "Chad Ochocinco", doNothing <- 0)
-  ifelse(length(which(actual$name == "Steve Johnson")) > 0, actual$name[actual$name == "Steve Johnson"] <- "Stevie Johnson", doNothing <- 0)
+  ifelse(length(which(actual$name == "CHRIS WELLS")) > 0, actual$name[actual$name == "CHRIS WELLS"] <- "BEANIE WELLS", doNothing <- 0)
+  ifelse(length(which(actual$name == "CHAD JOHNSON")) > 0, actual$name[actual$name == "CHAD JOHNSON"] <- "CHAD OCHOCINCO", doNothing <- 0)
+  ifelse(length(which(actual$name == "STEVE JOHNSON")) > 0, actual$name[actual$name == "STEVE JOHNSON"] <- "STEVIE JOHNSON", doNothing <- 0)
   
   #Convert variables from character strings to numeric
   actual$overall_rank <- as.numeric(actual$overall_rank)
@@ -129,8 +138,7 @@ for(i in 1:length(years)){
   actualK <- actualK[which(actualK$name_info!="0-19"), ]
   
   #Clean-up name field
-  actualK$name <- str_replace_all(actualK$name_info, "[[:punct:]]", "")
-  actualK$name <- toupper(actualK$name)
+  actualK$name <- nameMerge(actualK$name_info)
   
   #Remove punting columns
   actualK <- actualK[,!is.na(names(actualK))]
@@ -188,8 +196,7 @@ for(i in 1:length(years)){
     actualDef$pos <- "Def"
     
     #Cleanup name field
-    actualDef$name <- str_replace_all(actualDef$name_info, "[[:punct:]]", "")
-    actualDef$name <- toupper(actualDef$name)
+    actualDef$name <- nameMerge(actualDef$name_info)
     
     #Convert to numeric
     actualDef$pts <- as.numeric(actualDef$pts)
@@ -243,8 +250,7 @@ for(i in 1:length(years)){
     #Cleanup name
     actualDef$name <- str_sub(actualDef$name_info, start=6)
     actualDef$name <- str_trim(actualDef$name)
-    actualDef$name <- str_replace_all(actualDef$name, "[[:punct:]]", "")
-    actualDef$name <- toupper(actualDef$name)
+    actualDef$name <- nameMerge(actualDef$name)
     
     #Convert to numeric
     actualDef$pts <- as.numeric(actualDef$pts)
@@ -312,7 +318,6 @@ for(i in 1:length(years)){
   if(years[i] >= 2003){
     def <- merged[merged$pos=="Def",][order(merged[merged$pos=="Def",]$overallRank),]
   }
-
   
   qb$positionRank <- rank(-qb$points, ties.method="min")
   rb$positionRank <- rank(-rb$points, ties.method="min")
@@ -355,11 +360,8 @@ for(i in 1:length(years)){
   merged <- merged[order(-merged$vor),]
   row.names(merged) <- 1:dim(merged)[1]
   
-  #Name for merging
-  merged$nameMerge <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", merged$name)))
-  
   #Order variables in data set
-  merged <- merged[,c("name","nameMerge","pos","team","year","points","overallRank","positionRank","vor")]
+  merged <- merged[,c("name","pos","team","year","points","overallRank","positionRank","vor")]
   
   #Save data
   write.csv(merged, file=paste(getwd(),"/Data/Historical Actual Points/actual_", years[i], ".csv", sep=""), row.names=FALSE)

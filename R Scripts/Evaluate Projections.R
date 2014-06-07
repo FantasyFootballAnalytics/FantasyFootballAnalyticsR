@@ -62,7 +62,7 @@ actualPoints[,c("passYds","passTds","passInt","rushYds","rushTds","recYds","recT
 actualPoints$player <- str_trim(sapply(str_split(actualPoints$player, "\n"), "[[", 2))
 actualPoints$pos <- str_trim(str_sub(actualPoints$player, start= -2))
 actualPoints$name_yahoo <- str_trim(str_sub(actualPoints$player, start=0, end=str_locate(actualPoints$player, "-")[,1]-5))
-actualPoints$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", actualPoints$name_yahoo)))
+actualPoints$name <- nameMerge(actualPoints$name_yahoo)
 actualPoints$team_yahoo <- toupper(str_trim(str_sub(actualPoints$player, start=str_locate(actualPoints$player, "-")[,1]-4, end=str_locate(actualPoints$player, "-")[,1]-2)))
 
 #Select variables to keep
@@ -99,7 +99,7 @@ write.csv(actualPoints, file=paste(getwd(),"/Data/Historical Actual Points/Yahoo
 #####################
 load(paste(getwd(), "/Data/Historical Projections/LeagueProjections-", year, ".RData", sep=""))
 projections$name_fp <- projections$name
-projections$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", projections$name)))
+projections$name <- nameMerge(projections$name)
 
 #####################
 # 4. Merge/Process Projected & Actual Points

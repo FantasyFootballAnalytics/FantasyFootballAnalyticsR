@@ -29,10 +29,8 @@ load(paste(getwd(),"/Data/wisdomOfTheCrowd.RData", sep=""))
 experts <- readHTMLTable("http://www.fantasypros.com/nfl/rankings/consensus-cheatsheets.php", stringsAsFactors = FALSE)$data
 experts$sdPick_experts <- as.numeric(experts[,"Std Dev"])
 experts$pick_experts <- as.numeric(experts$Ave)
-#experts$name <- str_sub(experts[,c("Player, pos (team/bye)")], end=str_locate(experts[,c("Player, pos (team/bye)")], '\\(')[,1]-2)
-#experts$name <- str_sub(experts[,c("Player, pos (team/bye)")], end=str_locate(experts[,c("Player, pos (team/bye)")], ',')[,1]-1)
 experts$player <- str_sub(experts[,c("Player (team/bye)")], end=str_locate(experts[,c("Player (team/bye)")], '\\(')[,1]-2)
-experts$name <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", experts$player)))
+experts$name <- nameMerge(experts$player)
 
 #Rename Players
 #experts[grep("Beanie", experts[,c("Player (team/bye)")]),"name"] <- "Beanie Wells"

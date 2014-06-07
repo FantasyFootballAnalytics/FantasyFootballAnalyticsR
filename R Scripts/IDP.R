@@ -18,21 +18,17 @@ source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
 #Risk - "Experts"
 IDP <- readHTMLTable("http://www.fantasypros.com/nfl/rankings/idp-cheatsheets.php", stringsAsFactors = FALSE)$data
 
-IDP$name <- str_sub(IDP[,c("Player (team/bye)")], end=str_locate(IDP[,c("Player (team/bye)")], '\\(')[,1]-2)
+IDP$player <- str_sub(IDP[,c("Player (team/bye)")], end=str_locate(IDP[,c("Player (team/bye)")], '\\(')[,1]-2)
+IDP$name <- nameMerge(IDP$player)
 IDP$team <- str_sub(IDP[,c("Player (team/bye)")], start=str_locate(IDP[,c("Player (team/bye)")], '\\(')[,1]+1, end=str_locate(IDP[,c("Player (team/bye)")], '\\/')[,1]-1)
-#IDP$name <- str_sub(IDP[,c("Player, pos (team/bye)")], end=str_locate(IDP[,c("Player, pos (team/bye)")], ',')[,1]-1)
-#IDP$team <- str_sub(IDP[,c("Player, pos (team/bye)")], start=str_locate(IDP[,c("Player, pos (team/bye)")], '\\(')[,1]+1, end=str_locate(IDP[,c("Player, pos (team/bye)")], '\\/')[,1]-1)
 
 IDP$pos <- IDP$Pos
 IDP$pos <- gsub("\\d", "", IDP$pos)
-#IDP$pos <- str_sub(IDP[,c("Player, pos (team/bye)")], start=str_locate(IDP[,c("Player, pos (team/bye)")], ',')[,1]+2, end=str_locate(IDP[,c("Player, pos (team/bye)")], ',')[,1]+3)
-#IDP$pos <- gsub(" ","",IDP$pos)
-#IDP$pos <- gsub("\\)","",IDP$pos)
 
 IDP$rank <- as.numeric(IDP[,"Ave"])
 IDP$risk <- as.numeric(IDP[,"Std Dev"])
 
-IDP <- IDP[,c("name","pos","team","rank","risk")]
+IDP <- IDP[,c("name","player","pos","team","rank","risk")]
 
 IDP <- IDP[order(IDP$rank),]
 
