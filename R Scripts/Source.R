@@ -23,6 +23,9 @@ source(paste(getwd(),"/R Scripts/FantasyPros Projections.R", sep=""), echo=TRUE)
 #7. Download FantasySharks projections
 source(paste(getwd(),"/R Scripts/FantasySharks Projections.R", sep=""), echo=TRUE)
 
+#7. Download FFtoday projections
+source(paste(getwd(),"/R Scripts/FFtoday.R", sep=""), echo=TRUE)
+
 #8. Download NFL.com projections
 source(paste(getwd(),"/R Scripts/NFL Projections.R", sep=""), echo=TRUE)
 
