@@ -12,8 +12,8 @@
 library("Rglpk")
 
 #Functions
-source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
-source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
+source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
+source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
 #Data
 load(paste(getwd(),"/Data/simulation.RData", sep=""))

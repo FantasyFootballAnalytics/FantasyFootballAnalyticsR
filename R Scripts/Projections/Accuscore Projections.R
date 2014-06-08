@@ -14,8 +14,8 @@ library("stringr")
 library("ggplot2")
 
 #Functions
-source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
-source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
+source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
+source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
 #Download fantasy football projections from Accuscore.com
 qb <- readHTMLTable("http://accuscore.com/fantasy-sports/nfl-fantasy-sports/", header=1, stringsAsFactors = FALSE)$fantasy_table

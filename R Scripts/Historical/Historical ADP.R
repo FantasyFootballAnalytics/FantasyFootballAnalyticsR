@@ -22,7 +22,8 @@
 #Standard Scoring Settings: http://www.fantasypros.com/scoring-settings/
 
 #Libraries
-load_or_install(c("XML","stringr"))
+library("XML")
+library("stringr")
 
 #Data
 years <- 1999:2013

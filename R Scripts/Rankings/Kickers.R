@@ -12,8 +12,8 @@ library("XML")
 library("stringr")
 
 #Functions
-source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
-source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
+source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
+source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
 #Risk - "Experts"
 kickers <- readHTMLTable("http://www.fantasypros.com/nfl/rankings/k-cheatsheets.php", stringsAsFactors = FALSE)$data

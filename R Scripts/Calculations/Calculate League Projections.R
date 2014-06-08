@@ -13,8 +13,8 @@ library("reshape")
 library("MASS")
 
 #Functions
-source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
-source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
+source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
+source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
 #Import projections data
 filenames <- paste(getwd(),"/Data/", sourcesOfProjections, "-Projections.RData", sep="")

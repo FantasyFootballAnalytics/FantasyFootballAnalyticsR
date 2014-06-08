@@ -4,7 +4,7 @@
 # Date: 3/3/2013
 # Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
-# -These calculations are from last year (they have not yet been updated for the upcoming season)
+# To do:
 ###########################
 
 #Specify Maximum Risk
@@ -14,23 +14,20 @@ maxRisk <- 4.3
 library("Rglpk")
 
 #Functions
-source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
-source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
+source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
+source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
 #Load data
-load(paste(getwd(),"/Data/BidUpToSimulation-2014.RData", sep=""))
-load(paste(getwd(),"/Data/IDP-2014.RData", sep=""))
-load(paste(getwd(),"/Data/kickers-2014.RData", sep=""))
+load(paste(getwd(),"/Data/Historical Files/BidUpToSimulation-2014.RData", sep=""))
+load(paste(getwd(),"/Data/Historical Files/IDP-2014.RData", sep=""))
+load(paste(getwd(),"/Data/Historical Files/kickers-2014.RData", sep=""))
 
 #Subset data
-draftData <- projections[,c("name","player","pos","team","projections","vor","simulation","sdPick","sdPts","risk","avgCost","inflatedCost","bidUpTo","bidUpToSim")] #projectedPtsLatent
+draftData <- projections[,c("name","pos","team","projections","vor","simulation","sdPick","sdPts","risk","avgCost","inflatedCost","bidUpTo","bidUpToSim")] #projectedPtsLatent
 draftData <- draftData[order(-draftData$vor),]
 row.names(draftData) <- 1:dim(draftData)[1]
 
 #Save data
-save(draftData, file = paste(getwd(),"/Data/DraftDay.RData", sep=""))
-write.csv(draftData, file=paste(getwd(),"/Data/DraftDay.csv", sep=""), row.names=FALSE)
-
 save(draftData, file = paste(getwd(),"/Data/Historical Files/DraftDay-2014.RData", sep=""))
 write.csv(draftData, file=paste(getwd(),"/Data/Historical Files/DraftDay-2014.csv", sep=""), row.names=FALSE)
 

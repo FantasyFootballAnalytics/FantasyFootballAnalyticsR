@@ -15,10 +15,12 @@
 #Standard Scoring Settings: http://www.fantasypros.com/scoring-settings/
 
 #Libraries
-load_or_install(c("XML","stringr","plyr"))
+library("XML")
+library("stringr")
+library("plyr")
 
 #Functions
-source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
+source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 
 #Data
 years <- 1986:2013

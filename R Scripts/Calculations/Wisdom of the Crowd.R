@@ -18,8 +18,8 @@ library("XML")
 library("ggplot2")
 
 #Functions
-source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
-source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
+source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
+source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
 base.url <- "http://fantasyfootballcalculator.com/draft/"
 seed.url <- paste("http://fantasyfootballcalculator.com/completed_drafts.php?format=standard&teams=",num.teams,sep="")

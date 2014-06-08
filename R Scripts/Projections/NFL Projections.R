@@ -13,8 +13,8 @@ library("stringr")
 library("ggplot2")
 
 #Functions
-source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
-source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
+source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
+source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
 #Download fantasy football projections from NFL.com
 qb1_nfl <- readHTMLTable("http://fantasy.nfl.com/research/projections?position=1&sort=projectedPts&statCategory=projectedStats&statSeason=2014&statType=seasonProjectedStats", stringsAsFactors = FALSE)$`NULL`

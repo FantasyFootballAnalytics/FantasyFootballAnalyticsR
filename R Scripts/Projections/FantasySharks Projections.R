@@ -12,8 +12,8 @@ library("stringr")
 library("ggplot2")
 
 #Functions
-source(paste(getwd(),"/R Scripts/Functions.R", sep=""))
-source(paste(getwd(),"/R Scripts/League Settings.R", sep=""))
+source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
+source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
 #Download fantasy football projections from FantasySharks.com
 projections_fs <- read.csv("http://www.fantasysharks.com/apps/Projections/SeasonCSVProjections.php?l=11")
