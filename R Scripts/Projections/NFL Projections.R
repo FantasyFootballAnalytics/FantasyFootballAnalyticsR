@@ -55,12 +55,6 @@ rb_nfl$pos <- as.factor("RB")
 wr_nfl$pos <- as.factor("WR")
 te_nfl$pos <- as.factor("TE")
 
-#Calculate position rank
-qb_nfl$positionRank_nfl <- 1:dim(qb_nfl)[1]
-rb_nfl$positionRank_nfl <- 1:dim(rb_nfl)[1]
-wr_nfl$positionRank_nfl <- 1:dim(wr_nfl)[1]
-te_nfl$positionRank_nfl <- 1:dim(te_nfl)[1]
-
 #Merge players across positions
 projections_nfl <- rbind(qb_nfl,rb_nfl,wr_nfl,te_nfl)
 
@@ -105,6 +99,13 @@ projections_nfl[projections_nfl$name %in% projections_nfl[duplicated(projections
 
 #Calculate overall rank
 projections_nfl$overallRank_nfl <- rank(-projections_nfl$pts_nfl, ties.method="min")
+
+#Calculate Position Rank
+projections_nfl$positionRank_nfl <- NA
+projections_nfl[which(projections_nfl$pos == "QB"), "positionRank_nfl"] <- rank(-projections_nfl[which(projections_nfl$pos == "QB"), "pts_nfl"], ties.method="min")
+projections_nfl[which(projections_nfl$pos == "RB"), "positionRank_nfl"] <- rank(-projections_nfl[which(projections_nfl$pos == "RB"), "pts_nfl"], ties.method="min")
+projections_nfl[which(projections_nfl$pos == "WR"), "positionRank_nfl"] <- rank(-projections_nfl[which(projections_nfl$pos == "WR"), "pts_nfl"], ties.method="min")
+projections_nfl[which(projections_nfl$pos == "TE"), "positionRank_nfl"] <- rank(-projections_nfl[which(projections_nfl$pos == "TE"), "pts_nfl"], ties.method="min")
 
 #Order variables in data set
 projections_nfl <- projections_nfl[,c("name","name_nfl","pos","team_nfl","positionRank_nfl","overallRank_nfl",
