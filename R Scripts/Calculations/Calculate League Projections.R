@@ -23,12 +23,14 @@ listProjections <- sapply(filenames, function(x) get(load(x)), simplify = FALSE)
 #Merge projections data
 projections <- merge_recurse(listProjections, by=c("name","pos")) #, all=TRUE
 
-#Add player name
-projections$player <- projections$name_fp
+#Set player name as most common instance across sources
+nametable <- apply(projections[,paste("name", sourcesOfProjectionsAbbreviation, sep="_")], 1, table)  
+projections$player <- names(sapply(nametable,`[`,1) )
+projections$player[which(projections$player == "")] <- NA
 
 #Set team name as most common instance across sources
-mytable <- apply(projections[,paste("team", sourcesOfProjectionsAbbreviation, sep="_")], 1, table)  
-projections$team <- names(sapply(mytable,`[`,1) )
+teamtable <- apply(projections[,paste("team", sourcesOfProjectionsAbbreviation, sep="_")], 1, table)  
+projections$team <- names(sapply(teamtable,`[`,1) )
 projections$team[which(projections$team == "")] <- NA
 
 #Remove duplicate cases
@@ -67,21 +69,16 @@ projections$twoPts <- rowMeans(projections[,paste("twoPts", sourcesOfProjections
 projections$fumbles <- rowMeans(projections[,paste("fumbles", sourcesOfProjectionsAbbreviation, sep="_")], na.rm=TRUE)
 
 #Calculate Hodges-Lehmann (pseudo-median) average of categories
-pb <- txtProgressBar(min = 0, max = dim(projections)[1], style = 3)
-for(i in 1:dim(projections)[1]){
-  setTxtProgressBar(pb, i)
-  
-  projections$passYdsMedian[i] <- tryCatch(wilcox.test(as.numeric(as.vector(projections[i,paste("passYds", sourcesOfProjectionsAbbreviation, sep="_")])), conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(as.numeric(as.vector(projections[i,paste("passYds", sourcesOfProjectionsAbbreviation, sep="_")])), na.rm=TRUE))
-  projections$passTdsMedian[i] <- tryCatch(wilcox.test(as.numeric(as.vector(projections[i,paste("passTds", sourcesOfProjectionsAbbreviation, sep="_")])), conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(as.numeric(as.vector(projections[i,paste("passTds", sourcesOfProjectionsAbbreviation, sep="_")])), na.rm=TRUE))
-  projections$passIntMedian[i] <- tryCatch(wilcox.test(as.numeric(as.vector(projections[i,paste("passInt", sourcesOfProjectionsAbbreviation, sep="_")])), conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(as.numeric(as.vector(projections[i,paste("passInt", sourcesOfProjectionsAbbreviation, sep="_")])), na.rm=TRUE))
-  projections$rushYdsMedian[i] <- tryCatch(wilcox.test(as.numeric(as.vector(projections[i,paste("rushYds", sourcesOfProjectionsAbbreviation, sep="_")])), conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(as.numeric(as.vector(projections[i,paste("rushYds", sourcesOfProjectionsAbbreviation, sep="_")])), na.rm=TRUE))
-  projections$rushTdsMedian[i] <- tryCatch(wilcox.test(as.numeric(as.vector(projections[i,paste("rushTds", sourcesOfProjectionsAbbreviation, sep="_")])), conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(as.numeric(as.vector(projections[i,paste("rushTds", sourcesOfProjectionsAbbreviation, sep="_")])), na.rm=TRUE))
-  projections$recMedian[i] <- tryCatch(wilcox.test(as.numeric(as.vector(projections[i,paste("rec", sourcesOfProjectionsAbbreviation, sep="_")])), conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(as.numeric(as.vector(projections[i,paste("rec", sourcesOfProjectionsAbbreviation, sep="_")])), na.rm=TRUE))
-  projections$recYdsMedian[i] <- tryCatch(wilcox.test(as.numeric(as.vector(projections[i,paste("recYds", sourcesOfProjectionsAbbreviation, sep="_")])), conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(as.numeric(as.vector(projections[i,paste("recYds", sourcesOfProjectionsAbbreviation, sep="_")])), na.rm=TRUE))
-  projections$recTdsMedian[i] <- tryCatch(wilcox.test(as.numeric(as.vector(projections[i,paste("recTds", sourcesOfProjectionsAbbreviation, sep="_")])), conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(as.numeric(as.vector(projections[i,paste("recTds", sourcesOfProjectionsAbbreviation, sep="_")])), na.rm=TRUE))
-  projections$twoPtsMedian[i] <- tryCatch(wilcox.test(as.numeric(as.vector(projections[i,paste("twoPts", sourcesOfProjectionsAbbreviation, sep="_")])), conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(as.numeric(as.vector(projections[i,paste("twoPts", sourcesOfProjectionsAbbreviation, sep="_")])), na.rm=TRUE))
-  projections$fumblesMedian[i] <- tryCatch(wilcox.test(as.numeric(as.vector(projections[i,paste("fumbles", sourcesOfProjectionsAbbreviation, sep="_")])), conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(as.numeric(as.vector(projections[i,paste("fumbles", sourcesOfProjectionsAbbreviation, sep="_")])), na.rm=TRUE))
-}
+projections$passYdsMedian <- apply(projections[,paste("passYds", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE)))
+projections$passTdsMedian <- apply(projections[,paste("passTds", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE)))
+projections$passIntMedian <- apply(projections[,paste("passInt", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE)))
+projections$rushYdsMedian <- apply(projections[,paste("rushYds", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE)))
+projections$rushTdsMedian <- apply(projections[,paste("rushTds", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE)))
+projections$recMedian <- apply(projections[,paste("rec", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE)))
+projections$recYdsMedian <- apply(projections[,paste("recYds", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE)))
+projections$recTdsMedian <- apply(projections[,paste("recTds", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE)))
+projections$twoPtsMedian <- apply(projections[,paste("twoPts", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE)))
+projections$fumblesMedian <- apply(projections[,paste("fumbles", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE)))
 
 #Convert NA to 0
 #projections[is.na(projections$passYds)==TRUE,"passYds"] <- 0

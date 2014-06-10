@@ -3,6 +3,13 @@
 ###DON'T FORGET TO MANUALLY DOWNLOAD AVG COST FROM YAHOO
 
 ###############
+# Functions
+###############
+
+source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
+source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
+
+###############
 # Rankings
 ###############
 
@@ -19,6 +26,7 @@ source(paste(getwd(),"/R Scripts/Projections/ESPN Projections.R", sep=""), echo=
 source(paste(getwd(),"/R Scripts/Projections/FantasyPros Projections.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Projections/FantasySharks Projections.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Projections/FFtoday Projections.R", sep=""), echo=TRUE)
+source(paste(getwd(),"/R Scripts/Projections/FOX Projections.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Projections/NFL Projections.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Projections/Yahoo Projections.R", sep=""), echo=TRUE)
 
