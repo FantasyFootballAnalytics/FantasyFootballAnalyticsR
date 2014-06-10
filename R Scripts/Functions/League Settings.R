@@ -33,8 +33,8 @@ twoPtsMultiplier <- 2       #2 pts per 2-point conversion (not included in ESPN 
 fumlMultiplier <- -3        #-3 pts per fumble lost (not included in ESPN projections)
 
 #Projections
-sourcesOfProjections <- c("Accuscore", "CBS", "ESPN", "FantasyPros", "FantasySharks", "FFtoday", "FOX", "NFL", "Yahoo")
-sourcesOfProjectionsAbbreviation <- c("accu", "cbs", "espn", "fp", "fs", "fftoday", "fox", "nfl", "yahoo")
+sourcesOfProjections <- c("CBS", "FantasyPros", "FantasySharks", "FFtoday", "NFL", "Yahoo") #c("Accuscore", "CBS", "ESPN", "FantasyPros", "FantasySharks", "FFtoday", "FOX", "NFL", "Yahoo")
+sourcesOfProjectionsAbbreviation <- c("cbs", "fp", "fs", "fftoday", "nfl", "yahoo") #c("accu", "cbs", "espn", "fp", "fs", "fftoday", "fox", "nfl", "yahoo")
 
 #Number of players at each position drafted in Top 100 (adjust for your league)
 qbReplacements <- 17
