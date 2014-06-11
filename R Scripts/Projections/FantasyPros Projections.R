@@ -38,23 +38,16 @@ te_fp$pos <- as.factor("TE")
 #Merge players across positions
 projections_fp <- rbind.fill(qb_fp, rb_fp, wr_fp, te_fp)
 
-#Convert variables from character strings to numeric
-projections_fp$passAtt_fp <- as.numeric(projections_fp$passAtt_fp)
-projections_fp$passComp_fp <- as.numeric(projections_fp$passComp_fp)
-projections_fp$passYds_fp <- as.numeric(gsub(",", "", projections_fp$passYds_fp, fixed = TRUE))
-projections_fp$passTds_fp <- as.numeric(projections_fp$passTds_fp)
-projections_fp$passInt_fp <- as.numeric(projections_fp$passInt_fp)
-projections_fp$rushAtt_fp <- as.numeric(projections_fp$rushAtt_fp)
-projections_fp$rushYds_fp <- as.numeric(gsub(",", "", projections_fp$rushYds_fp, fixed = TRUE))
-projections_fp$rushTds_fp <- as.numeric(projections_fp$rushTds_fp)
-projections_fp$rec_fp <- as.numeric(projections_fp$rec_fp)
-projections_fp$recYds_fp <- as.numeric(gsub(",", "", projections_fp$recYds_fp, fixed = TRUE))
-projections_fp$recTds_fp <- as.numeric(projections_fp$recTds_fp)
-projections_fp$fumbles_fp <- as.numeric(projections_fp$fumbles_fp)
-projections_fp$pts_fp <- as.numeric(projections_fp$pts_fp)
-
 #Add variables from other projection sources
 projections_fp$twoPts_fp <- NA
+
+#Remove special characters(commas)
+projections_fp[,c("passAtt_fp","passComp_fp","passYds_fp","passTds_fp","passInt_fp","rushAtt_fp","rushYds_fp","rushTds_fp","rec_fp","recYds_fp","recTds_fp","twoPts_fp","fumbles_fp","pts_fp")] <-
+  apply(projections_fp[,c("passAtt_fp","passComp_fp","passYds_fp","passTds_fp","passInt_fp","rushAtt_fp","rushYds_fp","rushTds_fp","rec_fp","recYds_fp","recTds_fp","twoPts_fp","fumbles_fp","pts_fp")], 2, function(x) gsub("\\,", "", x))
+
+#Convert variables from character strings to numeric
+projections_fp[,c("passAtt_fp","passComp_fp","passYds_fp","passTds_fp","passInt_fp","rushAtt_fp","rushYds_fp","rushTds_fp","rec_fp","recYds_fp","recTds_fp","twoPts_fp","fumbles_fp","pts_fp")] <-
+  convert.magic(projections_fp[,c("passAtt_fp","passComp_fp","passYds_fp","passTds_fp","passInt_fp","rushAtt_fp","rushYds_fp","rushTds_fp","rec_fp","recYds_fp","recTds_fp","twoPts_fp","fumbles_fp","pts_fp")], "numeric")
 
 #Player names
 projections_fp <- adply(projections_fp, 1, function(x) {

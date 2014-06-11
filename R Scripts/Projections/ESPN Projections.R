@@ -67,22 +67,13 @@ projections_espn$pts_espn[projections_espn$pts_espn == "--"] <- "0"
 projections_espn$passComp_espn <- as.numeric(str_sub(string=projections_espn$passCompAtt_espn, end=str_locate(string=projections_espn$passCompAtt_espn, '/')[,1]-1))
 projections_espn$passAtt_espn <- as.numeric(str_sub(string=projections_espn$passCompAtt_espn, start=str_locate(string=projections_espn$passCompAtt_espn, '/')[,1]+1))
 
-#Convert variables from character strings to numeric
-projections_espn$positionRank_espn <- as.numeric(projections_espn$positionRank_espn)
-projections_espn$passYds_espn <- as.numeric(projections_espn$passYds_espn)
-projections_espn$passTds_espn <- as.numeric(projections_espn$passTds_espn)
-projections_espn$passInt_espn <- as.numeric(projections_espn$passInt_espn)
-projections_espn$rush_espn <- as.numeric(projections_espn$rush_espn)
-projections_espn$rushYds_espn <- as.numeric(projections_espn$rushYds_espn)
-projections_espn$rushTds_espn <- as.numeric(projections_espn$rushTds_espn)
-projections_espn$rec_espn <- as.numeric(projections_espn$rec_espn)
-projections_espn$recYds_espn <- as.numeric(projections_espn$recYds_espn)
-projections_espn$recTds_espn <- as.numeric(projections_espn$recTds_espn)
-projections_espn$pts_espn <- as.numeric(projections_espn$pts_espn)
-
 #Add variables from other projection sources
 projections_espn$fumbles_espn <- NA
 projections_espn$twoPts_espn <- NA
+
+#Convert variables from character strings to numeric
+projections_espn[,c("positionRank_espn","passYds_espn","passTds_espn","passInt_espn","rush_espn","rushYds_espn","rushTds_espn","rec_espn","recYds_espn","recTds_espn","pts_espn","fumbles_espn","twoPts_espn")] <-
+  convert.magic(projections_espn[,c("positionRank_espn","passYds_espn","passTds_espn","passInt_espn","rush_espn","rushYds_espn","rushTds_espn","rec_espn","recYds_espn","recTds_espn","pts_espn","fumbles_espn","twoPts_espn")], "numeric")
 
 #Player names
 projections_espn$name_espn <- str_sub(projections_espn$player_espn, end=str_locate(string=projections_espn$player_espn, ',')[,1]-1)

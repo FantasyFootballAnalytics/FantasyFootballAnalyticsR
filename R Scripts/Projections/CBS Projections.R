@@ -51,17 +51,17 @@ te_cbs$pos <- as.factor("TE")
 #Merge across positions
 projections_cbs <- rbind.fill(qb_cbs, rb_cbs, wr_cbs, te_cbs)
 
+#Add variables from other projection sources
+projections_cbs$twoPts_cbs <- NA
+
 #Convert variables from character strings to numeric
-projections_cbs[,c("fumbles_cbs","pts_cbs",
+projections_cbs[,c("twoPts_cbs","fumbles_cbs","pts_cbs",
                    "rec_cbs","recYds_cbs","recYdsPerRec_cbs","recTds_cbs",
                    "rushAtt_cbs","rushYds_cbs","rushYdsPerAtt_cbs","rushTds_cbs",
-                   "passAtt_cbs","passComp_cbs","passYds_cbs","passTds_cbs","passInt_cbs","passCompPct_cbs","passYdsPerAtt_cbs")] <- convert.magic(projections_cbs[,c("fumbles_cbs","pts_cbs",
+                   "passAtt_cbs","passComp_cbs","passYds_cbs","passTds_cbs","passInt_cbs","passCompPct_cbs","passYdsPerAtt_cbs")] <- convert.magic(projections_cbs[,c("twoPts_cbs","fumbles_cbs","pts_cbs",
                                                                                                                                                                       "rec_cbs","recYds_cbs","recYdsPerRec_cbs","recTds_cbs",
                                                                                                                                                                       "rushAtt_cbs","rushYds_cbs","rushYdsPerAtt_cbs","rushTds_cbs",
                                                                                                                                                                       "passAtt_cbs","passComp_cbs","passYds_cbs","passTds_cbs","passInt_cbs","passCompPct_cbs","passYdsPerAtt_cbs")], "numeric")
-
-#Add variables from other projection sources
-projections_cbs$twoPts_cbs <- NA
 
 #Player names
 projections_cbs$name_cbs <- str_sub(projections_cbs$player, end=str_locate(string=projections_cbs$player, ',')[,1]-1)

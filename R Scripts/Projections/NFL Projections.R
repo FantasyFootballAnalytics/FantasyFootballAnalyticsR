@@ -58,20 +58,12 @@ te_nfl$pos <- as.factor("TE")
 #Merge players across positions
 projections_nfl <- rbind(qb_nfl,rb_nfl,wr_nfl,te_nfl)
 
-#Convert variables from character strings to numeric
-projections_nfl$gp_nfl <- as.numeric(projections_nfl$gp_nfl)
-projections_nfl$passYds_nfl <- as.numeric(projections_nfl$passYds_nfl)
-projections_nfl$passTds_nfl <- as.numeric(projections_nfl$passTds_nfl)
-projections_nfl$passInt_nfl <- as.numeric(projections_nfl$passInt_nfl)
-projections_nfl$rushYds_nfl <- as.numeric(projections_nfl$rushYds_nfl)
-projections_nfl$rushTds_nfl <- as.numeric(projections_nfl$rushTds_nfl)
+#Add missing variables
 projections_nfl$rec_nfl <- NA
-projections_nfl$recYds_nfl <- as.numeric(projections_nfl$recYds_nfl)
-projections_nfl$recTds_nfl <- as.numeric(projections_nfl$recTds_nfl)
-projections_nfl$fumbleTds_nfl <- as.numeric(projections_nfl$fumbleTds_nfl)
-projections_nfl$twoPts_nfl <- as.numeric(projections_nfl$twoPts_nfl)
-projections_nfl$fumbles_nfl <- as.numeric(projections_nfl$fumbles_nfl)
-projections_nfl$pts_nfl <- as.numeric(projections_nfl$pts_nfl)
+
+#Convert variables from character strings to numeric
+projections_nfl[,c("gp_nfl","passYds_nfl","passTds_nfl","passInt_nfl","rushYds_nfl","rushTds_nfl","rec_nfl","recYds_nfl","recTds_nfl","fumbleTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")] <-
+  convert.magic(projections_nfl[,c("gp_nfl","passYds_nfl","passTds_nfl","passInt_nfl","rushYds_nfl","rushTds_nfl","rec_nfl","recYds_nfl","recTds_nfl","fumbleTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")], "numeric")
 
 #Player names
 qbnames <- str_sub(projections_nfl$player_nfl, end=str_locate(string=projections_nfl$player_nfl, c("QB"))[,1]-2) #"QB -"

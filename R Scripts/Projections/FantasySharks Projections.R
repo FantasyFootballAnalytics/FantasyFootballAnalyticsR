@@ -46,6 +46,10 @@ projections_fs$fumbles_fs <- projections_fs$Fumbles
 projections_fs$twoPts_fs <- NA
 projections_fs$pts_fs <- projections_fs$FantasyPts
 
+#Convert to numeric
+projections_fs[,c("passAtt_fs","passComp_fs","passYds_fs","passTds_fs","passInt_fs","rushYds_fs","rushTds_fs","rec_fs","recYds_fs","recTds_fs","fumbles_fs","twoPts_fs","pts_fs")] <-
+  convert.magic(projections_fs[,c("passAtt_fs","passComp_fs","passYds_fs","passTds_fs","passInt_fs","rushYds_fs","rushTds_fs","rec_fs","recYds_fs","recTds_fs","fumbles_fs","twoPts_fs","pts_fs")], "numeric")
+
 #Remove duplicate cases
 projections_fs[projections_fs$name %in% projections_fs[duplicated(projections_fs$name),"name"],]
 #projections_fs <- projections_fs[-which(projections_fs$name_fs=="Dexter McCluster" & projections_fs$pos=="RB"),]

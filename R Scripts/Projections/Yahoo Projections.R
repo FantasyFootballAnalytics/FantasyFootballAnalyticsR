@@ -40,13 +40,16 @@ projections_yahoo <- rbind(yahoo1,yahoo2,yahoo3,yahoo4,yahoo5,yahoo6,yahoo7,yaho
 names(projections_yahoo) <- c("star","player","add","owner","pts_yahoo","ownedPct","proj","actual",
                               "passYds_yahoo","passTds_yahoo","passInt_yahoo","rushYds_yahoo","rushTds_yahoo","recYds_yahoo","recTds_yahoo","returnTDs_yahoo","twoPts_yahoo","fumbles_yahoo","missing")
 
+#Add missing variables
+projections_yahoo$rec_yahoo <- NA
+
 #Remove special characters(commas)
-projections_yahoo[,c("passYds_yahoo","passTds_yahoo","passInt_yahoo","rushYds_yahoo","rushTds_yahoo","recYds_yahoo","recTds_yahoo","returnTDs_yahoo","twoPts_yahoo","fumbles_yahoo","pts_yahoo")] <-
-  apply(projections_yahoo[,c("passYds_yahoo","passTds_yahoo","passInt_yahoo","rushYds_yahoo","rushTds_yahoo","recYds_yahoo","recTds_yahoo","returnTDs_yahoo","twoPts_yahoo","fumbles_yahoo","pts_yahoo")], 2, function(x) gsub("\\,", "", x))
+projections_yahoo[,c("passYds_yahoo","passTds_yahoo","passInt_yahoo","rushYds_yahoo","rushTds_yahoo","rec_yahoo","recYds_yahoo","recTds_yahoo","returnTDs_yahoo","twoPts_yahoo","fumbles_yahoo","pts_yahoo")] <-
+  apply(projections_yahoo[,c("passYds_yahoo","passTds_yahoo","passInt_yahoo","rushYds_yahoo","rushTds_yahoo","rec_yahoo","recYds_yahoo","recTds_yahoo","returnTDs_yahoo","twoPts_yahoo","fumbles_yahoo","pts_yahoo")], 2, function(x) gsub("\\,", "", x))
 
 #Convert variables from character strings to numeric
-projections_yahoo[,c("passYds_yahoo","passTds_yahoo","passInt_yahoo","rushYds_yahoo","rushTds_yahoo","recYds_yahoo","recTds_yahoo","returnTDs_yahoo","twoPts_yahoo","fumbles_yahoo","pts_yahoo")] <- 
-  convert.magic(projections_yahoo[,c("passYds_yahoo","passTds_yahoo","passInt_yahoo","rushYds_yahoo","rushTds_yahoo","recYds_yahoo","recTds_yahoo","returnTDs_yahoo","twoPts_yahoo","fumbles_yahoo","pts_yahoo")], "numeric")
+projections_yahoo[,c("passYds_yahoo","passTds_yahoo","passInt_yahoo","rushYds_yahoo","rushTds_yahoo","rec_yahoo","recYds_yahoo","recTds_yahoo","returnTDs_yahoo","twoPts_yahoo","fumbles_yahoo","pts_yahoo")] <- 
+  convert.magic(projections_yahoo[,c("passYds_yahoo","passTds_yahoo","passInt_yahoo","rushYds_yahoo","rushTds_yahoo","rec_yahoo","recYds_yahoo","recTds_yahoo","returnTDs_yahoo","twoPts_yahoo","fumbles_yahoo","pts_yahoo")], "numeric")
 
 #Player name, position, and team
 projections_yahoo$player <- str_trim(sapply(str_split(projections_yahoo$player, "\n"), "[[", 2))
@@ -54,9 +57,6 @@ projections_yahoo$pos <- str_trim(str_sub(projections_yahoo$player, start= -2))
 projections_yahoo$name_yahoo <- str_trim(str_sub(projections_yahoo$player, start=0, end=str_locate(projections_yahoo$player, "-")[,1]-5))
 projections_yahoo$name <- nameMerge(projections_yahoo$name_yahoo)
 projections_yahoo$team_yahoo <- toupper(str_trim(str_sub(projections_yahoo$player, start=str_locate(projections_yahoo$player, "-")[,1]-4, end=str_locate(projections_yahoo$player, "-")[,1]-2)))
-
-#Add missing variables
-projections_yahoo$rec_yahoo <- NA
 
 #Remove duplicate cases
 projections_yahoo[projections_yahoo$name %in% projections_yahoo[duplicated(projections_yahoo$name),"name"],]
