@@ -10,6 +10,7 @@
 #Load libraries
 library("stringr")
 library("ggplot2")
+library("plyr")
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
