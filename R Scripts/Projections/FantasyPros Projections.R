@@ -66,8 +66,30 @@ projections_fp$name <- nameMerge(projections_fp$name_fp)
 #Player teams
 projections_fp$team_fp <- str_sub(projections_fp$player_fp, start=str_locate(string=projections_fp$player_fp, '\\(')[,1]+1, end = str_locate(string=projections_fp$player_fp, '\\)')[,1]-1)
 
+#Remove rows with all NAs
+projections_fp <- projections_fp[apply(projections_fp, 1, function(x) any(!is.na(x))),]
+
+#Remove rows with missing player name
+projections_fp <- projections_fp[-which(projections_fp$name_fp == ""),]
+
 #Remove duplicate cases
 projections_fp[projections_fp$name %in% projections_fp[duplicated(projections_fp$name),"name"],]
+
+projections_fp <- projections_fp[-which(projections_fp$name_fp=="Zach Miller" & projections_fp$team_fp=="CHI"),]
+
+dropNames <- c("DEXTERMCCLUSTER")
+dropVariables <- c("pos")
+dropLabels <- c("WR")
+
+projections_fp2 <- ddply(projections_fp, .(name), numcolwise(mean), na.rm=TRUE)
+
+for(i in 1:length(dropNames)){
+  if(dim(projections_fp[-which(projections_fp[,"name"] == dropNames[i] & projections_fp[,dropVariables[i]] == dropLabels[i]),])[1] > 0){
+    projections_fp <- projections_fp[-which(projections_fp[,"name"] == dropNames[i] & projections_fp[,dropVariables[i]] == dropLabels[i]),]
+  }
+}
+
+projections_fp <- merge(projections_fp2, projections_fp[,c("name","name_fp","player_fp","pos","team_fp")], by="name")
 
 #projections_fp[projections_fp$name_fp=="Alex Smith",][1,] <- NA
 #projections_fp <- projections_fp[-which(projections_fp$name_fp=="Alex Smith" & projections_fp$pos=="TE"),]
@@ -84,12 +106,6 @@ projections_fp[projections_fp$name %in% projections_fp[duplicated(projections_fp
 #projections_fp <- projections_fp[-which(projections_fp$name_fp=="Niles Paul" & projections_fp$pos=="WR"),]
 #projections_fp <- projections_fp[-which(projections_fp$name_fp=="Steve Smith" & is.na(projections_fp$team_fp)),]
 #projections_fp <- projections_fp[-which(projections_fp$name_fp=="Zach Miller" & projections_fp$team_fp=="CHI"),]
-
-#Remove rows with all NAs
-projections_fp <- projections_fp[apply(projections_fp, 1, function(x) any(!is.na(x))),]
-
-#Remove rows with missing player name
-projections_fp <- projections_fp[-which(projections_fp$name_fp == ""),]
 
 #Rename Players
 #projections_fp[projections_fp$name_fp=="Christopher Ivory", "name_fp"] <- "Chris Ivory"
