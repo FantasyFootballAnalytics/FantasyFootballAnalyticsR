@@ -53,7 +53,11 @@ projections_fs[,c("passAtt_fs","passComp_fs","passYds_fs","passTds_fs","passInt_
 
 #Remove duplicate cases
 projections_fs[projections_fs$name %in% projections_fs[duplicated(projections_fs$name),"name"],]
-#projections_fs <- projections_fs[-which(projections_fs$name_fs=="Dexter McCluster" & projections_fs$pos=="RB"),]
+
+#Same name, different player
+projections_fs <- projections_fs[-which(projections_fs$name=="RYANGRIFFIN" & projections_fs$pos=="QB"),]
+
+#Same player, different position
 
 #Rename players
 #projections_fs[projections_fs$name_espn=="EJ Manuel", "name_espn"] <- "E.J. Manuel"

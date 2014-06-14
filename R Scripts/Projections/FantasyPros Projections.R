@@ -75,8 +75,10 @@ projections_fp <- projections_fp[-which(projections_fp$name_fp == ""),]
 #Remove duplicate cases
 projections_fp[projections_fp$name %in% projections_fp[duplicated(projections_fp$name),"name"],]
 
-projections_fp <- projections_fp[-which(projections_fp$name_fp=="Zach Miller" & projections_fp$team_fp=="CHI"),]
+#Same name, different player
+projections_fp <- projections_fp[-which(projections_fp$name=="ZACHMILLER" & projections_fp$team_fp=="CHI"),]
 
+#Same player, different position
 dropNames <- c("DEXTERMCCLUSTER")
 dropVariables <- c("pos")
 dropLabels <- c("WR")

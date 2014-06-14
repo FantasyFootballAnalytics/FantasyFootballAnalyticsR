@@ -10,7 +10,7 @@
 #Type of drafts to scrape
 num.teams <- 10           #Number of teams in your league
 rounds <- 15              #Number of rounds completed, should not change (15 standard num to complete draft for 10 teams)
-num.obs <- 20000          #Number of drafts to scrape and parse
+num.obs <- 10000          #Number of drafts to scrape and parse
 humans <- 10    		      #Number of human drafters, in my case I want all humans
 
 #Load libraries

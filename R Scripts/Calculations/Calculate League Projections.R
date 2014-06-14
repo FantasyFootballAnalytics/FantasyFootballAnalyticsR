@@ -36,6 +36,23 @@ projections$team[which(projections$team == "")] <- NA
 #Remove duplicate cases
 projections[projections$name %in% projections$name[duplicated(projections$name)],]
 
+#Same name, different player
+
+#Same player, different position
+dropNames <- c("DENARDROBINSON","DEXTERMCCLUSTER")
+dropVariables <- c("pos","pos")
+dropLabels <- c("RB","WR")
+
+projections2 <- ddply(projections, .(name), numcolwise(mean), na.rm=TRUE)
+
+for(i in 1:length(dropNames)){
+  if(dim(projections[-which(projections[,"name"] == dropNames[i] & projections[,dropVariables[i]] == dropLabels[i]),])[1] > 0){
+    projections <- projections[-which(projections[,"name"] == dropNames[i] & projections[,dropVariables[i]] == dropLabels[i]),]
+  }
+}
+
+projections <- merge(projections2, projections[,c("name","player","pos","team")], by="name")
+
 #Calculate projections for each source
 for(i in 1:length(sourcesOfProjectionsAbbreviation)){
   projections[,paste(c("passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","twoPts","fumblesPts"), sourcesOfProjectionsAbbreviation[i], sep="_")] <- NA
@@ -156,24 +173,30 @@ projectedPtsLatent <- as.vector(factor.scores)
 fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 't')$loglik
 fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'normal')$loglik
 fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'logistic')$loglik
-fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'weibull')$loglik
+fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'weibull')$loglik #best
 fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'gamma')$loglik
-fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'lognormal')$loglik #best
+fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'lognormal')$loglik
 fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'exponential')$loglik
 
-logMean <- fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'lognormal')$estimate[[1]]
-logSD <- fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'lognormal')$estimate[[2]]
+############
+# Log normal
+############
+#logMean <- fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'lognormal')$estimate[[1]]
+#logSD <- fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'lognormal')$estimate[[2]]
 
-projectedPtsLatentLog <- qlnorm(plnorm(projectedPtsLatent), meanlog=logMean, sdlog=logSD)
-projectedPtsLatentLogRescaled <- rescaleRange(variable=projectedPtsLatentLog, minOutput=0, maxOutput=max(projections$projectedPtsMedian))
-projections$projectedPtsLatent <- projectedPtsLatentLogRescaled
+#projectedPtsLatentLog <- qlnorm(plnorm(projectedPtsLatent), meanlog=logMean, sdlog=logSD)
+#projectedPtsLatentLogRescaled <- rescaleRange(variable=projectedPtsLatentLog, minOutput=0, maxOutput=max(projections$projectedPtsMedian))
+#projections$projectedPtsLatent <- projectedPtsLatentLogRescaled
 
-#weibullShape <- fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'weibull')$estimate[[1]]
-#weibullScale <- fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'weibull')$estimate[[2]]
+############
+# Weibull
+############
+weibullShape <- fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'weibull')$estimate[[1]]
+weibullScale <- fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'weibull')$estimate[[2]]
 
-#projectedPtsLatentWeibull <- qweibull(pnorm(projectedPtsLatent), shape=weibullShape, scale=weibullScale)
-#projectedPtsLatentWeibullRescaled <- rescaleRange(variable=projectedPtsLatentWeibull, minOutput=0, maxOutput=max(projections$projectedPtsMedian))
-#projections$projectedPtsLatent <- projectedPtsLatentWeibullRescaled
+projectedPtsLatentWeibull <- qweibull(pnorm(projectedPtsLatent), shape=weibullShape, scale=weibullScale)
+projectedPtsLatentWeibullRescaled <- rescaleRange(variable=projectedPtsLatentWeibull, minOutput=0, maxOutput=max(projections$projectedPtsMedian))
+projections$projectedPtsLatent <- projectedPtsLatentWeibullRescaled
 
 projectionVars <- projections[,c(paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"), c("projectedPtsMean","projectedPtsMedian","projectedPtsLatent"))]
 
@@ -214,7 +237,7 @@ projections[,c("name","pos","team","projectedPts_fp","projectedPtsMean","project
 
 #Density Plot
 pointDensity <- c(projections$projectedPts_cbs, projections$projectedPts_nfl, projections$projectedPts_fs, projections$projectedPts_fp, projections$projectedPts_fftoday, projections$projectedPts_yahoo, projections$projectedPtsMean) #,projections$projectedPts_accu, projections$projectedPts_espn, projections$projectedPtsLatent
-sourceDensity <- c(rep("CBS",dim(projections)[1]), rep("NFL",dim(projections)[1]), rep("FS",dim(projections)[1]), rep("FP",dim(projections)[1]), rep("FFtoday",dim(projections)[1]), rep("Yahoo",dim(projections)[1]), rep("Average",dim(projections)[1])) #,rep("Accuscore",dim(projections)[1]), rep("ESPN",dim(projections)[1]), rep("Latent",dim(projections)[1])
+sourceDensity <- c(rep("CBS",dim(projections)[1]), rep("NFL",dim(projections)[1]), rep("FantasySharks",dim(projections)[1]), rep("FantasyPros",dim(projections)[1]), rep("FFtoday",dim(projections)[1]), rep("Yahoo",dim(projections)[1]), rep("Average",dim(projections)[1])) #,rep("Accuscore",dim(projections)[1]), rep("ESPN",dim(projections)[1]), rep("Latent",dim(projections)[1])
 densityData <- data.frame(pointDensity, sourceDensity)
 
 ggplot(densityData, aes(x=pointDensity, fill=sourceDensity)) + geom_density(alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of Projected Points") + theme(legend.title=element_blank())
