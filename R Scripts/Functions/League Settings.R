@@ -29,8 +29,8 @@ rushTdsMultiplier <- 6      #6 pts per rush td
 recMultiplier <- 0          #0 pts per rec
 recYdsMultiplier <- (1/8)   #1 pt per 8 rec yds
 recTdsMultiplier <- 6       #6 pts per rec td
-twoPtsMultiplier <- 2       #2 pts per 2-point conversion (not included in ESPN or CBS projections)
-fumlMultiplier <- -3        #-3 pts per fumble lost (not included in ESPN projections)
+twoPtsMultiplier <- 2       #2 pts per 2-point conversion
+fumlMultiplier <- -3        #-3 pts per fumble lost
 
 #Projections
 sourcesOfProjections <- c("CBS", "FantasyPros", "FantasySharks", "FFtoday", "NFL", "Yahoo") #c("Accuscore", "CBS", "ESPN", "FantasyPros", "FantasySharks", "FFtoday", "FOX", "NFL", "Yahoo")
