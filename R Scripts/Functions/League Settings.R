@@ -37,10 +37,10 @@ sourcesOfProjections <- c("CBS", "FantasyPros", "FantasySharks", "FFtoday", "NFL
 sourcesOfProjectionsAbbreviation <- c("cbs", "fp", "fs", "fftoday", "nfl", "yahoo") #c("accu", "cbs", "espn", "fp", "fs", "fftoday", "fox", "nfl", "yahoo")
 
 #Number of players at each position drafted in Top 100 (adjust for your league)
-qbReplacements <- 17
-rbReplacements <- 35
-wrReplacements <- 35
-teReplacements <- 13
+qbReplacements <- 15
+rbReplacements <- 37
+wrReplacements <- 36
+teReplacements <- 11
 
 #Alternative way of calculating the number of players at each position drafted in Top 100 based on league settings
 #numTeams <- 10  #number of teams in league
