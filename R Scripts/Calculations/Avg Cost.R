@@ -50,11 +50,11 @@ avgcost_yahoo$projectedCost <- ceiling(avgcost_yahoo$avgCost * (leagueCap/defaul
 #Merge
 projections <- merge(projections, avgcost_yahoo, by="name", all.x=TRUE)
 
-#Calculate Overall Rank
-projections$overallRank <- rank(-projections$projections, ties.method="min")
-
 #Remove duplicate cases
 projections[projections$name %in% projections$name[duplicated(projections$name)],]
+
+#Calculate Overall Rank
+projections$overallRank <- rank(-projections$projections, ties.method="min")
 
 #Apply 10% price premium to 33 players with highest projected points, apply 10% price premium for players lower than rank 66
 projections$inflatedCost <- ceiling(projections$avgCost * (leagueCap/defaultCap) * 1.0)
