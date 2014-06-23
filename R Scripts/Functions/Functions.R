@@ -25,7 +25,7 @@ convert.magic <- function(obj, type){
 
 #Convert to name for merging by removing all spaces and punctuation and converting to all caps
 nameMerge <- function(name){
-  newName <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", name)))
+  newName <- toupper(gsub("III", "", gsub("[[:punct:]]", "", gsub(" ", "", name))))
   return(newName)
 }
 
