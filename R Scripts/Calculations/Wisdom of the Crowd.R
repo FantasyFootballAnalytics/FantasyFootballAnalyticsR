@@ -136,6 +136,8 @@ wisdomOfTheCrowd <- drafts.stats[,c("name","name_ffc","pos","team_ffc","mean","s
 plotTitle <- paste("Sleepers from", dates[2], "to", dates[1], sep=" ")
 ex.mad <- quantile(drafts.stats$mad, .95)
 
+drafts.stats[drafts.stats$mad > ex.mad,]
+
 value.plot <- ggplot(subset(drafts.stats, drafts.stats$mad >= ex.mad), aes(median, mad)) +
   geom_text(aes(label = name_ffc, alpha=.85, colour="red", size=3.5), position=position_jitter(w=4,h=2)) +
   geom_point(data=subset(drafts.stats, drafts.stats$mad < ex.mad)) +
@@ -147,8 +149,7 @@ value.plot <- ggplot(subset(drafts.stats, drafts.stats$mad >= ex.mad), aes(media
   scale_color_manual(values=c("red"="darkred")) +
   theme(legend.position="none")
 
-pdf(paste(getwd(),"/Figures/Sleepers.pdf", sep=""), width=10, height=6)
-#jpeg(paste(getwd(),"/Figures/Sleepers.jpg", sep=""))
+ggsave(paste(getwd(),"/Figures/Sleepers.jpg", sep=""), width=10, height=6, units="in")
 value.plot
 dev.off()
 
