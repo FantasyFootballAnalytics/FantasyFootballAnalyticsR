@@ -55,7 +55,7 @@ projections_yahoo[,c("passYds_yahoo","passTds_yahoo","passInt_yahoo","rushYds_ya
 #Player name, position, and team
 projections_yahoo$player <- str_trim(sapply(str_split(projections_yahoo$player, "\n"), "[[", 2))
 projections_yahoo$pos <- str_trim(str_sub(projections_yahoo$player, start= -2))
-projections_yahoo$name_yahoo <- str_trim(str_sub(projections_yahoo$player, start=0, end=str_locate(projections_yahoo$player, "-")[,1]-5))
+projections_yahoo$name_yahoo <- str_trim(str_sub(projections_yahoo$player, start=0, end=nchar(projections_yahoo$player)-8))
 projections_yahoo$name <- nameMerge(projections_yahoo$name_yahoo)
 projections_yahoo$team_yahoo <- toupper(str_trim(str_sub(projections_yahoo$player, start=str_locate(projections_yahoo$player, "-")[,1]-4, end=str_locate(projections_yahoo$player, "-")[,1]-2)))
 
