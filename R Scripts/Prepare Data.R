@@ -25,6 +25,7 @@ source(paste(getwd(),"/R Scripts/Projections/Accuscore Projections.R", sep=""), 
 source(paste(getwd(),"/R Scripts/Projections/CBS1 Projections.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Projections/CBS2 Projections.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Projections/ESPN Projections.R", sep=""), echo=TRUE)
+source(paste(getwd(),"/R Scripts/Projections/FantasyFootballNerd Projections.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Projections/FantasyPros Projections.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Projections/FantasySharks Projections.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Projections/FFtoday Projections.R", sep=""), echo=TRUE)

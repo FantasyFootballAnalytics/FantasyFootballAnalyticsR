@@ -13,6 +13,13 @@ library("Rglpk")
 #No scientific notation
 options(scipen=999)
 
+#Function that takes a row sum and retains NAs when all values in the row are NA
+mySum <- function(data){
+  dataSum <- rowSums(data, na.rm=T) 
+  dataSum[which(rowMeans(is.na(data))==1)] <- NA
+  return(dataSum)
+}
+
 #Convert type of multiple columns of a dataframe at once
 convert.magic <- function(obj, type){
   FUN1 <- switch(type,

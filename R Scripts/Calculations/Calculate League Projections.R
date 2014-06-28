@@ -70,7 +70,7 @@ for(i in 1:length(sourcesOfProjectionsAbbreviation)){
   
   projections[,paste("projectedPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- NA
   
-  projections[,paste("projectedPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- rowSums(projections[,paste(c("passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","twoPtsPts","fumblesPts"), sourcesOfProjectionsAbbreviation[i], sep="_")], na.rm=T)
+  projections[,paste("projectedPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- mySum(projections[,paste(c("passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","twoPtsPts","fumblesPts"), sourcesOfProjectionsAbbreviation[i], sep="_")])
 }
 
 #Calculate average of categories
@@ -168,8 +168,8 @@ projections[,c("name",paste("recTdsPts", sourcesOfProjectionsAbbreviation, sep="
 projections[,c("name",paste("twoPtsPts", sourcesOfProjectionsAbbreviation, sep="_"), c("twoPtsPts","twoPtsMedianPts"))]
 projections[,c("name",paste("fumblesPts", sourcesOfProjectionsAbbreviation, sep="_"), c("fumblesPts","fumblesMedianPts"))]
 
-projections$projectedPtsMean <- rowSums(projections[,c("passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","twoPtsPts","fumblesPts")], na.rm=T)
-projections$projectedPtsMedian <- rowSums(projections[,c("passYdsMedianPts","passTdsMedianPts","passIntMedianPts","rushYdsMedianPts","rushTdsMedianPts","recMedianPts","recYdsMedianPts","recTdsMedianPts","twoPtsMedianPts","fumblesMedianPts")], na.rm=T)
+projections$projectedPtsMean <- mySum(projections[,c("passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","twoPtsPts","fumblesPts")])
+projections$projectedPtsMedian <- mySum(projections[,c("passYdsMedianPts","passTdsMedianPts","passIntMedianPts","rushYdsMedianPts","rushTdsMedianPts","recMedianPts","recYdsMedianPts","recTdsMedianPts","twoPtsMedianPts","fumblesMedianPts")])
 
 #Check projections
 projections[,c("name",paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"), c("projectedPtsMean","projectedPtsMedian"))]
@@ -233,8 +233,6 @@ cor(projections[,c(paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="
 
 #Set criterion for projections based on whose projections are most accurate
 projections$projections <- projections$projectedPtsMedian #projections$projectedPts_fp
-
-#If projections are zero, set them to be the avg projections
 
 #Calculate overall rank
 projections$overallRank <- rank(-projections$projections, ties.method="min") #projectedPtsLatent
