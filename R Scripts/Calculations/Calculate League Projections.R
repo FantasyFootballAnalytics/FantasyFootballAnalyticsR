@@ -188,30 +188,30 @@ projectedPtsLatent <- as.vector(factor.scores)
 fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 't')$loglik
 fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'normal')$loglik
 fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'logistic')$loglik
-fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'weibull')$loglik #best
+fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'weibull')$loglik
 fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'gamma')$loglik
-fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'lognormal')$loglik
+fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'lognormal')$loglik #best
 fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'exponential')$loglik
 
 ############
 # Log normal
 ############
-#logMean <- fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'lognormal')$estimate[[1]]
-#logSD <- fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'lognormal')$estimate[[2]]
+logMean <- fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'lognormal')$estimate[[1]]
+logSD <- fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'lognormal')$estimate[[2]]
 
-#projectedPtsLatentLog <- qlnorm(plnorm(projectedPtsLatent), meanlog=logMean, sdlog=logSD)
-#projectedPtsLatentLogRescaled <- rescaleRange(variable=projectedPtsLatentLog, minOutput=0, maxOutput=max(projections$projectedPtsMedian))
-#projections$projectedPtsLatent <- projectedPtsLatentLogRescaled
+projectedPtsLatentLog <- qlnorm(plnorm(projectedPtsLatent), meanlog=logMean, sdlog=logSD)
+projectedPtsLatentLogRescaled <- rescaleRange(variable=projectedPtsLatentLog, minOutput=0, maxOutput=max(projections$projectedPtsMedian))
+projections$projectedPtsLatent <- projectedPtsLatentLogRescaled
 
 ############
 # Weibull
 ############
-weibullShape <- fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'weibull')$estimate[[1]]
-weibullScale <- fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'weibull')$estimate[[2]]
+#weibullShape <- fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'weibull')$estimate[[1]]
+#weibullScale <- fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'weibull')$estimate[[2]]
 
-projectedPtsLatentWeibull <- qweibull(pnorm(projectedPtsLatent), shape=weibullShape, scale=weibullScale)
-projectedPtsLatentWeibullRescaled <- rescaleRange(variable=projectedPtsLatentWeibull, minOutput=0, maxOutput=max(projections$projectedPtsMedian))
-projections$projectedPtsLatent <- projectedPtsLatentWeibullRescaled
+#projectedPtsLatentWeibull <- qweibull(pnorm(projectedPtsLatent), shape=weibullShape, scale=weibullScale)
+#projectedPtsLatentWeibullRescaled <- rescaleRange(variable=projectedPtsLatentWeibull, minOutput=0, maxOutput=max(projections$projectedPtsMedian))
+#projections$projectedPtsLatent <- projectedPtsLatentWeibullRescaled
 
 projectionVars <- projections[,c(paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"), c("projectedPtsMean","projectedPtsMedian","projectedPtsLatent"))]
 
