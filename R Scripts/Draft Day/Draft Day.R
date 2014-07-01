@@ -18,9 +18,9 @@ source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
 #Load data
-load(paste(getwd(),"/Data/BidUpToSimulation-2014.RData", sep=""))
-load(paste(getwd(),"/Data/IDP-2014.RData", sep=""))
-load(paste(getwd(),"/Data/kickers-2014.RData", sep=""))
+load(paste(getwd(),"/Data/BidUpToSimulation.RData", sep=""))
+load(paste(getwd(),"/Data/IDP.RData", sep=""))
+load(paste(getwd(),"/Data/kickers.RData", sep=""))
 
 #Subset data
 draftData <- projections[,c("name","player","pos","team","projections","vor","simulation","sdPick","sdPts","risk","avgCost","inflatedCost","bidUpTo","bidUpToSim")] #projectedPtsLatent
@@ -46,13 +46,13 @@ removedPlayers
 
 #Example: Update with drafted (i.e., unavailable) players
 myteam <- data.frame(
-  player = c("Arian Foster", "Tom Brady", "Jacob Tamme"),
-  pos = c("RB", "QB", "TE"),
-  cost = c(64, 46, 5)
+  player = c("DeMarco Murray", "Jordan Reed", "Julio Jones", "Michael Floyd", "Jamaal Charles"), #Plus: Kaepernick + Garcon OR Luck + Torrey Smith
+  pos = c("RB", "TE", "WR", "WR", "RB"),
+  cost = c(42, 5, 47, 11, 74)
 )
 myteam$player <- as.character(myteam$player)
 
-drafted <- c(myteam$player,"Vincent Jackson","Eric Decker")
+drafted <- c(myteam$player,"Peyton Manning")
 
 optimizeDraft(maxRisk=4.3)
 optimizeDraft(maxRisk=4.3, omit=c("Adrian Peterson","Eric Decker"))

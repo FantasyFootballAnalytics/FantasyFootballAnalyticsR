@@ -6,6 +6,7 @@
 # Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
 # To do:
+# Implement in parallel processing
 ###########################
 
 #Library
@@ -18,12 +19,12 @@ source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 #Data
 load(paste(getwd(),"/Data/simulation.RData", sep=""))
 
+#Set iterations
+iterations <- 1000
+
 #Roster Optimization
 optimizeData <- na.omit(projections[,c("name","player","pos","projections","risk","inflatedCost","sdPts")]) #projectedPtsLatent
 maxCost <- leagueCap - (numTotalPlayers - numTotalStarters)
-
-#Set iterations
-iterations <- 1000
 
 #Bid Up To (i=player, j=cost, k=iteration)
 listOfPlayers <- vector(mode="character", length=numTotalStarters)
@@ -46,7 +47,7 @@ for(i in 1:length(optimizeData$name)){
   for (k in 1:iterations){
     j <- 1
     listOfPlayers <- optimizeData$player[i]
-      
+    
     while(!is.na(match(optimizeData$player[i],listOfPlayers)) & j < maxCost){
       newCost[i] <- j
       
@@ -71,7 +72,7 @@ for (i in 1:dim(bidUpTo)[1]){
 optimizeData
 
 #Merge with projections
-projections <- merge(projections, optimizeData[,c("name","pos","bidUpToSim")], by=c("name","pos"), all=TRUE)
+projections <- merge(projections, optimizeData[,c("name","bidUpToSim")], by=c("name"), all=TRUE) #,"pos"
 
 #Convert NAs to Zero
 projections$bidUpToSim[is.na(projections$bidUpToSim)] <- 1
