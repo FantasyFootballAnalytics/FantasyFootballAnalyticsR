@@ -72,6 +72,9 @@ projections_fp <- projections_fp[apply(projections_fp, 1, function(x) any(!is.na
 #Remove rows with missing player name
 projections_fp <- projections_fp[-which(projections_fp$name_fp == ""),]
 
+#Rename players
+projections_fp$name[which(projections_fp$name == "CHRISTOPHERIVORY")] <- "CHRISIVORY"
+
 #Remove duplicate cases
 projections_fp[projections_fp$name %in% projections_fp[duplicated(projections_fp$name),"name"],]
 

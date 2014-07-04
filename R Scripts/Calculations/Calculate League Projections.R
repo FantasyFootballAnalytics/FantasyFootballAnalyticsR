@@ -177,12 +177,13 @@ projections[,c("name",paste("projectedPts", sourcesOfProjectionsAbbreviation, se
 #Calculate latent variable for projected points
 cor(projections[,c(paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"), c("projectedPtsMean","projectedPtsMedian"))], use="pairwise.complete.obs")
 
-factor.analysis <- factanal(projections[,paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_")], factors = 1, scores = "Bartlett") #factor.analysis <- factanal(~projectedPts_espn + projectedPts_cbs + projectedPts_nfl + projectedPts_fs + projectedPts_fp, factors = 1, scores = "Bartlett", data=projections) #regression
+#factor.analysis <- factanal(as.formula(paste("~", paste(paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"), collapse=" + "), sep="")), factors = 1, scores = "Bartlett", data=projections) #factanal(projections[,paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_")], factors = 1, scores = "Bartlett") #factor.analysis <- factanal(~projectedPts_espn + projectedPts_cbs + projectedPts_nfl + projectedPts_fs + projectedPts_fp, factors = 1, scores = "Bartlett", data=projections) #regression
+##factor.analysis <- fa(projections[,paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_")], nfactors=1, fm="minres", scores="regression") #fm="ml"
 
-factor.scores <- factor.analysis$scores
-factor.loadings <- factor.analysis$loadings[,1]
-factor.loadings
-projectedPtsLatent <- as.vector(factor.scores)
+#factor.scores <- factor.analysis$scores
+#factor.loadings <- factor.analysis$loadings[,1]
+#factor.loadings
+#projectedPtsLatent <- as.vector(factor.scores)
 
 #Best fitting distribution of Average Fantasy Points
 fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 't')$loglik
@@ -196,12 +197,12 @@ fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedi
 ############
 # Log normal
 ############
-logMean <- fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'lognormal')$estimate[[1]]
-logSD <- fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'lognormal')$estimate[[2]]
+#logMean <- fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'lognormal')$estimate[[1]]
+#logSD <- fitdistr(projections$projectedPtsMedian - floor(min(projections$projectedPtsMedian, na.rm=TRUE)), 'lognormal')$estimate[[2]]
 
-projectedPtsLatentLog <- qlnorm(plnorm(projectedPtsLatent), meanlog=logMean, sdlog=logSD)
-projectedPtsLatentLogRescaled <- rescaleRange(variable=projectedPtsLatentLog, minOutput=0, maxOutput=max(projections$projectedPtsMedian))
-projections$projectedPtsLatent <- projectedPtsLatentLogRescaled
+#projectedPtsLatentLog <- qlnorm(plnorm(projectedPtsLatent), meanlog=logMean, sdlog=logSD)
+#projectedPtsLatentLogRescaled <- rescaleRange(variable=projectedPtsLatentLog, minOutput=0, maxOutput=max(projections$projectedPtsMedian))
+#projections$projectedPtsLatent <- projectedPtsLatentLogRescaled
 
 ############
 # Weibull
@@ -213,7 +214,7 @@ projections$projectedPtsLatent <- projectedPtsLatentLogRescaled
 #projectedPtsLatentWeibullRescaled <- rescaleRange(variable=projectedPtsLatentWeibull, minOutput=0, maxOutput=max(projections$projectedPtsMedian))
 #projections$projectedPtsLatent <- projectedPtsLatentWeibullRescaled
 
-projectionVars <- projections[,c(paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"), c("projectedPtsMean","projectedPtsMedian","projectedPtsLatent"))]
+projectionVars <- projections[,c(paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"), c("projectedPtsMean","projectedPtsMedian"))] #,"projectedPtsLatent"
 
 #Convert Zeros to NA
 for(i in 1:length(sourcesOfProjectionsAbbreviation)){
@@ -226,10 +227,10 @@ is.na(projectionVars) <- projectionVars==0
 describe(projectionVars)
 plot(density(na.omit(projections$projectedPtsMean)), col="black")
 lines(density(na.omit(projections$projectedPtsMedian)), col="blue")
-lines(density(na.omit(projections$projectedPtsLatent)), col="red")
+#lines(density(na.omit(projections$projectedPtsLatent)), col="red")
 
 #Correlations among projections
-cor(projections[,c(paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"), c("projectedPtsMean","projectedPtsMedian","projectedPtsLatent"))], use="pairwise.complete.obs")
+cor(projections[,c(paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"), c("projectedPtsMean","projectedPtsMedian"))], use="pairwise.complete.obs") #,"projectedPtsLatent"
 
 #Set criterion for projections based on whose projections are most accurate
 projections$projections <- projections$projectedPtsMedian #projections$projectedPts_fp
@@ -242,7 +243,7 @@ projections <- projections[order(projections$overallRank),]
 row.names(projections) <- 1:dim(projections)[1]
 
 #Keep important variables
-projections <- projections[,c("name","player","pos","team","overallRank","projections",paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"), c("projectedPtsMean","projectedPtsMedian","projectedPtsLatent"))]
+projections <- projections[,c("name","player","pos","team","overallRank","projections",paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"), c("projectedPtsMean","projectedPtsMedian"))] #,"projectedPtsLatent"
 
 #View projections
 projections
