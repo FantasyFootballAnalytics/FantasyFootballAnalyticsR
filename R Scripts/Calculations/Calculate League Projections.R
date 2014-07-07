@@ -247,7 +247,7 @@ projections <- projections[,c("name","player","pos","team","overallRank","projec
 
 #View projections
 projections
-projections[,c("name","pos","team","projectedPts_fp","projectedPtsMean","projectedPtsMedian","projectedPtsLatent")]
+projections[,c("name","pos","team","projectedPts_fp","projectedPtsMean","projectedPtsMedian")] #,"projectedPtsLatent"
 
 #Density Plot
 pointDensity <- c(projections$projectedPts_cbs1, projections$projectedPts_cbs2, projections$projectedPts_espn, projections$projectedPts_nfl, projections$projectedPts_fs, projections$projectedPts_fp, projections$projectedPts_fftoday, projections$projectedPtsMean) #,projections$projectedPts_accu, projections$projectedPts_cbs, projections$projectedPts_yahoo, projections$projectedPtsLatent
