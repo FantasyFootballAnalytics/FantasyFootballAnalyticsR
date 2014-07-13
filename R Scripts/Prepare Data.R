@@ -29,7 +29,7 @@ source(paste(getwd(),"/R Scripts/Projections/FantasyFootballNerd Projections.R",
 source(paste(getwd(),"/R Scripts/Projections/FantasyPros Projections.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Projections/FantasySharks Projections.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Projections/FFtoday Projections.R", sep=""), echo=TRUE)
-try(source(paste(getwd(),"/R Scripts/Projections/Footballguys1 Projections.R", sep=""), echo=TRUE))
+source(paste(getwd(),"/R Scripts/Projections/Footballguys1 Projections.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Projections/Footballguys2 Projections.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Projections/Footballguys3 Projections.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Projections/Footballguys4 Projections.R", sep=""), echo=TRUE)

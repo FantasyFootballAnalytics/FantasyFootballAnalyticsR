@@ -46,7 +46,7 @@ projections <- projections[order(projections$overallRank),]
 row.names(projections) <- 1:dim(projections)[1]
 
 #Reorder variables
-projections <- projections[,c("name","player","pos","team","overallRank","pick","positionRank","projections",paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"),"projectedPtsMean","projectedPtsMedian","projectedPtsLatent","vor","sdPick","sdPts","risk")]
+projections <- projections[,c("name","player","pos","team","overallRank","pick","positionRank","projections",paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"),"projectedPtsMean","projectedPtsMedian","vor","sdPick","sdPts","risk")] #,"projectedPtsLatent"
 
 #Starters (low risk)
 projections[which(projections$risk <= 5 & projections$vor >= 0),]

@@ -1,64 +1,65 @@
 ###########################
 # File: Footballguys Projections.R
 # Description: Downloads Fantasy Football Projections from Footballguys.com
-# Date: 3/3/2013
+# Date: 7/13/2014
 # Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
 # To do:
 ###########################
 
-#First, install phantomjs:
-#http://phantomjs.org/download.html
-
-#Second, add directory of phantomjs to your path enviroment variable:
-#https://stackoverflow.com/questions/9546324/adding-directory-to-path-environment-variable-in-windows
-
-#Third, install RSelenium
-#library(devtools)
-#devtools::install_github("ropensci/RSelenium")
-
 #Load libraries
+library(httr)
 library(XML)
 library(stringr)
 library(ggplot2)
 library(plyr)
-library(RSelenium)
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
 #Download fantasy football projections from Footballguys.com (password-protected)
-loginURL <- "http://subscribers.footballguys.com/amember/login.php"
+qbURL_fbg3 <- "http://subscribers.footballguys.com/myfbg/myviewprojections.php?projector=53"
+rbURL_fbg3 <- "http://subscribers.footballguys.com/myfbg/myviewprojections.php?projforwhat=rb&projector=53&profile=0"
+wrURL_fbg3 <- "http://subscribers.footballguys.com/myfbg/myviewprojections.php?projforwhat=wr&projector=53&profile=0"
+teURL_fbg3 <- "http://subscribers.footballguys.com/myfbg/myviewprojections.php?projforwhat=te&projector=53&profile=0"
 
-qbURL <- "http://subscribers.footballguys.com/myfbg/myviewprojections.php?projector=53"
-rbURL <- "http://subscribers.footballguys.com/myfbg/myviewprojections.php?projforwhat=rb&projector=53&profile=0"
-wrURL <- "http://subscribers.footballguys.com/myfbg/myviewprojections.php?projforwhat=wr&projector=53&profile=0"
-teURL <- "http://subscribers.footballguys.com/myfbg/myviewprojections.php?projforwhat=te&projector=53&profile=0"
+handle <- handle("http://subscribers.footballguys.com") 
+path   <- "amember/login.php"
 
-pJS <- phantom() # start phantomjs
-remDr <- remoteDriver(browserName = "phantomjs")
-remDr$open()
-remDr$navigate(loginURL)
-remDr$findElement("id", "login")$sendKeysToElement(list(footballguysUsername))  #replace "footballguysUsername" with your username
-remDr$findElement("id", "pass")$sendKeysToElement(list(footballguysPassword))   #replace "footballguysPassword" with your password
-remDr$findElement("css", ".am-login-form input[type='submit']")$clickElement()
+qbLogin_fbg3 <- list(
+  amember_login = footballguysUsername,
+  amember_pass  = footballguysPassword,
+  amember_redirect_url = qbURL_fbg3
+)
 
-remDr$navigate(qbURL)
-tableElem <- remDr$findElement("css", "table.datamedium")
-qb_fbg3 <- readHTMLTable(header = TRUE, tableElem$getElementAttribute("outerHTML")[[1]], stringsAsFactors = FALSE)$'NULL'
+rbLogin_fbg3 <- list(
+  amember_login = footballguysUsername,
+  amember_pass  = footballguysPassword,
+  amember_redirect_url = rbURL_fbg3
+)
 
-remDr$navigate(rbURL)
-tableElem <- remDr$findElement("css", "table.datamedium")
-rb_fbg3 <- readHTMLTable(header = TRUE, tableElem$getElementAttribute("outerHTML")[[1]], stringsAsFactors = FALSE)$'NULL'
+wrLogin_fbg3 <- list(
+  amember_login = footballguysUsername,
+  amember_pass  = footballguysPassword,
+  amember_redirect_url = wrURL_fbg3
+)
 
-remDr$navigate(wrURL)
-tableElem <- remDr$findElement("css", "table.datamedium")
-wr_fbg3 <- readHTMLTable(header = TRUE, tableElem$getElementAttribute("outerHTML")[[1]], stringsAsFactors = FALSE)$'NULL'
+teLogin_fbg3 <- list(
+  amember_login = footballguysUsername,
+  amember_pass  = footballguysPassword,
+  amember_redirect_url = teURL_fbg3
+)
 
-remDr$navigate(teURL)
-tableElem <- remDr$findElement("css", "table.datamedium")
-te_fbg3 <- readHTMLTable(header = TRUE, tableElem$getElementAttribute("outerHTML")[[1]], stringsAsFactors = FALSE)$'NULL'
+qbContent_fbg3 <- POST(handle = handle, path = path, body = qbLogin_fbg3)
+rbContent_fbg3 <- POST(handle = handle, path = path, body = rbLogin_fbg3)
+wrContent_fbg3 <- POST(handle = handle, path = path, body = wrLogin_fbg3)
+teContent_fbg3 <- POST(handle = handle, path = path, body = teLogin_fbg3)
+
+qb_fbg3 <- readHTMLTable(content(qbContent_fbg3), stringsAsFactors = FALSE)$'NULL'
+rb_fbg3 <- readHTMLTable(content(rbContent_fbg3), stringsAsFactors = FALSE)$'NULL'
+wr_fbg3 <- readHTMLTable(content(wrContent_fbg3), stringsAsFactors = FALSE)$'NULL'
+te_fbg3 <- readHTMLTable(content(teContent_fbg3), stringsAsFactors = FALSE)$'NULL'
 
 #Add variable names for each object
 names(qb_fbg3) <- c("rank_fbg3","name_fbg3","teamBye_fbg3","age_fbg3","exp_fbg3","passComp_fbg3","passAtt_fbg3","passCompPct_fbg3","passYds_fbg3","passYdsPerAtt_fbg3","passTds_fbg3","passInt_fbg3","rushAtt_fbg3","rushYds_fbg3","rushTds_fbg3","pts_fbg3")
@@ -93,7 +94,6 @@ projections_fbg3$name <- nameMerge(projections_fbg3$name_fbg3)
 projections_fbg3[projections_fbg3$name %in% projections_fbg3[duplicated(projections_fbg3$name),"name"],]
 
 #Same name, different player
-projections_fbg3 <- projections_fbg3[-which(projections_fbg3$name=="STEVESMITH" & projections_fbg3$team_fbg3==""),]
 
 #Same player, different position
 
