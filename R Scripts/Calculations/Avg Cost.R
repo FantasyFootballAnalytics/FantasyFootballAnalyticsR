@@ -74,7 +74,7 @@ row.names(projections) <- 1:dim(projections)[1]
 
 #Density Plot
 ggplot(projections, aes(x=inflatedCost)) + geom_density(fill="green", alpha=.3) + xlab("Player's Intrinsic Value (Cost)") + ggtitle("Density Plot of Players' Intrinsic Value") + theme(legend.title=element_blank())
-ggsave(paste(getwd(),"/Figures/Inflated Cost.jpg", sep=""))
+ggsave(paste(getwd(),"/Figures/Inflated Cost.jpg", sep=""), width=10, height=10)
 dev.off()
 
 #Save file

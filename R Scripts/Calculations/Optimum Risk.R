@@ -56,5 +56,5 @@ optimizeTeam(maxRisk=100)
 
 #Plot
 ggplot(data=riskData, aes(x=riskLevel, y=projectedPoints)) + geom_point(size=3) + xlab("Max Risk Level") + ylab("Total Projected Points") + ggtitle("Association Between Max Risk Level and Total Projected Points") # + geom_smooth()
-ggsave(paste(getwd(),"/Figures/Optimum Risk.jpg", sep=""))
+ggsave(paste(getwd(),"/Figures/Optimum Risk.jpg", sep=""), width=10, height=10)
 dev.off()

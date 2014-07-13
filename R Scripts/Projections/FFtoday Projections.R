@@ -104,7 +104,7 @@ row.names(projections_fftoday) <- 1:dim(projections_fftoday)[1]
 
 #Density Plot
 ggplot(projections_fftoday, aes(x=pts_fftoday)) + geom_density(fill="blue", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of FFtoday Projected Points")
-ggsave(paste(getwd(),"/Figures/FFtoday projections.jpg", sep=""))
+ggsave(paste(getwd(),"/Figures/FFtoday projections.jpg", sep=""), width=10, height=10)
 dev.off()
 
 #Save file

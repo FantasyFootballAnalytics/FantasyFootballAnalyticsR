@@ -73,7 +73,7 @@ row.names(projections_ffn) <- 1:dim(projections_ffn)[1]
 
 #Density Plot
 ggplot(projections_ffn, aes(x=pts_ffn)) + geom_density(fill="orange", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of FantasyFootballNerd Projected Points")
-ggsave(paste(getwd(),"/Figures/FantasyFootballNerd projections.jpg", sep=""))
+ggsave(paste(getwd(),"/Figures/FantasyFootballNerd projections.jpg", sep=""), width=10, height=10)
 dev.off()
 
 #Save file

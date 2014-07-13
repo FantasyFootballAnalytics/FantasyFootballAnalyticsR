@@ -20,13 +20,13 @@ mySum <- function(data){
   return(dataSum)
 }
 
-#Convert type of multiple columns of a dataframe at once
+#Converts variable types of multiple columns of a dataframe at once
 convert.magic <- function(obj, type){
   FUN1 <- switch(type,
                  character = as.character,
                  numeric = as.numeric,
                  factor = as.factor)
-  out <- lapply(obj, FUN1)
+  out <- lapply(obj, function(x) FUN1(as.character(x)))
   as.data.frame(out)
 }
 

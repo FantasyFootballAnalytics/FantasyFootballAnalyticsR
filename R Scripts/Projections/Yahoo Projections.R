@@ -87,7 +87,7 @@ row.names(projections_yahoo) <- 1:dim(projections_yahoo)[1]
 
 #Density Plot
 ggplot(projections_yahoo, aes(x=pts_yahoo)) + geom_density(fill="blue", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of Yahoo Projected Points")
-ggsave(paste(getwd(),"/Figures/Yahoo projections.jpg", sep=""))
+ggsave(paste(getwd(),"/Figures/Yahoo projections.jpg", sep=""), width=10, height=10)
 dev.off()
 
 #Save file

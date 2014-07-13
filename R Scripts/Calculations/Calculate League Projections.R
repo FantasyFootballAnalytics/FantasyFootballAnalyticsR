@@ -255,7 +255,7 @@ sourceDensity <- c(rep("CBS1",dim(projections)[1]), rep("CBS2",dim(projections)[
 densityData <- data.frame(pointDensity, sourceDensity)
 
 ggplot(densityData, aes(x=pointDensity, fill=sourceDensity)) + geom_density(alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of Projected Points") + theme(legend.title=element_blank())
-ggsave(paste(getwd(),"/Figures/Calculate projections.jpg", sep=""))
+ggsave(paste(getwd(),"/Figures/Calculate projections.jpg", sep=""), width=10, height=10)
 dev.off()
 
 #Save file

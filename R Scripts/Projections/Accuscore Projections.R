@@ -87,7 +87,7 @@ row.names(projections_accu) <- 1:dim(projections_accu)[1]
 
 #Density Plot
 ggplot(projections_accu, aes(x=pts_accu)) + geom_density(fill="blue", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of Accuscore Projected Points")
-ggsave(paste(getwd(),"/Figures/Accuscore projections.jpg", sep=""))
+ggsave(paste(getwd(),"/Figures/Accuscore projections.jpg", sep=""), width=10, height=10)
 dev.off()
 
 #Save file

@@ -108,7 +108,7 @@ row.names(projections_espn) <- 1:dim(projections_espn)[1]
 
 #Density Plot
 ggplot(projections_espn, aes(x=pts_espn)) + geom_density(fill="blue", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of ESPN Projected Points")
-ggsave(paste(getwd(),"/Figures/ESPN projections.jpg", sep=""))
+ggsave(paste(getwd(),"/Figures/ESPN projections.jpg", sep=""), width=10, height=10)
 dev.off()
 
 #Save file

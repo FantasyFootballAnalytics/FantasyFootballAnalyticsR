@@ -88,7 +88,7 @@ projections[rank(projections$risk, na.last="keep") %in% (max(rank(projections$ri
 
 #Density plot
 ggplot(projections, aes(x=risk)) + geom_density(fill="red", alpha=.7) + xlab("Player's Risk Level") + ggtitle("Density Plot of Players' Risk Levels")
-ggsave(paste(getwd(),"/Figures/Risk.jpg", sep=""))
+ggsave(paste(getwd(),"/Figures/Risk.jpg", sep=""), width=10, height=10)
 dev.off()
 
 #Save file

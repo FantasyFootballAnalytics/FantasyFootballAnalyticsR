@@ -221,7 +221,7 @@ summary(lm(actualPts ~ projections + risk, data=na.omit(projections[,c("actualPt
 #Plot
 ggplot(data=projectedWithActualPts, aes(x=projectedPts_fp, y=actualPts)) + geom_point() + geom_smooth() + xlab("Projected Fantasy Football Points") + ylab("Actual Fantasy Football Points") + ggtitle("Association Between Projected Fantasy Points and Actual Points") +
   annotate("text", x = 80, y = max(projectedWithActualPts$projections, na.rm=TRUE), label = paste("R-Squared = ",round(summary(lm(actualPts ~ projectedPts_fp, data=projectedWithActualPts))$r.squared,2),sep=""))
-ggsave(paste(getwd(),"/Figures/Evaluate Projections.jpg", sep=""))
+ggsave(paste(getwd(),"/Figures/Evaluate Projections.jpg", sep=""), width=10, height=10)
 dev.off()
 
 #Save data

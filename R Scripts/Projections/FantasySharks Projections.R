@@ -17,7 +17,7 @@ source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
 #Download fantasy football projections from FantasySharks.com
-projections_fs <- read.csv("http://www.fantasysharks.com/apps/Projections/SeasonCSVProjections.php?l=11")
+projections_fs <- read.csv("http://www.fantasysharks.com/apps/Projections/SeasonCSVProjections.php?l=11", stringsAsFactors = FALSE)
 
 #Player position
 projections_fs$pos <- projections_fs$Pos
@@ -83,7 +83,7 @@ row.names(projections_fs) <- 1:dim(projections_fs)[1]
 
 #Density Plot
 ggplot(projections_fs, aes(x=pts_fs)) + geom_density(fill="blue", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of FantasySharks Projected Points")
-ggsave(paste(getwd(),"/Figures/FantasySharks projections.jpg", sep=""))
+ggsave(paste(getwd(),"/Figures/FantasySharks projections.jpg", sep=""), width=10, height=10)
 dev.off()
 
 #Save file

@@ -84,7 +84,7 @@ row.names(projections_fox) <- 1:dim(projections_fox)[1]
 
 #Density Plot
 ggplot(projections_fox, aes(x=pts_fox)) + geom_density(fill="blue", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of FOX Projected Points")
-ggsave(paste(getwd(),"/Figures/FOX projections.jpg", sep=""))
+ggsave(paste(getwd(),"/Figures/FOX projections.jpg", sep=""), width=10, height=10)
 dev.off()
 
 #Save file
