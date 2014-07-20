@@ -71,6 +71,45 @@ rescaleRange <- function(variable, minOutput, maxOutput){
   return(values)
 }
 
+#Function that generates n random positive integers that sum to constrained value
+simulateIntegers <- function(n, sum, sd, pos.only = TRUE){
+  if(sum == 0 & pos.only == TRUE){
+    vec <- rep(0, n)
+  } else{
+    vec <- rnorm(n, sum/n, sd)
+    if (abs(sum(vec)) < 0.01) vec <- vec + 1
+    vec <- round(vec / sum(vec) * sum)
+    deviation <- sum - sum(vec)
+    for (. in seq_len(abs(deviation))){
+      vec[i] <- vec[i <- sample(n, 1)] + sign(deviation)
+    }
+    if (pos.only) while (any(vec < 0)){
+      negs <- vec < 0
+      pos  <- vec > 0
+      vec[negs][i] <- vec[negs][i <- sample(sum(negs), 1)] + 1
+      vec[pos][i]  <- vec[pos ][i <- sample(sum(pos ), 1)] - 1
+    }
+  }
+  vec
+}
+
+#Function that generates n random positive numbers that sum to constrained value
+simulateNumbers <- function(n, sum, sd, pos.only = TRUE){
+  if(sum == 0 & pos.only == TRUE){
+    vec <- rep(0, n)
+  } else{
+    vec <- rnorm(n, sum/n, sd)
+    vec <- vec / sum(vec) * sum
+    if (pos.only) while (any(vec < 0)){
+      negs <- vec < 0
+      pos  <- vec > 0
+      vec[negs][i] <- vec[negs][i <- sample(sum(negs), 1)] + 1
+      vec[pos][i]  <- vec[pos ][i <- sample(sum(pos ), 1)] - 1
+    }
+  }
+  vec
+}
+
 #Create Optimization Function
 optimizeTeam <- function(points=optimizeData$projections, playerCost=optimizeData$inflatedCost, maxRisk=maxRisk){ #can change points, cost, or risk #projectedPtsLatent
   num.players <- length(optimizeData$name)
