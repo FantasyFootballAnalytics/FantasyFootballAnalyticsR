@@ -127,6 +127,10 @@ cor.test(projections$ydsPerRec, projections$weeklySD)
 cor.test(projections$totalTds, projections$weeklyVariability)
 cor.test(projections$ydsPerRec, projections$weeklyVariability)
 
+#Players with highest weekly variability
+projections[order(projections$pos, -projections$weeklySD), c("player","pos","totalTds","ydsPerRec","weeklySD","weeklyVariability")]
+projections[order(projections$pos, -projections$weeklyVariability), c("player","pos","totalTds","ydsPerRec","weeklySD","weeklyVariability")]
+
 #Save file
 save(projections, file = paste(getwd(),"/Data/WeeklyVariability.RData", sep=""))
 write.csv(projections, file=paste(getwd(),"/Data/WeeklyVariability.csv", sep=""), row.names=FALSE)

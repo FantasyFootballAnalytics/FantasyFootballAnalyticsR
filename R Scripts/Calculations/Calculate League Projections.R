@@ -181,18 +181,7 @@ row.names(projections) <- 1:dim(projections)[1]
 projections <- projections[,c("name","player","pos","team","overallRank","projections",
                               paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"),
                               c("passYdsMedian","passTdsMedian","passIntMedian","rushYdsMedian","rushTdsMedian","recMedian","recYdsMedian","recTdsMedian","twoPtsMedian","fumblesMedian"),
-                              #paste("passYds", sourcesOfProjectionsAbbreviation, sep="_"),
-                              #paste("passTds", sourcesOfProjectionsAbbreviation, sep="_"),
-                              #paste("passInt", sourcesOfProjectionsAbbreviation, sep="_"),
-                              #paste("rushYds", sourcesOfProjectionsAbbreviation, sep="_"),
-                              #paste("rushTds", sourcesOfProjectionsAbbreviation, sep="_"),
-                              #paste("rec", sourcesOfProjectionsAbbreviation, sep="_"),
-                              #paste("recYds", sourcesOfProjectionsAbbreviation, sep="_"),
-                              #paste("recTds", sourcesOfProjectionsAbbreviation, sep="_"),
-                              #paste("twoPts", sourcesOfProjectionsAbbreviation, sep="_"),
-                              #paste("fumbles", sourcesOfProjectionsAbbreviation, sep="_"),
                               c("projectedPtsMean","projectedPtsMedian"))]
-#projections <- projections[,c("name","player","pos","team","overallRank","projections",paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"), c("projectedPtsMean","projectedPtsMedian"))]
 
 #View projections
 projections
