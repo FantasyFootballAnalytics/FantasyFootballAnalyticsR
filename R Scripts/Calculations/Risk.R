@@ -19,7 +19,7 @@ source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
 #Load data
-load(paste(getwd(),"/Data/WeeklyVariability.RData", sep=""))
+load(paste(getwd(),"/Data/LeagueProjections.RData", sep=""))
 load(paste(getwd(),"/Data/wisdomOfTheCrowd.RData", sep=""))
 
 #projections <- projectedWithActualPts

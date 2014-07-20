@@ -21,7 +21,6 @@ source(paste(getwd(),"/R Scripts/Rankings/Kickers.R", sep=""), echo=TRUE)
 ###############
 
 source(paste(getwd(),"/R Scripts/Projections/Accuscore Projections.R", sep=""), echo=TRUE)
-#source(paste(getwd(),"/R Scripts/Projections/CBS Projections.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Projections/CBS1 Projections.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Projections/CBS2 Projections.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Projections/ESPN Projections.R", sep=""), echo=TRUE)
@@ -42,7 +41,6 @@ source(paste(getwd(),"/R Scripts/Projections/Yahoo Projections.R", sep=""), echo
 ###############
 
 source(paste(getwd(),"/R Scripts/Calculations/Calculate League Projections.R", sep=""), echo=TRUE)
-source(paste(getwd(),"/R Scripts/Calculations/Weekly Simulation.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Calculations/Wisdom of the Crowd.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Calculations/Risk.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Calculations/Value Over Replacement.R", sep=""), echo=TRUE)
