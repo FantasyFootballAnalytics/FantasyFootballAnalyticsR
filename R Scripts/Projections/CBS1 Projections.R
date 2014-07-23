@@ -104,7 +104,7 @@ row.names(projections_cbs1) <- 1:dim(projections_cbs1)[1]
 
 #Density Plot
 ggplot(projections_cbs1, aes(x=pts_cbs1)) + geom_density(fill="red", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of CBS1 Projected Points from")
-ggsave(paste(getwd(),"/Figures/CBS1 projections.jpg", sep=""))
+ggsave(paste(getwd(),"/Figures/CBS1 projections.jpg", sep=""), width=10, height=10)
 dev.off()
 
 #Save file

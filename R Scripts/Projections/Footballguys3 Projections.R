@@ -24,8 +24,8 @@ rbURL_fbg3 <- "http://subscribers.footballguys.com/myfbg/myviewprojections.php?p
 wrURL_fbg3 <- "http://subscribers.footballguys.com/myfbg/myviewprojections.php?projforwhat=wr&projector=53&profile=0"
 teURL_fbg3 <- "http://subscribers.footballguys.com/myfbg/myviewprojections.php?projforwhat=te&projector=53&profile=0"
 
-handle <- handle("http://subscribers.footballguys.com") 
-path   <- "amember/login.php"
+handle_fbg <- handle("http://subscribers.footballguys.com") 
+path_fbg   <- "amember/login.php"
 
 qbLogin_fbg3 <- list(
   amember_login = footballguysUsername,
@@ -51,10 +51,10 @@ teLogin_fbg3 <- list(
   amember_redirect_url = teURL_fbg3
 )
 
-qbContent_fbg3 <- POST(handle = handle, path = path, body = qbLogin_fbg3)
-rbContent_fbg3 <- POST(handle = handle, path = path, body = rbLogin_fbg3)
-wrContent_fbg3 <- POST(handle = handle, path = path, body = wrLogin_fbg3)
-teContent_fbg3 <- POST(handle = handle, path = path, body = teLogin_fbg3)
+qbContent_fbg3 <- POST(handle = handle_fbg, path = path_fbg, body = qbLogin_fbg3)
+rbContent_fbg3 <- POST(handle = handle_fbg, path = path_fbg, body = rbLogin_fbg3)
+wrContent_fbg3 <- POST(handle = handle_fbg, path = path_fbg, body = wrLogin_fbg3)
+teContent_fbg3 <- POST(handle = handle_fbg, path = path_fbg, body = teLogin_fbg3)
 
 qb_fbg3 <- readHTMLTable(content(qbContent_fbg3), stringsAsFactors = FALSE)$'NULL'
 rb_fbg3 <- readHTMLTable(content(rbContent_fbg3), stringsAsFactors = FALSE)$'NULL'
