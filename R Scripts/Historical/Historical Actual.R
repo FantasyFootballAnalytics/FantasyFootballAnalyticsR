@@ -127,7 +127,7 @@ for(i in 1:length(years)){
   actual$points <- rowSums(actual[,c("passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recYdsPts","recTdsPts")], na.rm=T)
   
   #Subset data
-  actual <- actual[,c("name","pos","team","points")]
+  #actual <- actual[,c("name","pos","team","points")]
   
   ### Kickers
   actualK <- readHTMLTable(paste("http://www.pro-football-reference.com/years/", years[i], "/kicking.htm", sep=""), stringsAsFactors = FALSE)$kicking
@@ -188,7 +188,7 @@ for(i in 1:length(years)){
   actualK$points <- rowSums(actualK[,c("fg30Pts","fg40Pts","fg50Pts","fgMissedPts","patPts","patMissedPts")], na.rm=T)
   
   #Subset data
-  actualK <- actualK[,c("name","pos","team","points")]
+  #actualK <- actualK[,c("name","pos","team","points")]
   
   ### Defense
   if(years[i] >= 2003 & years[i] <= 2011){
@@ -240,7 +240,7 @@ for(i in 1:length(years)){
     actualDef$points <- rowSums(actualDef[,c("fumlRecoveryPts","intCaughtPts","fgBlockedPts","sackPts","safetyPts","tdPts","paPts")], na.rm=T)
     
     #Subset data
-    actualDef <- actualDef[,c("name","pos","points")]
+    #actualDef <- actualDef[,c("name","pos","points")]
   } else if(years[i] >= 2012){
     actualDef <- readHTMLTable(paste("http://fftoday.com/stats/playerstats.php?Season=", years[i], "&GameWeek=&PosID=99", sep=""), stringsAsFactors = FALSE)[[11]]
     
@@ -295,7 +295,7 @@ for(i in 1:length(years)){
     actualDef$points <- rowSums(actualDef[,c("fumlRecoveryPts","intCaughtPts","sackPts","safetyPts","tdPts","paPts")], na.rm=T)
     
     #Subset data
-    actualDef <- actualDef[,c("name","pos","points")]
+    #actualDef <- actualDef[,c("name","pos","points")]
   }
   
   #Merge across positions
@@ -362,11 +362,11 @@ for(i in 1:length(years)){
   merged <- merged[order(-merged$vor),]
   row.names(merged) <- 1:dim(merged)[1]
   
-  #Order variables in data set
-  merged <- merged[,c("name","pos","team","year","points","overallRank","positionRank","vor")]
-  
   #Save data
   write.csv(merged, file=paste(getwd(),"/Data/Historical Actual Points/actual_", years[i], ".csv", sep=""), row.names=FALSE)
+  
+  #Order variables in data set
+  merged <- merged[,c("name","pos","team","year","points","overallRank","positionRank","vor")]
   
   #Merge in List
   actualList[[i]] <- merged
