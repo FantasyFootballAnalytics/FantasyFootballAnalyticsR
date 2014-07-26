@@ -34,10 +34,10 @@ te1_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner
 te2_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=2&position=4&split=3", stringsAsFactors = FALSE)$playerTable
 
 #Add variable names for each object
-names(qb1_fox) <- names(qb2_fox) <- c("player_fox","status_fox","passTds_fox","passYds_fox","passAtt_fox","passComp_fox","passIncomp_fox","passInt_fox","sack","rushTds_fox","rushYds_fox","rushAtt_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox")
-names(rb1_fox) <- names(rb2_fox) <- names(rb3_fox) <- names(rb4_fox) <- c("player_fox","status_fox","rushTds_fox","rushYds_fox","rushAtt_fox","recTds_fox","recYds_fox","rec_fox","puntReturnTds_fox","puntReturnYds_fox","kickReturnTds_fox","kickReturnYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox")
-names(wr1_fox) <- names(wr2_fox) <- names(wr3_fox) <- names(wr4_fox) <- names(wr5_fox) <- names(wr6_fox) <- c("player_fox","status_fox","recTds_fox","recYds_fox","rec_fox","rushTds_fox","rushYds_fox","rushAtt_fox","puntReturnTds_fox","puntReturnYds_fox","kickReturnTds_fox","kickReturnYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox")
-names(te1_fox) <- names(te2_fox) <- c("player_fox","status_fox","rushAtt_fox","rushYds_fox","rushTds_fox","rec_fox","recYds_fox","recTds_fox","twoPts_fox","pts_fox") #,"fumlRecTds_fox","fumbles_fox"
+names(qb1_fox) <- names(qb2_fox) <- c("player_fox","status_fox","passTds_fox","passYds_fox","passInt_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox")
+names(rb1_fox) <- names(rb2_fox) <- names(rb3_fox) <- names(rb4_fox) <- c("player_fox","status_fox","rushTds_fox","rushYds_fox","recTds_fox","recYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox")
+names(wr1_fox) <- names(wr2_fox) <- names(wr3_fox) <- names(wr4_fox) <- names(wr5_fox) <- names(wr6_fox) <- c("player_fox","status_fox","recTds_fox","recYds_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox") #c("player_fox","status_fox","recTds_fox","recYds_fox","rec_fox","rushTds_fox","rushYds_fox","rushAtt_fox","puntReturnTds_fox","puntReturnYds_fox","kickReturnTds_fox","kickReturnYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox")
+names(te1_fox) <- names(te2_fox) <- c("player_fox","status_fox","recTds_fox","recYds_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox") #,"fumlRecTds_fox","fumbles_fox"
 
 #Merge players within position
 qb_fox <- rbind.fill(qb1_fox,qb2_fox)
@@ -54,9 +54,12 @@ te_fox$pos <- as.factor("TE")
 #Merge across positions
 projections_fox <- rbind.fill(qb_fox,rb_fox,wr_fox,te_fox)
 
+#Add missing variables
+projections_fox$rec_fox <- NA
+
 #Convert variables from character strings to numeric
-projections_fox[,c("passTds_fox","passYds_fox","passAtt_fox","passComp_fox","passIncomp_fox","passInt_fox","sack","rushTds_fox","rushYds_fox","rushAtt_fox","recTds_fox","recYds_fox","rec_fox","puntReturnTds_fox","puntReturnYds_fox","kickReturnTds_fox","kickReturnYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox")] <- 
-  convert.magic(projections_fox[,c("passTds_fox","passYds_fox","passAtt_fox","passComp_fox","passIncomp_fox","passInt_fox","sack","rushTds_fox","rushYds_fox","rushAtt_fox","recTds_fox","recYds_fox","rec_fox","puntReturnTds_fox","puntReturnYds_fox","kickReturnTds_fox","kickReturnYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox")], "numeric")
+projections_fox[,c("passTds_fox","passYds_fox","passInt_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox","recTds_fox","recYds_fox","rec_fox")] <- 
+  convert.magic(projections_fox[,c("passTds_fox","passYds_fox","passInt_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox","recTds_fox","recYds_fox","rec_fox")], "numeric")
 
 #Player name and team
 projections_fox$name_fox <- str_trim(sapply(str_split(projections_fox$player, "\r\n"), "[", 1))
