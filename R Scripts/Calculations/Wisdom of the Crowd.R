@@ -134,7 +134,7 @@ wisdomOfTheCrowd <- drafts.stats[,c("name","name_ffc","pos","team_ffc","mean","s
 
 #Plot
 plotTitle <- paste("Sleepers from", dates[2], "to", dates[1], sep=" ")
-ex.mad <- quantile(drafts.stats$mad, .95)
+ex.mad <- quantile(drafts.stats$mad, .95, na.rm=TRUE)
 
 drafts.stats[drafts.stats$mad > ex.mad,]
 
