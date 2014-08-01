@@ -61,7 +61,10 @@ projections_accu$name <- nameMerge(projections_accu$name_accu)
 
 #Remove duplicate cases
 projections_accu[projections_accu$name %in% projections_accu[duplicated(projections_accu$name),"name"],]
-#projections_accu <- projections_accu[-which(projections_accu$name_accu=="Dexter McCluster" & projections_accu$pos=="RB"),]
+
+#Same name, different player
+projections_accu <- projections_accu[-which(projections_accu$name=="ALEXSMITH" & projections_accu$pos=="TE"),]
+projections_accu <- projections_accu[-which(projections_accu$name=="STEVESMITH" & projections_accu$team_accu=="TB"),]
 
 #Rename players
 #projections_accu[projections_accu$name_accu=="EJ Manuel", "name_accu"] <- "E.J. Manuel"
