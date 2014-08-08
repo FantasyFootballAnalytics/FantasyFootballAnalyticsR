@@ -39,9 +39,9 @@ projections[projections$name %in% projections$name[duplicated(projections$name)]
 #Same name, different player
 
 #Same player, different position
-dropNames <- c("DENARDROBINSON","DEXTERMCCLUSTER","THEORIDDICK","ORSONCHARLES","JOEWEBB","EMILIGWENAGU","EVANRODRIGUEZ","BRADSMELLEY","RICHIEBROCKEL","BEARPASCOE","JEDCOLLINS")
-dropVariables <- c("pos","pos","pos","pos","pos","pos","pos","pos","pos","pos","pos")
-dropLabels <- c("RB","WR","WR","TE","WR","RB","TE","TE","RB","RB","TE")
+dropNames <- c("DENARDROBINSON","DEXTERMCCLUSTER","THEORIDDICK","ORSONCHARLES","JOEWEBB","EMILIGWENAGU","EVANRODRIGUEZ","BRADSMELLEY","RICHIEBROCKEL","BEARPASCOE","JEDCOLLINS","MARCUSTHIGPEN")
+dropVariables <- c("pos","pos","pos","pos","pos","pos","pos","pos","pos","pos","pos","pos")
+dropLabels <- c("RB","WR","WR","TE","WR","RB","TE","TE","RB","RB","TE","WR")
 
 projections2 <- ddply(projections, .(name), numcolwise(mean), na.rm=TRUE)
 
@@ -149,6 +149,7 @@ projections$projectedPtsMedian <- mySum(projections[,c("passYdsMedianPts","passT
 
 #Check projections
 projections[,c("name",paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"), c("projectedPtsMean","projectedPtsMedian"))]
+projections[,c("name","projectedPtsMean","projectedPtsMedian")]
 
 projectionVars <- projections[,c(paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"), c("projectedPtsMean","projectedPtsMedian"))]
 

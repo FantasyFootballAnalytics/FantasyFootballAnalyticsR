@@ -190,9 +190,9 @@ avgCost$pos[which(avgCost$pos == "")] <- NA
 #Remove duplicate cases
 avgCost[avgCost$name %in% avgCost$name[duplicated(avgCost$name)],]
 
-dropNames <- nameMerge(c("Alex Smith","Ryan Griffin","Zach Miller","Mike Williams","Chris Givens"))
-dropVariables <- c("pos_espn","pos_espn","team_espn","team_espn","team_espn")
-dropLabels <- c("TE","QB","CHI","FA","NO")
+dropNames <- nameMerge(c("Alex Smith","Ryan Griffin","Zach Miller","Steve Smith","Mike Williams")) #,"Chris Givens"
+dropVariables <- c("pos_espn","pos_espn","team_espn","team_espn","team_espn") #,"team_espn"
+dropLabels <- c("TE","QB","CHI","FA","FA") #,"NO"
 
 avgCost2 <- ddply(avgCost, .(name), numcolwise(mean), na.rm=TRUE)
 
