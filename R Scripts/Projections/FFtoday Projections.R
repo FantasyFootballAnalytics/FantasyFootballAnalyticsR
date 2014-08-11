@@ -65,12 +65,12 @@ projections_fftoday$twoPts_fftoday <- NA
 projections_fftoday$fumbles_fftoday <- NA
 
 #Remove special characters(commas)
-projections_fftoday[,c("passYds_fftoday","passTds_fftoday","passInt_fftoday","rushAtt_fftoday","rushYds_fftoday","rushTds_fftoday","rec_fftoday","recYds_fftoday","recTds_fftoday","pts_fftoday","twoPts_fftoday","fumbles_fftoday")] <-
-  apply(projections_fftoday[,c("passYds_fftoday","passTds_fftoday","passInt_fftoday","rushAtt_fftoday","rushYds_fftoday","rushTds_fftoday","rec_fftoday","recYds_fftoday","recTds_fftoday","pts_fftoday","twoPts_fftoday","fumbles_fftoday")], 2, function(x) gsub("\\,", "", x))
+projections_fftoday[,c("passAtt_fftoday","passComp_fftoday","passYds_fftoday","passTds_fftoday","passInt_fftoday","rushAtt_fftoday","rushYds_fftoday","rushTds_fftoday","rec_fftoday","recYds_fftoday","recTds_fftoday","pts_fftoday","twoPts_fftoday","fumbles_fftoday")] <-
+  apply(projections_fftoday[,c("passAtt_fftoday","passComp_fftoday","passYds_fftoday","passTds_fftoday","passInt_fftoday","rushAtt_fftoday","rushYds_fftoday","rushTds_fftoday","rec_fftoday","recYds_fftoday","recTds_fftoday","pts_fftoday","twoPts_fftoday","fumbles_fftoday")], 2, function(x) gsub("\\,", "", x))
 
 #Convert variables from character strings to numeric
-projections_fftoday[,c("passYds_fftoday","passTds_fftoday","passInt_fftoday","rushAtt_fftoday","rushYds_fftoday","rushTds_fftoday","rec_fftoday","recYds_fftoday","recTds_fftoday","pts_fftoday","twoPts_fftoday","fumbles_fftoday")] <- 
-  convert.magic(projections_fftoday[,c("passYds_fftoday","passTds_fftoday","passInt_fftoday","rushAtt_fftoday","rushYds_fftoday","rushTds_fftoday","rec_fftoday","recYds_fftoday","recTds_fftoday","pts_fftoday","twoPts_fftoday","fumbles_fftoday")], "numeric")
+projections_fftoday[,c("passAtt_fftoday","passComp_fftoday","passYds_fftoday","passTds_fftoday","passInt_fftoday","rushAtt_fftoday","rushYds_fftoday","rushTds_fftoday","rec_fftoday","recYds_fftoday","recTds_fftoday","pts_fftoday","twoPts_fftoday","fumbles_fftoday")] <- 
+  convert.magic(projections_fftoday[,c("passAtt_fftoday","passComp_fftoday","passYds_fftoday","passTds_fftoday","passInt_fftoday","rushAtt_fftoday","rushYds_fftoday","rushTds_fftoday","rec_fftoday","recYds_fftoday","recTds_fftoday","pts_fftoday","twoPts_fftoday","fumbles_fftoday")], "numeric")
 
 #Player name, position, and team
 projections_fftoday$name_fftoday <- str_trim(str_sub(projections_fftoday$player, start=2))
@@ -95,7 +95,7 @@ projections_fftoday[which(projections_fftoday$pos == "TE"), "positionRank_fftoda
 
 #Order variables in data set
 projections_fftoday <- projections_fftoday[,c("name","name_fftoday","pos","team_fftoday","positionRank_fftoday","overallRank_fftoday",
-                                              "passYds_fftoday","passTds_fftoday","passInt_fftoday","rushYds_fftoday","rushTds_fftoday","rec_fftoday","recYds_fftoday","recTds_fftoday",
+                                              "passAtt_fftoday","passComp_fftoday","passYds_fftoday","passTds_fftoday","passInt_fftoday","rushYds_fftoday","rushTds_fftoday","rec_fftoday","recYds_fftoday","recTds_fftoday",
                                               "twoPts_fftoday","fumbles_fftoday","pts_fftoday")]
 
 #Order players by overall rank

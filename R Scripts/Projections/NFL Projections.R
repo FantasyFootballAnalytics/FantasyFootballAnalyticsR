@@ -61,10 +61,12 @@ projections_nfl <- rbind(qb_nfl,rb_nfl,wr_nfl,te_nfl)
 
 #Add missing variables
 projections_nfl$rec_nfl <- NA
+projections_nfl$passAtt_nfl <- NA
+projections_nfl$passComp_nfl <- NA
 
 #Convert variables from character strings to numeric
-projections_nfl[,c("gp_nfl","passYds_nfl","passTds_nfl","passInt_nfl","rushYds_nfl","rushTds_nfl","rec_nfl","recYds_nfl","recTds_nfl","fumbleTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")] <-
-  convert.magic(projections_nfl[,c("gp_nfl","passYds_nfl","passTds_nfl","passInt_nfl","rushYds_nfl","rushTds_nfl","rec_nfl","recYds_nfl","recTds_nfl","fumbleTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")], "numeric")
+projections_nfl[,c("gp_nfl","passAtt_nfl","passComp_nfl","passYds_nfl","passTds_nfl","passInt_nfl","rushYds_nfl","rushTds_nfl","rec_nfl","recYds_nfl","recTds_nfl","fumbleTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")] <-
+  convert.magic(projections_nfl[,c("gp_nfl","passAtt_nfl","passComp_nfl","passYds_nfl","passTds_nfl","passInt_nfl","rushYds_nfl","rushTds_nfl","rec_nfl","recYds_nfl","recTds_nfl","fumbleTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")], "numeric")
 
 #Player names
 qbnames <- str_sub(projections_nfl$player_nfl, end=str_locate(string=projections_nfl$player_nfl, c("QB"))[,1]-2) #"QB -"
@@ -102,7 +104,7 @@ projections_nfl[which(projections_nfl$pos == "TE"), "positionRank_nfl"] <- rank(
 
 #Order variables in data set
 projections_nfl <- projections_nfl[,c("name","name_nfl","pos","team_nfl","positionRank_nfl","overallRank_nfl",
-                                      "passYds_nfl","passTds_nfl","passInt_nfl",
+                                      "passAtt_nfl","passComp_nfl","passYds_nfl","passTds_nfl","passInt_nfl",
                                       "rushYds_nfl","rushTds_nfl","rec_nfl","recYds_nfl","recTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")]
 
 #Order players by overall rank

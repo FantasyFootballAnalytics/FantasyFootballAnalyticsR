@@ -21,14 +21,16 @@ leagueCap <- 225            #your league's cap
 maxCost <- leagueCap - (numTotalPlayers - numTotalStarters)
 
 #Scoring
-passYdsMultiplier <- (1/25) #1 pt per 25 pass yds
-passTdsMultiplier <- 4      #4 pts per pass td
-passIntMultiplier <- -3     #-3 pts per INT
-rushYdsMultiplier <- (1/10) #1 pt per 10 rush yds
-rushTdsMultiplier <- 6      #6 pts per rush td
-recMultiplier <- 0          #0 pts per rec
-recYdsMultiplier <- (1/8)   #1 pt per 8 rec yds
-recTdsMultiplier <- 6       #6 pts per rec td
+passAttMultiplier <- 0      #0 pts per passing attempt
+passCompMultiplier <- 0     #0 pts per passing completion
+passYdsMultiplier <- (1/25) #1 pt per 25 passing yds
+passTdsMultiplier <- 4      #4 pts per passing td
+passIntMultiplier <- -3     #-3 pts per passing interception
+rushYdsMultiplier <- (1/10) #1 pt per 10 rushing yds
+rushTdsMultiplier <- 6      #6 pts per rushing touchdown
+recMultiplier <- 0          #0 pts per reception
+recYdsMultiplier <- (1/8)   #1 pt per 8 receiving yds
+recTdsMultiplier <- 6       #6 pts per receiving touchdown
 twoPtsMultiplier <- 2       #2 pts per 2-point conversion
 fumlMultiplier <- -3        #-3 pts per fumble lost
 

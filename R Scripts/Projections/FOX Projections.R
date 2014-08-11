@@ -56,10 +56,12 @@ projections_fox <- rbind.fill(qb_fox,rb_fox,wr_fox,te_fox)
 
 #Add missing variables
 projections_fox$rec_fox <- NA
+projections_fox$passAtt_fox <- NA
+projections_fox$passComp_fox <- NA
 
 #Convert variables from character strings to numeric
-projections_fox[,c("passTds_fox","passYds_fox","passInt_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox","recTds_fox","recYds_fox","rec_fox")] <- 
-  convert.magic(projections_fox[,c("passTds_fox","passYds_fox","passInt_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox","recTds_fox","recYds_fox","rec_fox")], "numeric")
+projections_fox[,c("passAtt_fox","passComp_fox","passTds_fox","passYds_fox","passInt_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox","recTds_fox","recYds_fox","rec_fox")] <- 
+  convert.magic(projections_fox[,c("passAtt_fox","passComp_fox","passTds_fox","passYds_fox","passInt_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox","recTds_fox","recYds_fox","rec_fox")], "numeric")
 
 #Player name and team
 projections_fox$name_fox <- str_trim(sapply(str_split(projections_fox$player, "\r\n"), "[", 1))
@@ -78,7 +80,7 @@ projections_fox[which(projections_fox$pos == "TE"), "positionRank_fox"] <- rank(
 
 #Order variables in data set
 projections_fox <- projections_fox[,c("name","name_fox","pos","team_fox","positionRank_fox","overallRank_fox",
-                                      "passYds_fox","passTds_fox","passInt_fox","rushYds_fox","rushTds_fox","rec_fox","recYds_fox","recTds_fox",
+                                      "passAtt_fox","passComp_fox","passYds_fox","passTds_fox","passInt_fox","rushYds_fox","rushTds_fox","rec_fox","recYds_fox","recTds_fox",
                                       "twoPts_fox","fumbles_fox","pts_fox")]
 
 #Order players by overall rank
