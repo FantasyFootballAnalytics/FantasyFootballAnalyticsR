@@ -33,6 +33,19 @@ teamtable <- apply(projections[,paste("team", sourcesOfProjectionsAbbreviation, 
 projections$team <- names(sapply(teamtable,`[`,1) )
 projections$team[which(projections$team == "")] <- NA
 
+#Duplicate last names
+projections$lastName <- gsub("Sr", "", gsub("Jr", "", gsub("III", "", gsub("[[:punct:]]", "", gsub(" ", "", sapply(str_split(projections$player, " "), "[[", 2))))))
+
+qb <- projections[which(projections$pos == "QB"),]
+rb <- projections[which(projections$pos == "RB"),]
+wr <- projections[which(projections$pos == "WR"),]
+te <- projections[which(projections$pos == "TE"),]
+
+qb[qb$lastName %in% qb$lastName[duplicated(qb$lastName)], c("player","team")]
+rb[rb$lastName %in% rb$lastName[duplicated(rb$lastName)], c("player","team")]
+wr[wr$lastName %in% wr$lastName[duplicated(wr$lastName)], c("player","team")]
+te[te$lastName %in% te$lastName[duplicated(te$lastName)], c("player","team")]
+
 #Remove duplicate cases
 projections[projections$name %in% projections$name[duplicated(projections$name)],]
 

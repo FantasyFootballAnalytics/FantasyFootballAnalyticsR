@@ -32,12 +32,7 @@ experts$player <- str_sub(experts[,c("Player (team/bye)")], end=str_locate(exper
 experts$name <- nameMerge(experts$player)
 
 #Rename Players
-#experts[grep("Beanie", experts[,c("Player (team/bye)")]),"name"] <- "Beanie Wells"
-#experts[grep("Ty Hilton", experts[,c("Player (team/bye)")]),"name"] <- "T.Y. Hilton"
-#experts[grep("Robert Housler", experts[,c("Player (team/bye)")]),"name"] <- "Rob Housler"
-#experts[grep("Reuben Randle", experts[,c("Player (team/bye)")]),"name"] <- "Rueben Randle"
-#experts[grep("Joseph Morgan", experts[,c("Player (team/bye)")]),"name"] <- "Joe Morgan"
-#experts[grep("Christopher Ivory", experts[,c("Player (team/bye)")]),"name"] <- "Chris Ivory"
+#experts[experts$name=="DOMANIQUEDAVIS", "name"] <- "DOMINIQUEDAVIS"
 
 experts <- experts[c("name","pick_experts","sdPick_experts")]
 

@@ -81,7 +81,7 @@ projections_fftoday[projections_fftoday$name %in% projections_fftoday[duplicated
 #projections_fftoday <- projections_fftoday[-which(projections_fftoday$name_fftoday=="Dexter McCluster" & projections_fftoday$pos=="RB"),]
 
 #Rename players
-#projections_fftoday[projections_fftoday$name_fftoday=="EJ Manuel", "name_fftoday"] <- "E.J. Manuel"
+projections_fftoday[projections_fftoday$name=="BENWATSON", "name"] <- "BENJAMINWATSON"
 
 #Calculate overall rank
 projections_fftoday$overallRank_fftoday <- rank(-projections_fftoday$pts_fftoday, ties.method="min")

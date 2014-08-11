@@ -89,8 +89,8 @@ projections_nfl$team_nfl <- str_trim(str_sub(projections_nfl$player_nfl, start=s
 projections_nfl[projections_nfl$name %in% projections_nfl[duplicated(projections_nfl$name),"name"],]
 #projections_nfl[which(projections_nfl$name_nfl=="Charles Clay"),"pos"] <- "TE"
 
-#Rename Players
-#projections_nfl[projections_nfl$name_nfl=="EJ Manuel", "name_nfl"] <- "E.J. Manuel"
+#Rename players
+projections_nfl[projections_nfl$name=="TIMOTHYWRIGHT", "name"] <- "TIMWRIGHT"
 
 #Calculate overall rank
 projections_nfl$overallRank_nfl <- rank(-projections_nfl$pts_nfl, ties.method="min")

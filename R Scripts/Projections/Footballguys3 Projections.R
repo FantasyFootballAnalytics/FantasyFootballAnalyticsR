@@ -97,6 +97,10 @@ projections_fbg3[projections_fbg3$name %in% projections_fbg3[duplicated(projecti
 
 #Same player, different position
 
+#Rename players
+projections_fbg3[projections_fbg3$name=="TIMOTHYWRIGHT", "name"] <- "TIMWRIGHT"
+projections_fbg3[projections_fbg3$name=="BENWATSON", "name"] <- "BENJAMINWATSON"
+
 #Calculate overall rank
 projections_fbg3$overallRank_fbg3 <- rank(-projections_fbg3$pts_fbg3, ties.method="min")
 

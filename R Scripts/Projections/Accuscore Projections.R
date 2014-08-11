@@ -66,8 +66,9 @@ projections_accu[projections_accu$name %in% projections_accu[duplicated(projecti
 projections_accu <- projections_accu[-which(projections_accu$name=="ALEXSMITH" & projections_accu$pos=="TE"),]
 projections_accu <- projections_accu[-which(projections_accu$name=="STEVESMITH" & projections_accu$team_accu=="TB"),]
 
-#Rename players
-#projections_accu[projections_accu$name_accu=="EJ Manuel", "name_accu"] <- "E.J. Manuel"
+#Rename Players
+projections_accu[projections_accu$name=="CHRISTOPHERIVORY", "name"] <- "CHRISIVORY"
+projections_accu[projections_accu$name=="MERCEDESLEWIS", "name"] <- "MARCEDESLEWIS"
 
 #Calculate overall rank
 projections_accu$overallRank_accu <- rank(-projections_accu$pts_accu, ties.method="min")

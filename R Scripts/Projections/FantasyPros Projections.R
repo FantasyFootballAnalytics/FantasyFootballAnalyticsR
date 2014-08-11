@@ -113,6 +113,7 @@ projections_fp <- merge(projections_fp2, projections_fp[,c("name","name_fp","pla
 #projections_fp <- projections_fp[-which(projections_fp$name_fp=="Zach Miller" & projections_fp$team_fp=="CHI"),]
 
 #Rename Players
+projections_fp[projections_fp$name=="DOMANIQUEDAVIS", "name"] <- "DOMINIQUEDAVIS"
 #projections_fp[projections_fp$name_fp=="Christopher Ivory", "name_fp"] <- "Chris Ivory"
 #projections_fp[projections_fp$name_fp=="Ty Hilton", "name_fp"] <- "T.Y. Hilton"
 #projections_fp[projections_fp$name_fp=="Robert Housler", "name_fp"] <- "Rob Housler"

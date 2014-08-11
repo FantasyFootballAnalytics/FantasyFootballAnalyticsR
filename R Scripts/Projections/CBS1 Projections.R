@@ -77,7 +77,7 @@ projections_cbs1[projections_cbs1$name %in% projections_cbs1[duplicated(projecti
 #projections_cbs1[projections_cbs1$name_cbs1 == "James Casey","pos"] <- "TE"
 
 #Rename Players
-#projections_cbs1[projections_cbs1$name_cbs1=="EJ Manuel", "name_cbs1"] <- "E.J. Manuel"
+projections_cbs1[projections_cbs1$name=="TIMOTHYWRIGHT", "name"] <- "TIMWRIGHT"
 
 #Player teams
 projections_cbs1$team_cbs1 <- str_trim(str_sub(projections_cbs1$player, start= -3))

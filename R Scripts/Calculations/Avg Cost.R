@@ -142,6 +142,7 @@ avgCost_fp$adp_fp <- as.numeric(avgCost_fp$ADP)
 
 #Rename Players
 avgCost_fp[grep("CHRISTOPHERIVORY", avgCost_fp[,c("name")]),"name"] <- "CHRISIVORY"
+#avgCost_fp[avgCost_fp$name=="DOMANIQUEDAVIS", "name"] <- "DOMINIQUEDAVIS"
 
 #Subset
 cost_fp <- avgCost_fp[,c("name","name_fp","pos_fp","team_fp","cost_fp","adp_fp")]

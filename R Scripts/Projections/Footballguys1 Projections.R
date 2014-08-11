@@ -98,6 +98,10 @@ projections_fbg1 <- projections_fbg1[-which(projections_fbg1$name=="STEVESMITH" 
 
 #Same player, different position
 
+#Rename players
+projections_fbg1[projections_fbg1$name=="TIMOTHYWRIGHT", "name"] <- "TIMWRIGHT"
+projections_fbg1[projections_fbg1$name=="BENWATSON", "name"] <- "BENJAMINWATSON"
+
 #Calculate overall rank
 projections_fbg1$overallRank_fbg1 <- rank(-projections_fbg1$pts_fbg1, ties.method="min")
 

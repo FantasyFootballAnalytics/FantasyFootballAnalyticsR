@@ -60,7 +60,7 @@ projections_fs <- projections_fs[-which(projections_fs$name=="RYANGRIFFIN" & pro
 #Same player, different position
 
 #Rename players
-#projections_fs[projections_fs$name_espn=="EJ Manuel", "name_espn"] <- "E.J. Manuel"
+projections_fs[projections_fs$name=="BENWATSON", "name"] <- "BENJAMINWATSON"
 
 #Calculate overall rank
 projections_fs$overallRank_fs <- rank(-projections_fs$pts_fs, ties.method="min")
