@@ -34,7 +34,7 @@ fileList <- c("qb_espn","rb1_espn","rb2_espn","rb3_espn","wr1_espn","wr2_espn","
 for(i in 1:length(fileList)){
   assign(fileList[i],get(fileList[i])[2:dim(get(fileList[i]))[1],])
   t <- get(fileList[i])
-  names(t) <-  c("positionRank_espn","player_espn","passCompAtt_espn","passYds_espn","passTds_espn","passInt_espn","rush_espn","rushYds_espn","rushTds_espn","rec_espn","recYds_espn","recTds_espn","pts_espn")
+  names(t) <-  c("positionRank_espn","player_espn","passCompAtt_espn","passYds_espn","passTds_espn","passInt_espn","rushAtt_espn","rushYds_espn","rushTds_espn","rec_espn","recYds_espn","recTds_espn","pts_espn")
   assign(fileList[i], t)
 }
 
@@ -56,7 +56,7 @@ projections_espn$passCompAtt_espn[projections_espn$passCompAtt_espn == "--/--"] 
 projections_espn$passYds_espn[projections_espn$passYds_espn == "--"] <- "0"
 projections_espn$passTds_espn[projections_espn$passTds_espn == "--"] <- "0"
 projections_espn$passInt_espn[projections_espn$passInt_espn == "--"] <- "0"
-projections_espn$rush_espn[projections_espn$rush_espn == "--"] <- "0"
+projections_espn$rushAtt_espn[projections_espn$rushAtt_espn == "--"] <- "0"
 projections_espn$rushYds_espn[projections_espn$rushYds_espn == "--"] <- "0"
 projections_espn$rushTds_espn[projections_espn$rushTds_espn == "--"] <- "0"
 projections_espn$rec_espn[projections_espn$rec_espn == "--"] <- "0"
@@ -73,8 +73,8 @@ projections_espn$fumbles_espn <- NA
 projections_espn$twoPts_espn <- NA
 
 #Convert variables from character strings to numeric
-projections_espn[,c("positionRank_espn","passYds_espn","passTds_espn","passInt_espn","rush_espn","rushYds_espn","rushTds_espn","rec_espn","recYds_espn","recTds_espn","pts_espn","fumbles_espn","twoPts_espn")] <-
-  convert.magic(projections_espn[,c("positionRank_espn","passYds_espn","passTds_espn","passInt_espn","rush_espn","rushYds_espn","rushTds_espn","rec_espn","recYds_espn","recTds_espn","pts_espn","fumbles_espn","twoPts_espn")], "numeric")
+projections_espn[,c("positionRank_espn","passYds_espn","passTds_espn","passInt_espn","rushAtt_espn","rushYds_espn","rushTds_espn","rec_espn","recYds_espn","recTds_espn","pts_espn","fumbles_espn","twoPts_espn")] <-
+  convert.magic(projections_espn[,c("positionRank_espn","passYds_espn","passTds_espn","passInt_espn","rushAtt_espn","rushYds_espn","rushTds_espn","rec_espn","recYds_espn","recTds_espn","pts_espn","fumbles_espn","twoPts_espn")], "numeric")
 
 #Player names
 projections_espn$name_espn <- str_sub(projections_espn$player_espn, end=str_locate(string=projections_espn$player_espn, ',')[,1]-1)
@@ -100,7 +100,7 @@ projections_espn$overallRank_espn <- rank(-projections_espn$pts_espn, ties.metho
 #Order variables in data set
 projections_espn <- projections_espn[,c("name","name_espn","pos","team_espn","positionRank_espn","overallRank_espn",
                                         "passAtt_espn","passComp_espn","passYds_espn","passTds_espn","passInt_espn",
-                                        "rushYds_espn","rushTds_espn","rec_espn","recYds_espn","recTds_espn","twoPts_espn","fumbles_espn","pts_espn")]
+                                        "rushAtt_espn","rushYds_espn","rushTds_espn","rec_espn","recYds_espn","recTds_espn","twoPts_espn","fumbles_espn","pts_espn")]
 
 #Order players by overall rank
 projections_espn <- projections_espn[order(projections_espn$overallRank_espn),]

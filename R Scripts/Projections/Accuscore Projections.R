@@ -26,7 +26,7 @@ te <- readHTMLTable(getURL("http://accuscore.com/fantasy-sports/nfl-fantasy-spor
 
 #Variable names
 names(qb) <- c("name_accu","team_accu","pts_accu","passComp_accu","passAtt_accu","passCompPct_accu","passYds_accu","passTds_accu","passInt_accu","rushYds_accu","rushTds_accu","fumbles_accu")
-names(rb) <- c("name_accu","team_accu","pts_accu","rush_accu","rushYds_accu","rushYPC_accu","rushTds_accu","rec_accu","recYds_accu","recTds_accu","fumbles_accu")
+names(rb) <- c("name_accu","team_accu","pts_accu","rushAtt_accu","rushYds_accu","rushYPC_accu","rushTds_accu","rec_accu","recYds_accu","recTds_accu","fumbles_accu")
 names(wr) <- c("name_accu","team_accu","pts_accu","rec_accu","recYds_accu","recYPR_accu","recTds_accu","fumbles_accu")
 names(te) <- c("name_accu","team_accu","pts_accu","rec_accu","recYds_accu","recYPR_accu","recTds_accu","fumbles_accu")
 
@@ -48,11 +48,11 @@ projections_accu$twoPts_accu <- NA
 #Convert variable types to numeric
 projections_accu[,c("pts_accu",
                     "passComp_accu","passAtt_accu","passCompPct_accu","passYds_accu","passTds_accu","passInt_accu",
-                    "rush_accu","rushYds_accu","rushYPC_accu","rushTds_accu",
+                    "rushAtt_accu","rushYds_accu","rushYPC_accu","rushTds_accu",
                     "rec_accu","recYds_accu","recYPR_accu","recTds_accu",
                     "twoPts_accu","fumbles_accu")] <- convert.magic(projections_accu[,c("pts_accu",
                                                                           "passComp_accu","passAtt_accu","passCompPct_accu","passYds_accu","passTds_accu","passInt_accu",
-                                                                          "rush_accu","rushYds_accu","rushYPC_accu","rushTds_accu",
+                                                                          "rushAtt_accu","rushYds_accu","rushYPC_accu","rushTds_accu",
                                                                           "rec_accu","recYds_accu","recYPR_accu","recTds_accu",
                                                                           "twoPts_accu","fumbles_accu")], "numeric")
 
@@ -83,7 +83,7 @@ projections_accu[which(projections_accu$pos == "TE"), "positionRank_accu"] <- ra
 #Order variables in data set
 projections_accu <- projections_accu[,c("name","name_accu","pos","team_accu","positionRank_accu","overallRank_accu",
                                         "passAtt_accu","passComp_accu","passYds_accu","passTds_accu","passInt_accu",
-                                        "rushYds_accu","rushTds_accu","rec_accu","recYds_accu","recTds_accu","twoPts_accu","fumbles_accu","pts_accu")]
+                                        "rushAtt_accu","rushYds_accu","rushTds_accu","rec_accu","recYds_accu","recTds_accu","twoPts_accu","fumbles_accu","pts_accu")]
 
 #Order players by overall rank
 projections_accu <- projections_accu[order(projections_accu$overallRank_accu),]

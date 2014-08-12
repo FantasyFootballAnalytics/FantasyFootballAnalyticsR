@@ -65,7 +65,7 @@ projections_ffn$overallRank_ffn <- rank(-projections_ffn$pts_ffn, ties.method="m
 #Order variables in data set
 projections_ffn <- projections_ffn[,c("name","name_ffn","pos","team_ffn","overallRank_ffn",
                                       "passAtt_ffn","passComp_ffn","passYds_ffn","passTds_ffn","passInt_ffn",
-                                      "rushYds_ffn","rushTds_ffn","rec_ffn","recYds_ffn","recTds_ffn","twoPts_ffn","fumbles_ffn","pts_ffn")]
+                                      "rushAtt_ffn","rushYds_ffn","rushTds_ffn","rec_ffn","recYds_ffn","recTds_ffn","twoPts_ffn","fumbles_ffn","pts_ffn")]
 
 #Order players by overall rank
 projections_ffn <- projections_ffn[order(projections_ffn$overallRank_ffn),]

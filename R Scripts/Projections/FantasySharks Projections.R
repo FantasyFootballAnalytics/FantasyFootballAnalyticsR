@@ -38,6 +38,7 @@ projections_fs$passComp_fs <- projections_fs$PassCmps
 projections_fs$passYds_fs <- projections_fs$PassYards
 projections_fs$passTds_fs <- projections_fs$PassTDTotal
 projections_fs$passInt_fs <- projections_fs$PassInt
+projections_fs$rushAtt_fs <- projections_fs$RushAtt
 projections_fs$rushYds_fs <- projections_fs$RushYards
 projections_fs$rushTds_fs <- projections_fs$RushTDTotal
 projections_fs$rec_fs <- projections_fs$Receptions
@@ -48,8 +49,8 @@ projections_fs$twoPts_fs <- NA
 projections_fs$pts_fs <- projections_fs$FantasyPts
 
 #Convert to numeric
-projections_fs[,c("passAtt_fs","passComp_fs","passYds_fs","passTds_fs","passInt_fs","rushYds_fs","rushTds_fs","rec_fs","recYds_fs","recTds_fs","fumbles_fs","twoPts_fs","pts_fs")] <-
-  convert.magic(projections_fs[,c("passAtt_fs","passComp_fs","passYds_fs","passTds_fs","passInt_fs","rushYds_fs","rushTds_fs","rec_fs","recYds_fs","recTds_fs","fumbles_fs","twoPts_fs","pts_fs")], "numeric")
+projections_fs[,c("passAtt_fs","passComp_fs","passYds_fs","passTds_fs","passInt_fs","rushAtt_fs","rushYds_fs","rushTds_fs","rec_fs","recYds_fs","recTds_fs","fumbles_fs","twoPts_fs","pts_fs")] <-
+  convert.magic(projections_fs[,c("passAtt_fs","passComp_fs","passYds_fs","passTds_fs","passInt_fs","rushAtt_fs","rushYds_fs","rushTds_fs","rec_fs","recYds_fs","recTds_fs","fumbles_fs","twoPts_fs","pts_fs")], "numeric")
 
 #Remove duplicate cases
 projections_fs[projections_fs$name %in% projections_fs[duplicated(projections_fs$name),"name"],]
@@ -75,7 +76,7 @@ projections_fs[which(projections_fs$pos == "TE"), "positionRank_fs"] <- rank(-pr
 #Order variables in data set
 projections_fs <- projections_fs[,c("name","name_fs","pos","team_fs","positionRank_fs","overallRank_fs",
                                     "passAtt_fs","passComp_fs","passYds_fs","passTds_fs","passInt_fs",
-                                    "rushYds_fs","rushTds_fs","rec_fs","recYds_fs","recTds_fs","twoPts_fs","fumbles_fs","pts_fs")]
+                                    "rushAtt_fs","rushYds_fs","rushTds_fs","rec_fs","recYds_fs","recTds_fs","twoPts_fs","fumbles_fs","pts_fs")]
 
 #Order players by overall rank
 projections_fs <- projections_fs[order(projections_fs$overallRank_fs),]

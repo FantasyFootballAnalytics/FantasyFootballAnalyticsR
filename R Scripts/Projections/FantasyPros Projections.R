@@ -70,10 +70,9 @@ projections_fp$team_fp <- str_sub(projections_fp$player_fp, start=str_locate(str
 projections_fp <- projections_fp[apply(projections_fp, 1, function(x) any(!is.na(x))),]
 
 #Remove rows with missing player name
-projections_fp <- projections_fp[-which(projections_fp$name_fp == ""),]
-
-#Rename players
-projections_fp$name[which(projections_fp$name == "CHRISTOPHERIVORY")] <- "CHRISIVORY"
+if(length(which(projections_fp$name_fp == "")) > 0){
+  projections_fp <- projections_fp[-which(projections_fp$name_fp == ""),]
+}
 
 #Remove duplicate cases
 projections_fp[projections_fp$name %in% projections_fp[duplicated(projections_fp$name),"name"],]
@@ -96,29 +95,9 @@ for(i in 1:length(dropNames)){
 
 projections_fp <- merge(projections_fp2, projections_fp[,c("name","name_fp","player_fp","pos","team_fp")], by="name")
 
-#projections_fp[projections_fp$name_fp=="Alex Smith",][1,] <- NA
-#projections_fp <- projections_fp[-which(projections_fp$name_fp=="Alex Smith" & projections_fp$pos=="TE"),]
-#projections_fp <- projections_fp[-which(projections_fp$name_fp=="Charles Clay" & projections_fp$pos=="RB"),]
-#projections_fp <- projections_fp[-which(projections_fp$name_fp=="Chris Givens" & projections_fp$team_fp=="NO"),]
-#projections_fp <- projections_fp[-which(projections_fp$name_fp=="Clay Harbor" & projections_fp$pos=="WR"),]
-#projections_fp <- projections_fp[-which(projections_fp$name_fp=="David Johnson" & projections_fp$pos=="TE"),]
-#projections_fp <- projections_fp[-which(projections_fp$name_fp=="Dexter McCluster" & projections_fp$pos=="RB"),]
-#projections_fp <- projections_fp[-which(projections_fp$name_fp=="Dorin Dickerson" & projections_fp$pos=="WR"),]
-#projections_fp <- projections_fp[-which(projections_fp$name_fp=="Dorin Dickerson" & projections_fp$pos=="RB"),]
-#projections_fp <- projections_fp[-which(projections_fp$name_fp=="Evan Rodriguez" & projections_fp$pos=="RB"),]
-#projections_fp <- projections_fp[-which(projections_fp$name_fp=="Jamie McCoy" & projections_fp$pos=="RB"),]
-#projections_fp <- projections_fp[-which(projections_fp$name_fp=="James Casey" & projections_fp$pos=="RB"),]
-#projections_fp <- projections_fp[-which(projections_fp$name_fp=="Niles Paul" & projections_fp$pos=="WR"),]
-#projections_fp <- projections_fp[-which(projections_fp$name_fp=="Steve Smith" & is.na(projections_fp$team_fp)),]
-#projections_fp <- projections_fp[-which(projections_fp$name_fp=="Zach Miller" & projections_fp$team_fp=="CHI"),]
-
 #Rename Players
-projections_fp[projections_fp$name=="DOMANIQUEDAVIS", "name"] <- "DOMINIQUEDAVIS"
-#projections_fp[projections_fp$name_fp=="Christopher Ivory", "name_fp"] <- "Chris Ivory"
-#projections_fp[projections_fp$name_fp=="Ty Hilton", "name_fp"] <- "T.Y. Hilton"
-#projections_fp[projections_fp$name_fp=="Robert Housler", "name_fp"] <- "Rob Housler"
-#projections_fp[projections_fp$name_fp=="Reuben Randle", "name_fp"] <- "Rueben Randle"
-#projections_fp[projections_fp$name_fp=="Joseph Morgan", "name_fp"] <- "Joe Morgan"
+projections_fp$name[which(projections_fp$name == "CHRISTOPHERIVORY")] <- "CHRISIVORY"
+projections_fp[projections_fp$name == "DOMANIQUEDAVIS", "name"] <- "DOMINIQUEDAVIS"
 
 #Calculate overall rank
 projections_fp$overallRank_fp <- rank(-projections_fp$pts_fp, ties.method="min")
@@ -126,7 +105,7 @@ projections_fp$overallRank_fp <- rank(-projections_fp$pts_fp, ties.method="min")
 #Order variables in data set
 projections_fp <- projections_fp[,c("name","name_fp","pos","team_fp","overallRank_fp",
                                     "passAtt_fp","passComp_fp","passYds_fp","passTds_fp","passInt_fp",
-                                    "rushYds_fp","rushTds_fp","rec_fp","recYds_fp","recTds_fp","twoPts_fp","fumbles_fp","pts_fp")]
+                                    "rushAtt_fp","rushYds_fp","rushTds_fp","rec_fp","recYds_fp","recTds_fp","twoPts_fp","fumbles_fp","pts_fp")]
 
 #Order players by overall rank
 projections_fp <- projections_fp[order(projections_fp$overallRank_fp),]

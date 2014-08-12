@@ -107,7 +107,7 @@ projections_fbg3$overallRank_fbg3 <- rank(-projections_fbg3$pts_fbg3, ties.metho
 #Order variables in data set
 projections_fbg3 <- projections_fbg3[,c("name","name_fbg3","pos","team_fbg3","overallRank_fbg3",
                                         "passAtt_fbg3","passComp_fbg3","passYds_fbg3","passTds_fbg3","passInt_fbg3",
-                                        "rushYds_fbg3","rushTds_fbg3","rec_fbg3","recYds_fbg3","recTds_fbg3","twoPts_fbg3","fumbles_fbg3","pts_fbg3")]
+                                        "rushAtt_fbg3","rushYds_fbg3","rushTds_fbg3","rec_fbg3","recYds_fbg3","recTds_fbg3","twoPts_fbg3","fumbles_fbg3","pts_fbg3")]
 
 #Order players by overall rank
 projections_fbg3 <- projections_fbg3[order(projections_fbg3$overallRank_fbg3),]

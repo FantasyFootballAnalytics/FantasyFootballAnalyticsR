@@ -70,11 +70,15 @@ projections <- merge(projections2, projections[,c("name","player","pos","team")]
 for(i in 1:length(sourcesOfProjectionsAbbreviation)){
   projections[,paste(c("passAttPts","passCompPts","passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","twoPtsPts","fumblesPts"), sourcesOfProjectionsAbbreviation[i], sep="_")] <- NA
   
+  projections[,paste("passIncomp", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passAtt", sourcesOfProjectionsAbbreviation[i], sep="_")] - projections[,paste("passComp", sourcesOfProjectionsAbbreviation[i], sep="_")]
+  
   projections[,paste("passAttPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passAtt", sourcesOfProjectionsAbbreviation[i], sep="_")] * passAttMultiplier
   projections[,paste("passCompPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passComp", sourcesOfProjectionsAbbreviation[i], sep="_")] * passCompMultiplier
+  projections[,paste("passIncompPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passIncomp", sourcesOfProjectionsAbbreviation[i], sep="_")] * passIncompMultiplier
   projections[,paste("passYdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passYds", sourcesOfProjectionsAbbreviation[i], sep="_")] * passYdsMultiplier
   projections[,paste("passTdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passTds", sourcesOfProjectionsAbbreviation[i], sep="_")] * passTdsMultiplier
   projections[,paste("passIntPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passInt", sourcesOfProjectionsAbbreviation[i], sep="_")] * passIntMultiplier
+  projections[,paste("rushAttPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("rushAtt", sourcesOfProjectionsAbbreviation[i], sep="_")] * rushAttMultiplier
   projections[,paste("rushYdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("rushYds", sourcesOfProjectionsAbbreviation[i], sep="_")] * rushYdsMultiplier
   projections[,paste("rushTdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("rushTds", sourcesOfProjectionsAbbreviation[i], sep="_")] * rushTdsMultiplier
   projections[,paste("recPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("rec", sourcesOfProjectionsAbbreviation[i], sep="_")] * recMultiplier
@@ -85,15 +89,17 @@ for(i in 1:length(sourcesOfProjectionsAbbreviation)){
   
   projections[,paste("projectedPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- NA
   
-  projections[,paste("projectedPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- mySum(projections[,paste(c("passAttPts","passCompPts","passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","twoPtsPts","fumblesPts"), sourcesOfProjectionsAbbreviation[i], sep="_")])
+  projections[,paste("projectedPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- mySum(projections[,paste(c("passAttPts","passIncompPts","passYdsPts","passTdsPts","passIntPts","rushAttPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","twoPtsPts","fumblesPts"), sourcesOfProjectionsAbbreviation[i], sep="_")])
 }
 
 #Calculate average of categories
 projections$passAtt <- rowMeans(projections[,paste("passAtt", sourcesOfProjectionsAbbreviation, sep="_")], na.rm=TRUE)
 projections$passComp <- rowMeans(projections[,paste("passComp", sourcesOfProjectionsAbbreviation, sep="_")], na.rm=TRUE)
+projections$passIncomp <- rowMeans(projections[,paste("passIncomp", sourcesOfProjectionsAbbreviation, sep="_")], na.rm=TRUE)
 projections$passYds <- rowMeans(projections[,paste("passYds", sourcesOfProjectionsAbbreviation, sep="_")], na.rm=TRUE)
 projections$passTds <- rowMeans(projections[,paste("passTds", sourcesOfProjectionsAbbreviation, sep="_")], na.rm=TRUE)
 projections$passInt <- rowMeans(projections[,paste("passInt", sourcesOfProjectionsAbbreviation, sep="_")], na.rm=TRUE)
+projections$rushAtt <- rowMeans(projections[,paste("rushAtt", sourcesOfProjectionsAbbreviation, sep="_")], na.rm=TRUE)
 projections$rushYds <- rowMeans(projections[,paste("rushYds", sourcesOfProjectionsAbbreviation, sep="_")], na.rm=TRUE)
 projections$rushTds <- rowMeans(projections[,paste("rushTds", sourcesOfProjectionsAbbreviation, sep="_")], na.rm=TRUE)
 projections$rec <- rowMeans(projections[,paste("rec", sourcesOfProjectionsAbbreviation, sep="_")], na.rm=TRUE)
@@ -105,9 +111,11 @@ projections$fumbles <- rowMeans(projections[,paste("fumbles", sourcesOfProjectio
 #Calculate Hodges-Lehmann (pseudo-median) robust average of categories
 projections$passAttMedian <- apply(projections[,paste("passAtt", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE)))
 projections$passCompMedian <- apply(projections[,paste("passComp", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE)))
+projections$passIncompMedian <- apply(projections[,paste("passIncomp", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE)))
 projections$passYdsMedian <- apply(projections[,paste("passYds", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE)))
 projections$passTdsMedian <- apply(projections[,paste("passTds", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE)))
 projections$passIntMedian <- apply(projections[,paste("passInt", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE)))
+projections$rushAttMedian <- apply(projections[,paste("rushAtt", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE)))
 projections$rushYdsMedian <- apply(projections[,paste("rushYds", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE)))
 projections$rushTdsMedian <- apply(projections[,paste("rushTds", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE)))
 projections$recMedian <- apply(projections[,paste("rec", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE)))
@@ -119,9 +127,11 @@ projections$fumblesMedian <- apply(projections[,paste("fumbles", sourcesOfProjec
 #Check projections
 projections[,c("name",paste("passAtt", sourcesOfProjectionsAbbreviation, sep="_"), c("passAtt","passAttMedian"))]
 projections[,c("name",paste("passComp", sourcesOfProjectionsAbbreviation, sep="_"), c("passComp","passCompMedian"))]
+projections[,c("name",paste("passIncomp", sourcesOfProjectionsAbbreviation, sep="_"), c("passIncomp","passIncompMedian"))]
 projections[,c("name",paste("passYds", sourcesOfProjectionsAbbreviation, sep="_"), c("passYds","passYdsMedian"))]
 projections[,c("name",paste("passTds", sourcesOfProjectionsAbbreviation, sep="_"), c("passTds","passTdsMedian"))]
 projections[,c("name",paste("passInt", sourcesOfProjectionsAbbreviation, sep="_"), c("passInt","passIntMedian"))]
+projections[,c("name",paste("rushAtt", sourcesOfProjectionsAbbreviation, sep="_"), c("rushAtt","rushAttMedian"))]
 projections[,c("name",paste("rushYds", sourcesOfProjectionsAbbreviation, sep="_"), c("rushYds","rushYdsMedian"))]
 projections[,c("name",paste("rushTds", sourcesOfProjectionsAbbreviation, sep="_"), c("rushTds","rushTdsMedian"))]
 projections[,c("name",paste("rec", sourcesOfProjectionsAbbreviation, sep="_"), c("rec","recMedian"))]
@@ -133,9 +143,11 @@ projections[,c("name",paste("fumbles", sourcesOfProjectionsAbbreviation, sep="_"
 #Calculate projected points for your league (average projections)
 projections$passAttPts <- projections$passAtt * passAttMultiplier
 projections$passCompPts <- projections$passComp * passCompMultiplier
+projections$passIncompPts <- projections$passIncomp * passIncompMultiplier
 projections$passYdsPts <- projections$passYds * passYdsMultiplier
 projections$passTdsPts <- projections$passTds * passTdsMultiplier
 projections$passIntPts <- projections$passInt * passIntMultiplier
+projections$rushAttPts <- projections$rushAtt * rushAttMultiplier
 projections$rushYdsPts <- projections$rushYds * rushYdsMultiplier
 projections$rushTdsPts <- projections$rushTds * rushTdsMultiplier
 projections$recPts <- projections$rec * recMultiplier
@@ -146,9 +158,11 @@ projections$fumblesPts <- projections$fumbles * fumlMultiplier
 
 projections$passAttMedianPts <- projections$passAttMedian * passAttMultiplier
 projections$passCompMedianPts <- projections$passCompMedian * passCompMultiplier
+projections$passIncompMedianPts <- projections$passIncompMedian * passIncompMultiplier
 projections$passYdsMedianPts <- projections$passYdsMedian * passYdsMultiplier
 projections$passTdsMedianPts <- projections$passTdsMedian * passTdsMultiplier
 projections$passIntMedianPts <- projections$passIntMedian * passIntMultiplier
+projections$rushAttMedianPts <- projections$rushAttMedian * rushAttMultiplier
 projections$rushYdsMedianPts <- projections$rushYdsMedian * rushYdsMultiplier
 projections$rushTdsMedianPts <- projections$rushTdsMedian * rushTdsMultiplier
 projections$recMedianPts <- projections$recMedian * recMultiplier
@@ -160,9 +174,11 @@ projections$fumblesMedianPts <- projections$fumblesMedian * fumlMultiplier
 #Check projections
 projections[,c("name",paste("passAttPts", sourcesOfProjectionsAbbreviation, sep="_"), c("passAttPts","passAttMedianPts"))]
 projections[,c("name",paste("passCompPts", sourcesOfProjectionsAbbreviation, sep="_"), c("passCompPts","passCompMedianPts"))]
+projections[,c("name",paste("passIncompPts", sourcesOfProjectionsAbbreviation, sep="_"), c("passIncompPts","passIncompMedianPts"))]
 projections[,c("name",paste("passYdsPts", sourcesOfProjectionsAbbreviation, sep="_"), c("passYdsPts","passYdsMedianPts"))]
 projections[,c("name",paste("passTdsPts", sourcesOfProjectionsAbbreviation, sep="_"), c("passTdsPts","passTdsMedianPts"))]
 projections[,c("name",paste("passIntPts", sourcesOfProjectionsAbbreviation, sep="_"), c("passIntPts","passIntMedianPts"))]
+projections[,c("name",paste("rushAttPts", sourcesOfProjectionsAbbreviation, sep="_"), c("rushAttPts","rushAttMedianPts"))]
 projections[,c("name",paste("rushYdsPts", sourcesOfProjectionsAbbreviation, sep="_"), c("rushYdsPts","rushYdsMedianPts"))]
 projections[,c("name",paste("rushTdsPts", sourcesOfProjectionsAbbreviation, sep="_"), c("rushTdsPts","rushYdsMedianPts"))]
 projections[,c("name",paste("recPts", sourcesOfProjectionsAbbreviation, sep="_"), c("recPts","recMedianPts"))]
@@ -171,8 +187,8 @@ projections[,c("name",paste("recTdsPts", sourcesOfProjectionsAbbreviation, sep="
 projections[,c("name",paste("twoPtsPts", sourcesOfProjectionsAbbreviation, sep="_"), c("twoPtsPts","twoPtsMedianPts"))]
 projections[,c("name",paste("fumblesPts", sourcesOfProjectionsAbbreviation, sep="_"), c("fumblesPts","fumblesMedianPts"))]
 
-projections$projectedPtsMean <- mySum(projections[,c("passAttPts","passCompPts","passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","twoPtsPts","fumblesPts")])
-projections$projectedPtsMedian <- mySum(projections[,c("passAttMedianPts","passCompMedianPts","passYdsMedianPts","passTdsMedianPts","passIntMedianPts","rushYdsMedianPts","rushTdsMedianPts","recMedianPts","recYdsMedianPts","recTdsMedianPts","twoPtsMedianPts","fumblesMedianPts")])
+projections$projectedPtsMean <- mySum(projections[,c("passAttPts","passCompPts","passIncompPts","passYdsPts","passTdsPts","passIntPts","rushAttPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","twoPtsPts","fumblesPts")])
+projections$projectedPtsMedian <- mySum(projections[,c("passAttMedianPts","passCompMedianPts","passIncompMedianPts","passYdsMedianPts","passTdsMedianPts","passIntMedianPts","rushAttMedianPts","rushYdsMedianPts","rushTdsMedianPts","recMedianPts","recYdsMedianPts","recTdsMedianPts","twoPtsMedianPts","fumblesMedianPts")])
 
 #Check projections
 projections[,c("name",paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"), c("projectedPtsMean","projectedPtsMedian"))]
@@ -208,7 +224,7 @@ row.names(projections) <- 1:dim(projections)[1]
 #Keep important variables
 projections <- projections[,c("name","player","pos","team","overallRank","projections",
                               paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"),
-                              c("passAttMedian","passCompMedian","passYdsMedian","passTdsMedian","passIntMedian","rushYdsMedian","rushTdsMedian","recMedian","recYdsMedian","recTdsMedian","twoPtsMedian","fumblesMedian"),
+                              c("passAttMedian","passCompMedian","passIncompMedian","passYdsMedian","passTdsMedian","passIntMedian","rushAttMedian","rushYdsMedian","rushTdsMedian","recMedian","recYdsMedian","recTdsMedian","twoPtsMedian","fumblesMedian"),
                               c("projectedPtsMean","projectedPtsMedian"))]
 
 #View projections

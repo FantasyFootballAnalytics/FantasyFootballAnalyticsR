@@ -95,7 +95,7 @@ projections_fftoday[which(projections_fftoday$pos == "TE"), "positionRank_fftoda
 
 #Order variables in data set
 projections_fftoday <- projections_fftoday[,c("name","name_fftoday","pos","team_fftoday","positionRank_fftoday","overallRank_fftoday",
-                                              "passAtt_fftoday","passComp_fftoday","passYds_fftoday","passTds_fftoday","passInt_fftoday","rushYds_fftoday","rushTds_fftoday","rec_fftoday","recYds_fftoday","recTds_fftoday",
+                                              "passAtt_fftoday","passComp_fftoday","passYds_fftoday","passTds_fftoday","passInt_fftoday","rushAtt_fftoday","rushYds_fftoday","rushTds_fftoday","rec_fftoday","recYds_fftoday","recTds_fftoday",
                                               "twoPts_fftoday","fumbles_fftoday","pts_fftoday")]
 
 #Order players by overall rank

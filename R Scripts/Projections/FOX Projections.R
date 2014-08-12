@@ -34,7 +34,7 @@ te1_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner
 te2_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=2&position=4&split=3", stringsAsFactors = FALSE)$playerTable
 
 #Add variable names for each object
-names(qb1_fox) <- names(qb2_fox) <- c("player_fox","status_fox","passTds_fox","passYds_fox","passInt_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox")
+names(qb1_fox) <- names(qb2_fox) <- c("player_fox","status_fox","passTds_fox","passYds_fox","passInt_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox") #,"passSack_fox","rushAtt_fox"
 names(rb1_fox) <- names(rb2_fox) <- names(rb3_fox) <- names(rb4_fox) <- c("player_fox","status_fox","rushTds_fox","rushYds_fox","recTds_fox","recYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox")
 names(wr1_fox) <- names(wr2_fox) <- names(wr3_fox) <- names(wr4_fox) <- names(wr5_fox) <- names(wr6_fox) <- c("player_fox","status_fox","recTds_fox","recYds_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox") #c("player_fox","status_fox","recTds_fox","recYds_fox","rec_fox","rushTds_fox","rushYds_fox","rushAtt_fox","puntReturnTds_fox","puntReturnYds_fox","kickReturnTds_fox","kickReturnYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox")
 names(te1_fox) <- names(te2_fox) <- c("player_fox","status_fox","recTds_fox","recYds_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox") #,"fumlRecTds_fox","fumbles_fox"
@@ -55,13 +55,14 @@ te_fox$pos <- as.factor("TE")
 projections_fox <- rbind.fill(qb_fox,rb_fox,wr_fox,te_fox)
 
 #Add missing variables
-projections_fox$rec_fox <- NA
 projections_fox$passAtt_fox <- NA
 projections_fox$passComp_fox <- NA
+projections_fox$rushAtt_fox <- NA
+projections_fox$rec_fox <- NA
 
 #Convert variables from character strings to numeric
-projections_fox[,c("passAtt_fox","passComp_fox","passTds_fox","passYds_fox","passInt_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox","recTds_fox","recYds_fox","rec_fox")] <- 
-  convert.magic(projections_fox[,c("passAtt_fox","passComp_fox","passTds_fox","passYds_fox","passInt_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox","recTds_fox","recYds_fox","rec_fox")], "numeric")
+projections_fox[,c("passAtt_fox","passComp_fox","passTds_fox","passYds_fox","passInt_fox","rushAtt_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox","recTds_fox","recYds_fox","rec_fox")] <- 
+  convert.magic(projections_fox[,c("passAtt_fox","passComp_fox","passTds_fox","passYds_fox","passInt_fox","rushAtt_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox","recTds_fox","recYds_fox","rec_fox")], "numeric")
 
 #Player name and team
 projections_fox$name_fox <- str_trim(sapply(str_split(projections_fox$player, "\r\n"), "[", 1))
@@ -80,7 +81,7 @@ projections_fox[which(projections_fox$pos == "TE"), "positionRank_fox"] <- rank(
 
 #Order variables in data set
 projections_fox <- projections_fox[,c("name","name_fox","pos","team_fox","positionRank_fox","overallRank_fox",
-                                      "passAtt_fox","passComp_fox","passYds_fox","passTds_fox","passInt_fox","rushYds_fox","rushTds_fox","rec_fox","recYds_fox","recTds_fox",
+                                      "passAtt_fox","passComp_fox","passYds_fox","passTds_fox","passInt_fox","rushAtt_fox","rushYds_fox","rushTds_fox","rec_fox","recYds_fox","recTds_fox",
                                       "twoPts_fox","fumbles_fox","pts_fox")]
 
 #Order players by overall rank
@@ -98,4 +99,3 @@ write.csv(projections_fox, file=paste(getwd(),"/Data/FOX-Projections.csv", sep="
 
 save(projections_fox, file = paste(getwd(),"/Data/Historical Projections/FOX-Projections-2014.RData", sep=""))
 write.csv(projections_fox, file=paste(getwd(),"/Data/Historical Projections/FOX-Projections-2014.csv", sep=""), row.names=FALSE)
-
