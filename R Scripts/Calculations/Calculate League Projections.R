@@ -20,16 +20,21 @@ source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 filenames <- paste(getwd(),"/Data/", sourcesOfProjections, "-Projections.RData", sep="")
 listProjections <- sapply(filenames, function(x) get(load(x)), simplify = FALSE)
 
+#Exclude defenses and kickers for now (will add later)
+for (i in 1:length(listProjections)){
+  listProjections[[i]] <- listProjections[[i]][which(listProjections[[i]]$pos %in% c("QB","RB","WR","TE")),]
+}
+
 #Merge projections data
 projections <- merge_recurse(listProjections, by=c("name","pos")) #, all=TRUE
 
 #Set player name as most common instance across sources
-nametable <- apply(projections[,paste("name", sourcesOfProjectionsAbbreviation, sep="_")], 1, table)  
+nametable <- apply(projections[,paste("name", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) sort(table(x), TRUE))  
 projections$player <- names(sapply(nametable,`[`,1) )
 projections$player[which(projections$player == "")] <- NA
 
 #Set team name as most common instance across sources
-teamtable <- apply(projections[,paste("team", sourcesOfProjectionsAbbreviation, sep="_")], 1, table)  
+teamtable <- apply(projections[,paste("team", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) sort(table(x), TRUE)) #more efficient: names(sort(table(x), TRUE))[1]
 projections$team <- names(sapply(teamtable,`[`,1) )
 projections$team[which(projections$team == "")] <- NA
 
@@ -91,6 +96,9 @@ for(i in 1:length(sourcesOfProjectionsAbbreviation)){
   
   projections[,paste("projectedPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- mySum(projections[,paste(c("passAttPts","passIncompPts","passYdsPts","passTdsPts","passIntPts","rushAttPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","twoPtsPts","fumblesPts"), sourcesOfProjectionsAbbreviation[i], sep="_")])
 }
+
+#Remove WalterFootball projections because they don't separate rushing TDs from receiving TDs
+projections$projectedPts_wf <- NA
 
 #Calculate average of categories
 projections$passAtt <- rowMeans(projections[,paste("passAtt", sourcesOfProjectionsAbbreviation, sep="_")], na.rm=TRUE)

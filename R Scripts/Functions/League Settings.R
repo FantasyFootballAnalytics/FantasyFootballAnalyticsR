@@ -20,6 +20,14 @@ defaultCap <- 200           #what the typical cap is for your service (ESPN, Yah
 leagueCap <- 225            #your league's cap
 maxCost <- leagueCap - (numTotalPlayers - numTotalStarters)
 
+#Variable names
+varNames <- c("name","name","pos","team","positionRank","overallRank","pts",
+              "passAtt","passComp","passYds","passTds","passInt",
+              "rushAtt","rushYds","rushTds","rec","recYds","recTds","twoPts","fumbles",
+              "solo","ast","idpSack","idpFumlRec","idpFumlForce","idpInt","idpPD",
+              "ptsAllowed","dstSack","dstInt","dstFumlRec","blk","to","intTd","kRetTd","pRetTd",
+              "fg","fg3039","fg4049","fg50","xp")
+
 #Scoring
 passAttMultiplier <- 0      #0 pts per passing attempt
 passCompMultiplier <- 0     #0 pts per passing completion
@@ -37,8 +45,8 @@ twoPtsMultiplier <- 2       #2 pts per 2-point conversion
 fumlMultiplier <- -3        #-3 pts per fumble lost
 
 #Projections
-sourcesOfProjections <- c("Accuscore", "CBS1", "CBS2", "ESPN", "FantasyFootballNerd", "FantasyPros", "FantasySharks", "FFtoday", "Footballguys1", "Footballguys2", "Footballguys3", "Footballguys4", "FOX", "NFL", "Yahoo")
-sourcesOfProjectionsAbbreviation <- c("accu", "cbs1", "cbs2", "espn", "ffn", "fp", "fs", "fftoday", "fbg1", "fbg2", "fbg3", "fbg4", "fox", "nfl", "yahoo")
+sourcesOfProjections <- c("Accuscore", "CBS1", "CBS2", "ESPN", "FantasyFootballNerd", "FantasyPros", "FantasySharks", "FFtoday", "Footballguys1", "Footballguys2", "Footballguys3", "Footballguys4", "FOX", "NFL", "WalterFootball", "Yahoo")
+sourcesOfProjectionsAbbreviation <- c("accu", "cbs1", "cbs2", "espn", "ffn", "fp", "fs", "fftoday", "fbg1", "fbg2", "fbg3", "fbg4", "fox", "nfl", "wf", "yahoo")
 
 #Number of players at each position drafted in Top 100 (adjust for your league)
 qbReplacements <- 15
