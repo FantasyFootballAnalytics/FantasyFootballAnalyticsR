@@ -34,6 +34,7 @@ source(paste(getwd(),"/R Scripts/Projections/Footballguys3 Projections.R", sep="
 source(paste(getwd(),"/R Scripts/Projections/Footballguys4 Projections.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Projections/FOX Projections.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Projections/NFL Projections.R", sep=""), echo=TRUE)
+source(paste(getwd(),"/R Scripts/Projections/WalterFootball Projections.R", sep=""), echo=TRUE)
 source(paste(getwd(),"/R Scripts/Projections/Yahoo Projections.R", sep=""), echo=TRUE)
 
 ###############
