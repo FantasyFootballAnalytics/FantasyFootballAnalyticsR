@@ -22,21 +22,21 @@ qb_fp <- readHTMLTable("http://www.fantasypros.com/nfl/projections/qb.php", stri
 rb_fp <- readHTMLTable("http://www.fantasypros.com/nfl/projections/rb.php", stringsAsFactors = FALSE)$data
 wr_fp <- readHTMLTable("http://www.fantasypros.com/nfl/projections/wr.php", stringsAsFactors = FALSE)$data
 te_fp <- readHTMLTable("http://www.fantasypros.com/nfl/projections/te.php", stringsAsFactors = FALSE)$data
-kickers_fp <- readHTMLTable("http://www.fantasypros.com/nfl/projections/k.php", stringsAsFactors = FALSE)$data
+k_fp <- readHTMLTable("http://www.fantasypros.com/nfl/projections/k.php", stringsAsFactors = FALSE)$data
 
 #Add variable names for each object
 names(qb_fp) <- c("player_fp","passAtt_fp","passComp_fp","passYds_fp","passTds_fp","passInt_fp","rushAtt_fp","rushYds_fp","rushTds_fp","fumbles_fp","pts_fp")
 names(rb_fp) <- c("player_fp","rushAtt_fp","rushYds_fp","rushTds_fp","rec_fp","recYds_fp","recTds_fp","fumbles_fp","pts_fp")
 names(wr_fp) <- c("player_fp","rushAtt_fp","rushYds_fp","rushTds_fp","rec_fp","recYds_fp","recTds_fp","fumbles_fp","pts_fp")
 names(te_fp) <- c("player_fp","rec_fp","recYds_fp","recTds_fp","fumbles_fp","pts_fp")
-names(kickers_fp) <- c("player_fp","fg_fp","fga_fp","xp_fp","pts_fp")
+names(k_fp) <- c("player_fp","fg_fp","fga_fp","xp_fp","pts_fp")
 
 #Add variable for player position
 qb_fp$pos <- as.factor("QB")
 rb_fp$pos <- as.factor("RB")
 wr_fp$pos <- as.factor("WR")
 te_fp$pos <- as.factor("TE")
-kickers_fp$pos <- as.factor("K")
+k_fp$pos <- as.factor("K")
 
 #Merge players across positions
 projections_fp <- rbind.fill(qb_fp, rb_fp, wr_fp, te_fp, k_fp)
@@ -46,15 +46,15 @@ projections_fp$twoPts_fp <- NA
 
 #Remove special characters(commas)
 projections_fp[,c("passAtt_fp","passComp_fp","passYds_fp","passTds_fp","passInt_fp","rushAtt_fp","rushYds_fp","rushTds_fp","rec_fp","recYds_fp","recTds_fp","twoPts_fp","fumbles_fp","pts_fp",
-                  "fg_fp","fga_fp","xp_fp","pts_fp")] <-
+                  "fg_fp","fga_fp","xp_fp")] <-
   apply(projections_fp[,c("passAtt_fp","passComp_fp","passYds_fp","passTds_fp","passInt_fp","rushAtt_fp","rushYds_fp","rushTds_fp","rec_fp","recYds_fp","recTds_fp","twoPts_fp","fumbles_fp","pts_fp",
-                          "fg_fp","fga_fp","xp_fp","pts_fp")], 2, function(x) gsub("\\,", "", x))
+                          "fg_fp","fga_fp","xp_fp")], 2, function(x) gsub("\\,", "", x))
 
 #Convert variables from character strings to numeric
 projections_fp[,c("passAtt_fp","passComp_fp","passYds_fp","passTds_fp","passInt_fp","rushAtt_fp","rushYds_fp","rushTds_fp","rec_fp","recYds_fp","recTds_fp","twoPts_fp","fumbles_fp","pts_fp",
-                  "fg_fp","fga_fp","xp_fp","pts_fp")] <-
+                  "fg_fp","fga_fp","xp_fp")] <-
   convert.magic(projections_fp[,c("passAtt_fp","passComp_fp","passYds_fp","passTds_fp","passInt_fp","rushAtt_fp","rushYds_fp","rushTds_fp","rec_fp","recYds_fp","recTds_fp","twoPts_fp","fumbles_fp","pts_fp",
-                                  "fg_fp","fga_fp","xp_fp","pts_fp")], "numeric")
+                                  "fg_fp","fga_fp","xp_fp")], "numeric")
 
 #Player names
 projections_fp <- adply(projections_fp, 1, function(x) {
@@ -113,7 +113,7 @@ projections_fp$overallRank_fp <- rank(-projections_fp$pts_fp, ties.method="min")
 projections_fp <- projections_fp[,c("name","name_fp","pos","team_fp","overallRank_fp","pts_fp",
                                     "passAtt_fp","passComp_fp","passYds_fp","passTds_fp","passInt_fp",
                                     "rushAtt_fp","rushYds_fp","rushTds_fp","rec_fp","recYds_fp","recTds_fp","twoPts_fp","fumbles_fp",
-                                    "fg_fp","fga_fp","xp_fp","pts_fp")]
+                                    "fg_fp","fga_fp","xp_fp")]
 
 #Order players by overall rank
 projections_fp <- projections_fp[order(projections_fp$overallRank_fp),]

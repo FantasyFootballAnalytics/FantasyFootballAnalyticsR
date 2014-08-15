@@ -87,6 +87,8 @@ projections_wf[projections_wf$name %in% projections_wf[duplicated(projections_wf
 #Same name, different player
 
 #Rename Players
+projections_wf$name[which(projections_wf$name == "TERRENCEWILLIAMS")] <- "TERRANCEWILLIAMS"
+projections_wf$name[which(projections_wf$name == "QBJETSNO8")] <- "MICHAELVICK"
 
 #Calculate overall rank
 projections_wf$overallRank_wf <- rank(-projections_wf$pts_wf, ties.method="min")

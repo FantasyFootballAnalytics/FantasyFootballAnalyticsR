@@ -26,7 +26,7 @@ for (i in 1:length(listProjections)){
 }
 
 #Merge projections data
-projections <- merge_recurse(listProjections, by=c("name","pos")) #, all=TRUE
+projections <- merge_recurse(listProjections, by=c("name","pos"))
 
 #Set player name as most common instance across sources
 nametable <- apply(projections[,paste("name", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) sort(table(x), TRUE))  

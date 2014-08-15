@@ -65,9 +65,20 @@ projections_fox[,c("passAtt_fox","passComp_fox","passTds_fox","passYds_fox","pas
   convert.magic(projections_fox[,c("passAtt_fox","passComp_fox","passTds_fox","passYds_fox","passInt_fox","rushAtt_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox","recTds_fox","recYds_fox","rec_fox")], "numeric")
 
 #Player name and team
-projections_fox$name_fox <- str_trim(sapply(str_split(projections_fox$player, "\r\n"), "[", 1))
+projections_fox$name_fox <- str_trim(sapply(str_split(projections_fox$player_fox, "\r\n"), "[", 1))
 projections_fox$name <- nameMerge(projections_fox$name_fox)
-projections_fox$team_fox <- toupper(str_trim(str_sub(projections_fox$player, start=str_locate(projections_fox$player, "\\(")[,1]+1, end=str_locate(projections_fox$player, "\\)")[,1]-6)))
+projections_fox$team_fox <- toupper(str_trim(str_sub(projections_fox$player_fox, start=str_locate(projections_fox$player_fox, "\\(")[,1]+1, end=str_locate(projections_fox$player_fox, "\\)")[,1]-6)))
+
+#Remove duplicate cases
+projections_fox[projections_fox$name %in% projections_fox[duplicated(projections_fox$name),"name"],]
+
+#Same name, different player
+projections_fox <- projections_fox[-which(projections_fox$name=="RYANGRIFFIN" & projections_fox$pos=="QB"),]
+
+#Same player, different position
+
+#Rename players
+projections_fox[projections_fox$name=="STEVIEJOHNSON", "name"] <- "STEVEJOHNSON"
 
 #Calculate overall rank
 projections_fox$overallRank_fox <- rank(-projections_fox$pts_fox, ties.method="min")

@@ -78,6 +78,9 @@ cost_yahoo$costAvg_yahoo <- rowMeans(cost_yahoo[,c("costProjected_yahoo","cost_y
 cost_yahoo$costMax_yahoo <- apply(cost_yahoo[,c("costProjected_yahoo","cost_yahoo")], 1, function(x) max(x, na.rm=TRUE))
 cost_yahoo$pos_yahoo <- cost_yahoo$pos
 
+#Rename players
+#projections_yahoo[projections_yahoo$name=="STEVIEJOHNSON", "name"] <- "STEVEJOHNSON"
+
 #Subset
 cost_yahoo <- cost_yahoo[,c("name","name_yahoo","pos_yahoo","team_yahoo","cost_yahoo","costProjected_yahoo","costAvg_yahoo","costMax_yahoo","adp_yahoo")]
 

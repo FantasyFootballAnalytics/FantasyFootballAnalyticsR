@@ -67,7 +67,7 @@ projections_yahoo[projections_yahoo$name %in% projections_yahoo[duplicated(proje
 #projections_yahoo <- projections_yahoo[-which(projections_yahoo$name_yahoo=="Dexter McCluster" & projections_yahoo$pos=="RB"),]
 
 #Rename players
-#projections_yahoo[projections_yahoo$name_yahoo=="EJ Manuel", "name_yahoo"] <- "E.J. Manuel"
+projections_yahoo[projections_yahoo$name=="STEVIEJOHNSON", "name"] <- "STEVEJOHNSON"
 
 #Calculate overall rank
 projections_yahoo$overallRank_yahoo <- rank(-projections_yahoo$pts_yahoo, ties.method="min")

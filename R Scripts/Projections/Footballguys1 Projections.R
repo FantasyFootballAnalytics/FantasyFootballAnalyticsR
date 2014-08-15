@@ -95,6 +95,7 @@ projections_fbg1[projections_fbg1$name %in% projections_fbg1[duplicated(projecti
 
 #Same name, different player
 projections_fbg1 <- projections_fbg1[-which(projections_fbg1$name=="STEVESMITH" & projections_fbg1$team_fbg1==""),]
+projections_fbg1 <- projections_fbg1[-which(projections_fbg1$name=="ZACHMILLER" & projections_fbg1$team_fbg1=="CHI"),]
 
 #Same player, different position
 
