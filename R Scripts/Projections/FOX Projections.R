@@ -18,20 +18,63 @@ source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
 #Download fantasy football projections from FOX Sports
-qb1_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=1&position=8&split=3", stringsAsFactors = FALSE)$playerTable
-qb2_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=2&position=8&split=3", stringsAsFactors = FALSE)$playerTable
-rb1_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=1&position=16&split=3", stringsAsFactors = FALSE)$playerTable
-rb2_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=2&position=16&split=3", stringsAsFactors = FALSE)$playerTable
-rb3_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=3&position=16&split=3", stringsAsFactors = FALSE)$playerTable
-rb4_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=4&position=16&split=3", stringsAsFactors = FALSE)$playerTable
-wr1_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=1&position=1&split=3", stringsAsFactors = FALSE)$playerTable
-wr2_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=2&position=1&split=3", stringsAsFactors = FALSE)$playerTable
-wr3_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=3&position=1&split=3", stringsAsFactors = FALSE)$playerTable
-wr4_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=4&position=1&split=3", stringsAsFactors = FALSE)$playerTable
-wr5_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=5&position=1&split=3", stringsAsFactors = FALSE)$playerTable
-wr6_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=6&position=1&split=3", stringsAsFactors = FALSE)$playerTable
-te1_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=1&position=4&split=3", stringsAsFactors = FALSE)$playerTable
-te2_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=2&position=4&split=3", stringsAsFactors = FALSE)$playerTable
+qb1_fox <- qb2_fox <- rb1_fox <- rb2_fox <- rb3_fox <- rb4_fox <- wr1_fox <- wr2_fox <- wr3_fox <- wr4_fox <- wr5_fox <- wr6_fox <- te1_fox <- te2_fox <- matrix()
+
+while(ncol(qb1_fox) != 11){
+  qb1_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=1&position=8&split=3", stringsAsFactors = FALSE)$playerTable
+}
+
+while(ncol(qb2_fox) != 11){
+  qb2_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=2&position=8&split=3", stringsAsFactors = FALSE)$playerTable
+}
+
+while(ncol(rb1_fox) != 10){
+  rb1_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=1&position=16&split=3", stringsAsFactors = FALSE)$playerTable
+}
+
+while(ncol(rb2_fox) != 10){
+  rb2_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=2&position=16&split=3", stringsAsFactors = FALSE)$playerTable
+}
+
+while(ncol(rb3_fox) != 10){
+  rb3_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=3&position=16&split=3", stringsAsFactors = FALSE)$playerTable
+}
+
+while(ncol(rb4_fox) != 10){
+  rb4_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=4&position=16&split=3", stringsAsFactors = FALSE)$playerTable
+}
+
+while(ncol(wr1_fox) != 10){
+  wr1_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=1&position=1&split=3", stringsAsFactors = FALSE)$playerTable
+}
+
+while(ncol(wr2_fox) != 10){
+  wr2_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=2&position=1&split=3", stringsAsFactors = FALSE)$playerTable
+}
+
+while(ncol(wr3_fox) != 10){
+  wr3_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=3&position=1&split=3", stringsAsFactors = FALSE)$playerTable
+}
+
+while(ncol(wr4_fox) != 10){
+  wr4_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=4&position=1&split=3", stringsAsFactors = FALSE)$playerTable
+}
+
+while(ncol(wr5_fox) != 10){
+  wr5_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=5&position=1&split=3", stringsAsFactors = FALSE)$playerTable
+}
+
+while(ncol(wr6_fox) != 10){
+  wr6_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=6&position=1&split=3", stringsAsFactors = FALSE)$playerTable
+}
+
+while(ncol(te1_fox) != 10){
+  te1_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=1&position=4&split=3", stringsAsFactors = FALSE)$playerTable
+}
+
+while(ncol(te2_fox) != 10){
+  te2_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=2&position=4&split=3", stringsAsFactors = FALSE)$playerTable
+}
 
 #Add variable names for each object
 names(qb1_fox) <- names(qb2_fox) <- c("player_fox","status_fox","passTds_fox","passYds_fox","passInt_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox") #,"passSack_fox","rushAtt_fox"
