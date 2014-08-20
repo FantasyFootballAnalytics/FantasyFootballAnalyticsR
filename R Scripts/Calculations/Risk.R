@@ -76,7 +76,7 @@ projections[projections$name %in% projections$name[duplicated(projections$name)]
 
 #Drop variables
 projections <- projections[,!(names(projections) %in% c("pick_experts","sdPick_experts","pick_crowd","sdPick_crowd","sdPickZ","sdPtsZ",
-                                                        "passYdsMedian","passTdsMedian","passIntMedian","rushYdsMedian","rushTdsMedian","recMedian","recYdsMedian","recTdsMedian","twoPtsMedian","fumblesMedian"))]
+                                                        "passYdsMedian","passTdsMedian","passIntMedian","rushYdsMedian","rushTdsMedian","recMedian","recYdsMedian","recTdsMedian","returnTdsMedian","twoPtsMedian","fumblesMedian"))]
 
 #Players with highest risk levels
 projections[rank(projections$risk, na.last="keep") %in% (max(rank(projections$risk, na.last="keep"), na.rm=TRUE)-5):max(rank(projections$risk, na.last="keep"), na.rm=TRUE) ,]

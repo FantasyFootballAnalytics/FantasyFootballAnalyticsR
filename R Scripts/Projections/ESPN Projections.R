@@ -18,6 +18,9 @@ library("plyr")
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
+#Suffix
+suffix <- "espn"
+
 #Download fantasy football projections from ESPN.com
 qb_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2014&slotCategoryId=0", stringsAsFactors = FALSE)$playertable_0
 rb1_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2014&slotCategoryId=2", stringsAsFactors = FALSE)$playertable_0
@@ -69,12 +72,13 @@ projections_espn$passComp_espn <- as.numeric(str_sub(string=projections_espn$pas
 projections_espn$passAtt_espn <- as.numeric(str_sub(string=projections_espn$passCompAtt_espn, start=str_locate(string=projections_espn$passCompAtt_espn, '/')[,1]+1))
 
 #Add variables from other projection sources
+projections_espn$returnTds_espn <- NA
 projections_espn$fumbles_espn <- NA
 projections_espn$twoPts_espn <- NA
 
 #Convert variables from character strings to numeric
-projections_espn[,c("positionRank_espn","passYds_espn","passTds_espn","passInt_espn","rushAtt_espn","rushYds_espn","rushTds_espn","rec_espn","recYds_espn","recTds_espn","pts_espn","fumbles_espn","twoPts_espn")] <-
-  convert.magic(projections_espn[,c("positionRank_espn","passYds_espn","passTds_espn","passInt_espn","rushAtt_espn","rushYds_espn","rushTds_espn","rec_espn","recYds_espn","recTds_espn","pts_espn","fumbles_espn","twoPts_espn")], "numeric")
+projections_espn[,c("positionRank_espn","passYds_espn","passTds_espn","passInt_espn","rushAtt_espn","rushYds_espn","rushTds_espn","rec_espn","recYds_espn","recTds_espn","pts_espn","returnTds_espn","fumbles_espn","twoPts_espn")] <-
+  convert.magic(projections_espn[,c("positionRank_espn","passYds_espn","passTds_espn","passInt_espn","rushAtt_espn","rushYds_espn","rushTds_espn","rec_espn","recYds_espn","recTds_espn","pts_espn","returnTds_espn","fumbles_espn","twoPts_espn")], "numeric")
 
 #Player names
 projections_espn$name_espn <- str_sub(projections_espn$player_espn, end=str_locate(string=projections_espn$player_espn, ',')[,1]-1)
@@ -98,9 +102,7 @@ projections_espn[projections_espn$name %in% projections_espn[duplicated(projecti
 projections_espn$overallRank_espn <- rank(-projections_espn$pts_espn, ties.method="min")
 
 #Order variables in data set
-projections_espn <- projections_espn[,c("name","name_espn","pos","team_espn","positionRank_espn","overallRank_espn",
-                                        "passAtt_espn","passComp_espn","passYds_espn","passTds_espn","passInt_espn",
-                                        "rushAtt_espn","rushYds_espn","rushTds_espn","rec_espn","recYds_espn","recTds_espn","twoPts_espn","fumbles_espn","pts_espn")]
+projections_espn <- projections_espn[,c(prefix, paste(varNames, suffix, sep="_"))]
 
 #Order players by overall rank
 projections_espn <- projections_espn[order(projections_espn$overallRank_espn),]

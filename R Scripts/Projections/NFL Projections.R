@@ -13,6 +13,9 @@ library("stringr")
 library("ggplot2")
 library("plyr")
 
+#Suffix
+suffix <- "nfl"
+
 #Functions
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
@@ -64,10 +67,11 @@ projections_nfl$passAtt_nfl <- NA
 projections_nfl$passComp_nfl <- NA
 projections_nfl$rushAtt_nfl <- NA
 projections_nfl$rec_nfl <- NA
+projections_nfl$returnTds_nfl <- NA
 
 #Convert variables from character strings to numeric
-projections_nfl[,c("gp_nfl","passAtt_nfl","passComp_nfl","passYds_nfl","passTds_nfl","passInt_nfl","rushAtt_nfl","rushYds_nfl","rushTds_nfl","rec_nfl","recYds_nfl","recTds_nfl","fumbleTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")] <-
-  convert.magic(projections_nfl[,c("gp_nfl","passAtt_nfl","passComp_nfl","passYds_nfl","passTds_nfl","passInt_nfl","rushAtt_nfl","rushYds_nfl","rushTds_nfl","rec_nfl","recYds_nfl","recTds_nfl","fumbleTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")], "numeric")
+projections_nfl[,c("gp_nfl","passAtt_nfl","passComp_nfl","passYds_nfl","passTds_nfl","passInt_nfl","rushAtt_nfl","rushYds_nfl","rushTds_nfl","rec_nfl","recYds_nfl","recTds_nfl","fumbleTds_nfl","returnTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")] <-
+  convert.magic(projections_nfl[,c("gp_nfl","passAtt_nfl","passComp_nfl","passYds_nfl","passTds_nfl","passInt_nfl","rushAtt_nfl","rushYds_nfl","rushTds_nfl","rec_nfl","recYds_nfl","recTds_nfl","fumbleTds_nfl","returnTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")], "numeric")
 
 #Player names
 qbnames <- str_sub(projections_nfl$player_nfl, end=str_locate(string=projections_nfl$player_nfl, c("QB"))[,1]-2) #"QB -"
@@ -104,9 +108,7 @@ projections_nfl[which(projections_nfl$pos == "WR"), "positionRank_nfl"] <- rank(
 projections_nfl[which(projections_nfl$pos == "TE"), "positionRank_nfl"] <- rank(-projections_nfl[which(projections_nfl$pos == "TE"), "pts_nfl"], ties.method="min")
 
 #Order variables in data set
-projections_nfl <- projections_nfl[,c("name","name_nfl","pos","team_nfl","positionRank_nfl","overallRank_nfl",
-                                      "passAtt_nfl","passComp_nfl","passYds_nfl","passTds_nfl","passInt_nfl",
-                                      "rushAtt_nfl","rushYds_nfl","rushTds_nfl","rec_nfl","recYds_nfl","recTds_nfl","twoPts_nfl","fumbles_nfl","pts_nfl")]
+projections_nfl <- projections_nfl[,c(prefix, paste(varNames, suffix, sep="_"))]
 
 #Order players by overall rank
 projections_nfl <- projections_nfl[order(projections_nfl$overallRank_nfl),]

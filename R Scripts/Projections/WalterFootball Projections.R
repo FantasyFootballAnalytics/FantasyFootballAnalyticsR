@@ -7,6 +7,9 @@
 # To do:
 ###########################
 
+#Set aside 1GB of RAM for Excel processing
+options(java.parameters = "-Xmx1024m")
+
 #Load libraries
 library("RCurl")
 library("XLConnect")
@@ -17,6 +20,9 @@ library("plyr")
 #Functions
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
+
+#Suffix
+suffix <- "wf"
 
 #Download fantasy football projections from WalterFootball.com
 url_wf <- "http://walterfootball.com/fantasy2014rankingsexcel.xls"
@@ -53,6 +59,7 @@ projections_wf$passAtt_wf <- NA
 projections_wf$rushAtt_wf <- NA
 projections_wf$rushTds_wf <- NA
 projections_wf$recTds_wf <- NA
+projections_wf$returnTds_wf <- NA
 projections_wf$fumbles_wf <- NA
 projections_wf$twoPts_wf <- NA
 
@@ -60,13 +67,13 @@ projections_wf$twoPts_wf <- NA
 projections_wf[,c("bye_wf","passComp_wf","passAtt_wf","passYds_wf","passTds_wf","passInt_wf",
                   "rushAtt_wf","rushYds_wf","rushTds_wf",
                   "rec_wf","recYds_wf","recTds_wf",
-                  "fumbles_wf","twoPts_wf",
+                  "returnTds_wf","fumbles_wf","twoPts_wf",
                   "fg0039_wf","fg4049_wf","fg50_wf","xp_wf",
                   "regScore_wf","rushRecTds_wf","bonus_wf","pts_wf","vbdReg_wf","pprPts_wf","pprVBD_wf","tdPts_wf","vbdTd_wf","pts2QB_wf","vbd2QB_wf","ptsCustom_wf","vbdCustom_wf")] <- 
   convert.magic(projections_wf[,c("bye_wf","passComp_wf","passAtt_wf","passYds_wf","passTds_wf","passInt_wf",
                                   "rushAtt_wf","rushYds_wf","rushTds_wf",
                                   "rec_wf","recYds_wf","recTds_wf",
-                                  "fumbles_wf","twoPts_wf",
+                                  "returnTds_wf","fumbles_wf","twoPts_wf",
                                   "fg0039_wf","fg4049_wf","fg50_wf","xp_wf",
                                   "regScore_wf","rushRecTds_wf","bonus_wf","pts_wf","vbdReg_wf","pprPts_wf","pprVBD_wf","tdPts_wf","vbdTd_wf","pts2QB_wf","vbd2QB_wf","ptsCustom_wf","vbdCustom_wf")], "numeric")
 
@@ -103,10 +110,7 @@ projections_wf[which(projections_wf$pos == "K"), "positionRank_wf"] <- rank(-pro
 projections_wf[which(projections_wf$pos == "DST"), "positionRank_wf"] <- rank(-projections_wf[which(projections_wf$pos == "DST"), "pts_wf"], ties.method="min")
 
 #Order variables in data set
-projections_wf <- projections_wf[,c("name","name_wf","pos","team_wf","positionRank_wf","overallRank_wf","pts_wf",
-                                    "passAtt_wf","passComp_wf","passYds_wf","passTds_wf","passInt_wf",
-                                    "rushAtt_wf","rushYds_wf","rushTds_wf","rec_wf","recYds_wf","recTds_wf","twoPts_wf","fumbles_wf",
-                                    "fg_wf","fg0039_wf","fg4049_wf","fg50_wf","xp_wf")]
+projections_wf <- projections_wf[,c(prefix, paste(varNames, suffix, sep="_"))]
 
 #Order players by overall rank
 projections_wf <- projections_wf[order(projections_wf$overallRank_wf),]

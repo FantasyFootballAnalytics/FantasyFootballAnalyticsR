@@ -17,6 +17,9 @@ library("plyr")
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
+#Suffix
+suffix <- "ffn"
+
 #Download fantasy football projections from FantasyFootballNerd.com
 qb_ffn <- readHTMLTable("http://www.fantasyfootballnerd.com/fantasy-football-projections", stringsAsFactors = FALSE)$projections
 rb_ffn <- readHTMLTable("http://www.fantasyfootballnerd.com/fantasy-football-projections/RB", stringsAsFactors = FALSE)$projections
@@ -45,21 +48,22 @@ dst_ffn$pos <- as.factor("DST")
 projections_ffn <- rbind.fill(qb_ffn, rb_ffn, wr_ffn, te_ffn, kickers_ffn, dst_ffn)
 
 #Add variables from other projection sources
+projections_ffn$returnTds_ffn <- NA
 projections_ffn$twoPts_ffn <- NA
 
 #Remove special characters (percentage sign)
-projections_ffn[,c("passComp_ffn","passAtt_ffn","passCompPct_ffn","passYds_ffn","passTds_ffn","passInt_ffn","rushAtt_ffn","rushYds_ffn","rushYpc_ffn","rushTds_ffn","rec_ffn","recYds_ffn","recTds_ffn","recYpc_ffn","twoPts_ffn","fumbles_ffn","pts_ffn",
+projections_ffn[,c("passComp_ffn","passAtt_ffn","passCompPct_ffn","passYds_ffn","passTds_ffn","passInt_ffn","rushAtt_ffn","rushYds_ffn","rushYpc_ffn","rushTds_ffn","rec_ffn","recYds_ffn","recTds_ffn","recYpc_ffn","returnTds_ffn","twoPts_ffn","fumbles_ffn","pts_ffn",
                    "xp_ffn","fg_ffn",
                    "dstSack_ffn","dstInt_ffn","dstFumlRec_ffn","dstDefTd_ffn","dstStTd_ffn")] <-
-  apply(projections_ffn[,c("passComp_ffn","passAtt_ffn","passCompPct_ffn","passYds_ffn","passTds_ffn","passInt_ffn","rushAtt_ffn","rushYds_ffn","rushYpc_ffn","rushTds_ffn","rec_ffn","recYds_ffn","recTds_ffn","recYpc_ffn","twoPts_ffn","fumbles_ffn","pts_ffn",
+  apply(projections_ffn[,c("passComp_ffn","passAtt_ffn","passCompPct_ffn","passYds_ffn","passTds_ffn","passInt_ffn","rushAtt_ffn","rushYds_ffn","rushYpc_ffn","rushTds_ffn","rec_ffn","recYds_ffn","recTds_ffn","recYpc_ffn","returnTds_ffn","twoPts_ffn","fumbles_ffn","pts_ffn",
                            "xp_ffn","fg_ffn",
                            "dstSack_ffn","dstInt_ffn","dstFumlRec_ffn","dstDefTd_ffn","dstStTd_ffn")], 2, function(x) gsub("\\%", "", x))
 
 #Convert variables from character strings to numeric
-projections_ffn[,c("passComp_ffn","passAtt_ffn","passCompPct_ffn","passYds_ffn","passTds_ffn","passInt_ffn","rushAtt_ffn","rushYds_ffn","rushYpc_ffn","rushTds_ffn","rec_ffn","recYds_ffn","recTds_ffn","recYpc_ffn","twoPts_ffn","fumbles_ffn","pts_ffn",
+projections_ffn[,c("passComp_ffn","passAtt_ffn","passCompPct_ffn","passYds_ffn","passTds_ffn","passInt_ffn","rushAtt_ffn","rushYds_ffn","rushYpc_ffn","rushTds_ffn","rec_ffn","recYds_ffn","recTds_ffn","recYpc_ffn","returnTds_ffn","twoPts_ffn","fumbles_ffn","pts_ffn",
                    "xp_ffn","fg_ffn",
                    "dstSack_ffn","dstInt_ffn","dstFumlRec_ffn","dstDefTd_ffn","dstStTd_ffn")] <-
-  convert.magic(projections_ffn[,c("passComp_ffn","passAtt_ffn","passCompPct_ffn","passYds_ffn","passTds_ffn","passInt_ffn","rushAtt_ffn","rushYds_ffn","rushYpc_ffn","rushTds_ffn","rec_ffn","recYds_ffn","recTds_ffn","recYpc_ffn","twoPts_ffn","fumbles_ffn","pts_ffn",
+  convert.magic(projections_ffn[,c("passComp_ffn","passAtt_ffn","passCompPct_ffn","passYds_ffn","passTds_ffn","passInt_ffn","rushAtt_ffn","rushYds_ffn","rushYpc_ffn","rushTds_ffn","rec_ffn","recYds_ffn","recTds_ffn","recYpc_ffn","returnTds_ffn","twoPts_ffn","fumbles_ffn","pts_ffn",
                                    "xp_ffn","fg_ffn",
                                    "dstSack_ffn","dstInt_ffn","dstFumlRec_ffn","dstDefTd_ffn","dstStTd_ffn")], "numeric")
 
@@ -76,12 +80,17 @@ projections_ffn[projections_ffn$name %in% projections_ffn[duplicated(projections
 #Calculate overall rank
 projections_ffn$overallRank_ffn <- rank(-projections_ffn$pts_ffn, ties.method="min")
 
+#Calculate Position Rank
+projections_ffn$positionRank_ffn <- NA
+projections_ffn[which(projections_ffn$pos == "QB"), "positionRank_ffn"] <- rank(-projections_ffn[which(projections_ffn$pos == "QB"), "pts_ffn"], ties.method="min")
+projections_ffn[which(projections_ffn$pos == "RB"), "positionRank_ffn"] <- rank(-projections_ffn[which(projections_ffn$pos == "RB"), "pts_ffn"], ties.method="min")
+projections_ffn[which(projections_ffn$pos == "WR"), "positionRank_ffn"] <- rank(-projections_ffn[which(projections_ffn$pos == "WR"), "pts_ffn"], ties.method="min")
+projections_ffn[which(projections_ffn$pos == "TE"), "positionRank_ffn"] <- rank(-projections_ffn[which(projections_ffn$pos == "TE"), "pts_ffn"], ties.method="min")
+projections_ffn[which(projections_ffn$pos == "K"), "positionRank_ffn"] <- rank(-projections_ffn[which(projections_ffn$pos == "K"), "pts_ffn"], ties.method="min")
+projections_ffn[which(projections_ffn$pos == "DST"), "positionRank_ffn"] <- rank(-projections_ffn[which(projections_ffn$pos == "DST"), "pts_ffn"], ties.method="min")
+
 #Order variables in data set
-projections_ffn <- projections_ffn[,c("name","name_ffn","pos","team_ffn","overallRank_ffn","pts_ffn",
-                                      "passAtt_ffn","passComp_ffn","passYds_ffn","passTds_ffn","passInt_ffn",
-                                      "rushAtt_ffn","rushYds_ffn","rushTds_ffn","rec_ffn","recYds_ffn","recTds_ffn","twoPts_ffn","fumbles_ffn",
-                                      "xp_ffn","fg_ffn",
-                                      "dstSack_ffn","dstInt_ffn","dstFumlRec_ffn","dstDefTd_ffn","dstStTd_ffn")]
+projections_ffn <- projections_ffn[,c(prefix, paste(varNames, suffix, sep="_"))]
 
 #Order players by overall rank
 projections_ffn <- projections_ffn[order(projections_ffn$overallRank_ffn),]

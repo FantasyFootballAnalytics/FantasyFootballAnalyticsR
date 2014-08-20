@@ -21,12 +21,14 @@ leagueCap <- 225            #your league's cap
 maxCost <- leagueCap - (numTotalPlayers - numTotalStarters)
 
 #Variable names
-varNames <- c("name","name","pos","team","positionRank","overallRank","pts",
+prefix <- c("name","pos")
+varNames <- c("name","team","positionRank","overallRank","pts",
               "passAtt","passComp","passYds","passTds","passInt",
-              "rushAtt","rushYds","rushTds","rec","recYds","recTds","twoPts","fumbles",
-              "solo","ast","idpSack","idpFumlRec","idpFumlForce","idpInt","idpPD",
-              "ptsAllowed","dstSack","dstInt","dstFumlRec","blk","to","intTd","kRetTd","pRetTd",
-              "fg","fg3039","fg4049","fg50","xp")
+              "rushAtt","rushYds","rushTds","rec","recYds","recTds",
+              "returnTds","twoPts","fumbles") 
+#"solo","ast","idpSack","idpFumlRec","idpFumlForce","idpInt","idpPD",
+#"ptsAllowed","dstSack","dstInt","dstFumlRec","blk","to","intTd","kRetTd","pRetTd",
+#"fg","fg3039","fg4049","fg50","xp"
 
 #Scoring
 passAttMultiplier <- 0      #0 pts per passing attempt
@@ -41,6 +43,7 @@ rushTdsMultiplier <- 6      #6 pts per rushing touchdown
 recMultiplier <- 0          #0 pts per reception
 recYdsMultiplier <- (1/8)   #1 pt per 8 receiving yds
 recTdsMultiplier <- 6       #6 pts per receiving touchdown
+returnTdsMultiplier <- 6    #6 pts per return touchdown
 twoPtsMultiplier <- 2       #2 pts per 2-point conversion
 fumlMultiplier <- -3        #-3 pts per fumble lost
 

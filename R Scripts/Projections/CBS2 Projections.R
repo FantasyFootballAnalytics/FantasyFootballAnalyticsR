@@ -17,6 +17,9 @@ library("plyr")
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
+#Suffix
+suffix <- "cbs2"
+
 #Download fantasy football projections from cbssports.com
 qb_cbs2 <- readHTMLTable("http://fantasynews.cbssports.com/fantasyfootball/stats/weeklyprojections/QB/season/dave_richard/standard", stringsAsFactors = FALSE)[7]$'NULL'
 rb1_cbs2 <- readHTMLTable("http://fantasynews.cbssports.com/fantasyfootball/stats/weeklyprojections/RB/season/dave_richard/standard", stringsAsFactors = FALSE)[7]$'NULL'
@@ -65,16 +68,17 @@ dst_cbs2$pos <- as.factor("DST")
 projections_cbs2 <- rbind.fill(qb_cbs2, rb_cbs2, wr_cbs2, te_cbs2, kickers_cbs2, dst_cbs2)
 
 #Add variables from other projection sources
+projections_cbs2$returnTds_cbs2 <- NA
 projections_cbs2$twoPts_cbs2 <- NA
 
 #Convert variables from character strings to numeric
-projections_cbs2[,c("twoPts_cbs2","fumbles_cbs2","pts_cbs2",
+projections_cbs2[,c("returnTds_cbs2","twoPts_cbs2","fumbles_cbs2","pts_cbs2",
                     "rec_cbs2","recYds_cbs2","recYdsPerRec_cbs2","recTds_cbs2",
                     "rushAtt_cbs2","rushYds_cbs2","rushYdsPerAtt_cbs2","rushTds_cbs2",
                     "passAtt_cbs2","passComp_cbs2","passYds_cbs2","passTds_cbs2","passInt_cbs2","passCompPct_cbs2","passYdsPerAtt_cbs2",
                     "fg_cbs2","fga_cbs2","xp_cbs2",
                     "dstInt_cbs2","dstFumlRec_cbs2","dstFumlForced_cbs2","dstSack_cbs2","dstTd_cbs2","safety_cbs2","ptsAllowed_cbs2","ydsAllowed_cbs2")] <- 
-  convert.magic(projections_cbs2[,c("twoPts_cbs2","fumbles_cbs2","pts_cbs2",
+  convert.magic(projections_cbs2[,c("returnTds_cbs2","twoPts_cbs2","fumbles_cbs2","pts_cbs2",
                                     "rec_cbs2","recYds_cbs2","recYdsPerRec_cbs2","recTds_cbs2",
                                     "rushAtt_cbs2","rushYds_cbs2","rushYdsPerAtt_cbs2","rushTds_cbs2",
                                     "passAtt_cbs2","passComp_cbs2","passYds_cbs2","passTds_cbs2","passInt_cbs2","passCompPct_cbs2","passYdsPerAtt_cbs2",
@@ -108,12 +112,7 @@ projections_cbs2[which(projections_cbs2$pos == "K"), "positionRank_cbs2"] <- ran
 projections_cbs2[which(projections_cbs2$pos == "DST"), "positionRank_cbs2"] <- rank(-projections_cbs2[which(projections_cbs2$pos == "DST"), "pts_cbs2"], ties.method="min")
 
 #Order variables in data set
-projections_cbs2 <- projections_cbs2[,c("name","name_cbs2","pos","team_cbs2","positionRank_cbs2","overallRank_cbs2","pts_cbs2",
-                                        "passAtt_cbs2","passComp_cbs2","passYds_cbs2","passTds_cbs2","passInt_cbs2","passCompPct_cbs2","passYdsPerAtt_cbs2",
-                                        "rushAtt_cbs2","rushYds_cbs2","rushYdsPerAtt_cbs2","rushTds_cbs2",
-                                        "rec_cbs2","recYds_cbs2","recYdsPerRec_cbs2","recTds_cbs2","twoPts_cbs2","fumbles_cbs2",
-                                        "fg_cbs2","fga_cbs2","xp_cbs2",
-                                        "dstInt_cbs2","dstFumlRec_cbs2","dstFumlForced_cbs2","dstSack_cbs2","dstTd_cbs2","safety_cbs2","ptsAllowed_cbs2","ydsAllowed_cbs2")]
+projections_cbs2 <- projections_cbs2[,c(prefix, paste(varNames, suffix, sep="_"))]
 
 #Order players by overall rank
 projections_cbs2 <- projections_cbs2[order(projections_cbs2$overallRank_cbs2),]

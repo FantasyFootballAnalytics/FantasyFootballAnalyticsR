@@ -17,70 +17,79 @@ library("plyr")
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
+#Suffix
+suffix <- "fox"
+
+#Variable names
+qbNames_fox <- c("player_fox","status_fox","passTds_fox","passYds_fox","passInt_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox") #,"passSack_fox","rushAtt_fox"
+rbNames_fox <- c("player_fox","status_fox","rushTds_fox","rushYds_fox","recTds_fox","recYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox")
+wrNames_fox <- c("player_fox","status_fox","recTds_fox","recYds_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox") #c("player_fox","status_fox","recTds_fox","recYds_fox","rec_fox","rushTds_fox","rushYds_fox","rushAtt_fox","puntReturnTds_fox","puntReturnYds_fox","kickReturnTds_fox","kickReturnYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox")
+teNames_fox <- c("player_fox","status_fox","recTds_fox","recYds_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox") #,"fumlRecTds_fox","fumbles_fox"
+
 #Download fantasy football projections from FOX Sports
 qb1_fox <- qb2_fox <- rb1_fox <- rb2_fox <- rb3_fox <- rb4_fox <- wr1_fox <- wr2_fox <- wr3_fox <- wr4_fox <- wr5_fox <- wr6_fox <- te1_fox <- te2_fox <- matrix()
 
-while(ncol(qb1_fox) != 11){
+while(ncol(qb1_fox) != length(qbNames_fox)){
   qb1_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=1&position=8&split=3", stringsAsFactors = FALSE)$playerTable
 }
 
-while(ncol(qb2_fox) != 11){
+while(ncol(qb2_fox) != length(qbNames_fox)){
   qb2_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=2&position=8&split=3", stringsAsFactors = FALSE)$playerTable
 }
 
-while(ncol(rb1_fox) != 10){
+while(ncol(rb1_fox) != length(rbNames_fox)){
   rb1_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=1&position=16&split=3", stringsAsFactors = FALSE)$playerTable
 }
 
-while(ncol(rb2_fox) != 10){
+while(ncol(rb2_fox) != length(rbNames_fox)){
   rb2_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=2&position=16&split=3", stringsAsFactors = FALSE)$playerTable
 }
 
-while(ncol(rb3_fox) != 10){
+while(ncol(rb3_fox) != length(rbNames_fox)){
   rb3_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=3&position=16&split=3", stringsAsFactors = FALSE)$playerTable
 }
 
-while(ncol(rb4_fox) != 10){
+while(ncol(rb4_fox) != length(rbNames_fox)){
   rb4_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=4&position=16&split=3", stringsAsFactors = FALSE)$playerTable
 }
 
-while(ncol(wr1_fox) != 10){
+while(ncol(wr1_fox) != length(wrNames_fox)){
   wr1_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=1&position=1&split=3", stringsAsFactors = FALSE)$playerTable
 }
 
-while(ncol(wr2_fox) != 10){
+while(ncol(wr2_fox) != length(wrNames_fox)){
   wr2_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=2&position=1&split=3", stringsAsFactors = FALSE)$playerTable
 }
 
-while(ncol(wr3_fox) != 10){
+while(ncol(wr3_fox) != length(wrNames_fox)){
   wr3_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=3&position=1&split=3", stringsAsFactors = FALSE)$playerTable
 }
 
-while(ncol(wr4_fox) != 10){
+while(ncol(wr4_fox) != length(wrNames_fox)){
   wr4_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=4&position=1&split=3", stringsAsFactors = FALSE)$playerTable
 }
 
-while(ncol(wr5_fox) != 10){
+while(ncol(wr5_fox) != length(wrNames_fox)){
   wr5_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=5&position=1&split=3", stringsAsFactors = FALSE)$playerTable
 }
 
-while(ncol(wr6_fox) != 10){
+while(ncol(wr6_fox) != length(wrNames_fox)){
   wr6_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=6&position=1&split=3", stringsAsFactors = FALSE)$playerTable
 }
 
-while(ncol(te1_fox) != 10){
+while(ncol(te1_fox) != length(teNames_fox)){
   te1_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=1&position=4&split=3", stringsAsFactors = FALSE)$playerTable
 }
 
-while(ncol(te2_fox) != 10){
+while(ncol(te2_fox) != length(teNames_fox)){
   te2_fox <- readHTMLTable("http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=2&position=4&split=3", stringsAsFactors = FALSE)$playerTable
 }
 
 #Add variable names for each object
-names(qb1_fox) <- names(qb2_fox) <- c("player_fox","status_fox","passTds_fox","passYds_fox","passInt_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox") #,"passSack_fox","rushAtt_fox"
-names(rb1_fox) <- names(rb2_fox) <- names(rb3_fox) <- names(rb4_fox) <- c("player_fox","status_fox","rushTds_fox","rushYds_fox","recTds_fox","recYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox")
-names(wr1_fox) <- names(wr2_fox) <- names(wr3_fox) <- names(wr4_fox) <- names(wr5_fox) <- names(wr6_fox) <- c("player_fox","status_fox","recTds_fox","recYds_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox") #c("player_fox","status_fox","recTds_fox","recYds_fox","rec_fox","rushTds_fox","rushYds_fox","rushAtt_fox","puntReturnTds_fox","puntReturnYds_fox","kickReturnTds_fox","kickReturnYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox")
-names(te1_fox) <- names(te2_fox) <- c("player_fox","status_fox","recTds_fox","recYds_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox") #,"fumlRecTds_fox","fumbles_fox"
+names(qb1_fox) <- names(qb2_fox) <- qbNames_fox
+names(rb1_fox) <- names(rb2_fox) <- names(rb3_fox) <- names(rb4_fox) <- rbNames_fox
+names(wr1_fox) <- names(wr2_fox) <- names(wr3_fox) <- names(wr4_fox) <- names(wr5_fox) <- names(wr6_fox) <- wrNames_fox
+names(te1_fox) <- names(te2_fox) <- teNames_fox
 
 #Merge players within position
 qb_fox <- rbind.fill(qb1_fox,qb2_fox)
@@ -102,10 +111,11 @@ projections_fox$passAtt_fox <- NA
 projections_fox$passComp_fox <- NA
 projections_fox$rushAtt_fox <- NA
 projections_fox$rec_fox <- NA
+projections_fox$returnTds_fox <- NA
 
 #Convert variables from character strings to numeric
-projections_fox[,c("passAtt_fox","passComp_fox","passTds_fox","passYds_fox","passInt_fox","rushAtt_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox","recTds_fox","recYds_fox","rec_fox")] <- 
-  convert.magic(projections_fox[,c("passAtt_fox","passComp_fox","passTds_fox","passYds_fox","passInt_fox","rushAtt_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox","recTds_fox","recYds_fox","rec_fox")], "numeric")
+projections_fox[,c("passAtt_fox","passComp_fox","passTds_fox","passYds_fox","passInt_fox","rushAtt_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox","recTds_fox","recYds_fox","rec_fox","returnTds_fox")] <- 
+  convert.magic(projections_fox[,c("passAtt_fox","passComp_fox","passTds_fox","passYds_fox","passInt_fox","rushAtt_fox","rushTds_fox","rushYds_fox","twoPts_fox","fumlRecTds_fox","fumbles_fox","pts_fox","recTds_fox","recYds_fox","rec_fox","returnTds_fox")], "numeric")
 
 #Player name and team
 projections_fox$name_fox <- str_trim(sapply(str_split(projections_fox$player_fox, "\r\n"), "[", 1))
@@ -134,9 +144,7 @@ projections_fox[which(projections_fox$pos == "WR"), "positionRank_fox"] <- rank(
 projections_fox[which(projections_fox$pos == "TE"), "positionRank_fox"] <- rank(-projections_fox[which(projections_fox$pos == "TE"), "pts_fox"], ties.method="min")
 
 #Order variables in data set
-projections_fox <- projections_fox[,c("name","name_fox","pos","team_fox","positionRank_fox","overallRank_fox",
-                                      "passAtt_fox","passComp_fox","passYds_fox","passTds_fox","passInt_fox","rushAtt_fox","rushYds_fox","rushTds_fox","rec_fox","recYds_fox","recTds_fox",
-                                      "twoPts_fox","fumbles_fox","pts_fox")]
+projections_fox <- projections_fox[,c(prefix, paste(varNames, suffix, sep="_"))]
 
 #Order players by overall rank
 projections_fox <- projections_fox[order(projections_fox$overallRank_fox),]

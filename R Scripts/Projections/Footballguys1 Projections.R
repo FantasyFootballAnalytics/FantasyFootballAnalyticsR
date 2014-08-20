@@ -4,6 +4,7 @@
 # Date: 7/13/2014
 # Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
+# If doesn't run, login to account, view projections, and say "No thanks" to offer
 # To do:
 ###########################
 
@@ -17,6 +18,9 @@ library(plyr)
 #Functions
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
+
+#Suffix
+suffix <- "fbg1"
 
 #Download fantasy football projections from Footballguys.com (password-protected)
 qbURL_fbg1 <- "http://subscribers.footballguys.com/myfbg/myviewprojections.php?projector=2"
@@ -77,12 +81,13 @@ te_fbg1$pos <- as.factor("TE")
 projections_fbg1 <- rbind.fill(qb_fbg1, rb_fbg1, wr_fbg1, te_fbg1)
 
 #Add variables from other projection sources
+projections_fbg1$returnTds_fbg1 <- NA
 projections_fbg1$twoPts_fbg1 <- NA
 projections_fbg1$fumbles_fbg1 <- NA
 
 #Convert variables from character strings to numeric
-projections_fbg1[,c("rank_fbg1","age_fbg1","exp_fbg1","passComp_fbg1","passAtt_fbg1","passCompPct_fbg1","passYds_fbg1","passYdsPerAtt_fbg1","passTds_fbg1","passInt_fbg1","rushAtt_fbg1","rushYds_fbg1","rushYdsPerAtt_fbg1","rushTds_fbg1","rec_fbg1","recYds_fbg1","recTds_fbg1","recYdsPerRec_fbg1","twoPts_fbg1","fumbles_fbg1","pts_fbg1")] <-
-  convert.magic(projections_fbg1[,c("rank_fbg1","age_fbg1","exp_fbg1","passComp_fbg1","passAtt_fbg1","passCompPct_fbg1","passYds_fbg1","passYdsPerAtt_fbg1","passTds_fbg1","passInt_fbg1","rushAtt_fbg1","rushYds_fbg1","rushYdsPerAtt_fbg1","rushTds_fbg1","rec_fbg1","recYds_fbg1","recTds_fbg1","recYdsPerRec_fbg1","twoPts_fbg1","fumbles_fbg1","pts_fbg1")], "numeric")
+projections_fbg1[,c("rank_fbg1","age_fbg1","exp_fbg1","passComp_fbg1","passAtt_fbg1","passCompPct_fbg1","passYds_fbg1","passYdsPerAtt_fbg1","passTds_fbg1","passInt_fbg1","rushAtt_fbg1","rushYds_fbg1","rushYdsPerAtt_fbg1","rushTds_fbg1","rec_fbg1","recYds_fbg1","recTds_fbg1","recYdsPerRec_fbg1","returnTds_fbg1","twoPts_fbg1","fumbles_fbg1","pts_fbg1")] <-
+  convert.magic(projections_fbg1[,c("rank_fbg1","age_fbg1","exp_fbg1","passComp_fbg1","passAtt_fbg1","passCompPct_fbg1","passYds_fbg1","passYdsPerAtt_fbg1","passTds_fbg1","passInt_fbg1","rushAtt_fbg1","rushYds_fbg1","rushYdsPerAtt_fbg1","rushTds_fbg1","rec_fbg1","recYds_fbg1","recTds_fbg1","recYdsPerRec_fbg1","returnTds_fbg1","twoPts_fbg1","fumbles_fbg1","pts_fbg1")], "numeric")
 
 #Team
 projections_fbg1$team_fbg1 <- str_trim(sapply(str_split(projections_fbg1$teamBye_fbg1, "\\/"), "[", 1))
@@ -106,10 +111,15 @@ projections_fbg1[projections_fbg1$name=="BENWATSON", "name"] <- "BENJAMINWATSON"
 #Calculate overall rank
 projections_fbg1$overallRank_fbg1 <- rank(-projections_fbg1$pts_fbg1, ties.method="min")
 
+#Calculate Position Rank
+projections_fbg1$positionRank_fbg1 <- NA
+projections_fbg1[which(projections_fbg1$pos == "QB"), "positionRank_fbg1"] <- rank(-projections_fbg1[which(projections_fbg1$pos == "QB"), "pts_fbg1"], ties.method="min")
+projections_fbg1[which(projections_fbg1$pos == "RB"), "positionRank_fbg1"] <- rank(-projections_fbg1[which(projections_fbg1$pos == "RB"), "pts_fbg1"], ties.method="min")
+projections_fbg1[which(projections_fbg1$pos == "WR"), "positionRank_fbg1"] <- rank(-projections_fbg1[which(projections_fbg1$pos == "WR"), "pts_fbg1"], ties.method="min")
+projections_fbg1[which(projections_fbg1$pos == "TE"), "positionRank_fbg1"] <- rank(-projections_fbg1[which(projections_fbg1$pos == "TE"), "pts_fbg1"], ties.method="min")
+
 #Order variables in data set
-projections_fbg1 <- projections_fbg1[,c("name","name_fbg1","pos","team_fbg1","overallRank_fbg1",
-                                        "passAtt_fbg1","passComp_fbg1","passYds_fbg1","passTds_fbg1","passInt_fbg1",
-                                        "rushAtt_fbg1","rushYds_fbg1","rushTds_fbg1","rec_fbg1","recYds_fbg1","recTds_fbg1","twoPts_fbg1","fumbles_fbg1","pts_fbg1")]
+projections_fbg1 <- projections_fbg1[,c(prefix, paste(varNames, suffix, sep="_"))]
 
 #Order players by overall rank
 projections_fbg1 <- projections_fbg1[order(projections_fbg1$overallRank_fbg1),]

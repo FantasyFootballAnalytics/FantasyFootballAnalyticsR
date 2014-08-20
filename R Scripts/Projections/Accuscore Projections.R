@@ -18,6 +18,9 @@ library("plyr")
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
+#Suffix
+suffix <- "accu"
+
 #Download fantasy football projections from Accuscore.com
 qb <- readHTMLTable("http://accuscore.com/fantasy-sports/nfl-fantasy-sports/", header=1, stringsAsFactors = FALSE)$fantasy_table
 rb <- readHTMLTable(getURL("http://accuscore.com/fantasy-sports/nfl-fantasy-sports/Rest-of-Season-RB"), header = 1, stringsAsFactors = FALSE)$fantasy_table
@@ -56,6 +59,7 @@ projections_accu <- rbind.fill(qb, rb, wr, te, lb, dl, db, dst, kickers)
 #projections_accu[is.na(projections_accu)] <- 0
 
 #Variables
+projections_accu$returnTds_accu <- NA
 projections_accu$twoPts_accu <- NA
 
 #Convert variable types to numeric
@@ -63,7 +67,7 @@ projections_accu[,c("pts_accu",
                     "passComp_accu","passAtt_accu","passCompPct_accu","passYds_accu","passTds_accu","passInt_accu",
                     "rushAtt_accu","rushYds_accu","rushYPC_accu","rushTds_accu",
                     "rec_accu","recYds_accu","recYPR_accu","recTds_accu",
-                    "twoPts_accu","fumbles_accu",
+                    "returnTds_accu","twoPts_accu","fumbles_accu",
                     "solo_accu","ast_accu","idpSack_accu","idpFumlRec_accu","idpFumlForce_accu","idpInt","idpPD",
                     "ptsAllowed_accu","dstSack_accu","dstInt_accu","dstFumlRec_accu","blk_accu","to_accu","intTd_accu","kRetTd_accu","pRetTd_accu",
                     "fg_accu","fga_accu","fg3039_accu","fg4049_accu","fg50_accu","xp_accu","xpa_accu")] <- 
@@ -71,7 +75,7 @@ projections_accu[,c("pts_accu",
                                     "passComp_accu","passAtt_accu","passCompPct_accu","passYds_accu","passTds_accu","passInt_accu",
                                     "rushAtt_accu","rushYds_accu","rushYPC_accu","rushTds_accu",
                                     "rec_accu","recYds_accu","recYPR_accu","recTds_accu",
-                                    "twoPts_accu","fumbles_accu",
+                                    "returnTds_accu","twoPts_accu","fumbles_accu",
                                     "solo_accu","ast_accu","idpSack_accu","idpFumlRec_accu","idpFumlForce_accu","idpInt","idpPD",
                                     "ptsAllowed_accu","dstSack_accu","dstInt_accu","dstFumlRec_accu","blk_accu","to_accu","intTd_accu","kRetTd_accu","pRetTd_accu",
                                     "fg_accu","fga_accu","fg3039_accu","fg4049_accu","fg50_accu","xp_accu","xpa_accu")], "numeric")
@@ -107,12 +111,7 @@ projections_accu[which(projections_accu$pos == "DB"), "positionRank_accu"] <- ra
 
 
 #Order variables in data set
-projections_accu <- projections_accu[,c("name","name_accu","pos","team_accu","positionRank_accu","overallRank_accu","pts_accu",
-                                        "passAtt_accu","passComp_accu","passYds_accu","passTds_accu","passInt_accu",
-                                        "rushAtt_accu","rushYds_accu","rushTds_accu","rec_accu","recYds_accu","recTds_accu","twoPts_accu","fumbles_accu",
-                                        "solo_accu","ast_accu","idpSack_accu","idpFumlRec_accu","idpFumlForce_accu","idpInt","idpPD",
-                                        "ptsAllowed_accu","dstSack_accu","dstInt_accu","dstFumlRec_accu","blk_accu","to_accu","intTd_accu","kRetTd_accu","pRetTd_accu",
-                                        "fg_accu","fga_accu","fg3039_accu","fg4049_accu","fg50_accu","xp_accu","xpa_accu")]
+projections_accu <- projections_accu[,c(prefix, paste(varNames, suffix, sep="_"))]
 
 #Order players by overall rank
 projections_accu <- projections_accu[order(projections_accu$overallRank_accu),]

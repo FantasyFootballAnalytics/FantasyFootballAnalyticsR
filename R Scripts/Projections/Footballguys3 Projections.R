@@ -18,6 +18,9 @@ library(plyr)
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
+#Suffix
+suffix <- "fbg3"
+
 #Download fantasy football projections from Footballguys.com (password-protected)
 qbURL_fbg3 <- "http://subscribers.footballguys.com/myfbg/myviewprojections.php?projector=53"
 rbURL_fbg3 <- "http://subscribers.footballguys.com/myfbg/myviewprojections.php?projforwhat=rb&projector=53&profile=0"
@@ -77,12 +80,13 @@ te_fbg3$pos <- as.factor("TE")
 projections_fbg3 <- rbind.fill(qb_fbg3, rb_fbg3, wr_fbg3, te_fbg3)
 
 #Add variables from other projection sources
+projections_fbg3$returnTds_fbg3 <- NA
 projections_fbg3$twoPts_fbg3 <- NA
 projections_fbg3$fumbles_fbg3 <- NA
 
 #Convert variables from character strings to numeric
-projections_fbg3[,c("rank_fbg3","age_fbg3","exp_fbg3","passComp_fbg3","passAtt_fbg3","passCompPct_fbg3","passYds_fbg3","passYdsPerAtt_fbg3","passTds_fbg3","passInt_fbg3","rushAtt_fbg3","rushYds_fbg3","rushYdsPerAtt_fbg3","rushTds_fbg3","rec_fbg3","recYds_fbg3","recTds_fbg3","recYdsPerRec_fbg3","twoPts_fbg3","fumbles_fbg3","pts_fbg3")] <-
-  convert.magic(projections_fbg3[,c("rank_fbg3","age_fbg3","exp_fbg3","passComp_fbg3","passAtt_fbg3","passCompPct_fbg3","passYds_fbg3","passYdsPerAtt_fbg3","passTds_fbg3","passInt_fbg3","rushAtt_fbg3","rushYds_fbg3","rushYdsPerAtt_fbg3","rushTds_fbg3","rec_fbg3","recYds_fbg3","recTds_fbg3","recYdsPerRec_fbg3","twoPts_fbg3","fumbles_fbg3","pts_fbg3")], "numeric")
+projections_fbg3[,c("rank_fbg3","age_fbg3","exp_fbg3","passComp_fbg3","passAtt_fbg3","passCompPct_fbg3","passYds_fbg3","passYdsPerAtt_fbg3","passTds_fbg3","passInt_fbg3","rushAtt_fbg3","rushYds_fbg3","rushYdsPerAtt_fbg3","rushTds_fbg3","rec_fbg3","recYds_fbg3","recTds_fbg3","recYdsPerRec_fbg3","returnTds_fbg3","twoPts_fbg3","fumbles_fbg3","pts_fbg3")] <-
+  convert.magic(projections_fbg3[,c("rank_fbg3","age_fbg3","exp_fbg3","passComp_fbg3","passAtt_fbg3","passCompPct_fbg3","passYds_fbg3","passYdsPerAtt_fbg3","passTds_fbg3","passInt_fbg3","rushAtt_fbg3","rushYds_fbg3","rushYdsPerAtt_fbg3","rushTds_fbg3","rec_fbg3","recYds_fbg3","recTds_fbg3","recYdsPerRec_fbg3","returnTds_fbg3","twoPts_fbg3","fumbles_fbg3","pts_fbg3")], "numeric")
 
 #Team
 projections_fbg3$team_fbg3 <- str_trim(sapply(str_split(projections_fbg3$teamBye_fbg3, "\\/"), "[", 1))
@@ -104,10 +108,15 @@ projections_fbg3[projections_fbg3$name=="BENWATSON", "name"] <- "BENJAMINWATSON"
 #Calculate overall rank
 projections_fbg3$overallRank_fbg3 <- rank(-projections_fbg3$pts_fbg3, ties.method="min")
 
+#Calculate Position Rank
+projections_fbg3$positionRank_fbg3 <- NA
+projections_fbg3[which(projections_fbg3$pos == "QB"), "positionRank_fbg3"] <- rank(-projections_fbg3[which(projections_fbg3$pos == "QB"), "pts_fbg3"], ties.method="min")
+projections_fbg3[which(projections_fbg3$pos == "RB"), "positionRank_fbg3"] <- rank(-projections_fbg3[which(projections_fbg3$pos == "RB"), "pts_fbg3"], ties.method="min")
+projections_fbg3[which(projections_fbg3$pos == "WR"), "positionRank_fbg3"] <- rank(-projections_fbg3[which(projections_fbg3$pos == "WR"), "pts_fbg3"], ties.method="min")
+projections_fbg3[which(projections_fbg3$pos == "TE"), "positionRank_fbg3"] <- rank(-projections_fbg3[which(projections_fbg3$pos == "TE"), "pts_fbg3"], ties.method="min")
+
 #Order variables in data set
-projections_fbg3 <- projections_fbg3[,c("name","name_fbg3","pos","team_fbg3","overallRank_fbg3",
-                                        "passAtt_fbg3","passComp_fbg3","passYds_fbg3","passTds_fbg3","passInt_fbg3",
-                                        "rushAtt_fbg3","rushYds_fbg3","rushTds_fbg3","rec_fbg3","recYds_fbg3","recTds_fbg3","twoPts_fbg3","fumbles_fbg3","pts_fbg3")]
+projections_fbg3 <- projections_fbg3[,c(prefix, paste(varNames, suffix, sep="_"))]
 
 #Order players by overall rank
 projections_fbg3 <- projections_fbg3[order(projections_fbg3$overallRank_fbg3),]

@@ -17,6 +17,9 @@ library("plyr")
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
+#Suffix
+suffix <- "yahoo"
+
 #Download fantasy football projections from Yahoo.com
 yahoo1 <- readHTMLTable("http://football.fantasysports.yahoo.com/f1/39345/players?status=A&pos=O&cut_type=9&stat1=S_PS_2014&myteam=0&sort=PTS&sdir=1", stringsAsFactors = FALSE)[2]$'NULL'
 yahoo2 <- readHTMLTable("http://football.fantasysports.yahoo.com/f1/39345/players?status=A&pos=O&cut_type=9&stat1=S_PS_2014&myteam=0&sort=PTS&sdir=1&count=25", stringsAsFactors = FALSE)[2]$'NULL'
@@ -39,7 +42,7 @@ projections_yahoo <- rbind(yahoo1,yahoo2,yahoo3,yahoo4,yahoo5,yahoo6,yahoo7,yaho
 
 #Variable Names
 names(projections_yahoo) <- c("star","player","add","owner","pts_yahoo","ownedPct","proj","actual",
-                              "passYds_yahoo","passTds_yahoo","passInt_yahoo","rushYds_yahoo","rushTds_yahoo","recYds_yahoo","recTds_yahoo","returnTDs_yahoo","twoPts_yahoo","fumbles_yahoo","missing")
+                              "passYds_yahoo","passTds_yahoo","passInt_yahoo","rushYds_yahoo","rushTds_yahoo","recYds_yahoo","recTds_yahoo","returnTds_yahoo","twoPts_yahoo","fumbles_yahoo","missing")
 
 #Add missing variables
 projections_yahoo$passAtt_yahoo <- NA
@@ -48,12 +51,12 @@ projections_yahoo$rushAtt_yahoo <- NA
 projections_yahoo$rec_yahoo <- NA
 
 #Remove special characters(commas)
-projections_yahoo[,c("passAtt_yahoo","passComp_yahoo","passYds_yahoo","passTds_yahoo","passInt_yahoo","rushAtt_yahoo","rushYds_yahoo","rushTds_yahoo","rec_yahoo","recYds_yahoo","recTds_yahoo","returnTDs_yahoo","twoPts_yahoo","fumbles_yahoo","pts_yahoo")] <-
-  apply(projections_yahoo[,c("passAtt_yahoo","passComp_yahoo","passYds_yahoo","passTds_yahoo","passInt_yahoo","rushAtt_yahoo","rushYds_yahoo","rushTds_yahoo","rec_yahoo","recYds_yahoo","recTds_yahoo","returnTDs_yahoo","twoPts_yahoo","fumbles_yahoo","pts_yahoo")], 2, function(x) gsub("\\,", "", x))
+projections_yahoo[,c("passAtt_yahoo","passComp_yahoo","passYds_yahoo","passTds_yahoo","passInt_yahoo","rushAtt_yahoo","rushYds_yahoo","rushTds_yahoo","rec_yahoo","recYds_yahoo","recTds_yahoo","returnTds_yahoo","twoPts_yahoo","fumbles_yahoo","pts_yahoo")] <-
+  apply(projections_yahoo[,c("passAtt_yahoo","passComp_yahoo","passYds_yahoo","passTds_yahoo","passInt_yahoo","rushAtt_yahoo","rushYds_yahoo","rushTds_yahoo","rec_yahoo","recYds_yahoo","recTds_yahoo","returnTds_yahoo","twoPts_yahoo","fumbles_yahoo","pts_yahoo")], 2, function(x) gsub("\\,", "", x))
 
 #Convert variables from character strings to numeric
-projections_yahoo[,c("passAtt_yahoo","passComp_yahoo","passYds_yahoo","passTds_yahoo","passInt_yahoo","rushAtt_yahoo","rushYds_yahoo","rushTds_yahoo","rec_yahoo","recYds_yahoo","recTds_yahoo","returnTDs_yahoo","twoPts_yahoo","fumbles_yahoo","pts_yahoo")] <- 
-  convert.magic(projections_yahoo[,c("passAtt_yahoo","passComp_yahoo","passYds_yahoo","passTds_yahoo","passInt_yahoo","rushAtt_yahoo","rushYds_yahoo","rushTds_yahoo","rec_yahoo","recYds_yahoo","recTds_yahoo","returnTDs_yahoo","twoPts_yahoo","fumbles_yahoo","pts_yahoo")], "numeric")
+projections_yahoo[,c("passAtt_yahoo","passComp_yahoo","passYds_yahoo","passTds_yahoo","passInt_yahoo","rushAtt_yahoo","rushYds_yahoo","rushTds_yahoo","rec_yahoo","recYds_yahoo","recTds_yahoo","returnTds_yahoo","twoPts_yahoo","fumbles_yahoo","pts_yahoo")] <- 
+  convert.magic(projections_yahoo[,c("passAtt_yahoo","passComp_yahoo","passYds_yahoo","passTds_yahoo","passInt_yahoo","rushAtt_yahoo","rushYds_yahoo","rushTds_yahoo","rec_yahoo","recYds_yahoo","recTds_yahoo","returnTds_yahoo","twoPts_yahoo","fumbles_yahoo","pts_yahoo")], "numeric")
 
 #Player name, position, and team
 projections_yahoo$player <- str_trim(sapply(str_split(projections_yahoo$player, "\n"), "[[", 2))
@@ -80,9 +83,7 @@ projections_yahoo[which(projections_yahoo$pos == "WR"), "positionRank_yahoo"] <-
 projections_yahoo[which(projections_yahoo$pos == "TE"), "positionRank_yahoo"] <- rank(-projections_yahoo[which(projections_yahoo$pos == "TE"), "pts_yahoo"], ties.method="min")
 
 #Order variables in data set
-projections_yahoo <- projections_yahoo[,c("name","name_yahoo","pos","team_yahoo","positionRank_yahoo","overallRank_yahoo",
-                                          "passAtt_yahoo","passComp_yahoo","passYds_yahoo","passTds_yahoo","passInt_yahoo","rushAtt_yahoo","rushYds_yahoo","rushTds_yahoo","rec_yahoo","recYds_yahoo","recTds_yahoo",
-                                          "twoPts_yahoo","fumbles_yahoo","pts_yahoo")]
+projections_yahoo <- projections_yahoo[,c(prefix, paste(varNames, suffix, sep="_"))]
 
 #Order players by overall rank
 projections_yahoo <- projections_yahoo[order(projections_yahoo$overallRank_yahoo),]
