@@ -4,7 +4,6 @@
 # Date: 3/2/2013
 # Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
-# -ESPN projections do not include fumbles!
 # To do:
 ###########################
 
