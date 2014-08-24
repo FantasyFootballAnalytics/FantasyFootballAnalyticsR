@@ -28,9 +28,17 @@ IDP$pos <- gsub("\\d", "", IDP$pos)
 IDP$rank <- as.numeric(IDP[,"Ave"])
 IDP$risk <- as.numeric(IDP[,"Std Dev"])
 
+#Subset columns
 IDP <- IDP[,c("name","player","pos","team","rank","risk")]
 
+#Remove rows with all NAs
+IDP <- IDP[rowSums(is.na(IDP)) != ncol(IDP),]
+
+#Sort by rank
 IDP <- IDP[order(IDP$rank),]
+
+#Row names
+row.names(IDP) <- 1:nrow(IDP)
 
 #View Rankings
 IDP

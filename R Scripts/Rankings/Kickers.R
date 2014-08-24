@@ -30,8 +30,13 @@ kickers$team <- str_sub(kickers[,c("Player (team/bye)")], start=str_locate(kicke
 kickers$rank <- as.numeric(kickers[,"Ave"])
 kickers$risk <- as.numeric(kickers[,"Std Dev"])
 
+#Subset columns
 kickers <- kickers[,c("name","player","team","rank","risk")]
 
+#Remove rows with all NAs
+kickers <- kickers[rowSums(is.na(kickers)) != ncol(kickers),]
+
+#Sort by rank
 kickers <- kickers[order(kickers$rank),]
 
 #View Rankings
