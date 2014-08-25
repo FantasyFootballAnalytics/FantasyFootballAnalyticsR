@@ -49,6 +49,7 @@ optimizeTeam(maxRisk=4.1)
 optimizeTeam(maxRisk=4.2)
 optimizeTeam(maxRisk=4.4)
 optimizeTeam(maxRisk=4.9) #optimal
+optimizeTeam(maxRisk=5.0)
 optimizeTeam(maxRisk=5.1)
 optimizeTeam(maxRisk=5.2)
 optimizeTeam(maxRisk=5.4)
