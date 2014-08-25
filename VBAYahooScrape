@@ -1,0 +1,113 @@
+Sub NFL_Weekly_HistoricalData()
+    Application.DisplayAlerts = False
+    
+    Dim xmlHttp As Object
+    Dim TR_col As Object, TR As Object 'Table Row
+    Dim TD_col As Object, TD As Object ' Table Data
+    Dim row As Long, col As Long
+    
+    
+    Dim RB As Worksheet: Set RB = Sheets("RB")
+    iposition = "RB"
+    RB.Activate
+   
+    
+    col = 4 'Index data by position season and week number in first column
+    row = 2
+    
+    
+    For iseason = 2003 To 2013
+    
+        
+    ipagename = "http://sports.yahoo.com/nfl/stats/byposition?pos=" & iposition & "&conference=NFL&year=season_" & iseason & "&timeframe=All&sort=49&old_category=QB"
+    Set xmlHttp = CreateObject("MSXML2.XMLHTTP.6.0")
+    xmlHttp.Open "GET", ipagename, False
+   
+    xmlHttp.setRequestHeader "Content-Type", "text/xml"
+    xmlHttp.send
+
+    Dim html As Object
+    Set html = CreateObject("htmlfile")
+    html.body.innerHTML = xmlHttp.ResponseText
+
+    Dim tbl As Object
+    Set tbl = html.getElementById("curr_table")
+
+    Set TR_col = html.getelementsbytagname("TR")
+    For Each TR In TR_col
+        Set TD_col = TR.getelementsbytagname("TD")
+        For Each TD In TD_col
+            Cells(row, 2).Formula = "=Sum(" & Range(Cells(row, 4), Cells(row, 100)).Address(False, False) & ")"
+            Cells(row, 3) = iseason 'Creates and index
+            Cells(row, col) = TD.innerText
+            col = col + 1
+        Next
+        col = 4 'Reset column to start on second column
+        row = row + 1 'Need to keep row number increasing
+               
+        
+    Next
+    
+    
+    Next
+    
+    
+    irow = 2
+    'Inserting column headings
+    For irow = 2 To row
+        If Cells(irow, 4).Text = " Name" Then
+            Range(Cells(irow, 2), Cells(irow, 1000)).Copy
+            Cells(2, 2).Select
+            Selection.PasteSpecial Paste:=xlPasteValues
+            Exit For
+        End If
+    
+    Next
+    
+    Range("A1").Value = row
+    'Sorting Rows
+    Range(Cells(2, 2), Cells(row, 1000)).Sort Key1:=Range("B1"), Order1:=xlDescending, Header:=xlYes
+    
+        
+    'Cleaning up miscellaneous data
+    Range(Cells(1, 2), Cells(row * 2, 2)).Copy
+    Cells(1, 2).Select
+    Selection.PasteSpecial Paste:=xlPasteValues
+    
+    krow = 3
+    
+    For krow = 3 To row * 2
+          If Cells(krow, 2).Text = 0 Then
+              Rows(krow).EntireRow.Delete
+              krow = krow - 1
+        End If
+         
+    Next
+        
+    Range(Cells(3, 1), Cells(row * 2, 1000)).Sort Key1:=Range("B2"), Order1:=xlDescending, Header:=xlYes
+        
+        
+    'Clean Up title
+    Range(Cells(1, 1), Cells(2, 3)).ClearContents
+      
+    'Removing Index
+    'Columns(1).Delete Shift:=xlToLeft
+    Columns(2).Delete Shift:=xlToLeft
+    Columns(1).Delete Shift:=xlToLeft
+            
+    Range("A2").Value = "Year"
+    
+    
+    
+    
+          
+            
+        
+    
+    
+    'Next
+    ActiveWorkbook.Save
+        
+
+End Sub
+
