@@ -71,35 +71,10 @@ for(i in 1:length(dropNames)){
 
 projections <- merge(projections2, projections[,c("name","player","pos","team")], by="name", all.x=TRUE)
 
-#Calculate projections for each source
+#Calculate stat categories for each source
 for(i in 1:length(sourcesOfProjectionsAbbreviation)){
-  projections[,paste(c("passAttPts","passCompPts","passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","returnTdsPts","twoPtsPts","fumblesPts"), sourcesOfProjectionsAbbreviation[i], sep="_")] <- NA
-  
   projections[,paste("passIncomp", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passAtt", sourcesOfProjectionsAbbreviation[i], sep="_")] - projections[,paste("passComp", sourcesOfProjectionsAbbreviation[i], sep="_")]
-  
-  projections[,paste("passAttPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passAtt", sourcesOfProjectionsAbbreviation[i], sep="_")] * passAttMultiplier
-  projections[,paste("passCompPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passComp", sourcesOfProjectionsAbbreviation[i], sep="_")] * passCompMultiplier
-  projections[,paste("passIncompPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passIncomp", sourcesOfProjectionsAbbreviation[i], sep="_")] * passIncompMultiplier
-  projections[,paste("passYdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passYds", sourcesOfProjectionsAbbreviation[i], sep="_")] * passYdsMultiplier
-  projections[,paste("passTdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passTds", sourcesOfProjectionsAbbreviation[i], sep="_")] * passTdsMultiplier
-  projections[,paste("passIntPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passInt", sourcesOfProjectionsAbbreviation[i], sep="_")] * passIntMultiplier
-  projections[,paste("rushAttPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("rushAtt", sourcesOfProjectionsAbbreviation[i], sep="_")] * rushAttMultiplier
-  projections[,paste("rushYdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("rushYds", sourcesOfProjectionsAbbreviation[i], sep="_")] * rushYdsMultiplier
-  projections[,paste("rushTdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("rushTds", sourcesOfProjectionsAbbreviation[i], sep="_")] * rushTdsMultiplier
-  projections[,paste("recPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("rec", sourcesOfProjectionsAbbreviation[i], sep="_")] * recMultiplier
-  projections[,paste("recYdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("recYds", sourcesOfProjectionsAbbreviation[i], sep="_")] * recYdsMultiplier
-  projections[,paste("recTdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("recTds", sourcesOfProjectionsAbbreviation[i], sep="_")] * recTdsMultiplier
-  projections[,paste("returnTdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("returnTds", sourcesOfProjectionsAbbreviation[i], sep="_")] * returnTdsMultiplier
-  projections[,paste("twoPtsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("twoPts", sourcesOfProjectionsAbbreviation[i], sep="_")] * twoPtsMultiplier
-  projections[,paste("fumblesPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("fumbles", sourcesOfProjectionsAbbreviation[i], sep="_")] * fumlMultiplier
-  
-  projections[,paste("projectedPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- NA
-  
-  projections[,paste("projectedPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- mySum(projections[,paste(c("passAttPts","passIncompPts","passYdsPts","passTdsPts","passIntPts","rushAttPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","returnTdsPts","twoPtsPts","fumblesPts"), sourcesOfProjectionsAbbreviation[i], sep="_")])
 }
-
-#Remove WalterFootball projections because they don't separate rushing TDs from receiving TDs
-projections$projectedPts_wf <- NA
 
 #Calculate average of categories
 projections$passAtt <- rowMeans(projections[,paste("passAtt", sourcesOfProjectionsAbbreviation, sep="_")], na.rm=TRUE)
@@ -186,24 +161,99 @@ projections$twoPtsMedianPts <- projections$twoPtsMedian * twoPtsMultiplier
 projections$fumblesMedianPts <- projections$fumblesMedian * fumlMultiplier
 
 #Check projections
-projections[,c("name",paste("passAttPts", sourcesOfProjectionsAbbreviation, sep="_"), c("passAttPts","passAttMedianPts"))]
-projections[,c("name",paste("passCompPts", sourcesOfProjectionsAbbreviation, sep="_"), c("passCompPts","passCompMedianPts"))]
-projections[,c("name",paste("passIncompPts", sourcesOfProjectionsAbbreviation, sep="_"), c("passIncompPts","passIncompMedianPts"))]
-projections[,c("name",paste("passYdsPts", sourcesOfProjectionsAbbreviation, sep="_"), c("passYdsPts","passYdsMedianPts"))]
-projections[,c("name",paste("passTdsPts", sourcesOfProjectionsAbbreviation, sep="_"), c("passTdsPts","passTdsMedianPts"))]
-projections[,c("name",paste("passIntPts", sourcesOfProjectionsAbbreviation, sep="_"), c("passIntPts","passIntMedianPts"))]
-projections[,c("name",paste("rushAttPts", sourcesOfProjectionsAbbreviation, sep="_"), c("rushAttPts","rushAttMedianPts"))]
-projections[,c("name",paste("rushYdsPts", sourcesOfProjectionsAbbreviation, sep="_"), c("rushYdsPts","rushYdsMedianPts"))]
-projections[,c("name",paste("rushTdsPts", sourcesOfProjectionsAbbreviation, sep="_"), c("rushTdsPts","rushYdsMedianPts"))]
-projections[,c("name",paste("recPts", sourcesOfProjectionsAbbreviation, sep="_"), c("recPts","recMedianPts"))]
-projections[,c("name",paste("recYdsPts", sourcesOfProjectionsAbbreviation, sep="_"), c("recYdsPts","recYdsMedianPts"))]
-projections[,c("name",paste("recTdsPts", sourcesOfProjectionsAbbreviation, sep="_"), c("recTdsPts","recTdsMedianPts"))]
-projections[,c("name",paste("returnTdsPts", sourcesOfProjectionsAbbreviation, sep="_"), c("returnTdsPts","returnTdsMedianPts"))]
-projections[,c("name",paste("twoPtsPts", sourcesOfProjectionsAbbreviation, sep="_"), c("twoPtsPts","twoPtsMedianPts"))]
-projections[,c("name",paste("fumblesPts", sourcesOfProjectionsAbbreviation, sep="_"), c("fumblesPts","fumblesMedianPts"))]
+projections[,c("passAttPts","passAttMedianPts")]
+projections[,c("passCompPts","passCompMedianPts")]
+projections[,c("passIncompPts","passIncompMedianPts")]
+projections[,c("passYdsPts","passYdsMedianPts")]
+projections[,c("passTdsPts","passTdsMedianPts")]
+projections[,c("passIntPts","passIntMedianPts")]
+projections[,c("rushAttPts","rushAttMedianPts")]
+projections[,c("rushYdsPts","rushYdsMedianPts")]
+projections[,c("rushTdsPts","rushYdsMedianPts")]
+projections[,c("recPts","recMedianPts")]
+projections[,c("recYdsPts","recYdsMedianPts")]
+projections[,c("recTdsPts","recTdsMedianPts")]
+projections[,c("returnTdsPts","returnTdsMedianPts")]
+projections[,c("twoPtsPts","twoPtsMedianPts")]
+projections[,c("fumblesPts","fumblesMedianPts")]
 
 projections$projectedPtsMean <- mySum(projections[,c("passAttPts","passCompPts","passIncompPts","passYdsPts","passTdsPts","passIntPts","rushAttPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","returnTdsPts","twoPtsPts","fumblesPts")])
 projections$projectedPtsMedian <- mySum(projections[,c("passAttMedianPts","passCompMedianPts","passIncompMedianPts","passYdsMedianPts","passTdsMedianPts","passIntMedianPts","rushAttMedianPts","rushYdsMedianPts","rushTdsMedianPts","recMedianPts","recYdsMedianPts","recTdsMedianPts","returnTdsMedianPts","twoPtsMedianPts","fumblesMedianPts")])
+
+#If variable is all missing for source, impute mean of other sources
+if(sum(unlist(lapply(projections[,paste("passAtt", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))) > 0){
+  projections[,paste("passAtt", sourcesOfProjectionsAbbreviation, sep="_")][,unlist(lapply(projections[,paste("passAtt", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))] <- projections$passAttMedian
+}
+if(sum(unlist(lapply(projections[,paste("passComp", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))) > 0){
+  projections[,paste("passComp", sourcesOfProjectionsAbbreviation, sep="_")][,unlist(lapply(projections[,paste("passComp", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))] <- projections$passCompMedian
+}
+if(sum(unlist(lapply(projections[,paste("passIncomp", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))) > 0){
+  projections[,paste("passIncomp", sourcesOfProjectionsAbbreviation, sep="_")][,unlist(lapply(projections[,paste("passIncomp", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))] <- projections$passIncompMedian
+}
+if(sum(unlist(lapply(projections[,paste("passYds", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))) > 0){
+  projections[,paste("passYds", sourcesOfProjectionsAbbreviation, sep="_")][,unlist(lapply(projections[,paste("passYds", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))] <- projections$passYdsMedian
+}
+if(sum(unlist(lapply(projections[,paste("passTds", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))) > 0){
+  projections[,paste("passTds", sourcesOfProjectionsAbbreviation, sep="_")][,unlist(lapply(projections[,paste("passTds", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))] <- projections$passTdsMedian
+}
+if(sum(unlist(lapply(projections[,paste("passInt", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))) > 0){
+  projections[,paste("passInt", sourcesOfProjectionsAbbreviation, sep="_")][,unlist(lapply(projections[,paste("passInt", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))] <- projections$passIntMedian
+}
+if(sum(unlist(lapply(projections[,paste("rushAtt", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))) > 0){
+  projections[,paste("rushAtt", sourcesOfProjectionsAbbreviation, sep="_")][,unlist(lapply(projections[,paste("rushAtt", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))] <- projections$rushAttMedian
+}
+if(sum(unlist(lapply(projections[,paste("rushYds", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))) > 0){
+  projections[,paste("rushYds", sourcesOfProjectionsAbbreviation, sep="_")][,unlist(lapply(projections[,paste("rushYds", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))] <- projections$rushYdsMedian
+}
+if(sum(unlist(lapply(projections[,paste("rushTds", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))) > 0){
+  projections[,paste("rushTds", sourcesOfProjectionsAbbreviation, sep="_")][,unlist(lapply(projections[,paste("rushTds", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))] <- projections$rushTdsMedian
+}
+if(sum(unlist(lapply(projections[,paste("rec", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))) > 0){
+  projections[,paste("rec", sourcesOfProjectionsAbbreviation, sep="_")][,unlist(lapply(projections[,paste("rec", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))] <- projections$recMedian
+}
+if(sum(unlist(lapply(projections[,paste("recYds", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))) > 0){
+  projections[,paste("recYds", sourcesOfProjectionsAbbreviation, sep="_")][,unlist(lapply(projections[,paste("recYds", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))] <- projections$recYdsMedian
+}
+if(sum(unlist(lapply(projections[,paste("recTds", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))) > 0){
+  projections[,paste("recTds", sourcesOfProjectionsAbbreviation, sep="_")][,unlist(lapply(projections[,paste("recTds", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))] <- projections$recTdsMedian
+}
+if(sum(unlist(lapply(projections[,paste("returnTds", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))) > 0){
+  projections[,paste("returnTds", sourcesOfProjectionsAbbreviation, sep="_")][,unlist(lapply(projections[,paste("returnTds", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))] <- projections$returnTdsMedian
+}
+if(sum(unlist(lapply(projections[,paste("twoPts", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))) > 0){
+  projections[,paste("twoPts", sourcesOfProjectionsAbbreviation, sep="_")][,unlist(lapply(projections[,paste("twoPts", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))] <- projections$twoPtsMedian
+}
+if(sum(unlist(lapply(projections[,paste("fumbles", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))) > 0){
+  projections[,paste("fumbles", sourcesOfProjectionsAbbreviation, sep="_")][,unlist(lapply(projections[,paste("fumbles", sourcesOfProjectionsAbbreviation, sep="_")], function(x) all(is.na(x))))] <- projections$fumblesMedian
+}
+
+#Calculate projections for each source
+for(i in 1:length(sourcesOfProjectionsAbbreviation)){
+  projections[,paste(c("passAttPts","passCompPts","passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","returnTdsPts","twoPtsPts","fumblesPts"), sourcesOfProjectionsAbbreviation[i], sep="_")] <- NA
+  
+  projections[,paste("passAttPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passAtt", sourcesOfProjectionsAbbreviation[i], sep="_")] * passAttMultiplier
+  projections[,paste("passCompPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passComp", sourcesOfProjectionsAbbreviation[i], sep="_")] * passCompMultiplier
+  projections[,paste("passIncompPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passIncomp", sourcesOfProjectionsAbbreviation[i], sep="_")] * passIncompMultiplier
+  projections[,paste("passYdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passYds", sourcesOfProjectionsAbbreviation[i], sep="_")] * passYdsMultiplier
+  projections[,paste("passTdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passTds", sourcesOfProjectionsAbbreviation[i], sep="_")] * passTdsMultiplier
+  projections[,paste("passIntPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("passInt", sourcesOfProjectionsAbbreviation[i], sep="_")] * passIntMultiplier
+  projections[,paste("rushAttPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("rushAtt", sourcesOfProjectionsAbbreviation[i], sep="_")] * rushAttMultiplier
+  projections[,paste("rushYdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("rushYds", sourcesOfProjectionsAbbreviation[i], sep="_")] * rushYdsMultiplier
+  projections[,paste("rushTdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("rushTds", sourcesOfProjectionsAbbreviation[i], sep="_")] * rushTdsMultiplier
+  projections[,paste("recPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("rec", sourcesOfProjectionsAbbreviation[i], sep="_")] * recMultiplier
+  projections[,paste("recYdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("recYds", sourcesOfProjectionsAbbreviation[i], sep="_")] * recYdsMultiplier
+  projections[,paste("recTdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("recTds", sourcesOfProjectionsAbbreviation[i], sep="_")] * recTdsMultiplier
+  projections[,paste("returnTdsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("returnTds", sourcesOfProjectionsAbbreviation[i], sep="_")] * returnTdsMultiplier
+  projections[,paste("twoPtsPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("twoPts", sourcesOfProjectionsAbbreviation[i], sep="_")] * twoPtsMultiplier
+  projections[,paste("fumblesPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- projections[,paste("fumbles", sourcesOfProjectionsAbbreviation[i], sep="_")] * fumlMultiplier
+  
+  projections[,paste("projectedPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- NA
+  
+  projections[,paste("projectedPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- mySum(projections[,paste(c("passAttPts","passIncompPts","passYdsPts","passTdsPts","passIntPts","rushAttPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","returnTdsPts","twoPtsPts","fumblesPts"), sourcesOfProjectionsAbbreviation[i], sep="_")])
+}
+
+#Remove WalterFootball projections because they don't separate rushing TDs from receiving TDs
+projections$projectedPts_wf <- NA
 
 #Check projections
 projections[,c("name",paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"), c("projectedPtsMean","projectedPtsMedian"))]
