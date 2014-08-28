@@ -138,7 +138,7 @@ optimizeTeam(points=optimizeData$solutionSum, maxRisk=4.9)
 optimizeTeam(points=optimizeData$solutionSum, maxRisk=6.8)
 
 #Set Optimal Risk
-optimalRisk <- 4.3
+optimalRisk <- 4.2
 
 ###Determine Points for Team that Maximizes Log of Solution Sum with Risk < Optimal Risk
 #Solution
@@ -147,13 +147,13 @@ optimizeTeam(points=optimizeData$simulation, maxRisk=optimalRisk)
 #Roster + Projections
 optimizeData[optimizeData$player %in% optimizeTeam(points=optimizeData$simulation, maxRisk=optimalRisk)$players, c("player","projections")]
 
-#Sum of Projected Points: 1442
+#Sum of Projected Points: 1436
 sum(optimizeData[optimizeData$player %in% optimizeTeam(points=optimizeData$simulation, maxRisk=optimalRisk)$players, "projections"])
 
-#Maximum Possible Projected Points with Same Risk: 1469
+#Maximum Possible Projected Points with Same Risk: 1477
 optimizeTeam(maxRisk=optimalRisk)
 
-#Maximum Possible Projected Points with Maximal Risk: 1484
+#Maximum Possible Projected Points with Maximal Risk: 1491
 optimizeTeam(maxRisk=100)
 
 #Chosen Lineup Points: 1454

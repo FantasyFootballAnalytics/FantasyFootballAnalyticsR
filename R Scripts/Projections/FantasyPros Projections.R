@@ -107,8 +107,8 @@ for(i in 1:length(dropNames)){
 projections_fp <- merge(projections_fp2, projections_fp[,c("name","name_fp","player_fp","pos","team_fp")], by="name")
 
 #Rename Players
-projections_fp$name[which(projections_fp$name == "CHRISTOPHERIVORY")] <- "CHRISIVORY"
-projections_fp[projections_fp$name == "DOMANIQUEDAVIS", "name"] <- "DOMINIQUEDAVIS"
+if(length(projections_fp[projections_fp$name == "CHRISTOPHERIVORY", "name"]) > 0){projections_fp[projections_fp$name == "CHRISTOPHERIVORY", "name"] <- "CHRISIVORY"}
+if(length(projections_fp[projections_fp$name == "DOMANIQUEDAVIS", "name"]) > 0){projections_fp[projections_fp$name == "DOMANIQUEDAVIS", "name"] <- "DOMINIQUEDAVIS"}
 
 #Calculate overall rank
 projections_fp$overallRank_fp <- rank(-projections_fp$pts_fp, ties.method="min")

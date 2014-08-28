@@ -109,7 +109,6 @@ projections_accu[which(projections_accu$pos == "DL"), "positionRank_accu"] <- ra
 projections_accu[which(projections_accu$pos == "LB"), "positionRank_accu"] <- rank(-projections_accu[which(projections_accu$pos == "LB"), "pts_accu"], ties.method="min")
 projections_accu[which(projections_accu$pos == "DB"), "positionRank_accu"] <- rank(-projections_accu[which(projections_accu$pos == "DB"), "pts_accu"], ties.method="min")
 
-
 #Order variables in data set
 projections_accu <- projections_accu[,c(prefix, paste(varNames, suffix, sep="_"))]
 

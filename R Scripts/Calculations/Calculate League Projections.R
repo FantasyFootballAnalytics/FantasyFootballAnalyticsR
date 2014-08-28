@@ -57,9 +57,9 @@ projections[projections$name %in% projections$name[duplicated(projections$name)]
 #Same name, different player
 
 #Same player, different position
-dropNames <- c("DENARDROBINSON","DEXTERMCCLUSTER","THEORIDDICK","ORSONCHARLES","JOEWEBB","EMILIGWENAGU","EVANRODRIGUEZ","BRADSMELLEY","RICHIEBROCKEL","BEARPASCOE","JEDCOLLINS","MARCUSTHIGPEN")
-dropVariables <- c("pos","pos","pos","pos","pos","pos","pos","pos","pos","pos","pos","pos")
-dropLabels <- c("RB","WR","WR","TE","WR","RB","TE","TE","RB","RB","TE","WR")
+dropNames <- c("DENARDROBINSON","DEXTERMCCLUSTER","THEORIDDICK","ORSONCHARLES","JOEWEBB","EMILIGWENAGU","EVANRODRIGUEZ","BRADSMELLEY","RICHIEBROCKEL","BEARPASCOE","JEDCOLLINS","MARCUSTHIGPEN","JORDANLYNCH")
+dropVariables <- c("pos","pos","pos","pos","pos","pos","pos","pos","pos","pos","pos","pos","pos")
+dropLabels <- c("RB","WR","WR","TE","WR","RB","TE","TE","RB","RB","TE","WR","QB")
 
 projections2 <- ddply(projections, .(name), numcolwise(mean), na.rm=TRUE)
 

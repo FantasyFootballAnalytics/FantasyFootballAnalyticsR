@@ -23,7 +23,7 @@ suffix <- "fs"
 projections_fs <- read.csv("http://www.fantasysharks.com/apps/Projections/SeasonCSVProjections.php?l=11", stringsAsFactors = FALSE)
 
 #Player position
-projections_fs$pos <- projections_fs$Pos
+projections_fs$pos <- as.factor(projections_fs$Pos)
 
 #Keep only QB, RB, WR, TE
 projections_fs <- projections_fs[which(projections_fs$pos %in% c("QB","RB","WR","TE")),]

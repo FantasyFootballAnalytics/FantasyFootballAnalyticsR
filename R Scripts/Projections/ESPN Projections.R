@@ -93,10 +93,23 @@ projections_espn$team_espn[projections_espn$team_espn=="WSH"] <- "WAS"
 
 #Remove duplicate cases
 projections_espn[projections_espn$name %in% projections_espn[duplicated(projections_espn$name),"name"],]
-#projections_espn <- projections_espn[-which(projections_espn$name_espn=="Dexter McCluster" & projections_espn$pos=="RB"),]
+
+#Same player, different position
+dropNames <- c("DEXTERMCCLUSTER")
+dropVariables <- c("pos")
+dropLabels <- c("WR")
+
+projections_espn2 <- ddply(projections_espn, .(name), numcolwise(mean), na.rm=TRUE)
+
+for(i in 1:length(dropNames)){
+  if(dim(projections_espn[-which(projections_espn[,"name"] == dropNames[i] & projections_espn[,dropVariables[i]] == dropLabels[i]),])[1] > 0){
+    projections_espn <- projections_espn[-which(projections_espn[,"name"] == dropNames[i] & projections_espn[,dropVariables[i]] == dropLabels[i]),]
+  }
+}
+
+projections_espn <- merge(projections_espn2, projections_espn[,c("name","name_espn","player_espn","pos","team_espn")], by="name")
 
 #Rename players
-#projections_espn[projections_espn$name_espn=="EJ Manuel", "name_espn"] <- "E.J. Manuel"
 
 #Calculate overall rank
 projections_espn$overallRank_espn <- rank(-projections_espn$pts_espn, ties.method="min")
