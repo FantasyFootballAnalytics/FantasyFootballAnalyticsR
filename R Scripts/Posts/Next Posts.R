@@ -1,13 +1,15 @@
-#WAIT FOR AVG COST
-#1. Avg Cost
+###########
+# Posts
+###########
+# 1. Re-evaluate projections
 
-#WAIT FOR UPDATED PROJECTIONS, RE-CALCULATE PROJECTIONS
-#2. Optimum Roster
-#3. Simulation
-#4. Bid Up To
-#5. Sleepers
-#6. Re-evaluating projections
+###########
+# Apps
+###########
+# 1. Weekly projections
 
-#Other sources of projections:
-http://msn.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx
-http://www.fftoolbox.com/football/2014/cheatsheets.cfm
+###########
+# Other sources of projections
+###########
+# 1. http://www.eatdrinkandsleepfootball.com/fantasy/projections/
+# 2. http://pickingpros.com/nfl/overall-fantasy-projections.php
