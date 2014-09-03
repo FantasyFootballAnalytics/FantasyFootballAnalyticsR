@@ -142,13 +142,14 @@ avgCost_fp$cost_fp <- as.numeric(sub("\\$","", avgCost_fp$Ave))
 avgCost_fp$team_fp <- nameMerge(str_sub(avgCost_fp[,c("Player (pos, team, bye)")], start=str_locate(avgCost_fp[,c("Player (pos, team, bye)")], "\\(")[,1]+1, end=str_locate(avgCost_fp[,c("Player (pos, team, bye)")], "\\(")[,1]+3))
 avgCost_fp$pos_fp <- as.factor(nameMerge(str_sub(avgCost_fp[,c("Player (pos, team, bye)")], start=str_locate(avgCost_fp[,c("Player (pos, team, bye)")], "\\,")[,1]+2, end=str_locate(avgCost_fp[,c("Player (pos, team, bye)")], "\\,")[,1]+3)))
 avgCost_fp$adp_fp <- as.numeric(avgCost_fp$ADP)
+avgCost_fp$ecr_fp <- as.numeric(avgCost_fp$ECR)
 
 #Rename Players
 avgCost_fp[grep("CHRISTOPHERIVORY", avgCost_fp[,c("name")]),"name"] <- "CHRISIVORY"
 #avgCost_fp[avgCost_fp$name=="DOMANIQUEDAVIS", "name"] <- "DOMINIQUEDAVIS"
 
 #Subset
-cost_fp <- avgCost_fp[,c("name","name_fp","pos_fp","team_fp","cost_fp","adp_fp")]
+cost_fp <- avgCost_fp[,c("name","name_fp","pos_fp","team_fp","cost_fp","adp_fp","ecr_fp")]
 
 ###############
 # FantasyFootballCalculator
@@ -252,3 +253,9 @@ write.csv(projections, file=paste(getwd(),"/Data/AvgCost.csv", sep=""), row.name
 
 save(projections, file = paste(getwd(),"/Data/Historical Cost/AvgCost-2014.RData", sep=""))
 write.csv(projections, file=paste(getwd(),"/Data/Historical Cost/AvgCost-2014.csv", sep=""), row.names=FALSE)
+
+save(projections, file = paste(getwd(),"/Data/Rankings.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/Rankings.csv", sep=""), row.names=FALSE)
+
+save(projections, file = paste(getwd(),"/Data/Historical Rankings/Rankings-2014.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/Historical Rankings/Rankings-2014.csv", sep=""), row.names=FALSE)

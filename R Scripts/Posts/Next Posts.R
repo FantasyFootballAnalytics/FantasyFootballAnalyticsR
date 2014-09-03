@@ -2,6 +2,7 @@
 # Posts
 ###########
 # 1. Re-evaluate projections
+# 2. Compare projections to rankings
 
 ###########
 # Apps

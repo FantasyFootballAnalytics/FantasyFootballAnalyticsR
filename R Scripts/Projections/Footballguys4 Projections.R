@@ -98,6 +98,8 @@ projections_fbg4$name <- nameMerge(projections_fbg4$name_fbg4)
 projections_fbg4[projections_fbg4$name %in% projections_fbg4[duplicated(projections_fbg4$name),"name"],]
 
 #Same name, different player
+projections_fbg4 <- projections_fbg4[-which(projections_fbg4$name=="ALEXSMITH" & projections_fbg4$team_fbg4=="CIN"),]
+projections_fbg4 <- projections_fbg4[-which(projections_fbg4$name=="RYANGRIFFIN" & projections_fbg4$team_fbg4=="NO"),]
 
 #Same player, different position
 

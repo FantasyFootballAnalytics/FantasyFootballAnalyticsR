@@ -60,13 +60,15 @@ projections_fs[,c("passAtt_fs","passComp_fs","passYds_fs","passTds_fs","passInt_
 projections_fs[projections_fs$name %in% projections_fs[duplicated(projections_fs$name),"name"],]
 
 #Same name, different player
-projections_fs <- projections_fs[-which(projections_fs$name=="RYANGRIFFIN" & projections_fs$pos=="QB"),]
+projections_fs <- projections_fs[-which(projections_fs$name=="ALEXSMITH" & projections_fs$team_fs=="CIN"),]
+projections_fs <- projections_fs[-which(projections_fs$name=="ZACHMILLER" & projections_fs$team_fs=="CHI"),]
+#projections_fs <- projections_fs[-which(projections_fs$name=="RYANGRIFFIN" & projections_fs$pos=="QB"),]
 
 #Same player, different position
 
 #Rename players
-projections_fs[projections_fs$name=="BENWATSON", "name"] <- "BENJAMINWATSON"
-projections_fs[projections_fs$name=="STEVIEJOHNSON", "name"] <- "STEVEJOHNSON"
+if(length(projections_fs[projections_fs$name == "BENJAMINWATSON", "name"]) > 0){projections_fs[projections_fs$name == "BENJAMINWATSON", "name"] <- "BENJAMINWATSON"}
+if(length(projections_fs[projections_fs$name == "STEVIEJOHNSON", "name"]) > 0){projections_fs[projections_fs$name == "STEVIEJOHNSON", "name"] <- "STEVEJOHNSON"}
 
 #Calculate overall rank
 projections_fs$overallRank_fs <- rank(-projections_fs$pts_fs, ties.method="min")

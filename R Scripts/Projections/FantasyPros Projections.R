@@ -89,12 +89,13 @@ if(length(which(projections_fp$name_fp == "")) > 0){
 projections_fp[projections_fp$name %in% projections_fp[duplicated(projections_fp$name),"name"],]
 
 #Same name, different player
-projections_fp <- projections_fp[-which(projections_fp$name=="ZACHMILLER" & projections_fp$team_fp=="CHI"),]
+projections_fp <- projections_fp[-which(projections_fp$name=="ALEXSMITH" & projections_fp$team_fp=="CIN"),]
+projections_fp <- projections_fp[-which(projections_fp$name=="RYANGRIFFIN" & projections_fp$team_fp=="HOU"),]
 
 #Same player, different position
-dropNames <- c("DEXTERMCCLUSTER")
-dropVariables <- c("pos")
-dropLabels <- c("WR")
+dropNames <- c("DEXTERMCCLUSTER","DENARDROBINSON","JAMESCASEY","CORYHARKEY","RYANHEWITT","NILESPAUL")
+dropVariables <- c("pos","pos","pos","pos","pos","pos")
+dropLabels <- c("WR","RB","RB","RB","RB","TE")
 
 projections_fp2 <- ddply(projections_fp, .(name), numcolwise(mean), na.rm=TRUE)
 
