@@ -29,7 +29,7 @@ te_eds <- readHTMLTable("http://www.eatdrinkandsleepfootball.com/fantasy/project
 #Add variable names for each object
 names(qb_eds) <- c("positionRank_eds","player_eds","team_eds","passComp_eds","passAtt_eds","passYds_eds","passTds_eds","passInt_eds","rushAtt_eds","rushYds_eds","rushTds_eds","pts_eds")
 names(rb_eds) <- c("positionRank_eds","player_eds","team_eds","rushAtt_eds","rushYds_eds","rushTds_eds","rec_eds","recYds_eds","recTds_eds","pts_eds")
-names(wr_eds) <- c("positionRank_eds","player_eds","team_eds","rushAtt_eds","rushYds_eds","rushTds_eds","rec_eds","recYds_eds","recTds_eds","pts_eds")
+names(wr_eds) <- c("positionRank_eds","player_eds","team_eds","rec_eds","recYds_eds","recTds_eds","rushAtt_eds","rushYds_eds","rushTds_eds","pts_eds")
 names(te_eds) <- c("positionRank_eds","player_eds","team_eds","rec_eds","recYds_eds","recTds_eds","pts_eds")
 
 #Add variable for player position
