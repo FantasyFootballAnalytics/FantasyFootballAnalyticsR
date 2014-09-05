@@ -252,9 +252,6 @@ for(i in 1:length(sourcesOfProjectionsAbbreviation)){
   projections[,paste("projectedPts", sourcesOfProjectionsAbbreviation[i], sep="_")] <- mySum(projections[,paste(c("passAttPts","passIncompPts","passYdsPts","passTdsPts","passIntPts","rushAttPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","returnTdsPts","twoPtsPts","fumblesPts"), sourcesOfProjectionsAbbreviation[i], sep="_")])
 }
 
-#Remove WalterFootball projections because they don't separate rushing TDs from receiving TDs
-projections$projectedPts_wf <- NA
-
 #Check projections
 projections[,c("name",paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_"), c("projectedPtsMean","projectedPtsMedian"))]
 projections[,c("name","projectedPtsMean","projectedPtsMedian")]
