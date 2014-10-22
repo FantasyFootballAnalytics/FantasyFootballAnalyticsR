@@ -12,6 +12,7 @@
 ###########
 # 1. Add PPR ADP: http://fantasyfootballcalculator.com/adp_csv.php?format=ppr&teams=12
 # 2. Weekly projections
+# 3. Trade Analyzer
 
 ###########
 # Other sources of projections

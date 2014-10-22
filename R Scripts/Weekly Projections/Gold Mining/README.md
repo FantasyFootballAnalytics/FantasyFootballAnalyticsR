@@ -1,0 +1,1 @@
+R Scripts for Weekly Gold Mining.
