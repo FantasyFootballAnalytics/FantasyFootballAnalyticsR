@@ -10,7 +10,7 @@ NAtoZero <- function (DT) {
 }
 
 #Upcomming Week
-seasonStart<- as.Date("2014-08-28")
+seasonStart<- as.Date("2014-08-27")
 next_week <- trunc(as.numeric((as.Date(Sys.time())-seasonStart))/7)
 
 #I'm writting this script for WRs in a PPR league, but we might as well make it flexible.
@@ -81,30 +81,30 @@ NAtoZero(espn)
 espn[,player:=NULL]
 
 # Get FF Today WR Data ####
-fft_pos<-list(QB=10,RB=20,WR=30,TE=40,K=80)
-fft_base_url<-paste("http://www.fftoday.com/rankings/playerwkproj.php?Season=",
-                    year(seasonStart),"&GameWeek=",next_week,
-                    "&LeagueID=1&order_by=FFPts&sort_order=DESC&PosID=",fft_pos[[spos]],sep="")
-fft_pages<-c("0","1")
-fft_urls<-paste(fft_base_url,"&cur_page=",fft_pages,sep="")
-fft<-lapply(fft_urls,function(x) {data.table(readHTMLTable(x, as.data.frame=TRUE, stringsAsFactors=FALSE)[11]$`NULL`)})
-#Do row removal pior to rbind
-for(i in 1:length(fft)) {
-  ##Delete Row 1
-  fft[[i]]<-fft[[i]][2:nrow(fft[[i]])]
-}
-fft<-rbindlist(fft)
-##Add week, pos, src, and writer.
-fft[,c("week","pos","src","writer","scoring"):=list(next_week,spos,"fft","fft","std")]
-##Delete extraneous collumns
-fft[,c("V1","V4"):=NULL]
-##setnames
-setnames(fft,c("V2","V3","V5","V6","V7","V8"),c("player","team","rec","rec_yd","rec_td","fpts"))
-##Add player name
-fft[,name:=str_replace_all(player, "^Â\\s+", "")]
-##convert to numeric
-fft[,c("rec","rec_yd","rec_td","fpts"):=lapply(list(rec,rec_yd,rec_td,fpts),as.numeric)]
-fft[,player:=NULL]
+# fft_pos<-list(QB=10,RB=20,WR=30,TE=40,K=80)
+# fft_base_url<-paste("http://www.fftoday.com/rankings/playerwkproj.php?Season=",
+#                     year(seasonStart),"&GameWeek=",next_week,
+#                     "&LeagueID=1&order_by=FFPts&sort_order=DESC&PosID=",fft_pos[[spos]],sep="")
+# fft_pages<-c("0","1")
+# fft_urls<-paste(fft_base_url,"&cur_page=",fft_pages,sep="")
+# fft<-lapply(fft_urls,function(x) {data.table(readHTMLTable(x, as.data.frame=TRUE, stringsAsFactors=FALSE)[11]$`NULL`)})
+# #Do row removal pior to rbind
+# for(i in 1:length(fft)) {
+#   ##Delete Row 1
+#   fft[[i]]<-fft[[i]][2:nrow(fft[[i]])]
+# }
+# fft<-rbindlist(fft)
+# ##Add week, pos, src, and writer.
+# fft[,c("week","pos","src","writer","scoring"):=list(next_week,spos,"fft","fft","std")]
+# ##Delete extraneous collumns
+# fft[,c("V1","V4"):=NULL]
+# ##setnames
+# setnames(fft,c("V2","V3","V5","V6","V7","V8"),c("player","team","rec","rec_yd","rec_td","fpts"))
+# ##Add player name
+# fft[,name:=str_replace_all(player, "^Â\\s+", "")]
+# ##convert to numeric
+# fft[,c("rec","rec_yd","rec_td","fpts"):=lapply(list(rec,rec_yd,rec_td,fpts),as.numeric)]
+# fft[,player:=NULL]
 
 # Get FF Sharks Data ####
 ffs_pos=list(QB="QB",RB="RB",WR="WR",TE="TE",flex="FLEX",K="PK",DEF="D")
@@ -187,7 +187,8 @@ for(i in 1:length(ranks)){
 
 # Aggregate ####
 
-proj<-list(cbs,espn,ffs,fft,fx,pp,yahoo)
+#proj<-list(cbs,espn,ffs,fft,fx,pp,yahoo)
+proj<-list(cbs,espn,ffs,fx,pp,yahoo)
 
 for(i in 1:length(proj)){
   setcolorder(proj[[i]],c("pos","week","name","team","rec","rec_yd","rec_td","fpts","scoring","src","writer"))
@@ -223,7 +224,7 @@ ffa[name=="Steve Smith Sr.",name:="Steve Smith"]
 ffa[name=="Louis Murphy Jr.",name:="Louis Murphy"]
 ffa[name=="Ted Ginn Jr.",name:="Ted Ginn"]
 ffa[name=="Denard Robinson Ja",name:="Denard Robinson"]
-
+ffa[name=="Odell Beckham Jr.",name:="Odel Beckham"]
 #Save
 save(ffa,next_week,file="ffa_wr.RData")
 
