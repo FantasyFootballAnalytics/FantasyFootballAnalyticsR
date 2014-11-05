@@ -225,6 +225,7 @@ ffa[name=="Louis Murphy Jr.",name:="Louis Murphy"]
 ffa[name=="Ted Ginn Jr.",name:="Ted Ginn"]
 ffa[name=="Denard Robinson Ja",name:="Denard Robinson"]
 ffa[name=="Odell Beckham Jr.",name:="Odel Beckham"]
+
 #Save
-save(ffa,next_week,file="ffa_wr.RData")
+save(ffa,next_week,file="./RMarkdown/GoldMining/ffa_wr.RData")
 

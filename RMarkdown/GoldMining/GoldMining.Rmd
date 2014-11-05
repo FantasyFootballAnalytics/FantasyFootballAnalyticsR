@@ -12,8 +12,8 @@ require(RColorBrewer)
 require(knitr)
 require(seqinr)
 require(mclust)
-load("E:/FFA/GoldMining/ffa_wr.RData")
-
+require(ggvis)
+load("ffa_wr.RData")
 ffa<-ffa[min_rank<36]
 
 sstat <- function(x){
@@ -42,6 +42,7 @@ htests[,c("ppr_tier","std_tier"):=list(Mclust(ppr_mean, G=7)$classification,Mclu
 htests[,c("ppr_h.l","std_h.l"):=NULL]
 htests[order(-ppr_pm),ppr_rank:=1:.N]
 htests[order(-std_pm),std_rank:=1:.N]
+ffa[,c("std_ave_fpts","ppr_ave_fpts"):=list(mean(std_fpts),mean(ppr_fpts)),by=name]
 ```
 
 This is an example of the sort of work product or arcticle we can produce automatically each week.  We can be creative about the text generation, which will take some work, but for the most part we should let the statistics do the work.
@@ -95,8 +96,11 @@ ggplot(htests, aes(x=std_pm, y=std_rank, color=factor(std_tier))) +
   labs(title = paste("Week ", next_week, " WRs Uncertainty", sep="")) +
   coord_cartesian(xlim =c(0,(max(htests$std_pm_h)+10))) 
 ```
-
-
+##
+```{r}
+#ffa[src=="yahoo"] %>% ggvis()%>%layer_paths() %>%add_tooltip(function(df) df$name)  %>% layer_points(~std_ave_fpts, ~std_fpts)))
+   
+```
 
 ## Top Recievers - Standard Scoring leagues
 ```{r,echo=FALSE, results='asis', message=FALSE,warning=FALSE}
