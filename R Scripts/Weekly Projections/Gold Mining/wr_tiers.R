@@ -1,5 +1,4 @@
 #install libraries
-
 library("XML")
 library("seqinr")
 library("stringr")
@@ -8,7 +7,7 @@ library("mclust")
 library("ggplot2")
 
 #enter the week
-week <- "11"
+week <- "8"
 
 #grab the data
 cbs_nz_url <- paste("http://fantasynews.cbssports.com/fantasyfootball/stats/weeklyprojections/WR/", week, "/nathan_zegura/ppr?&print_rows=9999", sep="")
@@ -23,9 +22,9 @@ url4_espn <- paste("http://games.espn.go.com/ffl/tools/projections?slotCategoryI
 url_fftoday1 <- paste("http://www.fftoday.com/rankings/playerwkproj.php?Season=2013&GameWeek=", week, "&PosID=30", sep="")
 url_fftoday2 <- paste("http://www.fftoday.com/rankings/playerwkproj.php?Season=2013&GameWeek=", week, "&PosID=30&LeagueID=1&order_by=FFPts&sort_order=DESC&cur_page=1", sep="")
 
-url_bsports <- "http://www.bsports.com/decisionmakerwr"
+#url_bsports <- "http://www.bsports.com/decisionmakerwr"
 
-url_ffs <- "http://www.fantasysharks.com/apps/Projections/WeeklyWRProjections.php"
+url_ffs <- "http://www.fantasysharks.com/apps/Projections/WeeklyProjections.php?pos=WR"
 
 #grab rank data
 url_fantasy_pro_ranks <- ("http://www.fantasypros.com/nfl/rankings/ppr-wr.php")
@@ -42,9 +41,9 @@ dr_wrproj <- readHTMLTable(cbs_dr_url, as.data.frame=TRUE, stringsAsFactors=FALS
 import_fftoday_wrproj1 <- readHTMLTable(url_fftoday1, as.data.frame=TRUE, stringsAsFactors=FALSE)[11]$`NULL`
 import_fftoday_wrproj2 <- readHTMLTable(url_fftoday2, as.data.frame=TRUE, stringsAsFactors=FALSE)[11]$`NULL`
 
-import_bsports_wrproj <- readHTMLTable(url_bsports, as.data.frame=TRUE, stringsAsFactors=FALSE)$`tablepress-174`
+#import_bsports_wrproj <- readHTMLTable(url_bsports, as.data.frame=TRUE, stringsAsFactors=FALSE)$`tablepress-174`
 
-import_ffs <- readHTMLTable(url_ffs, as.data.frame=TRUE, stringsAsFactors=FALSE)[6]$`NULL`
+import_ffs <- readHTMLTable(url_ffs, as.data.frame=TRUE, stringsAsFactors=FALSE)[3]$`NULL`
 
 #grab rank data
 data_ranks <- readHTMLTable(url_fantasy_pro_ranks, as.data.frame=TRUE, stringsAsFactors=FALSE)$data
@@ -73,7 +72,7 @@ espn_wrproj <- rbind(partial_espn_wrproj1, partial_espn_wrproj2, partial_espn_wr
 fftoday_wrproj <- rbind(import_fftoday_wrproj1, import_fftoday_wrproj2)
 
 #convert into my naming convention
-bsp_wrproj <- import_bsports_wrproj
+#bsp_wrproj <- import_bsports_wrproj
 ffs_wrproj <- import_ffs
 
 #trim the top 100 wr projections
@@ -82,7 +81,7 @@ je_wrproj <- je_wrproj[1:100,]
 dr_wrproj <- dr_wrproj[1:100,]
 espn_wrproj <- espn_wrproj[1:100,]
 #less than 100, no need to trim ## fftoday_wrproj <- fftoday_wrproj[1:100,]
-bsp_wrproj <- bsp_wrproj[1:100,]
+#bsp_wrproj <- bsp_wrproj[1:100,]
 ffs_wrproj <- ffs_wrproj[1:100,]
 
 #remove an NAs
@@ -92,7 +91,7 @@ ffs_wrproj <- na.omit(ffs_wrproj)
 #get rid of unwanted columns
 espn_wrproj <- subset(espn_wrproj, select = c(1,11,12,13,14))
 fftoday_wrproj <- subset(fftoday_wrproj, select = c(2,5,6,7,8))
-bsp_wrproj <- subset(bsp_wrproj, select = c(2,8,9,10,11))
+#bsp_wrproj <- subset(bsp_wrproj, select = c(2,8,9,10,11))
 ffs_wrproj <- subset(ffs_wrproj, select = c(1,4,5,9,10))
 
 #name the columns
@@ -101,7 +100,7 @@ names(je_wrproj) <- c("player","je_recpts","je_yd","je_avg","je_td","je_fl","je_
 names(dr_wrproj) <- c("player","dr_recpts","dr_yd","dr_avg","dr_td","dr_fl","dr_fpts")
 names(espn_wrproj) <- c("player","espn_recpts","espn_yd","espn_td","espn_fpts")
 names(fftoday_wrproj) <- c("player","fft_recpts","fft_yd","fft_td","fft_fpts")
-names(bsp_wrproj) <- c("player","bsp_recpts","bsp_yd","bsp_td","bsp_fpts")
+#names(bsp_wrproj) <- c("player","bsp_recpts","bsp_yd","bsp_td","bsp_fpts")
 names(ffs_wrproj) <- c("player","ffs_recpts","ffs_yd","ffs_td","ffs_fpts")
 
 #name rank data

@@ -1,5 +1,5 @@
 ---
-title: "Gold Minning"
+title: "Gold Mining"
 author: "Fantasy Football Analytics"
 date: "Friday, October 31, 2014"
 output: html_document
@@ -13,6 +13,7 @@ require(knitr)
 require(seqinr)
 require(mclust)
 require(ggvis)
+source("../../R Scripts/Functions/MRGFunctions.R")
 load("ffa_wr.RData")
 ffa<-ffa[min_rank<36]
 
@@ -43,9 +44,12 @@ htests[,c("ppr_h.l","std_h.l"):=NULL]
 htests[order(-ppr_pm),ppr_rank:=1:.N]
 htests[order(-std_pm),std_rank:=1:.N]
 ffa[,c("std_ave_fpts","ppr_ave_fpts"):=list(mean(std_fpts),mean(ppr_fpts)),by=name]
+premium<-ffa[,list(name,writer,premium=std_fpts-std_ave_fpts)]
+wpremium<-BreakBuild(premium,BCol = "writer",IDCols = "name",ValCols = "premium")
+wpremium
 ```
 
-This is an example of the sort of work product or arcticle we can produce automatically each week.  We can be creative about the text generation, which will take some work, but for the most part we should let the statistics do the work.
+This is an example of the sort of work product or article we can produce automatically each week.  We can be creative about the text generation, which will take some work, but for the most part we should let the statistics do the work.
 
 
 These are stats for week `r next_week`.
@@ -96,10 +100,16 @@ ggplot(htests, aes(x=std_pm, y=std_rank, color=factor(std_tier))) +
   labs(title = paste("Week ", next_week, " WRs Uncertainty", sep="")) +
   coord_cartesian(xlim =c(0,(max(htests$std_pm_h)+10))) 
 ```
-##
-```{r}
-#ffa[src=="yahoo"] %>% ggvis()%>%layer_paths() %>%add_tooltip(function(df) df$name)  %>% layer_points(~std_ave_fpts, ~std_fpts)))
-   
+
+## Source Arbitrage
+
+If you are fairly confident that one of your league mates only uses one source and you know what that source is, you may be able to get them to trade a player to you that is undervalued by that source.  Likewise you may be able to trade to them a player that is overvalued by that source.  The table below shows the difference between the source projection and the mean projection for each player.  A negative number means the source undervalues the player and a positive number means the source over-values the player.
+
+Suppose your league is a yahoo league.  It is likely that your league mates use yahoo projections to value trades.  Sometimes yahoo places a very high valuation on a players performance.  If that's the case, and you have one or two of those players, you may be able to trade those players away for players with higher consesus value.
+
+```{r,echo=FALSE,results="asis",message=FALSE,warning=FALSE}
+
+
 ```
 
 ## Top Recievers - Standard Scoring leagues
