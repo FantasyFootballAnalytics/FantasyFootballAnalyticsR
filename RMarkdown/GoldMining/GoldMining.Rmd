@@ -105,11 +105,10 @@ ggplot(htests, aes(x=std_pm, y=std_rank, color=factor(std_tier))) +
 
 If you are fairly confident that one of your league mates only uses one source and you know what that source is, you may be able to get them to trade a player to you that is undervalued by that source.  Likewise you may be able to trade to them a player that is overvalued by that source.  The table below shows the difference between the source projection and the mean projection for each player.  A negative number means the source undervalues the player and a positive number means the source over-values the player.
 
-Suppose your league is a yahoo league.  It is likely that your league mates use yahoo projections to value trades.  Sometimes yahoo places a very high valuation on a players performance.  If that's the case, and you have one or two of those players, you may be able to trade those players away for players with higher consesus value.
+Suppose your league is a yahoo league.  It is likely that your league mates use yahoo projections to value trades.  Sometimes yahoo places a very high valuation on a players performance.  If that's the case, and you have one or two of those players, you may be able to trade those players away for players with higher consensus value.
 
 ```{r,echo=FALSE,results="asis",message=FALSE,warning=FALSE}
-
-
+kable(wpremium)
 ```
 
 ## Top Recievers - Standard Scoring leagues
