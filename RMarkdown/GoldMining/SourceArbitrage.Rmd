@@ -1,0 +1,61 @@
+---
+title: "Source Arbitrage"
+author: "Michael Griebe"
+date: "Wednesday, November 12, 2014"
+output: html_document
+---
+
+```{r, echo=FALSE,message=FALSE,results='hide',warning=FALSE}
+require(data.table)
+require(ggplot2)
+require(RColorBrewer)
+require(knitr)
+require(seqinr)
+require(mclust)
+require(ggvis)
+source("../../R Scripts/Functions/MRGFunctions.R")
+load("ffa_wr.RData")
+ffa<-ffa[min_rank<36]
+
+sstat <- function(x){
+  return(list("Lowest Projection"=min(x),"Highest Projection"=max(x),
+              "Mean Projection" = mean(x),"Standard Deviation"=sd(x), "Median Projection"=median(x)))
+         }
+h.l <- function(x){tryCatch({
+  wilcox.test(x,na.action="na.exclude",conf.int=TRUE)},
+  error=function(e){return(list(estimate=median(x),conf.int=c(median(x)-sd(x),median(x)+sd(x))))})
+}
+
+htests<-ffa[,list(ppr_mean=mean(ppr_fpts),std_mean=mean(std_fpts),
+                  ppr_min=min(ppr_fpts),ppr_max=max(ppr_fpts),
+                  ppr_ave_rank=mean(ppr_rank), std_ave_rank=mean(std_rank),
+                  ppr_h.l=list(h.l(ppr_fpts)),std_h.l=list(h.l(std_fpts))),by=name]
+htests[,c("ppr_pm","ppr_pm_l","ppr_pm_h"):=list(vapply(ppr_h.l,function(x){x$estimate},double(1)),
+                                    vapply(ppr_h.l,function(x){x$conf.int[1]},double(1)),
+                                    vapply(ppr_h.l,function(x){x$conf.int[2]},double(1)))]
+htests[,c("std_pm","std_pm_l","std_pm_h"):=list(vapply(std_h.l,function(x){x$estimate},double(1)),
+                                    vapply(std_h.l,function(x){x$conf.int[1]},double(1)),
+                                    vapply(std_h.l,function(x){x$conf.int[2]},double(1)))]
+
+#clustering based on means.
+htests[,c("ppr_tier","std_tier"):=list(Mclust(ppr_mean, G=7)$classification,Mclust(std_mean,G=7)$classification)]
+
+htests[,c("ppr_h.l","std_h.l"):=NULL]
+htests[order(-ppr_pm),ppr_rank:=1:.N]
+htests[order(-std_pm),std_rank:=1:.N]
+ffa[,c("std_ave_fpts","ppr_ave_fpts"):=list(mean(std_fpts),mean(ppr_fpts)),by=name]
+premium<-ffa[,list(name,writer,premium=std_fpts-std_ave_fpts)]
+wpremium<-BreakBuild(premium,BCol = "writer",IDCols = "name",ValCols = "premium")
+wpremium
+```
+
+
+## Source Arbitrage
+
+If you are fairly confident that one of your league mates only uses one source and you know what that source is, you may be able to get them to trade a player to you that is undervalued by that source.  Likewise you may be able to trade to them a player that is overvalued by that source.  The table below shows the difference between the source projection and the mean projection for each player.  A negative number means the source undervalues the player and a positive number means the source over-values the player.
+
+Suppose your league is a yahoo league.  It is likely that your league mates use yahoo projections to value trades.  Sometimes yahoo places a very high valuation on a players performance.  If that's the case, and you have one or two of those players, you may be able to trade those players away for players with higher consensus value.
+
+```{r,echo=FALSE,results="asis",message=FALSE,warning=FALSE}
+kable(wpremium)
+```
