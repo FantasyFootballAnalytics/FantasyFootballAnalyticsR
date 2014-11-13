@@ -69,8 +69,8 @@ The graph below summarizes the projections from a variety of sources.  This week
 From this graph be sure to notice:
 
  - `r p_and(htests[order(-std_upside)][1:5][order(std_ave_rank)][,unique(name)])` are the five players with the <b>largest upside</b> (as measured from their (pseudo)medians).  For these players, some projections are placing much higher valuations than others. If you are projected to lose this week by quite a few points and are looking for a risky play that may tip the balance in your favor, these are players to consider.
- - `r p_and(htests[order(std_downside)][1:5][order(std_ave_rank)][,unique(name)])` are the playres with the <b> smallest downside</b>, which suggests that while their median projection might not be great, there is less uncertainty concerning how poorly they may perform.  So, if your are likely to win by a lot and want to reduce your downside risk, these players may deserve extra attention.
- - On the other hand, `r p_and(htests[order(-std_downside)][1:5][order(std_ave_rank)][,unique(name)])`  are the five playres with the <b>largest downside</b> this week.  If you are planning on starting them, it may be prudent to investigate why some projections have such low expectations for these players.
+ - `r p_and(htests[order(std_downside)][1:5][order(std_ave_rank)][,unique(name)])` are the players with the <b> smallest downside</b>, which suggests that while their median projection might not be great, there is less uncertainty concerning how poorly they may perform.  So, if your are likely to win by a lot and want to reduce your downside risk, these players may deserve extra attention.
+ - On the other hand, `r p_and(htests[order(-std_downside)][1:5][order(std_ave_rank)][,unique(name)])`  are the five players with the <b>largest downside</b> this week.  If you are planning on starting them, it may be prudent to investigate why some projections have such low expectations for these players.
  
 <center> 
 ```{r,echo=FALSE,fig.height=8,fig.width=8}
@@ -108,8 +108,8 @@ ggplot(htests, aes(x=std_pm, y=std_rank, color=factor(std_tier))) +
 From this graph be sure to notice:
 
  - `r p_and(htests[order(-ppr_upside)][1:5][order(ppr_ave_rank)][,unique(name)])` are the five players with the <b>largest upside</b> (as measured from their (pseudo)medians).  For these players, some projections are placing much higher valuations than others. If you are projected to lose this week by quite a few points and are looking for a risky play that may tip the balance in your favor, these are players to consider.
- - `r p_and(htests[order(ppr_downside)][1:5][order(ppr_ave_rank)][,unique(name)])` are the playres with the <b> smallest downside</b>, which suggests that while their median projection might not be great, there is less uncertainty concerning how poorly they may perform.  So, if your are likely to win by a lot and want to reduce your downside risk, these players may deserve extra attention.
- - On the other hand, `r p_and(htests[order(-ppr_downside)][1:5][order(ppr_ave_rank)][,unique(name)])` are the five playres with the <b>largest downside</b> this week.  If you are planning on starting them, it may be prudent to investigate why some projections have such low expectations for these players.
+ - `r p_and(htests[order(ppr_downside)][1:5][order(ppr_ave_rank)][,unique(name)])` are the players with the <b> smallest downside</b>, which suggests that while their median projection might not be great, there is less uncertainty concerning how poorly they may perform.  So, if your are likely to win by a lot and want to reduce your downside risk, these players may deserve extra attention.
+ - On the other hand, `r p_and(htests[order(-ppr_downside)][1:5][order(ppr_ave_rank)][,unique(name)])` are the five players with the <b>largest downside</b> this week.  If you are planning on starting them, it may be prudent to investigate why some projections have such low expectations for these players.
 
 <center> 
 ```{r,echo=FALSE,fig.height=8, fig.width=8}
@@ -129,7 +129,7 @@ ggplot(htests, aes(x=ppr_pm, y=ppr_rank, color=factor(ppr_tier))) +
     ,legend.position = "none"
   ) + scale_y_reverse()+
   ylab("Average Rank") + xlab("Median FPTS Projection with Confidence Interval") +
-  labs(title = paste("Week ", next_week, " Wide Recevier Projections Roundup", sep="")) +
+  labs(title = paste("Week ", next_week, " Wide Receiver Projections Roundup", sep="")) +
   coord_cartesian(xlim =c(0,(max(htests$ppr_pm_h)+10))) 
 
 ```
