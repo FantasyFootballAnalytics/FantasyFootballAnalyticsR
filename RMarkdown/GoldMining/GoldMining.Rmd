@@ -1,7 +1,7 @@
 ---
 title: "Gold Mining"
 author: "Fantasy Football Analytics"
-date: "Friday, October 31, 2014"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 ---
 
@@ -38,7 +38,7 @@ htests[,c("std_pm","std_pm_l","std_pm_h"):=list(vapply(std_h.l,function(x){x$est
                                     vapply(std_h.l,function(x){x$conf.int[2]},double(1)))]
 
 #clustering based on means.
-htests[,c("ppr_tier","std_tier"):=list(Mclust(ppr_mean, G=7)$classification,Mclust(std_mean,G=7)$classification)]
+htests[,c("ppr_tier","std_tier"):=list(Mclust(ppr_pm, G=7)$classification,Mclust(std_pm,G=7)$classification)]
 
 htests[,c("ppr_h.l","std_h.l"):=NULL]
 htests[order(-ppr_pm),ppr_rank:=1:.N]
@@ -52,8 +52,8 @@ wpremium
 htests[,std_upside:=std_pm_h-std_pm]
 htests[,std_downside:=std_pm-std_pm_l]
 
-std_big_upsides<-htests[order(-std_upside)][1:5][order(std_ave_rank)][,unique(name)]
-std_small_downsides<-htests[order(std_downside)][1:5][order(std_ave_rank)][,unique(name)]
+htests[,ppr_upside:=ppr_pm_h-ppr_pm]
+htests[,ppr_downside:=ppr_pm-ppr_pm_l]
 
 p_and<- function(x) {
   paste(paste(x[1:(length(x)-1)],collapse=", "), "and", x[length(x)])
@@ -61,17 +61,16 @@ p_and<- function(x) {
 
 ```
 
-The graph below summarises the projections from a variety of sources.  This week's summary includes projections from: `r paste(writers[ffa[,unique(writer)]],collapse=", ")`.
+The graph below summarizes the projections from a variety of sources.  This week's summary includes projections from: `r p_and(writers[ffa[,unique(writer)]])`.
 
 ## Standard Scoring Leagues
-
-### Week `r next_week` Wide Recievers 
+### Week `r next_week` Wide Receivers 
 
 From this graph be sure to notice:
 
- - `r p_and(htests[order(-std_upside)][1:5][order(std_ave_rank)][,unique(name)])` have particularly high upsides.  For these players, some projections are placing much higher valuations than others.  If you need to introduce some uncertainty into your game plan, these may be the players to consider.
- - `r p_and(htests[order(std_downside)][1:5][order(std_ave_rank)][,unique(name)])` have little downside to them, which suggests that while their median projection might not be great, there is less uncertainty concerning how poorly they may perform.
- - On the other hand, `r p_and(htests[order(-std_downside)][1:8][order(std_ave_rank)][,unique(name)])` have relatively large downsides this week.  If you are planning on starting them, it may be prudent to investigate.
+ - `r p_and(htests[order(-std_upside)][1:5][order(std_ave_rank)][,unique(name)])` are the five players with the <b>largest upside</b> (as measured from their (pseudo)medians).  For these players, some projections are placing much higher valuations than others. If you are projected to lose this week by quite a few points and are looking for a risky play that may tip the balance in your favor, these are players to consider.
+ - `r p_and(htests[order(std_downside)][1:5][order(std_ave_rank)][,unique(name)])` are the playres with the <b> smallest downside</b>, which suggests that while their median projection might not be great, there is less uncertainty concerning how poorly they may perform.  So, if your are likely to win by a lot and want to reduce your downside risk, these players may deserve extra attention.
+ - On the other hand, `r p_and(htests[order(-std_downside)][1:5][order(std_ave_rank)][,unique(name)])`  are the five playres with the <b>largest downside</b> this week.  If you are planning on starting them, it may be prudent to investigate why some projections have such low expectations for these players.
  
 <center> 
 ```{r,echo=FALSE,fig.height=8,fig.width=8}
@@ -91,22 +90,29 @@ ggplot(htests, aes(x=std_pm, y=std_rank, color=factor(std_tier))) +
     ,legend.position = "none"
   ) + scale_y_reverse()+
   ylab("Average Rank") + xlab("Median FPTS Projection with Confidence Interval") +
-  labs(title = paste("Week ", next_week, " Wide Reciever Projections", sep="")) +
+  labs(title = paste("Week ", next_week, " Wide Receiver Projections Roundup", sep="")) +
   coord_cartesian(xlim =c(0,(max(htests$std_pm_h)+10))) 
 ```
 </center>
 
-## Top Recievers - Standard Scoring leagues
 
 ```{r,echo=FALSE, results='asis', message=FALSE,warning=FALSE}
-kable(ffa[order(std_ave_rank)][,c(sstat(std_fpts),list("Average Rank"=mean(ppr_rank))),
-          by=name][1:30])
+##kable(ffa[order(std_ave_rank)][,c(sstat(std_fpts),list("Average Rank"=mean(ppr_rank))),
+##          by=name][1:30])
 ```
 
 
 ## PPR Leagues
+### Week `r next_week` Wide Receivers 
 
-```{r,echo=FALSE,fig.height=10}
+From this graph be sure to notice:
+
+ - `r p_and(htests[order(-ppr_upside)][1:5][order(ppr_ave_rank)][,unique(name)])` are the five players with the <b>largest upside</b> (as measured from their (pseudo)medians).  For these players, some projections are placing much higher valuations than others. If you are projected to lose this week by quite a few points and are looking for a risky play that may tip the balance in your favor, these are players to consider.
+ - `r p_and(htests[order(ppr_downside)][1:5][order(ppr_ave_rank)][,unique(name)])` are the playres with the <b> smallest downside</b>, which suggests that while their median projection might not be great, there is less uncertainty concerning how poorly they may perform.  So, if your are likely to win by a lot and want to reduce your downside risk, these players may deserve extra attention.
+ - On the other hand, `r p_and(htests[order(-ppr_downside)][1:5][order(ppr_ave_rank)][,unique(name)])` are the five playres with the <b>largest downside</b> this week.  If you are planning on starting them, it may be prudent to investigate why some projections have such low expectations for these players.
+
+<center> 
+```{r,echo=FALSE,fig.height=8, fig.width=8}
 #graphing
 #geom_point(size=3)+
 ggplot(htests, aes(x=ppr_pm, y=ppr_rank, color=factor(ppr_tier))) +
@@ -116,23 +122,23 @@ ggplot(htests, aes(x=ppr_pm, y=ppr_rank, color=factor(ppr_tier))) +
   geom_text(aes(x=ppr_pm_h, label=name, hjust=-0.2, angle=(0), size=1))+
   theme(
     plot.background = element_blank()
-    ,panel.grid.major = element_blank()
-    ,panel.grid.minor = element_blank()
-    ,panel.border = element_blank()
+    ,panel.grid.major.x = element_line(color="grey")
+    ,panel.grid.minor.y = element_line(color="grey")
+    ,panel.border=element_rect(color="grey",fill=NA)
     ,panel.background = element_blank()
     ,legend.position = "none"
   ) + scale_y_reverse()+
-  ylab("Average Rank") + xlab("Average FPTS Projection") +
-  labs(title = paste("Week ", next_week, " WRs Uncertainty", sep="")) +
+  ylab("Average Rank") + xlab("Median FPTS Projection with Confidence Interval") +
+  labs(title = paste("Week ", next_week, " Wide Recevier Projections Roundup", sep="")) +
   coord_cartesian(xlim =c(0,(max(htests$ppr_pm_h)+10))) 
 
 ```
+</center> 
 
 
-## Top Recievers - PPR leagues
 ```{r,echo=FALSE, results='asis'}
-kable(ffa[order(ppr_ave_rank)][,c(sstat(ppr_fpts),list("Average Rank"=mean(ppr_rank))),
-          by=name][1:30])
+##kable(ffa[order(ppr_ave_rank)][,c(sstat(ppr_fpts),list("Average Rank"=mean(ppr_rank))),
+##          by=name][1:30])
 ```
 
 
