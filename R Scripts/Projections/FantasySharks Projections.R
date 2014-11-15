@@ -96,5 +96,5 @@ dev.off()
 save(projections_fs, file = paste(getwd(),"/Data/FantasySharks-Projections.RData", sep=""))
 write.csv(projections_fs, file=paste(getwd(),"/Data/FantasySharks-Projections.csv", sep=""), row.names=FALSE)
 
-save(projections_fs, file = paste(getwd(),"/Data/Historical Projections/FantasySharks-Projections-2014.RData", sep=""))
-write.csv(projections_fs, file=paste(getwd(),"/Data/Historical Projections/FantasySharks-Projections-2014.csv", sep=""), row.names=FALSE)
+save(projections_fs, file = paste(getwd(),"/Data/Historical Projections/FantasySharks-Projections-2015.RData", sep=""))
+write.csv(projections_fs, file=paste(getwd(),"/Data/Historical Projections/FantasySharks-Projections-2015.csv", sep=""), row.names=FALSE)

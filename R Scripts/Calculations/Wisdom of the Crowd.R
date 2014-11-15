@@ -157,5 +157,5 @@ dev.off()
 save(wisdomOfTheCrowd, file = paste(getwd(),"/Data/wisdomOfTheCrowd.RData", sep=""))
 write.csv(wisdomOfTheCrowd, file=paste(getwd(),"/Data/wisdomOfTheCrowd.csv", sep=""), row.names=FALSE)
 
-save(wisdomOfTheCrowd, file = paste(getwd(),"/Data/Historical Files/wisdomOfTheCrowd-2014.RData", sep=""))
-write.csv(wisdomOfTheCrowd, file=paste(getwd(),"/Data/Historical Files/wisdomOfTheCrowd-2014.csv", sep=""), row.names=FALSE)
+save(wisdomOfTheCrowd, file = paste(getwd(),"/Data/Historical Files/wisdomOfTheCrowd-2015.RData", sep=""))
+write.csv(wisdomOfTheCrowd, file=paste(getwd(),"/Data/Historical Files/wisdomOfTheCrowd-2015.csv", sep=""), row.names=FALSE)

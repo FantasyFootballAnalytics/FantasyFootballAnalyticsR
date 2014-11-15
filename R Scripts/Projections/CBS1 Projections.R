@@ -127,5 +127,5 @@ dev.off()
 save(projections_cbs1, file = paste(getwd(),"/Data/CBS1-Projections.RData", sep=""))
 write.csv(projections_cbs1, file=paste(getwd(),"/Data/CBS1-Projections.csv", sep=""), row.names=FALSE)
 
-save(projections_cbs1, file = paste(getwd(),"/Data/Historical Projections/CBS1-Projections-2014.RData", sep=""))
-write.csv(projections_cbs1, file=paste(getwd(),"/Data/Historical Projections/CBS1-Projections-2014.csv", sep=""), row.names=FALSE)
+save(projections_cbs1, file = paste(getwd(),"/Data/Historical Projections/CBS1-Projections-2015.RData", sep=""))
+write.csv(projections_cbs1, file=paste(getwd(),"/Data/Historical Projections/CBS1-Projections-2015.csv", sep=""), row.names=FALSE)

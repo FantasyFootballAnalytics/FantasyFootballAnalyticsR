@@ -68,8 +68,8 @@ dev.off()
 save(projections, file = paste(getwd(),"/Data/VOR.RData", sep=""))
 write.csv(projections, file=paste(getwd(),"/Data/VOR.csv", sep=""), row.names=FALSE)
 
-save(projections, file = paste(getwd(),"/Data/Historical Files/VOR-2014.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/Historical Files/VOR-2014.csv", sep=""), row.names=FALSE)
+save(projections, file = paste(getwd(),"/Data/Historical Files/VOR-2015.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/Historical Files/VOR-2015.csv", sep=""), row.names=FALSE)
 
 #Subset data
 draftData <- projections[row.names(na.omit(projections[,c("projections","vor","risk")])),c("name","pos","team","projections","vor","sdPick","sdPts","risk")] #projectedPtsLatent

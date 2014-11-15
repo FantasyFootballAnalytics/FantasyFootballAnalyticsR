@@ -159,5 +159,5 @@ dev.off()
 save(projections_fox, file = paste(getwd(),"/Data/FOX-Projections.RData", sep=""))
 write.csv(projections_fox, file=paste(getwd(),"/Data/FOX-Projections.csv", sep=""), row.names=FALSE)
 
-save(projections_fox, file = paste(getwd(),"/Data/Historical Projections/FOX-Projections-2014.RData", sep=""))
-write.csv(projections_fox, file=paste(getwd(),"/Data/Historical Projections/FOX-Projections-2014.csv", sep=""), row.names=FALSE)
+save(projections_fox, file = paste(getwd(),"/Data/Historical Projections/FOX-Projections-2015.RData", sep=""))
+write.csv(projections_fox, file=paste(getwd(),"/Data/Historical Projections/FOX-Projections-2015.csv", sep=""), row.names=FALSE)

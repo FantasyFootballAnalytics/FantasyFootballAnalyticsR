@@ -125,5 +125,5 @@ dev.off()
 save(projections_accu, file = paste(getwd(),"/Data/Accuscore-Projections.RData", sep=""))
 write.csv(projections_accu, file=paste(getwd(),"/Data/Accuscore-Projections.csv", sep=""), row.names=FALSE)
 
-save(projections_accu, file = paste(getwd(),"/Data/Historical Projections/Accuscore-Projections-2014.RData", sep=""))
-write.csv(projections_accu, file=paste(getwd(),"/Data/Historical Projections/Accuscore-Projections-2014.csv", sep=""), row.names=FALSE)
+save(projections_accu, file = paste(getwd(),"/Data/Historical Projections/Accuscore-Projections-2015.RData", sep=""))
+write.csv(projections_accu, file=paste(getwd(),"/Data/Historical Projections/Accuscore-Projections-2015.csv", sep=""), row.names=FALSE)

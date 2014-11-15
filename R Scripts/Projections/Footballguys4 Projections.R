@@ -133,5 +133,5 @@ dev.off()
 save(projections_fbg4, file = paste(getwd(),"/Data/Footballguys4-Projections.RData", sep=""))
 write.csv(projections_fbg4, file=paste(getwd(),"/Data/Footballguys4-Projections.csv", sep=""), row.names=FALSE)
 
-save(projections_fbg4, file = paste(getwd(),"/Data/Historical Projections/Footballguys4-Projections-2014.RData", sep=""))
-write.csv(projections_fbg4, file=paste(getwd(),"/Data/Historical Projections/Footballguys4-Projections-2014.csv", sep=""), row.names=FALSE)
+save(projections_fbg4, file = paste(getwd(),"/Data/Historical Projections/Footballguys4-Projections-2015.RData", sep=""))
+write.csv(projections_fbg4, file=paste(getwd(),"/Data/Historical Projections/Footballguys4-Projections-2015.csv", sep=""), row.names=FALSE)

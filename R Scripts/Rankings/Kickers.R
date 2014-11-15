@@ -46,5 +46,5 @@ kickers
 save(kickers, file = paste(getwd(),"/Data/kickers.RData", sep=""))
 write.csv(kickers, file=paste(getwd(),"/Data/kickers.csv", sep=""), row.names=FALSE)
 
-save(kickers, file = paste(getwd(),"/Data/Historical Rankings/kickers-2014.RData", sep=""))
-write.csv(kickers, file=paste(getwd(),"/Data/Historical Rankings/kickers-2014.csv", sep=""), row.names=FALSE)
+save(kickers, file = paste(getwd(),"/Data/Historical Rankings/kickers-2015.RData", sep=""))
+write.csv(kickers, file=paste(getwd(),"/Data/Historical Rankings/kickers-2015.csv", sep=""), row.names=FALSE)

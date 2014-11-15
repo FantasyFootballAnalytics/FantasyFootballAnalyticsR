@@ -251,11 +251,11 @@ dev.off()
 save(projections, file = paste(getwd(),"/Data/AvgCost.RData", sep=""))
 write.csv(projections, file=paste(getwd(),"/Data/AvgCost.csv", sep=""), row.names=FALSE)
 
-save(projections, file = paste(getwd(),"/Data/Historical Cost/AvgCost-2014.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/Historical Cost/AvgCost-2014.csv", sep=""), row.names=FALSE)
+save(projections, file = paste(getwd(),"/Data/Historical Cost/AvgCost-2015.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/Historical Cost/AvgCost-2015.csv", sep=""), row.names=FALSE)
 
 save(projections, file = paste(getwd(),"/Data/Rankings.RData", sep=""))
 write.csv(projections, file=paste(getwd(),"/Data/Rankings.csv", sep=""), row.names=FALSE)
 
-save(projections, file = paste(getwd(),"/Data/Historical Rankings/Rankings-2014.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/Historical Rankings/Rankings-2014.csv", sep=""), row.names=FALSE)
+save(projections, file = paste(getwd(),"/Data/Historical Rankings/Rankings-2015.RData", sep=""))
+write.csv(projections, file=paste(getwd(),"/Data/Historical Rankings/Rankings-2015.csv", sep=""), row.names=FALSE)

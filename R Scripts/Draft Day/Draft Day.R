@@ -31,8 +31,8 @@ row.names(draftData) <- 1:dim(draftData)[1]
 save(draftData, file = paste(getwd(),"/Data/DraftDay.RData", sep=""))
 write.csv(draftData, file=paste(getwd(),"/Data/DraftDay.csv", sep=""), row.names=FALSE)
 
-save(draftData, file = paste(getwd(),"/Data/Historical Files/DraftDay-2014.RData", sep=""))
-write.csv(draftData, file=paste(getwd(),"/Data/Historical Files/DraftDay-2014.csv", sep=""), row.names=FALSE)
+save(draftData, file = paste(getwd(),"/Data/Historical Files/DraftDay-2015.RData", sep=""))
+write.csv(draftData, file=paste(getwd(),"/Data/Historical Files/DraftDay-2015.csv", sep=""), row.names=FALSE)
 
 options(digits=2)
 draftData
