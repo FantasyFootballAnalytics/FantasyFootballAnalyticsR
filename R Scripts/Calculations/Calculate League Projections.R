@@ -11,6 +11,7 @@
 library("reshape")
 library("MASS")
 library("psych")
+library("data.table")
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
@@ -20,17 +21,18 @@ source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 filenames <- paste(getwd(),"/Data/", sourcesOfProjections, "-Projections.RData", sep="")
 listProjections <- sapply(filenames, function(x) get(load(x)), simplify = FALSE)
 
-#Exclude defenses and kickers for now (will add later)
-for (i in 1:length(listProjections)){
-  listProjections[[i]] <- listProjections[[i]][which(listProjections[[i]]$pos %in% c("QB","RB","WR","TE")),]
-}
-
 #Merge projections data
-projections <- merge_recurse(listProjections, by=c("name","pos"))
+dtList <- copy(listProjections)
+lapply(dtList, setDT)
+lapply(dtList, function(x){
+  setkeyv(x, cols=c("name","pos","sourceName"))
+})
+
+projections <- rbindlist(dtList, fill=TRUE)
 
 #Set player name as most common instance across sources
-nametable <- apply(projections[,paste("name", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) sort(table(x), TRUE))  
-projections$player <- names(sapply(nametable,`[`,1) )
+nametable <- apply(projections[,paste("name", sourcesOfProjectionsAbbreviation, sep="_"), with=FALSE], 1, function(x) sort(table(x), TRUE))  
+projections$player <- names(sapply(nametable,`[`, 1) )
 projections$player[which(projections$player == "")] <- NA
 
 #Set team name as most common instance across sources

@@ -21,15 +21,16 @@ leagueCap <- 225            #your league's cap
 maxCost <- leagueCap - (numTotalPlayers - numTotalStarters)
 
 #Variable names
-prefix <- c("name","pos")
+prefix <- c("name","pos","sourceName")
 sourceSpecific <- c("name","team")
 scoreCategories <- c("points",
                      "passAtt","passComp","passYds","passTds","passInt",
-                     "rushAtt","rushYds","rushTds","rec","recYds","recTds",
+                     "rushAtt","rushYds","rushTds",
+                     "rec","recTgt","recYds","recTds",
                      "returnTds","twoPts","fumbles",
                      "idpSolo","idpAst","idpSack","idpFumlRec","idpFumlForce","idpInt","idpPD",
-                     "dstPtsAllowed","dstSack","dstSafety","dstInt","dstFumlRec","dstBlk","dstTo","dstIntTd","kRetTd","pRetTd",
-                     "fg","fg019","fg2029","fg3039","fg4049","fg50","xp")
+                     "dstPtsAllowed","dstYdsAllowed","dstSack","dstSafety","dstInt","dstFumlRec","dstFumlForce","dstBlk","dstTd",
+                     "fg","fgAtt","fg019","fg2029","fg3039","fg4049","fg50","xp")
 rankVars <- c("positionRank","overallRank")
 varNames <- c(rankVars, scoreCategories)
 
@@ -51,8 +52,8 @@ twoPtsMultiplier <- 2       #2 pts per 2-point conversion
 fumlMultiplier <- -3        #-3 pts per fumble lost
 
 #Projections
-sourcesOfProjections <- c("Accuscore", "CBS1", "CBS2", "EDSfootball", "ESPN", "FantasyFootballNerd", "FantasyPros", "FantasySharks", "FFtoday", "Footballguys1", "Footballguys2", "Footballguys3", "Footballguys4", "FOX", "NFL", "numberFire", "WalterFootball", "Yahoo")
-sourcesOfProjectionsAbbreviation <- c("accu", "cbs1", "cbs2", "eds", "espn", "ffn", "fp", "fs", "fftoday", "fbg1", "fbg2", "fbg3", "fbg4", "fox", "nfl", "nf", "wf", "yahoo")
+sourcesOfProjections <- c("CBS", "ESPN", "Yahoo") #c("Accuscore", "CBS1", "CBS2", "EDSfootball", "ESPN", "FantasyFootballNerd", "FantasyPros", "FantasySharks", "FFtoday", "Footballguys1", "Footballguys2", "Footballguys3", "Footballguys4", "FOX", "NFL", "numberFire", "WalterFootball", "Yahoo")
+sourcesOfProjectionsAbbreviation <- c("cbs", "espn", "yahoo") #c("accu", "cbs1", "cbs2", "eds", "espn", "ffn", "fp", "fs", "fftoday", "fbg1", "fbg2", "fbg3", "fbg4", "fox", "nfl", "nf", "wf", "yahoo")
 
 #Number of players at each position drafted in Top 100 (adjust for your league)
 qbReplacements <- 15

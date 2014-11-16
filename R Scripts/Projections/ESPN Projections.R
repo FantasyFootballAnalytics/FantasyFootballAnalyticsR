@@ -4,7 +4,6 @@
 # Date: 3/3/2013
 # Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
-# -ESPN projections do not include fumbles!
 # To do:
 ###########################
 
@@ -13,116 +12,144 @@ library("XML")
 library("stringr")
 library("ggplot2")
 library("plyr")
+library("data.table")
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
-#Suffix
+#Projection Info
+season <- 2015
 suffix <- "espn"
 
 #Download fantasy football projections from ESPN.com
-qb_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2014&slotCategoryId=0", stringsAsFactors = FALSE)$playertable_0
-rb1_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2014&slotCategoryId=2", stringsAsFactors = FALSE)$playertable_0
-rb2_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2014&slotCategoryId=2&startIndex=40", stringsAsFactors = FALSE)$playertable_0
-rb3_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2014&slotCategoryId=2&startIndex=80", stringsAsFactors = FALSE)$playertable_0
-wr1_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2014&slotCategoryId=4", stringsAsFactors = FALSE)$playertable_0
-wr2_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2014&slotCategoryId=4&startIndex=40", stringsAsFactors = FALSE)$playertable_0
-wr3_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2014&slotCategoryId=4&startIndex=80", stringsAsFactors = FALSE)$playertable_0
-te_espn <- readHTMLTable("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=2014&slotCategoryId=6", stringsAsFactors = FALSE)$playertable_0
+espn_base_url <- paste0("http://games.espn.go.com/ffl/tools/projections?&seasonTotals=true&seasonId=", season, "&scoringPeriodId=")
+espn_pos <- list(QB=0, RB=2, WR=4, TE=6, K=17, DST=16)
+espn_pages <- c("0","40","80")
+espn_urls <- paste0(espn_base_url, "&slotCategoryId=", rep(espn_pos, each=length(espn_pages)), "&startIndex=", espn_pages)
 
-#Add variable names for each object
-fileList <- c("qb_espn","rb1_espn","rb2_espn","rb3_espn","wr1_espn","wr2_espn","wr3_espn","te_espn")
+#Scrape
+espn <- lapply(espn_urls, function(x){data.table(readHTMLTable(x, as.data.frame=TRUE, stringsAsFactors=FALSE)$playertable_0)})
+espnList <- espn
 
-for(i in 1:length(fileList)){
-  assign(fileList[i],get(fileList[i])[2:dim(get(fileList[i]))[1],])
-  t <- get(fileList[i])
-  names(t) <-  c("positionRank_espn","player_espn","passCompAtt_espn","passYds_espn","passTds_espn","passInt_espn","rushAtt_espn","rushYds_espn","rushTds_espn","rec_espn","recYds_espn","recTds_espn","pts_espn")
-  assign(fileList[i], t)
+#Clean data
+qbNames <- rbNames <- wrNames <- teNames <- kNames <- dstNames <- c("rank","player","passCompAtt","passYds","passTds","passInt","rushAtt","rushYds","rushTds","rec","recYds","recTds","points")
+
+for(i in 1:length(espnList)) {
+  if(nrow(espnList[[i]]) > 0){
+    #Add position to projection
+    espnList[[i]][,pos := rep(names(espn_pos), each=length(espn_pages))[i]]
+    espnList[[i]][,pos := as.factor(pos)]
+    
+    #Trim dimensions  
+    espnList[[i]] <- espnList[[i]][2:nrow(espnList[[i]])]
+    
+    #Add variable names
+    if(unique(espnList[[i]][,pos]) == "QB"){
+      setnames(espnList[[i]], c(qbNames, "pos"))
+    } else if(unique(espnList[[i]][,pos]) == "RB"){
+      setnames(espnList[[i]], c(rbNames, "pos"))
+    } else if(unique(espnList[[i]][,pos]) == "WR"){
+      setnames(espnList[[i]], c(wrNames, "pos"))
+    } else if(unique(espnList[[i]][,pos]) == "TE"){
+      setnames(espnList[[i]], c(teNames, "pos"))
+    } else if(unique(espnList[[i]][,pos]) == "K"){
+      setnames(espnList[[i]], c(kNames, "pos"))
+    } else if(unique(espnList[[i]][,pos]) == "DST"){
+      setnames(espnList[[i]], c(dstNames, "pos"))
+    }
+  }
 }
 
-#Merge players within position
-rb_espn <- rbind(rb1_espn,rb2_espn,rb3_espn)
-wr_espn <- rbind(wr1_espn,wr2_espn,wr3_espn)
-
-#Add variable for player position
-qb_espn$pos <- as.factor("QB")
-rb_espn$pos <- as.factor("RB")
-wr_espn$pos <- as.factor("WR")
-te_espn$pos <- as.factor("TE")
-
-#Merge players across positions
-projections_espn <- rbind(qb_espn,rb_espn,wr_espn,te_espn)
+#Merge
+projections_espn <- rbindlist(espnList, fill=TRUE)
 
 #Replace symbols with value of zero
-projections_espn$passCompAtt_espn[projections_espn$passCompAtt_espn == "--/--"] <- "0/0"
-projections_espn$passYds_espn[projections_espn$passYds_espn == "--"] <- "0"
-projections_espn$passTds_espn[projections_espn$passTds_espn == "--"] <- "0"
-projections_espn$passInt_espn[projections_espn$passInt_espn == "--"] <- "0"
-projections_espn$rushAtt_espn[projections_espn$rushAtt_espn == "--"] <- "0"
-projections_espn$rushYds_espn[projections_espn$rushYds_espn == "--"] <- "0"
-projections_espn$rushTds_espn[projections_espn$rushTds_espn == "--"] <- "0"
-projections_espn$rec_espn[projections_espn$rec_espn == "--"] <- "0"
-projections_espn$recYds_espn[projections_espn$recYds_espn == "--"] <- "0"
-projections_espn$recTds_espn[projections_espn$recTds_espn == "--"] <- "0"
-projections_espn$pts_espn[projections_espn$pts_espn == "--"] <- "0"
+projections_espn[which(passCompAtt == "--/--"), passCompAtt := "0/0"]
+projections_espn[which(passYds == "--"), passYds := "0"]
+projections_espn[which(passTds == "--"), passTds := "0"]
+projections_espn[which(passInt == "--"), passInt := "0"]
+projections_espn[which(rushAtt == "--"), rushAtt := "0"]
+projections_espn[which(rushYds == "--"), rushYds := "0"]
+projections_espn[which(rushTds == "--"), rushTds := "0"]
+projections_espn[which(rec == "--"), rec := "0"]
+projections_espn[which(recYds == "--"), recYds := "0"]
+projections_espn[which(recTds == "--"), recTds := "0"]
+projections_espn[which(points == "--"), points := "0"]
 
 #Separate pass completions from attempts
-projections_espn$passComp_espn <- as.numeric(str_sub(string=projections_espn$passCompAtt_espn, end=str_locate(string=projections_espn$passCompAtt_espn, '/')[,1]-1))
-projections_espn$passAtt_espn <- as.numeric(str_sub(string=projections_espn$passCompAtt_espn, start=str_locate(string=projections_espn$passCompAtt_espn, '/')[,1]+1))
-
-#Add variables from other projection sources
-projections_espn$returnTds_espn <- NA
-projections_espn$fumbles_espn <- NA
-projections_espn$twoPts_espn <- NA
+projections_espn[, passComp := str_sub(string=passCompAtt, end=str_locate(string=passCompAtt, '/')[,1]-1)]
+projections_espn[, passAtt := str_sub(string=passCompAtt, start=str_locate(string=passCompAtt, '/')[,1]+1)]
 
 #Convert variables from character strings to numeric
-projections_espn[,c("positionRank_espn","passYds_espn","passTds_espn","passInt_espn","rushAtt_espn","rushYds_espn","rushTds_espn","rec_espn","recYds_espn","recTds_espn","pts_espn","returnTds_espn","fumbles_espn","twoPts_espn")] <-
-  convert.magic(projections_espn[,c("positionRank_espn","passYds_espn","passTds_espn","passInt_espn","rushAtt_espn","rushYds_espn","rushTds_espn","rec_espn","recYds_espn","recTds_espn","pts_espn","returnTds_espn","fumbles_espn","twoPts_espn")], "numeric")
-
-#Player names
-projections_espn$name_espn <- str_sub(projections_espn$player_espn, end=str_locate(string=projections_espn$player_espn, ',')[,1]-1)
-projections_espn$name_espn <- str_replace_all(projections_espn$name_espn, "\\*", "")
-projections_espn$name <- nameMerge(projections_espn$name_espn)
+numericVars <- names(projections_espn)[names(projections_espn) %in% scoreCategories]
+projections_espn[, (numericVars) := lapply(.SD, function(x) as.numeric(as.character(x))), .SDcols = numericVars]
 
 #Player teams
-projections_espn$team_espn <- str_sub(projections_espn$player_espn, start=str_locate(string=projections_espn$player_espn, ',')[,1]+2, end = str_locate(string=projections_espn$player_espn, ',')[,1]+4)
-projections_espn$team_espn <- str_trim(projections_espn$team_espn, side="right")
-projections_espn$team_espn <- toupper(projections_espn$team_espn)
-projections_espn$team_espn[projections_espn$team_espn=="WSH"] <- "WAS"
+projections_espn[,team_espn := str_sub(player, start=str_locate(string=player, ',')[,1]+2, end = str_locate(string=player, ',')[,1]+4)]
+projections_espn[,team_espn := str_trim(projections_espn$team_espn, side="right")]
+projections_espn[which(pos == "DST"), team_espn := convertTeamAbbreviation(str_sub(projections_espn$player[which(projections_espn$pos == "DST")], end=str_locate(string=projections_espn$player[which(projections_espn$pos == "DST")], " ")[,1]-1))]
+projections_espn[,team_espn := cleanTeamAbbreviations(toupper(projections_espn$team_espn))]
+
+#Player names
+projections_espn[,name_espn := str_sub(player, end=str_locate(string=player, ',')[,1]-1)]
+projections_espn[,name_espn := str_replace_all(name_espn, "\\*", "")]
+projections_espn[which(pos == "DST"), name_espn := convertTeamName(projections_espn$team_espn[which(projections_espn$pos == "DST")])]
+projections_espn[,name := nameMerge(projections_espn$name_espn)]
 
 #Remove duplicate cases
-projections_espn[projections_espn$name %in% projections_espn[duplicated(projections_espn$name),"name"],]
+duplicateCases <- projections_espn[duplicated(name)]$name
+projections_espn[which(name %in% duplicateCases),]
+
+#Same name, different player
+projections_espn <- projections_espn[-which(name == "ALEXSMITH" & team_espn == "CIN"),]
+projections_espn <- projections_espn[-which(name == "RYANGRIFFIN" & team_espn == "NO"),]
+projections_espn <- projections_espn[-which(name == "ZACHMILLER" & team_espn == "CHI"),]
 
 #Same player, different position
 dropNames <- c("DEXTERMCCLUSTER")
 dropVariables <- c("pos")
 dropLabels <- c("WR")
 
-projections_espn2 <- ddply(projections_espn, .(name), numcolwise(mean), na.rm=TRUE)
+projections_espn2 <- setDT(ddply(projections_espn, .(name), numcolwise(mean), na.rm=TRUE))
 
 for(i in 1:length(dropNames)){
-  if(dim(projections_espn[-which(projections_espn[,"name"] == dropNames[i] & projections_espn[,dropVariables[i]] == dropLabels[i]),])[1] > 0){
-    projections_espn <- projections_espn[-which(projections_espn[,"name"] == dropNames[i] & projections_espn[,dropVariables[i]] == dropLabels[i]),]
+  if(dim(projections_espn[-which(name == dropNames[i] & projections_espn[,dropVariables[i], with=FALSE] == dropLabels[i]),])[1] > 0){
+    projections_espn <- projections_espn[-which(name == dropNames[i] & projections_espn[,dropVariables[i], with=FALSE] == dropLabels[i]),]
   }
 }
 
-projections_espn <- merge(projections_espn2, projections_espn[,c("name","name_espn","player_espn","pos","team_espn")], by="name")
+setkeyv(projections_espn2, cols="name")
+setkeyv(projections_espn, cols="name")
+
+projections_espn <- merge(projections_espn2, projections_espn[,c("name","name_espn","player","pos","team_espn"), with=FALSE], by="name")
 
 #Rename players
 
 #Calculate overall rank
-projections_espn$overallRank_espn <- rank(-projections_espn$pts_espn, ties.method="min")
+projections_espn[,overallRank := rank(-points, ties.method="min")]
+
+#Calculate Position Rank
+projections_espn[which(pos == "QB"), positionRank := rank(-projections_espn[which(pos == "QB"), "points", with=FALSE], ties.method="min")]
+projections_espn[which(pos == "RB"), positionRank := rank(-projections_espn[which(pos == "RB"), "points", with=FALSE], ties.method="min")]
+projections_espn[which(pos == "WR"), positionRank := rank(-projections_espn[which(pos == "WR"), "points", with=FALSE], ties.method="min")]
+projections_espn[which(pos == "TE"), positionRank := rank(-projections_espn[which(pos == "TE"), "points", with=FALSE], ties.method="min")]
+projections_espn[which(pos == "K"), positionRank := rank(-projections_espn[which(pos == "K"), "points", with=FALSE], ties.method="min")]
+projections_espn[which(pos == "DST"), positionRank := rank(-projections_espn[which(pos == "DST"), "points", with=FALSE], ties.method="min")]
+
+#Add source
+projections_espn$sourceName <- suffix
 
 #Order variables in data set
-projections_espn <- projections_espn[,c(prefix, paste(varNames, suffix, sep="_"))]
+allVars <- c(prefix, paste(sourceSpecific, suffix, sep="_"), varNames)
+keepVars <- allVars[allVars %in% names(projections_espn)]
+projections_espn <- projections_espn[,keepVars, with=FALSE]
 
 #Order players by overall rank
-projections_espn <- projections_espn[order(projections_espn$overallRank_espn),]
-row.names(projections_espn) <- 1:dim(projections_espn)[1]
+projections_espn <- projections_espn[order(projections_espn$overallRank),]
 
 #Density Plot
-ggplot(projections_espn, aes(x=pts_espn)) + geom_density(fill="blue", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of ESPN Projected Points")
+ggplot(projections_espn, aes(x=points)) + geom_density(fill="blue", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of ESPN Projected Points")
 ggsave(paste(getwd(),"/Figures/ESPN projections.jpg", sep=""), width=10, height=10)
 dev.off()
 

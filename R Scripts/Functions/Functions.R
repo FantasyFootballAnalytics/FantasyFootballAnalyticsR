@@ -236,6 +236,9 @@ convertTeamAbbreviation <- function(x){
   x[grep("Detroit", x, ignore.case=TRUE)] <- "DET"
   x[grep("Lions", x, ignore.case=TRUE)] <- "DET"
   
+  x[grep("Free", x, ignore.case=TRUE)] <- "FA"
+  x[grep("Agent", x, ignore.case=TRUE)] <- "FA"
+  
   x[grep("Green Bay", x, ignore.case=TRUE)] <- "GB"
   x[grep("Packers", x, ignore.case=TRUE)] <- "GB"
   
@@ -298,6 +301,75 @@ convertTeamAbbreviation <- function(x){
   
   x[grep("Washington", x, ignore.case=TRUE)] <- "WAS"
   x[grep("Redskins", x, ignore.case=TRUE)] <- "WAS"
+  
+  return(x)
+}
+
+#Convert team abbreviations to cities/nicknames
+convertTeamName <- function(x){
+  x[which(toupper(x) == "ARI")] <- "Arizona Cardinals"
+  x[which(toupper(x) == "ARZ")] <- "Arizona Cardinals"
+  x[which(toupper(x) == "ATL")] <- "Atlanta Falcons"
+  x[which(toupper(x) == "BAL")] <- "Baltimore Ravens"
+  x[which(toupper(x) == "BUF")] <- "Buffalo Bills"
+  x[which(toupper(x) == "CAR")] <- "Carolina Panthers"
+  x[which(toupper(x) == "CHI")] <- "Chicago Bears"
+  x[which(toupper(x) == "CIN")] <- "Cincinnati Bengals"
+  x[which(toupper(x) == "CLE")] <- "Cleveland Browns"
+  x[which(toupper(x) == "DAL")] <- "Dallas Cowboys"
+  x[which(toupper(x) == "DEN")] <- "Denver Broncos"
+  x[which(toupper(x) == "DET")] <- "Detroit Lions"
+  x[which(toupper(x) == "FA")] <- "Free Agent"
+  x[which(toupper(x) == "GB")] <- "Green Bay Packers"
+  x[which(toupper(x) == "GBP")] <- "Green Bay Packers"
+  x[which(toupper(x) == "HOU")] <- "Houston Texans"
+  x[which(toupper(x) == "IND")] <- "Indianapolis Colts"
+  x[which(toupper(x) == "JAC")] <- "Jacksonville Jaguars"
+  x[which(toupper(x) == "JAX")] <- "Jacksonville Jaguars"
+  x[which(toupper(x) == "KC")] <- "Kansas City Chiefs"
+  x[which(toupper(x) == "KCC")] <- "Kansas City Chiefs"
+  x[which(toupper(x) == "MIA")] <- "Miami Dolphins"
+  x[which(toupper(x) == "MIN")] <- "Minnesota Vikings"
+  x[which(toupper(x) == "NEW")] <- "New England Patriots"
+  x[which(toupper(x) == "NE")] <- "New England Patriots"
+  x[which(toupper(x) == "NOS")] <- "New Orleans Saints"
+  x[which(toupper(x) == "NO")] <- "New Orleans Saints"
+  x[which(toupper(x) == "NYJ")] <- "New York Jets"
+  x[which(toupper(x) == "NYG")] <- "New York Giants"
+  x[which(toupper(x) == "OAK")] <- "Oakland Raiders"
+  x[which(toupper(x) == "PHI")] <- "Philadelphia Eagles"
+  x[which(toupper(x) == "PIT")] <- "Pittsburgh Steelers"
+  x[which(toupper(x) == "SD")] <- "San Diego Chargers"
+  x[which(toupper(x) == "SDC")] <- "San Diego Chargers"
+  x[which(toupper(x) == "SAN")] <- "San Diego Chargers"
+  x[which(toupper(x) == "ST")] <- "St. Louis Rams"
+  x[which(toupper(x) == "STL")] <- "St. Louis Rams"
+  x[which(toupper(x) == "SF")] <- "San Francisco 49ers"
+  x[which(toupper(x) == "SFO")] <- "San Francisco 49ers"
+  x[which(toupper(x) == "SEA")] <- "Seattle Seahawks"
+  x[which(toupper(x) == "TB")] <- "Tampa Bay Buccaneers"
+  x[which(toupper(x) == "TBB")] <- "Tampa Bay Buccaneers"
+  x[which(toupper(x) == "TEN")] <- "Tennessee Titans"
+  x[which(toupper(x) == "WAS")] <- "Washington Redskins"
+  x[which(toupper(x) == "WSH")] <- "Washington Redskins"
+  
+  return(x)
+}
+
+#Convert team abbreviations to cities/nicknames
+cleanTeamAbbreviations <- function(x){
+  x[which(toupper(x) == "ARI")] <- "ARZ"
+  x[which(toupper(x) == "GBP")] <- "GB"
+  x[which(toupper(x) == "JAX")] <- "JAC"
+  x[which(toupper(x) == "KCC")] <- "KC"
+  x[which(toupper(x) == "NEW")] <- "NE"
+  x[which(toupper(x) == "NOS")] <- "NO"
+  x[which(toupper(x) == "SAN")] <- "SD"
+  x[which(toupper(x) == "SDC")] <- "SD"
+  x[which(toupper(x) == "ST")] <- "STL"
+  x[which(toupper(x) == "SFO")] <- "SF"
+  x[which(toupper(x) == "TBB")] <- "TB"
+  x[which(toupper(x) == "WSH")] <- "WAS"
   
   return(x)
 }

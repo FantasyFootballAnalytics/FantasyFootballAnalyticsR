@@ -1,5 +1,5 @@
 ###########################
-# File: CBS Projections.R
+# File: CBS1 Projections.R
 # Description: Downloads Fantasy Football Projections from cbssports.com
 # Date: 3/3/2013
 # Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
@@ -12,100 +12,132 @@ library("XML")
 library("stringr")
 library("ggplot2")
 library("plyr")
+library("data.table")
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
+#Projection Info
+season <- 2015
+suffix <- "cbs"
+
 #Download fantasy football projections from cbssports.com
-qb_cbs <- readHTMLTable("http://fantasynews.cbssports.com/fantasyfootball/stats/weeklyprojections/QB/season", stringsAsFactors = FALSE)[7]$'NULL'
-rb1_cbs <- readHTMLTable("http://fantasynews.cbssports.com/fantasyfootball/stats/weeklyprojections/RB/season", stringsAsFactors = FALSE)[7]$'NULL'
-rb2_cbs <- readHTMLTable("http://fantasynews.cbssports.com/fantasyfootball/stats/weeklyprojections/RB/season?&start_row=51", stringsAsFactors = FALSE)[7]$'NULL'
-wr1_cbs <- readHTMLTable("http://fantasynews.cbssports.com/fantasyfootball/stats/weeklyprojections/WR/season", stringsAsFactors = FALSE)[7]$'NULL'
-wr2_cbs <- readHTMLTable("http://fantasynews.cbssports.com/fantasyfootball/stats/weeklyprojections/WR/season?&start_row=51", stringsAsFactors = FALSE)[7]$'NULL'
-te_cbs <- readHTMLTable("http://fantasynews.cbssports.com/fantasyfootball/stats/weeklyprojections/TE/season", stringsAsFactors = FALSE)[7]$'NULL'
+cbs_baseurl <- "http://fantasynews.cbssports.com/fantasyfootball/stats/weeklyprojections/"
+cbs_pos <- c("QB","RB","WR","TE","K","DST")
+cbs_writers <- c("jamey_eisenberg","dave_richard")
+cbs_source <- c("cbs1", "cbs2")
+cbs_leaguetype <- "standard"
+cbs_urls <- paste0(cbs_baseurl, cbs_pos, "/season/", rep(cbs_writers, each=length(cbs_pos)), "/", cbs_leaguetype, "?&print_rows=9999")
 
-#Add variable names for each object
-names(qb_cbs) <- c("player_cbs","passAtt_cbs","passComp_cbs","passYds_cbs","passTds_cbs","passInt_cbs","passCompPct_cbs","passYdsPerAtt_cbs","rushAtt_cbs","rushYds_cbs","rushYdsPerAtt_cbs","rushTds_cbs","fumbles_cbs","pts_cbs")
-names(rb1_cbs) <- names(rb2_cbs) <- c("player_cbs","rushAtt_cbs","rushYds_cbs","rushYdsPerAtt_cbs","rushTds_cbs","rec_cbs","recYds_cbs","recYdsPerRec_cbs","recTds_cbs","fumbles_cbs","pts_cbs")
-names(wr1_cbs) <- names(wr2_cbs) <- c("player_cbs","rec_cbs","recYds_cbs","recYdsPerRec_cbs","recTds_cbs","fumbles_cbs","pts_cbs")
-names(te_cbs) <- c("player_cbs","rec_cbs","recYds_cbs","recYdsPerRec_cbs","recTds_cbs","fumbles_cbs","pts_cbs")
+#Scrape
+cbs <- lapply(cbs_urls, function(x) {data.table(readHTMLTable(x, stringsAsFactors = FALSE)[7]$'NULL')})
+cbsList <- cbs
 
-#Trim dimensions
-qb_cbs <- qb_cbs[3:(dim(qb_cbs)[1]-1),]
-rb1_cbs <- rb1_cbs[3:(dim(rb1_cbs)[1]-1),]
-rb2_cbs <- rb2_cbs[3:(dim(rb2_cbs)[1]-1),]
-wr1_cbs <- wr1_cbs[3:(dim(wr1_cbs)[1]-1),]
-wr2_cbs <- wr2_cbs[3:(dim(wr2_cbs)[1]-1),]
-te_cbs <- te_cbs[3:(dim(te_cbs)[1]-1),]
+#Clean data
+qbNames <- c("player","passAtt","passComp","passYds","passTds","passInt","passCompPct","passYdsPerAtt","rushAtt","rushYds","rushYdsPerAtt","rushTds","fumbles","points")
+rbNames <- c("player","rushAtt","rushYds","rushYdsPerAtt","rushTds","rec","recYds","recYdsPerRec","recTds","fumbles","points")
+wrNames <- c("player","rec","recYds","recYdsPerRec","recTds","fumbles","points")
+teNames <- c("player","rec","recYds","recYdsPerRec","recTds","fumbles","points")
+kNames <- c("player","fg","fgAtt","xp","points")
+dstNames <- c("player","dstInt","dstFumlRec","dstFumlForce","dstSack","dstTd","dstSafety","dstPtsAllowed","dstYdsAllowed","points")
 
-#Merge within position
-rb_cbs <- rbind(rb1_cbs,rb2_cbs)
-wr_cbs <- rbind(wr1_cbs,wr2_cbs)
+for(i in 1:length(cbsList)){
+  #Add writer's name to projection
+  cbsList[[i]][,sourceName := rep(cbs_source, each=length(cbs_pos))[i]]
+  
+  #Add position to projection
+  cbsList[[i]][,pos := rep(cbs_pos, length(cbs_source))[i]]
+  cbsList[[i]][,pos := as.factor(pos)]
+  
+  #Trim dimensions  
+  if(unique(cbsList[[i]][,pos]) %in% c("K","DST")){
+    cbsList[[i]] <- cbsList[[i]][2:(nrow(cbsList[[i]])-1)]
+  } else if(unique(cbsList[[i]][,pos]) %in% c("QB")){
+    cbsList[[i]] <- cbsList[[i]][3:(nrow(cbsList[[i]]))]
+  } else{
+    cbsList[[i]] <- cbsList[[i]][3:(nrow(cbsList[[i]])-1)]
+  }
+  
+  #Add variable names
+  if(unique(cbsList[[i]][,pos]) == "QB"){
+    setnames(cbsList[[i]], c(qbNames, "sourceName", "pos"))
+  } else if(unique(cbsList[[i]][,pos]) == "RB"){
+    setnames(cbsList[[i]], c(rbNames, "sourceName", "pos"))
+  } else if(unique(cbsList[[i]][,pos]) == "WR"){
+    setnames(cbsList[[i]], c(wrNames, "sourceName", "pos"))
+  } else if(unique(cbsList[[i]][,pos]) == "TE"){
+    setnames(cbsList[[i]], c(teNames, "sourceName", "pos"))
+  } else if(unique(cbsList[[i]][,pos]) == "K"){
+    setnames(cbsList[[i]], c(kNames, "sourceName", "pos"))
+  } else if(unique(cbsList[[i]][,pos]) == "DST"){
+    setnames(cbsList[[i]], c(dstNames, "sourceName", "pos"))
+  }
+}
 
-#Add variable for player position
-qb_cbs$pos <- as.factor("QB")
-rb_cbs$pos <- as.factor("RB")
-wr_cbs$pos <- as.factor("WR")
-te_cbs$pos <- as.factor("TE")
-
-#Merge across positions
-projections_cbs <- rbind.fill(qb_cbs, rb_cbs, wr_cbs, te_cbs)
-
-#Add variables from other projection sources
-projections_cbs$twoPts_cbs <- NA
+#Merge
+projections_cbs <- rbindlist(cbsList, fill=TRUE)
 
 #Convert variables from character strings to numeric
-projections_cbs[,c("twoPts_cbs","fumbles_cbs","pts_cbs",
-                   "rec_cbs","recYds_cbs","recYdsPerRec_cbs","recTds_cbs",
-                   "rushAtt_cbs","rushYds_cbs","rushYdsPerAtt_cbs","rushTds_cbs",
-                   "passAtt_cbs","passComp_cbs","passYds_cbs","passTds_cbs","passInt_cbs","passCompPct_cbs","passYdsPerAtt_cbs")] <- convert.magic(projections_cbs[,c("twoPts_cbs","fumbles_cbs","pts_cbs",
-                                                                                                                                                                      "rec_cbs","recYds_cbs","recYdsPerRec_cbs","recTds_cbs",
-                                                                                                                                                                      "rushAtt_cbs","rushYds_cbs","rushYdsPerAtt_cbs","rushTds_cbs",
-                                                                                                                                                                      "passAtt_cbs","passComp_cbs","passYds_cbs","passTds_cbs","passInt_cbs","passCompPct_cbs","passYdsPerAtt_cbs")], "numeric")
-
-#Player names
-projections_cbs$name_cbs <- str_sub(projections_cbs$player, end=str_locate(string=projections_cbs$player, ',')[,1]-1)
-projections_cbs$name <- nameMerge(projections_cbs$name_cbs)
-
-#Remove Duplicates
-projections_cbs[projections_cbs$name %in% projections_cbs[duplicated(projections_cbs$name),"name"],]
-#projections_cbs[projections_cbs$name_cbs == "James Casey","pos"] <- "TE"
-
-#Rename Players
-#projections_cbs[projections_cbs$name_cbs=="EJ Manuel", "name_cbs"] <- "E.J. Manuel"
+numericVars <- names(projections_cbs)[names(projections_cbs) %in% scoreCategories]
+projections_cbs[, (numericVars) := lapply(.SD, function(x) as.numeric(as.character(x))), .SDcols = numericVars]
 
 #Player teams
-projections_cbs$team_cbs <- str_trim(str_sub(projections_cbs$player, start= -3))
+projections_cbs[,team_cbs := cleanTeamAbbreviations(str_trim(str_sub(player, start = -3)))]
 
-#Calculate overall rank
-projections_cbs$overallRank_cbs <- rank(-projections_cbs$pts_cbs, ties.method="min")
+#Player names
+projections_cbs[,name_cbs := str_sub(player, end=str_locate(string=player, ',')[,1]-1)]
+projections_cbs[which(pos == "DST"), name_cbs := convertTeamName(projections_cbs$team_cbs[which(projections_cbs$pos == "DST")])]
+projections_cbs[,name := nameMerge(name_cbs)]
+
+#Remove Duplicate Cases
+projections_cbs1 <- projections_cbs[which(sourceName == "cbs1")]
+projections_cbs2 <- projections_cbs[which(sourceName == "cbs2")]
+
+duplicateCases_cbs1 <- projections_cbs1[duplicated(name)]$name
+duplicateCases_cbs2 <- projections_cbs2[duplicated(name)]$name
+
+projections_cbs1[which(name %in% duplicateCases_cbs1),]
+projections_cbs2[which(name %in% duplicateCases_cbs2),]
+
+#Rename Players
+projections_cbs[name=="TIMOTHYWRIGHT", name:="TIMWRIGHT"]
+
+#Calculate Overall Rank
+projections_cbs[which(sourceName == "cbs1"), overallRank := rank(-projections_cbs[which(sourceName == "cbs1"), "points", with=FALSE], ties.method="min")]
+projections_cbs[which(sourceName == "cbs2"), overallRank := rank(-projections_cbs[which(sourceName == "cbs2"), "points", with=FALSE], ties.method="min")]
 
 #Calculate Position Rank
-projections_cbs$positionRank_cbs <- NA
-projections_cbs[which(projections_cbs$pos == "QB"), "positionRank_cbs"] <- rank(-projections_cbs[which(projections_cbs$pos == "QB"), "pts_cbs"], ties.method="min")
-projections_cbs[which(projections_cbs$pos == "RB"), "positionRank_cbs"] <- rank(-projections_cbs[which(projections_cbs$pos == "RB"), "pts_cbs"], ties.method="min")
-projections_cbs[which(projections_cbs$pos == "WR"), "positionRank_cbs"] <- rank(-projections_cbs[which(projections_cbs$pos == "WR"), "pts_cbs"], ties.method="min")
-projections_cbs[which(projections_cbs$pos == "TE"), "positionRank_cbs"] <- rank(-projections_cbs[which(projections_cbs$pos == "TE"), "pts_cbs"], ties.method="min")
+projections_cbs[which(pos == "QB" & sourceName == "cbs1"), positionRank := rank(-projections_cbs[which(pos == "QB" & sourceName == "cbs1"), "points", with=FALSE], ties.method="min")]
+projections_cbs[which(pos == "RB" & sourceName == "cbs1"), positionRank := rank(-projections_cbs[which(pos == "RB" & sourceName == "cbs1"), "points", with=FALSE], ties.method="min")]
+projections_cbs[which(pos == "WR" & sourceName == "cbs1"), positionRank := rank(-projections_cbs[which(pos == "WR" & sourceName == "cbs1"), "points", with=FALSE], ties.method="min")]
+projections_cbs[which(pos == "TE" & sourceName == "cbs1"), positionRank := rank(-projections_cbs[which(pos == "TE" & sourceName == "cbs1"), "points", with=FALSE], ties.method="min")]
+projections_cbs[which(pos == "K" & sourceName == "cbs1"), positionRank := rank(-projections_cbs[which(pos == "K" & sourceName == "cbs1"), "points", with=FALSE], ties.method="min")]
+projections_cbs[which(pos == "DST" & sourceName == "cbs1"), positionRank := rank(-projections_cbs[which(pos == "DST" & sourceName == "cbs1"), "points", with=FALSE], ties.method="min")]
+
+projections_cbs[which(pos == "QB" & sourceName == "cbs2"), positionRank := rank(-projections_cbs[which(pos == "QB" & sourceName == "cbs2"), "points", with=FALSE], ties.method="min")]
+projections_cbs[which(pos == "RB" & sourceName == "cbs2"), positionRank := rank(-projections_cbs[which(pos == "RB" & sourceName == "cbs2"), "points", with=FALSE], ties.method="min")]
+projections_cbs[which(pos == "WR" & sourceName == "cbs2"), positionRank := rank(-projections_cbs[which(pos == "WR" & sourceName == "cbs2"), "points", with=FALSE], ties.method="min")]
+projections_cbs[which(pos == "TE" & sourceName == "cbs2"), positionRank := rank(-projections_cbs[which(pos == "TE" & sourceName == "cbs2"), "points", with=FALSE], ties.method="min")]
+projections_cbs[which(pos == "K" & sourceName == "cbs2"), positionRank := rank(-projections_cbs[which(pos == "K" & sourceName == "cbs2"), "points", with=FALSE], ties.method="min")]
+projections_cbs[which(pos == "DST" & sourceName == "cbs2"), positionRank := rank(-projections_cbs[which(pos == "DST" & sourceName == "cbs2"), "points", with=FALSE], ties.method="min")]
 
 #Order variables in data set
-projections_cbs <- projections_cbs[,c("name","name_cbs","pos","team_cbs","positionRank_cbs","overallRank_cbs",
-                                      "passAtt_cbs","passComp_cbs","passYds_cbs","passTds_cbs","passInt_cbs","passCompPct_cbs","passYdsPerAtt_cbs",
-                                      "rushAtt_cbs","rushYds_cbs","rushYdsPerAtt_cbs","rushTds_cbs",
-                                      "rec_cbs","recYds_cbs","recYdsPerRec_cbs","recTds_cbs","twoPts_cbs","fumbles_cbs","pts_cbs")]
+allVars <- c(prefix, paste(sourceSpecific, suffix, sep="_"), varNames)
+keepVars <- allVars[allVars %in% names(projections_cbs)]
+projections_cbs <- projections_cbs[,keepVars, with=FALSE]
 
 #Order players by overall rank
-projections_cbs <- projections_cbs[order(projections_cbs$overallRank_cbs),]
-row.names(projections_cbs) <- 1:dim(projections_cbs)[1]
+projections_cbs <- projections_cbs[order(projections_cbs$overallRank),]
 
 #Density Plot
-ggplot(projections_cbs, aes(x=pts_cbs)) + geom_density(fill="red", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of CBS Projected Points from")
+ggplot(projections_cbs, aes(x=points)) + geom_density(fill="red", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of CBS Projected Points")
 ggsave(paste(getwd(),"/Figures/CBS projections.jpg", sep=""), width=10, height=10)
 dev.off()
 
 #Save file
-save(projections_cbs, file = paste(getwd(),"/Data/CBS-Projections.RData", sep=""))
-write.csv(projections_cbs, file=paste(getwd(),"/Data/CBS-Projections.csv", sep=""), row.names=FALSE)
+save(projections_cbs, file = paste0(getwd(),"/Data/CBS-Projections.RData"))
+write.csv(projections_cbs, file = paste(getwd(),"/Data/CBS-Projections.csv"), row.names=FALSE)
 
-save(projections_cbs, file = paste(getwd(),"/Data/Historical Projections/CBS-Projections-2014.RData", sep=""))
-write.csv(projections_cbs, file=paste(getwd(),"/Data/Historical Projections/CBS-Projections-2014.csv", sep=""), row.names=FALSE)
+save(projections_cbs, file = paste0(getwd(), "/Data/Historical Projections/CBS-Projections-", season, ".RData"))
+write.csv(projections_cbs, file = paste0(getwd(), "/Data/Historical Projections/CBS-Projections-", season, ".csv"), row.names=FALSE)

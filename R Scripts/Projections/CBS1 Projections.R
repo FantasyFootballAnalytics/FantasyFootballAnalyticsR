@@ -17,7 +17,8 @@ library("plyr")
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
-#Suffix
+#Projection Info
+year <- 2015
 suffix <- "cbs1"
 
 #Download fantasy football projections from cbssports.com
