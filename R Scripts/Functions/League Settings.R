@@ -22,13 +22,16 @@ maxCost <- leagueCap - (numTotalPlayers - numTotalStarters)
 
 #Variable names
 prefix <- c("name","pos")
-varNames <- c("name","team","positionRank","overallRank","pts",
-              "passAtt","passComp","passYds","passTds","passInt",
-              "rushAtt","rushYds","rushTds","rec","recYds","recTds",
-              "returnTds","twoPts","fumbles") 
-#"solo","ast","idpSack","idpFumlRec","idpFumlForce","idpInt","idpPD",
-#"ptsAllowed","dstSack","dstInt","dstFumlRec","blk","to","intTd","kRetTd","pRetTd",
-#"fg","fg3039","fg4049","fg50","xp"
+sourceSpecific <- c("name","team")
+scoreCategories <- c("points",
+                     "passAtt","passComp","passYds","passTds","passInt",
+                     "rushAtt","rushYds","rushTds","rec","recYds","recTds",
+                     "returnTds","twoPts","fumbles",
+                     "idpSolo","idpAst","idpSack","idpFumlRec","idpFumlForce","idpInt","idpPD",
+                     "dstPtsAllowed","dstSack","dstSafety","dstInt","dstFumlRec","dstBlk","dstTo","dstIntTd","kRetTd","pRetTd",
+                     "fg","fg019","fg2029","fg3039","fg4049","fg50","xp")
+rankVars <- c("positionRank","overallRank")
+varNames <- c(rankVars, scoreCategories)
 
 #Scoring
 passAttMultiplier <- 0      #0 pts per passing attempt

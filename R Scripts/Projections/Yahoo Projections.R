@@ -18,8 +18,9 @@ library("data.table")
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
-#Year
+#Projection Info
 year <- 2015
+suffix <- "yahoo"
 
 #Download fantasy football projections from Yahoo.com
 yahoo_baseurl <- "http://football.fantasysports.yahoo.com/f1/39345/players?status=ALL&cut_type=9&myteam=0&sort=PTS&sdir=1"
@@ -35,27 +36,23 @@ projections_yahoo <- rbindlist(yahoo, fill=TRUE)
 
 #Variable Names
 setnames(projections_yahoo,
-         c("star","player","add","owner","pts_yahoo","ownedPct","proj","actual",
-           "passYds_yahoo","passTds_yahoo","passInt_yahoo","passAtt_yahoo",
-           "rushYds_yahoo","rushTds_yahoo",
-           "recTgt_yahoo","rec_yahoo","recYds_yahoo","recTds_yahoo",
-           "returnTds_yahoo","twoPts_yahoo","fumbles_yahoo","missing1",
-           "kicker","fg019","fg2029","fg3039","fg4049","fg50","fgMade","missing2",
-           "dst","dstPtsAllowed","dstSack","dstSafety","dstFumble","fstBlockKick","missing3"))
-
-#Add missing variables
-projections_yahoo$passComp_yahoo <- NA
-projections_yahoo$rushAtt_yahoo <- NA
+         c("star","player","add","owner","points","ownedPct","proj","actual",
+           "passYds","passTds","passInt","passAtt",
+           "rushYds","rushTds",
+           "recTgt","rec","recYds","recTds",
+           "returnTds","twoPts","fumbles","missing1",
+           "kicker","fg019","fg2029","fg3039","fg4049","fg50","fg","missing2",
+           "dst","dstPtsAllowed","dstSack","dstSafety","dstFumlRec","dstBlk","missing3"))
 
 #Add source
-projections_yahoo$sourceName <- "yahoo"
+projections_yahoo$sourceName <- suffix
 
 #Remove special characters (%, comma)
 projections_yahoo <- projections_yahoo[,lapply(.SD, function(x) gsub("\\%", "", x))]
 projections_yahoo <- projections_yahoo[,lapply(.SD, function(x) gsub("\\,", "", x))]
 
 #Convert variables from character strings to numeric
-numericVars <- c("passAtt_yahoo","passComp_yahoo","passYds_yahoo","passTds_yahoo","passInt_yahoo","rushAtt_yahoo","rushYds_yahoo","rushTds_yahoo","rec_yahoo","recYds_yahoo","recTds_yahoo","returnTds_yahoo","twoPts_yahoo","fumbles_yahoo","pts_yahoo")
+numericVars <- names(projections_yahoo)[names(projections_yahoo) %in% scoreCategories]
 
 projections_yahoo[, (numericVars) := lapply(.SD, function(x) as.numeric(as.character(x))), .SDcols = numericVars]
 
@@ -66,6 +63,8 @@ projections_yahoo[,player := str_trim(sapply(str_split(player, "\n"), "[", 2))]
 
 projections_yahoo[,pos := str_trim(gsub("(.*)\\-", "\\2", player))]
 projections_yahoo[which(nchar(pos) == 4), pos := str_sub(pos, start=0, end=2)] #remove 2nd position
+projections_yahoo[which(pos == "DEF"), pos := "DST"]
+
 projections_yahoo[,name_yahoo := str_trim(str_sub(gsub("(.*)\\-", "\\1", projections_yahoo$player), start=0, end=nchar(projections_yahoo$player)-4))]
 projections_yahoo[,name_yahoo := str_trim(str_sub(gsub("  R", "", name_yahoo)))]
 projections_yahoo[,name_yahoo := str_trim(str_sub(gsub("  W", "", name_yahoo)))]
@@ -85,24 +84,26 @@ projections_yahoo[which(name %in% duplicateCases),]
 projections_yahoo[name=="STEVIEJOHNSON", name:="STEVEJOHNSON"]
 
 #Calculate overall rank
-projections_yahoo[,overallRank_yahoo := rank(-pts_yahoo, ties.method="min")]
+projections_yahoo[,overallRank := rank(-points, ties.method="min")]
 
 #Calculate Position Rank
-projections_yahoo[which(pos == "QB"), positionRank_yahoo := rank(-projections_yahoo[which(pos == "QB"), "pts_yahoo", with=FALSE], ties.method="min")]
-projections_yahoo[which(pos == "RB"), positionRank_yahoo := rank(-projections_yahoo[which(pos == "RB"), "pts_yahoo", with=FALSE], ties.method="min")]
-projections_yahoo[which(pos == "WR"), positionRank_yahoo := rank(-projections_yahoo[which(pos == "WR"), "pts_yahoo", with=FALSE], ties.method="min")]
-projections_yahoo[which(pos == "TE"), positionRank_yahoo := rank(-projections_yahoo[which(pos == "TE"), "pts_yahoo", with=FALSE], ties.method="min")]
+projections_yahoo[which(pos == "QB"), positionRank := rank(-projections_yahoo[which(pos == "QB"), "points", with=FALSE], ties.method="min")]
+projections_yahoo[which(pos == "RB"), positionRank := rank(-projections_yahoo[which(pos == "RB"), "points", with=FALSE], ties.method="min")]
+projections_yahoo[which(pos == "WR"), positionRank := rank(-projections_yahoo[which(pos == "WR"), "points", with=FALSE], ties.method="min")]
+projections_yahoo[which(pos == "TE"), positionRank := rank(-projections_yahoo[which(pos == "TE"), "points", with=FALSE], ties.method="min")]
+projections_yahoo[which(pos == "K"), positionRank := rank(-projections_yahoo[which(pos == "K"), "points", with=FALSE], ties.method="min")]
+projections_yahoo[which(pos == "DST"), positionRank := rank(-projections_yahoo[which(pos == "DST"), "points", with=FALSE], ties.method="min")]
 
 #Order variables in data set
-keepVars <- c(prefix, paste(varNames, suffix, sep="_"))
+allVars <- c(prefix, paste(sourceSpecific, suffix, sep="_"), varNames)
+keepVars <- allVars[allVars %in% names(projections_yahoo)]
 projections_yahoo <- projections_yahoo[,keepVars, with=FALSE]
 
 #Order players by overall rank
-projections_yahoo <- projections_yahoo[order(projections_yahoo$overallRank_yahoo),]
-row.names(projections_yahoo) <- 1:nrow(projections_yahoo)
+projections_yahoo <- projections_yahoo[order(projections_yahoo$overallRank),]
 
 #Density Plot
-ggplot(projections_yahoo, aes(x=pts_yahoo)) + geom_density(fill="blue", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of Yahoo Projected Points")
+ggplot(projections_yahoo, aes(x=points)) + geom_density(fill="blue", alpha=.3) + xlab("Player's Projected Points") + ggtitle("Density Plot of Yahoo Projected Points")
 ggsave(paste(getwd(),"/Figures/Yahoo projections.jpg", sep=""), width=10, height=10)
 dev.off()
 
