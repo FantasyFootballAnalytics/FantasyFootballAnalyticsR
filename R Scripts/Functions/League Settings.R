@@ -24,7 +24,7 @@ maxCost <- leagueCap - (numTotalPlayers - numTotalStarters)
 prefix <- c("name","pos","sourceName")
 sourceSpecific <- c("name","team")
 scoreCategories <- c("points",
-                     "passAtt","passComp","passYds","passTds","passInt",
+                     "passAtt","passComp","passIncomp","passYds","passTds","passInt",
                      "rushAtt","rushYds","rushTds",
                      "rec","recTgt","recYds","recTds",
                      "returnTds","twoPts","fumbles",
@@ -33,6 +33,7 @@ scoreCategories <- c("points",
                      "fg","fgAtt","fg019","fg2029","fg3039","fg4049","fg50","xp")
 rankVars <- c("positionRank","overallRank")
 varNames <- c(rankVars, scoreCategories)
+finalVarNames <- c("name","pos","team","sourceName","playerID", varNames)
 
 #Scoring
 passAttMultiplier <- 0      #0 pts per passing attempt

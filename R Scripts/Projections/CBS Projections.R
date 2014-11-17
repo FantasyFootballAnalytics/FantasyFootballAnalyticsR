@@ -76,7 +76,7 @@ for(i in 1:length(cbsList)){
 }
 
 #Merge
-projections_cbs <- rbindlist(cbsList, fill=TRUE)
+projections_cbs <- rbindlist(cbsList, use.names=TRUE, fill=TRUE)
 
 #Convert variables from character strings to numeric
 numericVars <- names(projections_cbs)[names(projections_cbs) %in% scoreCategories]
@@ -104,23 +104,10 @@ projections_cbs2[which(name %in% duplicateCases_cbs2),]
 projections_cbs[name=="TIMOTHYWRIGHT", name:="TIMWRIGHT"]
 
 #Calculate Overall Rank
-projections_cbs[which(sourceName == "cbs1"), overallRank := rank(-projections_cbs[which(sourceName == "cbs1"), "points", with=FALSE], ties.method="min")]
-projections_cbs[which(sourceName == "cbs2"), overallRank := rank(-projections_cbs[which(sourceName == "cbs2"), "points", with=FALSE], ties.method="min")]
+projections_cbs <- projections_cbs[order(-points)][,overallRank := 1:.N, by=list(sourceName)]
 
 #Calculate Position Rank
-projections_cbs[which(pos == "QB" & sourceName == "cbs1"), positionRank := rank(-projections_cbs[which(pos == "QB" & sourceName == "cbs1"), "points", with=FALSE], ties.method="min")]
-projections_cbs[which(pos == "RB" & sourceName == "cbs1"), positionRank := rank(-projections_cbs[which(pos == "RB" & sourceName == "cbs1"), "points", with=FALSE], ties.method="min")]
-projections_cbs[which(pos == "WR" & sourceName == "cbs1"), positionRank := rank(-projections_cbs[which(pos == "WR" & sourceName == "cbs1"), "points", with=FALSE], ties.method="min")]
-projections_cbs[which(pos == "TE" & sourceName == "cbs1"), positionRank := rank(-projections_cbs[which(pos == "TE" & sourceName == "cbs1"), "points", with=FALSE], ties.method="min")]
-projections_cbs[which(pos == "K" & sourceName == "cbs1"), positionRank := rank(-projections_cbs[which(pos == "K" & sourceName == "cbs1"), "points", with=FALSE], ties.method="min")]
-projections_cbs[which(pos == "DST" & sourceName == "cbs1"), positionRank := rank(-projections_cbs[which(pos == "DST" & sourceName == "cbs1"), "points", with=FALSE], ties.method="min")]
-
-projections_cbs[which(pos == "QB" & sourceName == "cbs2"), positionRank := rank(-projections_cbs[which(pos == "QB" & sourceName == "cbs2"), "points", with=FALSE], ties.method="min")]
-projections_cbs[which(pos == "RB" & sourceName == "cbs2"), positionRank := rank(-projections_cbs[which(pos == "RB" & sourceName == "cbs2"), "points", with=FALSE], ties.method="min")]
-projections_cbs[which(pos == "WR" & sourceName == "cbs2"), positionRank := rank(-projections_cbs[which(pos == "WR" & sourceName == "cbs2"), "points", with=FALSE], ties.method="min")]
-projections_cbs[which(pos == "TE" & sourceName == "cbs2"), positionRank := rank(-projections_cbs[which(pos == "TE" & sourceName == "cbs2"), "points", with=FALSE], ties.method="min")]
-projections_cbs[which(pos == "K" & sourceName == "cbs2"), positionRank := rank(-projections_cbs[which(pos == "K" & sourceName == "cbs2"), "points", with=FALSE], ties.method="min")]
-projections_cbs[which(pos == "DST" & sourceName == "cbs2"), positionRank := rank(-projections_cbs[which(pos == "DST" & sourceName == "cbs2"), "points", with=FALSE], ties.method="min")]
+projections_cbs <- projections_cbs[order(-points)][,positionRank := 1:.N, by=list(sourceName, pos)]
 
 #Order variables in data set
 allVars <- c(prefix, paste(sourceSpecific, suffix, sep="_"), varNames)

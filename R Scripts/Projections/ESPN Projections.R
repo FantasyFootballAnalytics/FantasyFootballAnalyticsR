@@ -62,7 +62,7 @@ for(i in 1:length(espnList)) {
 }
 
 #Merge
-projections_espn <- rbindlist(espnList, fill=TRUE)
+projections_espn <- rbindlist(espnList, use.names=TRUE, fill=TRUE)
 
 #Replace symbols with value of zero
 projections_espn[which(passCompAtt == "--/--"), passCompAtt := "0/0"]
@@ -102,40 +102,35 @@ duplicateCases <- projections_espn[duplicated(name)]$name
 projections_espn[which(name %in% duplicateCases),]
 
 #Same name, different player
-projections_espn <- projections_espn[-which(name == "ALEXSMITH" & team_espn == "CIN"),]
-projections_espn <- projections_espn[-which(name == "RYANGRIFFIN" & team_espn == "NO"),]
-projections_espn <- projections_espn[-which(name == "ZACHMILLER" & team_espn == "CHI"),]
+#projections_espn <- projections_espn[-which(name == "ALEXSMITH" & team_espn == "CIN"),]
+#projections_espn <- projections_espn[-which(name == "RYANGRIFFIN" & team_espn == "NO"),]
+#projections_espn <- projections_espn[-which(name == "ZACHMILLER" & team_espn == "CHI"),]
 
 #Same player, different position
-dropNames <- c("DEXTERMCCLUSTER")
-dropVariables <- c("pos")
-dropLabels <- c("WR")
+#dropNames <- c("DEXTERMCCLUSTER")
+#dropVariables <- c("pos")
+#dropLabels <- c("WR")
 
-projections_espn2 <- setDT(ddply(projections_espn, .(name), numcolwise(mean), na.rm=TRUE))
+#projections_espn2 <- setDT(ddply(projections_espn, .(name), numcolwise(mean), na.rm=TRUE))
 
-for(i in 1:length(dropNames)){
-  if(dim(projections_espn[-which(name == dropNames[i] & projections_espn[,dropVariables[i], with=FALSE] == dropLabels[i]),])[1] > 0){
-    projections_espn <- projections_espn[-which(name == dropNames[i] & projections_espn[,dropVariables[i], with=FALSE] == dropLabels[i]),]
-  }
-}
+#for(i in 1:length(dropNames)){
+#  if(dim(projections_espn[-which(name == dropNames[i] & projections_espn[,dropVariables[i], with=FALSE] == dropLabels[i]),])[1] > 0){
+#    projections_espn <- projections_espn[-which(name == dropNames[i] & projections_espn[,dropVariables[i], with=FALSE] == dropLabels[i]),]
+#  }
+#}
 
-setkeyv(projections_espn2, cols="name")
-setkeyv(projections_espn, cols="name")
+#setkeyv(projections_espn2, cols="name")
+#setkeyv(projections_espn, cols="name")
 
-projections_espn <- merge(projections_espn2, projections_espn[,c("name","name_espn","player","pos","team_espn"), with=FALSE], by="name")
+#projections_espn <- merge(projections_espn2, projections_espn[,c("name","name_espn","player","pos","team_espn"), with=FALSE], by="name")
 
 #Rename players
 
-#Calculate overall rank
-projections_espn[,overallRank := rank(-points, ties.method="min")]
+#Calculate Overall Rank
+projections_espn <- projections_espn[order(-points)][,overallRank := 1:.N]
 
 #Calculate Position Rank
-projections_espn[which(pos == "QB"), positionRank := rank(-projections_espn[which(pos == "QB"), "points", with=FALSE], ties.method="min")]
-projections_espn[which(pos == "RB"), positionRank := rank(-projections_espn[which(pos == "RB"), "points", with=FALSE], ties.method="min")]
-projections_espn[which(pos == "WR"), positionRank := rank(-projections_espn[which(pos == "WR"), "points", with=FALSE], ties.method="min")]
-projections_espn[which(pos == "TE"), positionRank := rank(-projections_espn[which(pos == "TE"), "points", with=FALSE], ties.method="min")]
-projections_espn[which(pos == "K"), positionRank := rank(-projections_espn[which(pos == "K"), "points", with=FALSE], ties.method="min")]
-projections_espn[which(pos == "DST"), positionRank := rank(-projections_espn[which(pos == "DST"), "points", with=FALSE], ties.method="min")]
+projections_espn <- projections_espn[order(-points)][,positionRank := 1:.N, by=list(pos)]
 
 #Add source
 projections_espn$sourceName <- suffix

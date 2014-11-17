@@ -62,7 +62,7 @@ for(i in 1:length(yahooList)){
 }
 
 #Merge
-projections_yahoo <- rbindlist(yahoo, fill=TRUE)
+projections_yahoo <- rbindlist(yahoo, use.names=TRUE, fill=TRUE)
 
 #Remove special characters (%, comma)
 projections_yahoo <- projections_yahoo[,lapply(.SD, function(x) gsub("\\%", "", x))]
@@ -95,40 +95,35 @@ duplicateCases <- projections_yahoo[duplicated(name)]$name
 projections_yahoo[which(name %in% duplicateCases),]
 
 #Same name, different player
-projections_yahoo <- projections_yahoo[-which(name == "ALEXSMITH" & team_yahoo == "CIN"),]
-projections_yahoo <- projections_yahoo[-which(name == "RYANGRIFFIN" & team_yahoo == "NO"),]
+#projections_yahoo <- projections_yahoo[-which(name == "ALEXSMITH" & team_yahoo == "CIN"),]
+#projections_yahoo <- projections_yahoo[-which(name == "RYANGRIFFIN" & team_yahoo == "NO"),]
 
 #Same player, different position
-dropNames <- c("DEXTERMCCLUSTER","DENARDROBINSON","DRIARCHER","MARQUEISGRAY","JORDANLYNCH")
-dropVariables <- c("pos","pos","pos","pos","pos")
-dropLabels <- c("WR","RB","RB","TE","RB")
+#dropNames <- c("DEXTERMCCLUSTER","DENARDROBINSON","DRIARCHER","MARQUEISGRAY","JORDANLYNCH")
+#dropVariables <- c("pos","pos","pos","pos","pos")
+#dropLabels <- c("WR","RB","RB","TE","RB")
 
-projections_yahoo2 <- setDT(ddply(projections_yahoo, .(name), numcolwise(mean), na.rm=TRUE))
+#projections_yahoo2 <- setDT(ddply(projections_yahoo, .(name), numcolwise(mean), na.rm=TRUE))
 
-for(i in 1:length(dropNames)){
-  if(dim(projections_yahoo[-which(name == dropNames[i] & projections_yahoo[,dropVariables[i], with=FALSE] == dropLabels[i]),])[1] > 0){
-    projections_yahoo <- projections_yahoo[-which(name == dropNames[i] & projections_yahoo[,dropVariables[i], with=FALSE] == dropLabels[i]),]
-  }
-}
+#for(i in 1:length(dropNames)){
+#  if(dim(projections_yahoo[-which(name == dropNames[i] & projections_yahoo[,dropVariables[i], with=FALSE] == dropLabels[i]),])[1] > 0){
+#    projections_yahoo <- projections_yahoo[-which(name == dropNames[i] & projections_yahoo[,dropVariables[i], with=FALSE] == dropLabels[i]),]
+#  }
+#}
 
-setkeyv(projections_yahoo2, cols="name")
-setkeyv(projections_yahoo, cols="name")
+#setkeyv(projections_yahoo2, cols="name")
+#setkeyv(projections_yahoo, cols="name")
 
-projections_yahoo <- merge(projections_yahoo2, projections_yahoo[,c("name","name_yahoo","player","pos","team_yahoo"), with=FALSE], by="name")
+#projections_yahoo <- merge(projections_yahoo2, projections_yahoo[,c("name","name_yahoo","player","pos","team_yahoo"), with=FALSE], by="name")
 
 #Rename players
 projections_yahoo[name=="STEVIEJOHNSON", name:="STEVEJOHNSON"]
 
-#Calculate overall rank
-projections_yahoo[,overallRank := rank(-points, ties.method="min")]
+#Calculate Overall Rank
+projections_yahoo <- projections_yahoo[order(-points)][,overallRank := 1:.N]
 
 #Calculate Position Rank
-projections_yahoo[which(pos == "QB"), positionRank := rank(-projections_yahoo[which(pos == "QB"), "points", with=FALSE], ties.method="min")]
-projections_yahoo[which(pos == "RB"), positionRank := rank(-projections_yahoo[which(pos == "RB"), "points", with=FALSE], ties.method="min")]
-projections_yahoo[which(pos == "WR"), positionRank := rank(-projections_yahoo[which(pos == "WR"), "points", with=FALSE], ties.method="min")]
-projections_yahoo[which(pos == "TE"), positionRank := rank(-projections_yahoo[which(pos == "TE"), "points", with=FALSE], ties.method="min")]
-projections_yahoo[which(pos == "K"), positionRank := rank(-projections_yahoo[which(pos == "K"), "points", with=FALSE], ties.method="min")]
-projections_yahoo[which(pos == "DST"), positionRank := rank(-projections_yahoo[which(pos == "DST"), "points", with=FALSE], ties.method="min")]
+projections_yahoo <- projections_yahoo[order(-points)][,positionRank := 1:.N, by=list(pos)]
 
 #Add source
 projections_yahoo$sourceName <- suffix
