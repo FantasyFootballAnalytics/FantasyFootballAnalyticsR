@@ -13,6 +13,7 @@
 #Load libraries
 library("XML")
 library("stringr")
+library("data.table")
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
@@ -22,24 +23,22 @@ source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 load(paste(getwd(),"/Data/LeagueProjections.RData", sep=""))
 load(paste(getwd(),"/Data/wisdomOfTheCrowd.RData", sep=""))
 
-#projections <- projectedWithActualPts
-
 #Risk - "Experts"
-experts <- readHTMLTable("http://www.fantasypros.com/nfl/rankings/consensus-cheatsheets.php", stringsAsFactors = FALSE)$data
-experts$sdPick_experts <- as.numeric(experts[,"Std Dev"])
-experts$pick_experts <- as.numeric(experts$Ave)
-experts$player <- str_sub(experts[,c("Player (team/bye)")], end=str_locate(experts[,c("Player (team/bye)")], '\\(')[,1]-2)
+experts <- data.table(readHTMLTable("http://www.fantasypros.com/nfl/rankings/consensus-cheatsheets.php", stringsAsFactors = FALSE)$data)
+experts[,sdPick_experts := as.numeric(get("Std Dev"))]
+experts[,pick_experts := as.numeric(Avg)]
+experts[,player := str_sub(get("Player (team/bye)"), end=str_locate(get("Player (team/bye)"), "\\(")[,1]-2)]
 experts$name <- nameMerge(experts$player)
 
 #Rename Players
 #experts[experts$name=="DOMANIQUEDAVIS", "name"] <- "DOMINIQUEDAVIS"
 
-experts <- experts[c("name","pick_experts","sdPick_experts")]
+experts <- experts[,c("name","pick_experts","sdPick_experts"), with=FALSE]
 
 #Risk - Wisdom of the Crowd
-wisdomOfTheCrowd$pick_crowd <- wisdomOfTheCrowd$mean
-wisdomOfTheCrowd$sdPick_crowd <- wisdomOfTheCrowd$mad
-wisdomOfTheCrowd <- wisdomOfTheCrowd[,c("name","pick_crowd","sdPick_crowd")]
+wisdomOfTheCrowd[,pick_crowd := mean]
+wisdomOfTheCrowd[,sdPick_crowd := mad]
+wisdomOfTheCrowd <- wisdomOfTheCrowd[,c("name","pick_crowd","sdPick_crowd"), with=FALSE]
 
 #drafts <- readHTMLTable("http://fantasyfootballcalculator.com/adp.php?teams=10", stringsAsFactors = FALSE)$`NULL`
 #drafts$sdPick_crowd <- as.numeric(drafts$Std.Dev)
@@ -54,29 +53,29 @@ wisdomOfTheCrowd <- wisdomOfTheCrowd[,c("name","pick_crowd","sdPick_crowd")]
 #Merge files
 risk <- merge(experts, wisdomOfTheCrowd, by="name", all=TRUE)
 projections <- merge(projections, risk, by="name", all.x=TRUE)
-projections <- projections[order(projections$overallRank),]
-row.names(projections) <- 1:max(as.numeric(row.names(projections)))
 
 #Calculate risk
-projections$pick <- rowMeans(projections[,c("pick_experts","pick_crowd")], na.rm=TRUE)
+projections[,pick := rowMeans(projections[,c("pick_experts", "pick_crowd"), with=FALSE], na.rm=TRUE)]
 
-projections$sdPts <- apply(projections[,paste("projectedPts", sourcesOfProjectionsAbbreviation, sep="_")], 1, function(x) sd(x, na.rm=TRUE))
+projections[-which(sourceName %in% c("average","averageRobust")), sdPts := sd(points), by=c("name","player","pos","team","playerID")]
+projections[,sdPts := mean(sdPts, na.rm=TRUE), by=c("name","player","pos","team","playerID")]
 
-projections$sdPick <- rowMeans(projections[,c("sdPick_experts","sdPick_crowd")], na.rm=TRUE)
-projections$sdPts[projections$sdPts == 0] <- NA
-projections$sdPickZ <- scale(projections$sdPick)
-projections$sdPtsZ <- scale(projections$sdPts)
-projections$risk <- rowMeans(projections[,c("sdPickZ","sdPtsZ")], na.rm=TRUE)
+projections[,sdPick := rowMeans(projections[,c("sdPick_experts","sdPick_crowd"), with=FALSE], na.rm=TRUE)]
+projections$sdPts[which(projections$sdPts == 0)] <- NA
+
+#Standardize risk by position
+projections[,sdPickZ := scale(sdPick), by="pos"]
+projections[,sdPtsZ := scale(sdPts), by="pos"]
+projections[,risk := rowMeans(projections[,c("sdPickZ","sdPtsZ"), with=FALSE], na.rm=TRUE)]
 
 #Rescale risk with mean~5 and sd~2
 projections$risk <- ((projections$risk * 2/(sd(projections$risk, na.rm=TRUE))) + (5-(mean(projections$risk, na.rm=TRUE))))
 
-#Remove duplicate cases
-projections[projections$name %in% projections$name[duplicated(projections$name)],]
-
-#Drop variables
-projections <- projections[,!(names(projections) %in% c("pick_experts","sdPick_experts","pick_crowd","sdPick_crowd","sdPickZ","sdPtsZ",
-                                                        "passYdsMedian","passTdsMedian","passIntMedian","rushYdsMedian","rushTdsMedian","recMedian","recYdsMedian","recTdsMedian","returnTdsMedian","twoPtsMedian","fumblesMedian"))]
+#Select and order variables
+newVars <- c("pick","risk","sdPts","sdPick")
+allVars <- c(finalVarNames, newVars)
+keepVars <- finalVarNames[finalVarNames %in% names(projections)]
+projections <- projections[,keepVars, with=FALSE]
 
 #Players with highest risk levels
 projections[rank(projections$risk, na.last="keep") %in% (max(rank(projections$risk, na.last="keep"), na.rm=TRUE)-5):max(rank(projections$risk, na.last="keep"), na.rm=TRUE) ,]
@@ -87,8 +86,8 @@ ggsave(paste(getwd(),"/Figures/Risk.jpg", sep=""), width=10, height=10)
 dev.off()
 
 #Save file
-save(projections, file = paste(getwd(),"/Data/Risk.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/Risk.csv", sep=""), row.names=FALSE)
+save(projections, file = paste0(getwd(), "/Data/Risk.RData"))
+write.csv(projections, file = paste0(getwd(), "/Data/Risk.csv"), row.names=FALSE)
 
-save(projections, file = paste(getwd(),"/Data/Historical Files/Risk-2015.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/Historical Files/Risk-2015.csv", sep=""), row.names=FALSE)
+save(projections, file = paste0(getwd(), "/Data/Historical Files/Risk-", season, ".RData"))
+write.csv(projections, file = paste0(getwd(), "/Data/Historical Files/Risk-", season, ".csv"), row.names=FALSE)

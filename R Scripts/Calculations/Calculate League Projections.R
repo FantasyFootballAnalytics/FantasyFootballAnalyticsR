@@ -17,6 +17,9 @@ library("data.table")
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
+#Projection Info
+season <- 2015
+
 #Import projections data
 filenames <- paste(getwd(),"/Data/", sourcesOfProjections, "-Projections.RData", sep="")
 listProjections <- sapply(filenames, function(x) get(load(x)), simplify = FALSE)
@@ -44,10 +47,7 @@ teamNames <- na.omit(
 setkeyv(teamNames, cols=c("name","pos"))
 projections <- projections[unique(teamNames)]
 
-#Set key
-setkeyv(projections, cols=c("name","pos","team","sourceName"))
-
-#Remove duplicate cases
+#Identify duplicate cases
 cases <- projections[, c("name","pos","team"), with=FALSE]
 uniqueCases <- unique(projections[, c("name","pos","team"), with=FALSE])
 duplicateCases <- uniqueCases[duplicated(name) | duplicated(name, fromLast=TRUE)]
@@ -59,20 +59,6 @@ duplicateCases[!duplicated(duplicateCases) & !duplicated(duplicateCases, fromLas
 #Same player (same name and team, different position)
 setkeyv(duplicateCases, c("name", "team"))
 duplicateCases[duplicated(duplicateCases) | duplicated(duplicateCases, fromLast=TRUE)]
-
-#dropNames <- c("DENARDROBINSON","DEXTERMCCLUSTER","THEORIDDICK","ORSONCHARLES","JOEWEBB","EMILIGWENAGU","EVANRODRIGUEZ","BRADSMELLEY","RICHIEBROCKEL","BEARPASCOE","JEDCOLLINS","MARCUSTHIGPEN","JORDANLYNCH")
-#dropVariables <- c("pos","pos","pos","pos","pos","pos","pos","pos","pos","pos","pos","pos","pos")
-#dropLabels <- c("RB","WR","WR","TE","WR","RB","TE","TE","RB","RB","TE","WR","QB")
-
-#projections2 <- ddply(projections, .(name), numcolwise(mean), na.rm=TRUE)
-
-#for(i in 1:length(dropNames)){
-#  if(dim(projections[-which(projections[,"name"] == dropNames[i] & projections[,dropVariables[i]] == dropLabels[i]),])[1] > 0){
-#    projections <- projections[-which(projections[,"name"] == dropNames[i] & projections[,dropVariables[i]] == dropLabels[i]),]
-#  }
-#}
-
-#projections <- merge(projections2, projections[,c("name","player","pos","team")], by="name", all.x=TRUE)
 
 #Calculate stat categories for each source
 projections[,passIncomp := passAtt - passComp]
@@ -87,34 +73,13 @@ projectionsRobustAvg$sourceName <- "averageRobust"
 
 #Merge
 projectionCalculations <- rbind(projectionsAvg, projectionsRobustAvg, fill=TRUE)
-setkeyv(projectionCalculations, cols=c("name","pos","team","sourceName"))
+#setkeyv(projectionCalculations, cols=c("name","pos","team","sourceName"))
 
 projections <- rbind(projections, projectionCalculations, fill=TRUE)
 
 #Set key
 setkeyv(projections, cols=c("name","pos","team"))
 projections[, playerID := (.GRP), by=c("name","pos","team")]
-
-#Calculate projected points for your league
-projections[,passAttPts := passAtt * passAttMultiplier]
-projections[,passCompPts := passComp * passCompMultiplier]
-projections[,passIncompPts := passIncomp * passIncompMultiplier]
-projections[,passYdsPts := passYds * passYdsMultiplier]
-projections[,passTdsPts := passTds * passYdsMultiplier]
-projections[,passIntPts := passInt * passIntMultiplier]
-projections[,rushAttPts := rushAtt * rushAttMultiplier]
-projections[,rushYdsPts := rushYds * rushYdsMultiplier]
-projections[,rushTdsPts := rushTds * rushTdsMultiplier]
-projections[,recPts := rec * recMultiplier]
-projections[,recYdsPts := recYds * recYdsMultiplier]
-projections[,recTdsPts := recTds * recTdsMultiplier]
-projections[,returnTdsPts := returnTds * returnTdsMultiplier]
-projections[,twoPtsPts := twoPts * twoPtsMultiplier]
-projections[,fumblesPts := fumbles * fumlMultiplier]
-
-scoreCategoriesPoints <- names(projections)[names(projections) %in% paste0(scoreCategories, "Pts")]
-
-projections[,points := mySum(projections[,scoreCategoriesPoints, with=FALSE])]
 
 #If variable is all missing for source, impute mean of other sources
 pb <- txtProgressBar(min = 0, max = length(unique(projections$sourceName)), style = 3)
@@ -148,7 +113,15 @@ projections[,returnTdsPts := returnTds * returnTdsMultiplier]
 projections[,twoPtsPts := twoPts * twoPtsMultiplier]
 projections[,fumblesPts := fumbles * fumlMultiplier]
 
+scoreCategoriesPoints <- names(projections)[names(projections) %in% paste0(scoreCategories, "Pts")]
 projections[,points := mySum(projections[,scoreCategoriesPoints, with=FALSE])]
+
+#Calculate 95% CI around robust average
+projections[-which(sourceName %in% c("average","averageRobust")), pointsLo := tryCatch(wilcox.test(points, conf.int=TRUE, na.action="na.exclude")$conf.int[1], error=function(e) median(points, na.rm=TRUE)), by=c("name","player","pos","team","playerID")]
+projections[-which(sourceName %in% c("average","averageRobust")), pointsHi := tryCatch(wilcox.test(points, conf.int=TRUE, na.action="na.exclude")$conf.int[2], error=function(e) median(points, na.rm=TRUE)), by=c("name","player","pos","team","playerID")]
+
+projections[,pointsLo := mean(pointsLo, na.rm=TRUE), by=c("name","player","pos","team","playerID")]
+projections[,pointsHi := mean(pointsHi, na.rm=TRUE), by=c("name","player","pos","team","playerID")]
 
 #Describe
 projections[,list(n = length(points),
@@ -160,15 +133,11 @@ projections[,list(n = length(points),
 
 #Correlations among projections
 projectionsWide <- dcast.data.table(projections, name + pos + team + playerID ~ sourceName, value.var="points", fun.aggregate = mean)
-
 cor(projectionsWide[,c(unique(projections$sourceName)), with=FALSE], use="pairwise.complete.obs")
 
 #Calculate ranks
 projections <- projections[order(-points)][,overallRank := 1:.N, by=list(sourceName)]
 projections <- projections[order(-points)][,positionRank := 1:.N, by=list(sourceName, pos)]
-
-#projections$overallRank[projections$sourceName == "average"] <- rank(-projections$points[projections$sourceName == "average"], ties.method="min")
-#projections$overallRank[projections$sourceName == "averageRobust"] <- rank(-projections$points[projections$sourceName == "averageRobust"], ties.method="min")
 
 #Select and order variables
 keepVars <- finalVarNames[finalVarNames %in% names(projections)]
@@ -187,8 +156,8 @@ ggsave(paste(getwd(),"/Figures/Calculate projections.jpg", sep=""), width=10, he
 dev.off()
 
 #Save file
-save(projections, file = paste(getwd(),"/Data/LeagueProjections.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/LeagueProjections.csv", sep=""), row.names=FALSE)
+save(projections, file = paste0(getwd(),"/Data/LeagueProjections.RData"))
+write.csv(projections, file=paste0(getwd(),"/Data/LeagueProjections.csv"), row.names=FALSE)
 
-save(projections, file = paste(getwd(),"/Data/Historical Projections/LeagueProjections-2015.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/Historical Projections/LeagueProjections-2015.csv", sep=""), row.names=FALSE)
+save(projections, file = paste0(getwd(), "/Data/Historical Projections/LeagueProjections-", season, ".RData"))
+write.csv(projections, file=paste0(getwd(), "/Data/Historical Projections/LeagueProjections-", season, ".csv"), row.names=FALSE)

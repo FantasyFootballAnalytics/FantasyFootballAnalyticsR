@@ -19,7 +19,6 @@ source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
 #Projection Info
-season <- 2015
 suffix <- "espn"
 
 #Download fantasy football projections from ESPN.com

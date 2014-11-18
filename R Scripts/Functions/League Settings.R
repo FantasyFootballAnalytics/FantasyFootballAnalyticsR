@@ -7,6 +7,9 @@
 # To do:
 ###########################
 
+#Season
+season <- 2015
+
 #Roster
 numQBstarters <- 1
 numRBstarters <- 2
@@ -23,17 +26,16 @@ maxCost <- leagueCap - (numTotalPlayers - numTotalStarters)
 #Variable names
 prefix <- c("name","pos","sourceName")
 sourceSpecific <- c("name","team")
-scoreCategories <- c("points",
-                     "passAtt","passComp","passIncomp","passYds","passTds","passInt",
+scoreCategories <- c("passAtt","passComp","passIncomp","passYds","passTds","passInt",
                      "rushAtt","rushYds","rushTds",
                      "rec","recTgt","recYds","recTds",
                      "returnTds","twoPts","fumbles",
                      "idpSolo","idpAst","idpSack","idpFumlRec","idpFumlForce","idpInt","idpPD",
                      "dstPtsAllowed","dstYdsAllowed","dstSack","dstSafety","dstInt","dstFumlRec","dstFumlForce","dstBlk","dstTd",
                      "fg","fgAtt","fg019","fg2029","fg3039","fg4049","fg50","xp")
-rankVars <- c("positionRank","overallRank")
-varNames <- c(rankVars, scoreCategories)
-finalVarNames <- c("name","pos","team","sourceName","playerID", varNames)
+calculatedVars <- c("positionRank","overallRank","points","pointsLo","pointsHi","vor","pick","risk","sdPts","sdPick")
+varNames <- c(calculatedVars, scoreCategories)
+finalVarNames <- c("name","pos","team","sourceName","player","playerID", varNames)
 
 #Scoring
 passAttMultiplier <- 0      #0 pts per passing attempt

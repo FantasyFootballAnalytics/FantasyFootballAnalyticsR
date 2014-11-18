@@ -19,7 +19,6 @@ source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
 #Projection Info
-season <- 2015
 suffix <- "cbs"
 
 #Download fantasy football projections from cbssports.com
