@@ -17,9 +17,6 @@ library("data.table")
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
-#Projection Info
-season <- 2015
-
 #Import projections data
 filenames <- paste(getwd(),"/Data/", sourcesOfProjections, "-Projections.RData", sep="")
 listProjections <- sapply(filenames, function(x) get(load(x)), simplify = FALSE)
@@ -28,21 +25,23 @@ projections <- rbindlist(listProjections, use.names=TRUE, fill=TRUE)
 setkeyv(projections, cols=c("name","pos"))
 
 #Set player name as most common instance across sources
-playerNames <- na.omit(
-  melt(projections[, c("name","pos", paste("name", sourcesOfProjectionsAbbreviation, sep="_")), with=FALSE], 
-       id.var=c("name","pos"), value.name="player")
-)[,player := names(which.max(table(player))),
-  by=list(name, pos)][order(name), -3, with=FALSE]
+playerNames <- melt(projections,
+                    id.vars = c("name","pos"),
+                    measure.vars = paste("name", sourcesOfProjectionsAbbreviation, sep="_"),
+                    na.rm=TRUE,
+                    value.name="player")[,player := names(which.max(table(player))),
+                                         by=list(name, pos)][order(name), -3, with=FALSE]
 
 setkeyv(playerNames, cols=c("name","pos"))
 projections <- projections[unique(playerNames)]
 
 #Set team name as most common instance across sources
-teamNames <- na.omit(
-  melt(projections[, c("name","pos", paste("team", sourcesOfProjectionsAbbreviation, sep="_")), with=FALSE], 
-       id.var=c("name","pos"), value.name="team")
-)[,team := names(which.max(table(team))),
-  by=list(name, pos)][order(name), -3, with=FALSE]
+teamNames <- melt(projections,
+                    id.vars = c("name","pos"),
+                    measure.vars = paste("team", sourcesOfProjectionsAbbreviation, sep="_"),
+                    na.rm=TRUE,
+                    value.name="team")[,team := names(which.max(table(team))),
+                                       by=list(name, pos)][order(name), -3, with=FALSE]
 
 setkeyv(teamNames, cols=c("name","pos"))
 projections <- projections[unique(teamNames)]

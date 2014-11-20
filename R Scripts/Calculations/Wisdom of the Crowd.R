@@ -16,6 +16,7 @@ humans <- 10    		      #Number of human drafters, in my case I want all humans
 #Load libraries
 library("XML")
 library("ggplot2")
+library("data.table")
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
@@ -59,14 +60,14 @@ get.df <- function(draft.id, num.teams, rounds) {
   #Create seperate columns for player name, position and team
   raw <- strsplit(raw,"[\\(\\)]")
   raw <- do.call(rbind, raw)
-  player <- raw[,1]  # Players
+  player <- gsub("\n", " ", raw[,1])  # Players
   team <- raw[,2]    # Team
   
   #Create vector for player position
-  pos <- sapply(player,function(x) substring(x, nchar(x)-1))
+  pos <- str_trim(sapply(player,function(x) substring(x, nchar(x)-2)))
   
   #Strip keep just player name
-  player <- sapply(player,function(x)substring(x, first=1, last=nchar(x)-2))
+  player <- str_trim(sapply(player,function(x)substring(x, first=1, last=nchar(x)-3)))
   order <- 1:length(player) # Draft order
   df <- cbind(player,pos,team,order)
   row.names(df) <- order
@@ -130,7 +131,7 @@ drafts.stats$team_ffc <- as.character(drafts.stats$Team)
 drafts.stats <- drafts.stats[with(drafts.stats, order(mean)),]
 
 #Subset data
-wisdomOfTheCrowd <- drafts.stats[,c("name","name_ffc","pos","team_ffc","mean","sd","freq","mad","median")]
+wisdomOfTheCrowd <- setDT(drafts.stats[,c("name","name_ffc","pos","team_ffc","mean","sd","freq","mad","median")])
 
 #Plot
 plotTitle <- paste("Sleepers from", dates[2], "to", dates[1], sep=" ")
@@ -157,5 +158,5 @@ dev.off()
 save(wisdomOfTheCrowd, file = paste(getwd(),"/Data/wisdomOfTheCrowd.RData", sep=""))
 write.csv(wisdomOfTheCrowd, file=paste(getwd(),"/Data/wisdomOfTheCrowd.csv", sep=""), row.names=FALSE)
 
-save(wisdomOfTheCrowd, file = paste(getwd(),"/Data/Historical Files/wisdomOfTheCrowd-2015.RData", sep=""))
-write.csv(wisdomOfTheCrowd, file=paste(getwd(),"/Data/Historical Files/wisdomOfTheCrowd-2015.csv", sep=""), row.names=FALSE)
+save(wisdomOfTheCrowd, file = paste(getwd(),"/Data/Historical Files/wisdomOfTheCrowd-", season, ".RData", sep=""))
+write.csv(wisdomOfTheCrowd, file=paste(getwd(),"/Data/Historical Files/wisdomOfTheCrowd-", season, ".csv", sep=""), row.names=FALSE)
