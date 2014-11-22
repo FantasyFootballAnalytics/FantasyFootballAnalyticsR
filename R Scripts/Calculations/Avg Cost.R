@@ -10,10 +10,12 @@
 #Library
 library("stringr")
 library("XML")
+library("data.table")
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
+is.odd <- function(x) x %% 2 != 0
 
 #Load data
 load(paste(getwd(),"/Data/VOR.RData", sep=""))
@@ -23,49 +25,49 @@ load(paste(getwd(),"/Data/VOR.RData", sep=""))
 ###############
 
 #Scrape data
-qbCost_yahoo <- readHTMLTable("http://football.fantasysports.yahoo.com/f1/draftanalysis?tab=AD&pos=QB&sort=DA_AP", stringsAsFactors = FALSE)$draftanalysistable
-rbCost_yahoo <- readHTMLTable("http://football.fantasysports.yahoo.com/f1/draftanalysis?tab=AD&pos=RB&sort=DA_AP", stringsAsFactors = FALSE)$draftanalysistable
-wrCost_yahoo <- readHTMLTable("http://football.fantasysports.yahoo.com/f1/draftanalysis?tab=AD&pos=WR&sort=DA_AP", stringsAsFactors = FALSE)$draftanalysistable
-teCost_yahoo <- readHTMLTable("http://football.fantasysports.yahoo.com/f1/draftanalysis?tab=AD&pos=TE&sort=DA_AP", stringsAsFactors = FALSE)$draftanalysistable
+yahoo_baseurl <- "http://football.fantasysports.yahoo.com/f1/draftanalysis?"
+yahoo_pos <- list(QB="QB", RB="RB", WR="WR", TE="TE", K="K", DST="DEF")
+yahoo_pages <- list(Cost="AD", ADP="SD")
+yahoo_urls <- paste0(yahoo_baseurl, "tab=", yahoo_pages, "&pos=", rep(yahoo_pos, each=length(yahoo_pages)))
+yahoo <- lapply(yahoo_urls, function(x) {data.table(readHTMLTable(x, stringsAsFactors = FALSE)[2]$draftanalysistable)})
+yahooList <- yahoo
 
-qbADP_yahoo <- readHTMLTable("http://football.fantasysports.yahoo.com/f1/draftanalysis?tab=SD&pos=QB&sort=DA_AP", stringsAsFactors = FALSE)$draftanalysistable
-rbADP_yahoo <- readHTMLTable("http://football.fantasysports.yahoo.com/f1/draftanalysis?tab=SD&pos=RB&sort=DA_AP", stringsAsFactors = FALSE)$draftanalysistable
-wrADP_yahoo <- readHTMLTable("http://football.fantasysports.yahoo.com/f1/draftanalysis?tab=SD&pos=WR&sort=DA_AP", stringsAsFactors = FALSE)$draftanalysistable
-teADP_yahoo <- readHTMLTable("http://football.fantasysports.yahoo.com/f1/draftanalysis?tab=SD&pos=TE&sort=DA_AP", stringsAsFactors = FALSE)$draftanalysistable
+yahooListCost <- list()
+yahooListADP <- list()
+for(i in 1:length(yahooList)){
+  #Add position to projection
+  yahooList[[i]][,pos := rep(names(yahoo_pos), each=length(yahoo_pages))[i]]
+  yahooList[[i]][,pos := as.factor(pos)]
+  
+  #Add variable names
+  if(is.odd(i)){
+    setnames(yahooList[[i]], c("player","costProjected","cost","draftedPct","pos"))
+    yahooListCost[[(i+1)/2]] <- setDT(yahooList[[i]])
+  } else{
+    setnames(yahooList[[i]], c("player","adp","avgRound","draftedPct","pos"))
+    yahooListADP[[i/2]] <- setDT(yahooList[[i]])
+  }
+}
 
-#Add variable names to each object
-names(qbCost_yahoo) <- names(rbCost_yahoo) <- names(wrCost_yahoo) <- names(teCost_yahoo) <- c("player","costProjected_yahoo","cost_yahoo","draftedPct_yahoo")
-
-names(qbADP_yahoo) <- names(rbADP_yahoo) <- names(wrADP_yahoo) <- names(teADP_yahoo) <- c("player","adp_yahoo","avgRound_yahoo","draftedPct_yahoo")
-
-#Add variable for player position
-qbCost_yahoo$pos <- as.factor("QB")
-rbCost_yahoo$pos <- as.factor("RB")
-wrCost_yahoo$pos <- as.factor("WR")
-teCost_yahoo$pos <- as.factor("TE")
-
-qbADP_yahoo$pos <- as.factor("QB")
-rbADP_yahoo$pos <- as.factor("RB")
-wrADP_yahoo$pos <- as.factor("WR")
-teADP_yahoo$pos <- as.factor("TE")
-
-#Merge players across positions
-avgCost_yahoo <- rbind(qbCost_yahoo, rbCost_yahoo, wrCost_yahoo, teCost_yahoo)
-adp_yahoo <- rbind(qbADP_yahoo, rbADP_yahoo, wrADP_yahoo, teADP_yahoo)
+#Merge
+avgCost_yahoo <- rbindlist(yahooListCost, use.names=TRUE, fill=TRUE)
+adp_yahoo <- rbindlist(yahooListADP, use.names=TRUE, fill=TRUE)
 
 #Player name, position, and team
-avgCost_yahoo$player <- str_trim(sapply(str_split(avgCost_yahoo$player, "\n"), "[[", 2))
-avgCost_yahoo$name_yahoo <- str_trim(str_sub(avgCost_yahoo$player, start=0, end=nchar(avgCost_yahoo$player)-8))
-avgCost_yahoo$name <- nameMerge(avgCost_yahoo$name_yahoo)
-avgCost_yahoo$team_yahoo <- toupper(str_trim(str_sub(avgCost_yahoo$player, start=str_locate(avgCost_yahoo$player, "-")[,1]-4, end=str_locate(avgCost_yahoo$player, "-")[,1]-2)))
+avgCost_yahoo[,player := str_trim(sapply(str_split(avgCost_yahoo$player, "\n"), "[[", 2))]
+avgCost_yahoo[,team_yahoo := toupper(str_trim(str_sub(avgCost_yahoo$player, start=str_locate(avgCost_yahoo$player, "-")[,1]-4, end=str_locate(avgCost_yahoo$player, "-")[,1]-2)))]
+avgCost_yahoo[,name_yahoo := str_trim(str_sub(avgCost_yahoo$player, start=0, end=nchar(avgCost_yahoo$player)-8))]
+avgCost_yahoo[which(pos == "DST"), name_yahoo := convertTeamName(team_yahoo)]
+avgCost_yahoo[,name := nameMerge(avgCost_yahoo$name_yahoo)]
 
-adp_yahoo$player <- str_trim(sapply(str_split(adp_yahoo$player, "\n"), "[[", 2))
-adp_yahoo$name_yahoo <- str_trim(str_sub(adp_yahoo$player, start=0, end=nchar(adp_yahoo$player)-8))
-adp_yahoo$name <- nameMerge(adp_yahoo$name_yahoo)
-adp_yahoo$team_yahoo <- toupper(str_trim(str_sub(adp_yahoo$player, start=str_locate(adp_yahoo$player, "-")[,1]-4, end=str_locate(adp_yahoo$player, "-")[,1]-2)))
+adp_yahoo[,player := str_trim(sapply(str_split(adp_yahoo$player, "\n"), "[[", 2))]
+adp_yahoo[,team_yahoo := toupper(str_trim(str_sub(adp_yahoo$player, start=str_locate(adp_yahoo$player, "-")[,1]-4, end=str_locate(adp_yahoo$player, "-")[,1]-2)))]
+adp_yahoo[,name_yahoo := str_trim(str_sub(adp_yahoo$player, start=0, end=nchar(adp_yahoo$player)-8))]
+adp_yahoo[which(pos == "DST"), name_yahoo := convertTeamName(team_yahoo)]
+adp_yahoo[,name := nameMerge(adp_yahoo$name_yahoo)]
 
 #Merge ADP & avgCost
-cost_yahoo <- merge(avgCost_yahoo[,c("name","name_yahoo","pos","team_yahoo","costProjected_yahoo","cost_yahoo","draftedPct_yahoo")], adp_yahoo[,c("name","pos","adp_yahoo","avgRound_yahoo")], by=c("name","pos"), all=TRUE)
+cost_yahoo <- merge(avgCost_yahoo[,c("name","name_yahoo","pos","team_yahoo","costProjected_yahoo","cost_yahoo","draftedPct_yahoo"), with=FALSE], adp_yahoo[,c("name","pos","adp_yahoo","avgRound_yahoo"), with=FALSE], by=c("name","pos"), all=TRUE)
 
 #Remove special characters
 cost_yahoo[,c("costProjected_yahoo","cost_yahoo","draftedPct_yahoo")] <- apply(cost_yahoo[,c("costProjected_yahoo","cost_yahoo","draftedPct_yahoo")], 2, function(x) gsub("\\%", "", gsub("\\$", "", x)))
