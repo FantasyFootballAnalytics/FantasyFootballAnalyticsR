@@ -43,8 +43,8 @@ kickers <- kickers[order(kickers$rank),]
 kickers
 
 #Save file
-save(kickers, file = paste(getwd(),"/Data/kickers.RData", sep=""))
-write.csv(kickers, file=paste(getwd(),"/Data/kickers.csv", sep=""), row.names=FALSE)
+save(kickers, file = paste(getwd(), "/Data/kickers.RData", sep=""))
+write.csv(kickers, file=paste(getwd(), "/Data/kickers.csv", sep=""), row.names=FALSE)
 
-save(kickers, file = paste(getwd(),"/Data/Historical Rankings/kickers-2015.RData", sep=""))
-write.csv(kickers, file=paste(getwd(),"/Data/Historical Rankings/kickers-2015.csv", sep=""), row.names=FALSE)
+save(kickers, file = paste(getwd(), "/Data/Historical Rankings/kickers-", season, ".RData", sep=""))
+write.csv(kickers, file=paste(getwd(), "/Data/Historical Rankings/kickers-", season, ".csv", sep=""), row.names=FALSE)

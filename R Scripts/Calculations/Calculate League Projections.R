@@ -155,8 +155,8 @@ ggsave(paste(getwd(),"/Figures/Calculate projections.jpg", sep=""), width=10, he
 dev.off()
 
 #Save file
-save(projections, file = paste0(getwd(),"/Data/LeagueProjections.RData"))
-write.csv(projections, file=paste0(getwd(),"/Data/LeagueProjections.csv"), row.names=FALSE)
+save(projections, file = paste0(getwd(), "/Data/LeagueProjections.RData"))
+write.csv(projections, file=paste0(getwd(), "/Data/LeagueProjections.csv"), row.names=FALSE)
 
 save(projections, file = paste0(getwd(), "/Data/Historical Projections/LeagueProjections-", season, ".RData"))
 write.csv(projections, file=paste0(getwd(), "/Data/Historical Projections/LeagueProjections-", season, ".csv"), row.names=FALSE)

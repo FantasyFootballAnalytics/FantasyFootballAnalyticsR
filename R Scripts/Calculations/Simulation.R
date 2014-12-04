@@ -50,11 +50,11 @@ optimizeData$simulation <- log(optimizeData$solutionSum + 1)
 projections <- merge(projections, optimizeData[,c("name","simulation")], by="name", all.x=TRUE)
 
 #Save file
-save(projections, file = paste(getwd(),"/Data/simulation.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/simulation.csv", sep=""), row.names=FALSE)
+save(projections, file = paste(getwd(), "/Data/simulation.RData", sep=""))
+write.csv(projections, file=paste(getwd(), "/Data/simulation.csv", sep=""), row.names=FALSE)
 
-save(projections, file = paste(getwd(),"/Data/Historical Files/simulation-2015.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/Historical Files/simulation-2015.csv", sep=""), row.names=FALSE)
+save(projections, file = paste(getwd(), "/Data/Historical Files/simulation-", season, ".RData", sep=""))
+write.csv(projections, file=paste(getwd(), "/Data/Historical Files/simulation-", season, ".csv", sep=""), row.names=FALSE)
 
 #View Data
 optimizeData

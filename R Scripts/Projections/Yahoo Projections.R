@@ -141,8 +141,8 @@ ggsave(paste(getwd(),"/Figures/Yahoo projections.jpg", sep=""), width=10, height
 dev.off()
 
 #Save file
-save(projections_yahoo, file = paste0(getwd(),"/Data/Yahoo-Projections.RData"))
-write.csv(projections_yahoo, file = paste(getwd(),"/Data/Yahoo-Projections.csv"), row.names=FALSE)
+save(projections_yahoo, file = paste0(getwd(), "/Data/Yahoo-Projections.RData"))
+write.csv(projections_yahoo, file = paste(getwd(), "/Data/Yahoo-Projections.csv"), row.names=FALSE)
 
 save(projections_yahoo, file = paste0(getwd(), "/Data/Historical Projections/Yahoo-Projections-", season, ".RData"))
 write.csv(projections_yahoo, file = paste0(getwd(), "/Data/Historical Projections/Yahoo-Projections-", season, ".csv"), row.names=FALSE)

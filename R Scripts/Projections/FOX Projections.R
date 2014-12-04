@@ -156,8 +156,8 @@ ggsave(paste(getwd(),"/Figures/FOX projections.jpg", sep=""), width=10, height=1
 dev.off()
 
 #Save file
-save(projections_fox, file = paste(getwd(),"/Data/FOX-Projections.RData", sep=""))
-write.csv(projections_fox, file=paste(getwd(),"/Data/FOX-Projections.csv", sep=""), row.names=FALSE)
+save(projections_fox, file = paste(getwd(), "/Data/FOX-Projections.RData", sep=""))
+write.csv(projections_fox, file=paste(getwd(), "/Data/FOX-Projections.csv", sep=""), row.names=FALSE)
 
-save(projections_fox, file = paste(getwd(),"/Data/Historical Projections/FOX-Projections-2015.RData", sep=""))
-write.csv(projections_fox, file=paste(getwd(),"/Data/Historical Projections/FOX-Projections-2015.csv", sep=""), row.names=FALSE)
+save(projections_fox, file = paste(getwd(), "/Data/Historical Projections/FOX-Projections-", season, ".RData", sep=""))
+write.csv(projections_fox, file=paste(getwd(), "/Data/Historical Projections/FOX-Projections-", season, ".csv", sep=""), row.names=FALSE)

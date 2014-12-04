@@ -48,8 +48,8 @@ ggsave(paste(getwd(),"/Figures/numberFire projections.jpg", sep=""), width=10, h
 dev.off()
 
 #Save file
-save(projections_nf, file = paste(getwd(),"/Data/numberFire-Projections.RData", sep=""))
-write.csv(projections_nf, file=paste(getwd(),"/Data/numberFire-Projections.csv", sep=""), row.names=FALSE)
+save(projections_nf, file = paste(getwd(), "/Data/numberFire-Projections.RData", sep=""))
+write.csv(projections_nf, file=paste(getwd(), "/Data/numberFire-Projections.csv", sep=""), row.names=FALSE)
 
-save(projections_nf, file = paste(getwd(),"/Data/Historical Projections/numberFire-Projections-2015.RData", sep=""))
-write.csv(projections_nf, file=paste(getwd(),"/Data/Historical Projections/numberFire-Projections-2015.csv", sep=""), row.names=FALSE)
+save(projections_nf, file = paste(getwd(), "/Data/Historical Projections/numberFire-Projections-", season, ".RData", sep=""))
+write.csv(projections_nf, file=paste(getwd(), "/Data/Historical Projections/numberFire-Projections-", season, ".csv", sep=""), row.names=FALSE)

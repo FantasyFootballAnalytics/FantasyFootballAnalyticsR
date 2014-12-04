@@ -49,8 +49,8 @@ projections$bidUpTo[is.na(projections$bidUpTo)] <- 1
 row.names(projections) <- 1:max(as.numeric(row.names(projections)))
 
 #Save file
-save(projections, file = paste(getwd(),"/Data/BidUpTo.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/BidUpTo.csv", sep=""), row.names=FALSE)
+save(projections, file = paste(getwd(), "/Data/BidUpTo.RData", sep=""))
+write.csv(projections, file=paste(getwd(), "/Data/BidUpTo.csv", sep=""), row.names=FALSE)
 
-save(projections, file = paste(getwd(),"/Data/Historical Files/BidUpTo-2015.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/Historical Files/BidUpTo-2015.csv", sep=""), row.names=FALSE)
+save(projections, file = paste(getwd(), "/Data/Historical Files/BidUpTo-", season, ".RData", sep=""))
+write.csv(projections, file=paste(getwd(), "/Data/Historical Files/BidUpTo-", season, ".csv", sep=""), row.names=FALSE)

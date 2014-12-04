@@ -250,14 +250,14 @@ ggsave(paste(getwd(),"/Figures/Inflated Cost.jpg", sep=""), width=10, height=10)
 dev.off()
 
 #Save file
-save(projections, file = paste(getwd(),"/Data/AvgCost.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/AvgCost.csv", sep=""), row.names=FALSE)
+save(projections, file = paste(getwd(), "/Data/AvgCost.RData", sep=""))
+write.csv(projections, file=paste(getwd(), "/Data/AvgCost.csv", sep=""), row.names=FALSE)
 
-save(projections, file = paste(getwd(),"/Data/Historical Cost/AvgCost-2015.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/Historical Cost/AvgCost-2015.csv", sep=""), row.names=FALSE)
+save(projections, file = paste(getwd(), "/Data/Historical Cost/AvgCost-", season, ".RData", sep=""))
+write.csv(projections, file=paste(getwd(), "/Data/Historical Cost/AvgCost-", season, ".csv", sep=""), row.names=FALSE)
 
-save(projections, file = paste(getwd(),"/Data/Rankings.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/Rankings.csv", sep=""), row.names=FALSE)
+save(projections, file = paste(getwd(), "/Data/Rankings.RData", sep=""))
+write.csv(projections, file=paste(getwd(), "/Data/Rankings.csv", sep=""), row.names=FALSE)
 
-save(projections, file = paste(getwd(),"/Data/Historical Rankings/Rankings-2015.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/Historical Rankings/Rankings-2015.csv", sep=""), row.names=FALSE)
+save(projections, file = paste(getwd(), "/Data/Historical Rankings/Rankings-", season, ".RData", sep=""))
+write.csv(projections, file=paste(getwd(), "/Data/Historical Rankings/Rankings-", season, ".csv", sep=""), row.names=FALSE)

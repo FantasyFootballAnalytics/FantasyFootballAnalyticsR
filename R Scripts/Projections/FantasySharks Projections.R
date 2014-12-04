@@ -93,8 +93,8 @@ ggsave(paste(getwd(),"/Figures/FantasySharks projections.jpg", sep=""), width=10
 dev.off()
 
 #Save file
-save(projections_fs, file = paste(getwd(),"/Data/FantasySharks-Projections.RData", sep=""))
-write.csv(projections_fs, file=paste(getwd(),"/Data/FantasySharks-Projections.csv", sep=""), row.names=FALSE)
+save(projections_fs, file = paste(getwd(), "/Data/FantasySharks-Projections.RData", sep=""))
+write.csv(projections_fs, file=paste(getwd(), "/Data/FantasySharks-Projections.csv", sep=""), row.names=FALSE)
 
-save(projections_fs, file = paste(getwd(),"/Data/Historical Projections/FantasySharks-Projections-2015.RData", sep=""))
-write.csv(projections_fs, file=paste(getwd(),"/Data/Historical Projections/FantasySharks-Projections-2015.csv", sep=""), row.names=FALSE)
+save(projections_fs, file = paste(getwd(), "/Data/Historical Projections/FantasySharks-Projections-", season, ".RData", sep=""))
+write.csv(projections_fs, file=paste(getwd(), "/Data/Historical Projections/FantasySharks-Projections-", season, ".csv", sep=""), row.names=FALSE)

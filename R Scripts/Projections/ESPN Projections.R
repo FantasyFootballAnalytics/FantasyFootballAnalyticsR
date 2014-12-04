@@ -148,8 +148,8 @@ ggsave(paste(getwd(),"/Figures/ESPN projections.jpg", sep=""), width=10, height=
 dev.off()
 
 #Save file
-save(projections_espn, file = paste(getwd(),"/Data/ESPN-Projections.RData", sep=""))
-write.csv(projections_espn, file=paste(getwd(),"/Data/ESPN-Projections.csv", sep=""), row.names=FALSE)
+save(projections_espn, file = paste(getwd(), "/Data/ESPN-Projections.RData", sep=""))
+write.csv(projections_espn, file=paste(getwd(), "/Data/ESPN-Projections.csv", sep=""), row.names=FALSE)
 
-save(projections_espn, file = paste(getwd(),"/Data/Historical Projections/ESPN-Projections-2015.RData", sep=""))
-write.csv(projections_espn, file=paste(getwd(),"/Data/Historical Projections/ESPN-Projections-2015.csv", sep=""), row.names=FALSE)
+save(projections_espn, file = paste(getwd(), "/Data/Historical Projections/ESPN-Projections-", season, ".RData", sep=""))
+write.csv(projections_espn, file=paste(getwd(), "/Data/Historical Projections/ESPN-Projections-", season, ".csv", sep=""), row.names=FALSE)

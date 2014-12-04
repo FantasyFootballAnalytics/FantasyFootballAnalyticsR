@@ -44,9 +44,9 @@ row.names(IDP) <- 1:nrow(IDP)
 IDP
 
 #Save file
-save(IDP, file = paste(getwd(),"/Data/IDP.RData", sep=""))
-write.csv(IDP, file=paste(getwd(),"/Data/IDP.csv", sep=""), row.names=FALSE)
+save(IDP, file = paste(getwd(), "/Data/IDP.RData", sep=""))
+write.csv(IDP, file=paste(getwd(), "/Data/IDP.csv", sep=""), row.names=FALSE)
 
-save(IDP, file = paste(getwd(),"/Data/Historical Rankings/IDP-2015.RData", sep=""))
-write.csv(IDP, file=paste(getwd(),"/Data/Historical Rankings/IDP-2015.csv", sep=""), row.names=FALSE)
+save(IDP, file = paste(getwd(), "/Data/Historical Rankings/IDP-", season, ".RData", sep=""))
+write.csv(IDP, file=paste(getwd(), "/Data/Historical Rankings/IDP-", season, ".csv", sep=""), row.names=FALSE)
 

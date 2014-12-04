@@ -122,8 +122,8 @@ ggsave(paste(getwd(),"/Figures/CBS projections.jpg", sep=""), width=10, height=1
 dev.off()
 
 #Save file
-save(projections_cbs, file = paste0(getwd(),"/Data/CBS-Projections.RData"))
-write.csv(projections_cbs, file = paste(getwd(),"/Data/CBS-Projections.csv"), row.names=FALSE)
+save(projections_cbs, file = paste0(getwd(), "/Data/CBS-Projections.RData"))
+write.csv(projections_cbs, file = paste(getwd(), "/Data/CBS-Projections.csv"), row.names=FALSE)
 
 save(projections_cbs, file = paste0(getwd(), "/Data/Historical Projections/CBS-Projections-", season, ".RData"))
 write.csv(projections_cbs, file = paste0(getwd(), "/Data/Historical Projections/CBS-Projections-", season, ".csv"), row.names=FALSE)

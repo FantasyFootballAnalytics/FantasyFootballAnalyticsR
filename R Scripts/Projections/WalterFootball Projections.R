@@ -122,8 +122,8 @@ ggsave(paste(getwd(),"/Figures/WalterFootball projections.jpg", sep=""), width=1
 dev.off()
 
 #Save file
-save(projections_wf, file = paste(getwd(),"/Data/WalterFootball-Projections.RData", sep=""))
-write.csv(projections_wf, file=paste(getwd(),"/Data/WalterFootball-Projections.csv", sep=""), row.names=FALSE)
+save(projections_wf, file = paste(getwd(), "/Data/WalterFootball-Projections.RData", sep=""))
+write.csv(projections_wf, file=paste(getwd(), "/Data/WalterFootball-Projections.csv", sep=""), row.names=FALSE)
 
-save(projections_wf, file = paste(getwd(),"/Data/Historical Projections/WalterFootball-Projections-2015.RData", sep=""))
-write.csv(projections_wf, file=paste(getwd(),"/Data/Historical Projections/WalterFootball-Projections-2015.csv", sep=""), row.names=FALSE)
+save(projections_wf, file = paste(getwd(), "/Data/Historical Projections/WalterFootball-Projections-", season, ".RData", sep=""))
+write.csv(projections_wf, file=paste(getwd(), "/Data/Historical Projections/WalterFootball-Projections-", season, ".csv", sep=""), row.names=FALSE)

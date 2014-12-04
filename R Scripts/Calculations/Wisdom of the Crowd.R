@@ -155,8 +155,8 @@ value.plot
 dev.off()
 
 #Save file
-save(wisdomOfTheCrowd, file = paste(getwd(),"/Data/wisdomOfTheCrowd.RData", sep=""))
-write.csv(wisdomOfTheCrowd, file=paste(getwd(),"/Data/wisdomOfTheCrowd.csv", sep=""), row.names=FALSE)
+save(wisdomOfTheCrowd, file = paste(getwd(), "/Data/wisdomOfTheCrowd.RData", sep=""))
+write.csv(wisdomOfTheCrowd, file=paste(getwd(), "/Data/wisdomOfTheCrowd.csv", sep=""), row.names=FALSE)
 
-save(wisdomOfTheCrowd, file = paste(getwd(),"/Data/Historical Files/wisdomOfTheCrowd-", season, ".RData", sep=""))
-write.csv(wisdomOfTheCrowd, file=paste(getwd(),"/Data/Historical Files/wisdomOfTheCrowd-", season, ".csv", sep=""), row.names=FALSE)
+save(wisdomOfTheCrowd, file = paste(getwd(), "/Data/Historical Files/wisdomOfTheCrowd-", season, ".RData", sep=""))
+write.csv(wisdomOfTheCrowd, file=paste(getwd(), "/Data/Historical Files/wisdomOfTheCrowd-", season, ".csv", sep=""), row.names=FALSE)

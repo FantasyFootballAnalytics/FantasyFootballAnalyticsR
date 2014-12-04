@@ -82,9 +82,9 @@ projections <- projections[order(-projections$vor),] #projections$projections
 row.names(projections) <- 1:dim(projections)[1]
 
 #Save file
-save(projections, file = paste(getwd(),"/Data/BidUpToSimulation.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/BidUpToSimulation.csv", sep=""), row.names=FALSE)
+save(projections, file = paste(getwd(), "/Data/BidUpToSimulation.RData", sep=""))
+write.csv(projections, file=paste(getwd(), "/Data/BidUpToSimulation.csv", sep=""), row.names=FALSE)
 
-save(projections, file = paste(getwd(),"/Data/Historical Files/BidUpToSimulation-2015.RData", sep=""))
-write.csv(projections, file=paste(getwd(),"/Data/Historical Files/BidUpToSimulation-2015.csv", sep=""), row.names=FALSE)
+save(projections, file = paste(getwd(), "/Data/Historical Files/BidUpToSimulation-", season, ".RData", sep=""))
+write.csv(projections, file=paste(getwd(), "/Data/Historical Files/BidUpToSimulation-", season, ".csv", sep=""), row.names=FALSE)
 

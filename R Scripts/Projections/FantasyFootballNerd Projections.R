@@ -102,8 +102,8 @@ ggsave(paste(getwd(),"/Figures/FantasyFootballNerd projections.jpg", sep=""), wi
 dev.off()
 
 #Save file
-save(projections_ffn, file = paste(getwd(),"/Data/FantasyFootballNerd-Projections.RData", sep=""))
-write.csv(projections_ffn, file=paste(getwd(),"/Data/FantasyFootballNerd-Projections.csv", sep=""), row.names=FALSE)
+save(projections_ffn, file = paste(getwd(), "/Data/FantasyFootballNerd-Projections.RData", sep=""))
+write.csv(projections_ffn, file=paste(getwd(), "/Data/FantasyFootballNerd-Projections.csv", sep=""), row.names=FALSE)
 
-save(projections_ffn, file = paste(getwd(),"/Data/Historical Projections/FantasyFootballNerd-Projections-2015.RData", sep=""))
-write.csv(projections_ffn, file=paste(getwd(),"/Data/Historical Projections/FantasyFootballNerd-Projections-2015.csv", sep=""), row.names=FALSE)
+save(projections_ffn, file = paste(getwd(), "/Data/Historical Projections/FantasyFootballNerd-Projections-", season, ".RData", sep=""))
+write.csv(projections_ffn, file=paste(getwd(), "/Data/Historical Projections/FantasyFootballNerd-Projections-", season, ".csv", sep=""), row.names=FALSE)

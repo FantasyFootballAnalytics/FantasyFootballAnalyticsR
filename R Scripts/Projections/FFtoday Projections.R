@@ -110,8 +110,8 @@ ggsave(paste(getwd(),"/Figures/FFtoday projections.jpg", sep=""), width=10, heig
 dev.off()
 
 #Save file
-save(projections_fftoday, file = paste(getwd(),"/Data/FFtoday-Projections.RData", sep=""))
-write.csv(projections_fftoday, file=paste(getwd(),"/Data/FFtoday-Projections.csv", sep=""), row.names=FALSE)
+save(projections_fftoday, file = paste(getwd(), "/Data/FFtoday-Projections.RData", sep=""))
+write.csv(projections_fftoday, file=paste(getwd(), "/Data/FFtoday-Projections.csv", sep=""), row.names=FALSE)
 
-save(projections_fftoday, file = paste(getwd(),"/Data/Historical Projections/FFtoday-Projections-2015.RData", sep=""))
-write.csv(projections_fftoday, file=paste(getwd(),"/Data/Historical Projections/FFtoday-Projections-2015.csv", sep=""), row.names=FALSE)
+save(projections_fftoday, file = paste(getwd(), "/Data/Historical Projections/FFtoday-Projections-", season, ".RData", sep=""))
+write.csv(projections_fftoday, file=paste(getwd(), "/Data/Historical Projections/FFtoday-Projections-", season, ".csv", sep=""), row.names=FALSE)

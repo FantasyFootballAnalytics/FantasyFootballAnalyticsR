@@ -131,8 +131,8 @@ ggsave(paste(getwd(),"/Figures/Footballguys2 projections.jpg", sep=""), width=10
 dev.off()
 
 #Save file
-save(projections_fbg2, file = paste(getwd(),"/Data/Footballguys2-Projections.RData", sep=""))
-write.csv(projections_fbg2, file=paste(getwd(),"/Data/Footballguys2-Projections.csv", sep=""), row.names=FALSE)
+save(projections_fbg2, file = paste(getwd(), "/Data/Footballguys2-Projections.RData", sep=""))
+write.csv(projections_fbg2, file=paste(getwd(), "/Data/Footballguys2-Projections.csv", sep=""), row.names=FALSE)
 
-save(projections_fbg2, file = paste(getwd(),"/Data/Historical Projections/Footballguys2-Projections-2015.RData", sep=""))
-write.csv(projections_fbg2, file=paste(getwd(),"/Data/Historical Projections/Footballguys2-Projections-2015.csv", sep=""), row.names=FALSE)
+save(projections_fbg2, file = paste(getwd(), "/Data/Historical Projections/Footballguys2-Projections-", season, ".RData", sep=""))
+write.csv(projections_fbg2, file=paste(getwd(), "/Data/Historical Projections/Footballguys2-Projections-", season, ".csv", sep=""), row.names=FALSE)
