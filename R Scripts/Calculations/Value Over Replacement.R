@@ -59,7 +59,7 @@ save(projections, file = paste0(getwd(), "/Data/Historical Files/VOR-", season, 
 write.csv(projections, file = paste0(getwd(), "/Data/Historical Files/VOR-", season, ".csv"), row.names=FALSE)
 
 #Subset data
-draftData <- projections[row.names(na.omit(projections[,c("projections","vor","risk")])),c("name","pos","team","projections","vor","sdPick","sdPts","risk")] #projectedPtsLatent
+draftData <- projections[as.numeric(row.names(na.omit(projections[,c("points","vor","risk"), with=FALSE]))), c("name","pos","team","points","vor","sdPick","sdPts","risk"), with=FALSE] #projectedPtsLatent
 row.names(draftData) <- 1:dim(draftData)[1]
 
 options(digits=2)

@@ -22,7 +22,7 @@ load(paste(getwd(),"/Data/BidUpTo.RData", sep=""))
 #load(paste(getwd(),"/Data/projectedWithActualPoints.RData", sep=""))
 
 #Roster Optimization
-optimizeData <- na.omit(projections[,c("name","player","pos","projections","risk","inflatedCost","sdPts")])
+optimizeData <- na.omit(projections[sourceName == "averageRobust", c("name","player","pos","team","points","risk","inflatedCost","sdPts"), with=FALSE])
 maxCost <- leagueCap - (numTotalPlayers - numTotalStarters)
 
 #Roster Optimization Simulation
@@ -31,7 +31,7 @@ solutionList <- matrix(nrow=dim(optimizeData)[1], ncol=iterations)
 pb <- txtProgressBar(min = 0, max = iterations, style = 3)
 for (i in 1:iterations){
   setTxtProgressBar(pb, i)
-  optimizeData$simPts <- mapply(function(x,y) rnorm(n=1, mean=x, sd=y), x=optimizeData$projections, y=optimizeData$sdPts)
+  optimizeData$simPts <- mapply(function(x,y) rnorm(n=1, mean=x, sd=y), x=optimizeData$points, y=optimizeData$sdPts)
   solutionList[,i] <- optimizeTeam(points=optimizeData$simPts, maxRisk=100)$solution
 }
 
@@ -42,12 +42,15 @@ plot(density(log(solutionSum + 1)))
 
 #best: log(solutionSum + 1)
 
-optimizeData$solutionSum <- solutionSum
-optimizeData$percentage <- (optimizeData$solutionSum / iterations) * 100
+optimizeData[,solutionSum := solutionSum]
+optimizeData[,percentage := (solutionSum / iterations) * 100]
 
-optimizeData <- optimizeData[order(-optimizeData$solutionSum),c("name","player","pos","projections","risk","inflatedCost","sdPts","solutionSum","percentage")]
-optimizeData$simulation <- log(optimizeData$solutionSum + 1)
-projections <- merge(projections, optimizeData[,c("name","simulation")], by="name", all.x=TRUE)
+#optimizeData <- optimizeData[order(-optimizeData$solutionSum),c("name","player","pos","team","points","risk","inflatedCost","sdPts","solutionSum","percentage"), with=FALSE]
+optimizeData[,simulation := log(solutionSum + 1)]
+
+optimizeDataSubset <- optimizeData[,c("name","pos","team","simulation"), with=FALSE]
+
+projections <- merge(projections, optimizeDataSubset, by=c("name","pos","team"), all.x=TRUE, allow.cartesian=TRUE)
 
 #Save file
 save(projections, file = paste(getwd(), "/Data/simulation.RData", sep=""))

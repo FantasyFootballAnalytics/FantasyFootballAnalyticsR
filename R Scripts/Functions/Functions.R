@@ -111,7 +111,7 @@ simulateNumbers <- function(n, sum, sd, pos.only = TRUE){
 }
 
 #Create Optimization Function
-optimizeTeam <- function(points=optimizeData$projections, playerCost=optimizeData$inflatedCost, maxRisk=maxRisk){ #can change points, cost, or risk #projectedPtsLatent
+optimizeTeam <- function(points=optimizeData$points, playerCost=optimizeData$inflatedCost, maxRisk=maxRisk){ #can change points, cost, or risk
   num.players <- length(optimizeData$name)
   var.types <- rep("B", num.players)
   
@@ -140,16 +140,15 @@ optimizeTeam <- function(points=optimizeData$projections, playerCost=optimizeDat
          numTotalStarters)
   
   sol <- Rglpk_solve_LP(obj = points, mat = A, dir = dir, rhs = b,types = var.types, max = TRUE)
-  sol$playerInfo <- as.data.frame(cbind(optimizeData[sol$solution == 1,"player"],round(points[sol$solution == 1],2),round(optimizeData[sol$solution == 1,"risk"],2),playerCost[sol$solution == 1]))
+  sol$playerInfo <- as.data.frame(cbind(optimizeData[sol$solution == 1, "player", with=FALSE], round(points[sol$solution == 1], 2), round(optimizeData[sol$solution == 1, "risk", with=FALSE], 2), playerCost[sol$solution == 1]))
   names(sol$playerInfo) <- c("player","points","risk","cost")
-  #sol$totalCost <- sum(optimizeData$inflatedCost * sol$solution)
   sol$totalCost <- sum(playerCost * sol$solution)
   sol$players <- optimizeData$player[sol$solution == 1]
   return(sol)
 }
 
 #Draft Day Optimization: Allows omitting unavailable (drafted) players and includes BidUpTo in summary table
-optimizeDraft <- function(points=removedPlayers$projections, playerCost=removedPlayers$inflatedCost, maxRisk=maxRisk, omit=NULL, team=myteam){ #can change points, cost, or risk #projectedPtsLatent
+optimizeDraft <- function(points=removedPlayers$points, playerCost=removedPlayers$inflatedCost, maxRisk=maxRisk, omit=NULL, team=myteam){ #can change points, cost, or risk
   #Omit players that have already been drafted
   omitName <- toupper(gsub("[[:punct:]]", "", gsub(" ", "", omit)))
   removedPlayers <- removedPlayers[! removedPlayers$name %in% omitName,]
@@ -194,7 +193,7 @@ optimizeDraft <- function(points=removedPlayers$projections, playerCost=removedP
          numToDraft)
   
   sol <- Rglpk_solve_LP(obj = points, mat = A, dir = dir, rhs = b,types = var.types, max = TRUE)
-  sol$playerInfo <- as.data.frame(cbind(removedPlayers[sol$solution == 1,"player"],round(points[sol$solution == 1],2),round(removedPlayers[sol$solution == 1,"risk"],2),removedPlayers[sol$solution == 1,"avgCost"],playerCost[sol$solution == 1],removedPlayers[sol$solution == 1,"bidUpTo"]))
+  sol$playerInfo <- as.data.frame(cbind(removedPlayers[sol$solution == 1, "player", with=FALSE], round(points[sol$solution == 1], 2), round(removedPlayers[sol$solution == 1, "risk", with=FALSE], 2), removedPlayers[sol$solution == 1, "avgCost", with=FALSE], playerCost[sol$solution == 1], removedPlayers[sol$solution == 1, "bidUpTo", with=FALSE]))
   names(sol$playerInfo) <- c("player","points","risk","avgCost","inflatedCost","bidUpTo")
   sol$totalCost <- sum(removedPlayers$inflatedCost * sol$solution)
   sol$players <- removedPlayers$player[sol$solution == 1]

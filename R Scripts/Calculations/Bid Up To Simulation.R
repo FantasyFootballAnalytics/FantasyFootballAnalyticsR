@@ -23,7 +23,7 @@ load(paste(getwd(),"/Data/simulation.RData", sep=""))
 iterations <- 1000
 
 #Roster Optimization
-optimizeData <- na.omit(projections[,c("name","player","pos","projections","risk","inflatedCost","sdPts")]) #projectedPtsLatent
+optimizeData <- na.omit(projections[sourceName == "averageRobust", c("name","player","pos","team","points","risk","inflatedCost","sdPts"), with=FALSE])
 maxCost <- leagueCap - (numTotalPlayers - numTotalStarters)
 
 #Bid Up To (i=player, j=cost, k=iteration)
@@ -35,20 +35,20 @@ newCost <- optimizeData$inflatedCost
 #Simulated Points
 simulatedPoints <- matrix(nrow=length(optimizeData$name), ncol=iterations)
 for(i in 1:iterations){
-  simulatedPoints[,i] <- mapply(function(x,y) rnorm(n=1, mean=x, sd=y), x=optimizeData$projections, y=optimizeData$sdPts)
+  simulatedPoints[,i] <- mapply(function(x,y) rnorm(n=1, mean=x, sd=y), x=optimizeData$points, y=optimizeData$sdPts)
 }
 
 pb <- txtProgressBar(min = 0, max = length(optimizeData$name), style = 3)
 for(i in 1:length(optimizeData$name)){
   setTxtProgressBar(pb, i)
-  listOfPlayers <- rep(optimizeData$player[i],numTotalStarters)
+  listOfPlayers <- rep(optimizeData$player[i], numTotalStarters)
   newCost <- optimizeData$inflatedCost    
   
   for (k in 1:iterations){
     j <- 1
     listOfPlayers <- optimizeData$player[i]
     
-    while(!is.na(match(optimizeData$player[i],listOfPlayers)) & j < maxCost){
+    while(!is.na(match(optimizeData$player[i], listOfPlayers)) & j < maxCost){
       newCost[i] <- j
       
       listOfPlayers <- optimizeTeam(points=simulatedPoints[,k], playerCost=newCost, maxRisk=(max(optimizeData$risk)+1))$players
@@ -72,14 +72,10 @@ for (i in 1:dim(bidUpTo)[1]){
 optimizeData
 
 #Merge with projections
-projections <- merge(projections, optimizeData[,c("name","bidUpToSim")], by=c("name"), all=TRUE) #,"pos"
+projections <- merge(projections, optimizeData[,c("name","pos","team","bidUpToSim"), with=FALSE], by=c("name","pos","team"), all.x=TRUE, allow.cartesian=TRUE)
 
 #Convert NAs to Zero
-projections$bidUpToSim[is.na(projections$bidUpToSim)] <- 1
-
-#Order players by vor #projections
-projections <- projections[order(-projections$vor),] #projections$projections
-row.names(projections) <- 1:dim(projections)[1]
+projections[is.na(bidUpToSim), bidUpToSim := 1]
 
 #Save file
 save(projections, file = paste(getwd(), "/Data/BidUpToSimulation.RData", sep=""))

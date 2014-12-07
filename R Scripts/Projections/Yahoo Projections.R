@@ -116,7 +116,7 @@ projections_yahoo[which(name %in% duplicateCases),]
 #projections_yahoo <- merge(projections_yahoo2, projections_yahoo[,c("name","name_yahoo","player","pos","team_yahoo"), with=FALSE], by="name")
 
 #Rename players
-projections_yahoo[name=="STEVIEJOHNSON", name:="STEVEJOHNSON"]
+projections_yahoo[name == "STEVIEJOHNSON", name := "STEVEJOHNSON"]
 
 #Calculate Overall Rank
 projections_yahoo <- projections_yahoo[order(-points)][,overallRank := 1:.N]

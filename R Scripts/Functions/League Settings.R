@@ -35,7 +35,7 @@ scoreCategories <- c("passAtt","passComp","passIncomp","passYds","passTds","pass
                      "fg","fgAtt","fg019","fg2029","fg3039","fg4049","fg50","xp")
 calculatedVars <- c("positionRank","overallRank","points","pointsLo","pointsHi","vor","pick","risk","sdPts","sdPick")
 varNames <- c(calculatedVars, scoreCategories)
-finalVarNames <- c("name","pos","team","sourceName","player","playerID", varNames)
+finalVarNames <- c("name","pos","team","sourceName","player","playerID","season", varNames)
 
 #Scoring
 passAttMultiplier <- 0      #0 pts per passing attempt

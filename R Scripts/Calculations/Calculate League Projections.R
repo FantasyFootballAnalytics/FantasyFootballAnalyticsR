@@ -138,6 +138,9 @@ cor(projectionsWide[,c(unique(projections$sourceName)), with=FALSE], use="pairwi
 projections <- projections[order(-points)][,overallRank := 1:.N, by=list(sourceName)]
 projections <- projections[order(-points)][,positionRank := 1:.N, by=list(sourceName, pos)]
 
+#Add season
+projections[,season := season]
+
 #Select and order variables
 keepVars <- finalVarNames[finalVarNames %in% names(projections)]
 projections <- projections[,keepVars, with=FALSE]
