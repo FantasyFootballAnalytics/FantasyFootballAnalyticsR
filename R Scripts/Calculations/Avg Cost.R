@@ -41,10 +41,10 @@ for(i in 1:length(yahooList)){
   
   #Add variable names
   if(is.odd(i)){
-    setnames(yahooList[[i]], c("player","costProjected","cost","draftedPct","pos"))
+    setnames(yahooList[[i]], c("player","costProjected_yahoo","cost_yahoo","draftedPct_yahoo","pos"))
     yahooListCost[[(i+1)/2]] <- setDT(yahooList[[i]])
   } else{
-    setnames(yahooList[[i]], c("player","adp","avgRound","draftedPct","pos"))
+    setnames(yahooList[[i]], c("player","adp_yahoo","avgRound_yahoo","draftedPct_yahoo","pos"))
     yahooListADP[[i/2]] <- setDT(yahooList[[i]])
   }
 }
@@ -54,81 +54,83 @@ avgCost_yahoo <- rbindlist(yahooListCost, use.names=TRUE, fill=TRUE)
 adp_yahoo <- rbindlist(yahooListADP, use.names=TRUE, fill=TRUE)
 
 #Player name, position, and team
-avgCost_yahoo[,player := str_trim(sapply(str_split(avgCost_yahoo$player, "\n"), "[[", 2))]
-avgCost_yahoo[,team_yahoo := toupper(str_trim(str_sub(avgCost_yahoo$player, start=str_locate(avgCost_yahoo$player, "-")[,1]-4, end=str_locate(avgCost_yahoo$player, "-")[,1]-2)))]
-avgCost_yahoo[,name_yahoo := str_trim(str_sub(avgCost_yahoo$player, start=0, end=nchar(avgCost_yahoo$player)-8))]
+avgCost_yahoo[,player := str_trim(sapply(str_split(player, "\n"), "[[", 2))]
+avgCost_yahoo[,team_yahoo := toupper(str_trim(str_sub(player, start=str_locate(player, "-")[,1]-4, end=str_locate(player, "-")[,1]-2)))]
+avgCost_yahoo[,name_yahoo := str_trim(str_sub(player, start=0, end=nchar(player)-8))]
 avgCost_yahoo[which(pos == "DST"), name_yahoo := convertTeamName(team_yahoo)]
-avgCost_yahoo[,name := nameMerge(avgCost_yahoo$name_yahoo)]
+avgCost_yahoo[,name := nameMerge(name_yahoo)]
 
-adp_yahoo[,player := str_trim(sapply(str_split(adp_yahoo$player, "\n"), "[[", 2))]
-adp_yahoo[,team_yahoo := toupper(str_trim(str_sub(adp_yahoo$player, start=str_locate(adp_yahoo$player, "-")[,1]-4, end=str_locate(adp_yahoo$player, "-")[,1]-2)))]
-adp_yahoo[,name_yahoo := str_trim(str_sub(adp_yahoo$player, start=0, end=nchar(adp_yahoo$player)-8))]
+adp_yahoo[,player := str_trim(sapply(str_split(player, "\n"), "[[", 2))]
+adp_yahoo[,team_yahoo := toupper(str_trim(str_sub(player, start=str_locate(player, "-")[,1]-4, end=str_locate(player, "-")[,1]-2)))]
+adp_yahoo[,name_yahoo := str_trim(str_sub(player, start=0, end=nchar(player)-8))]
 adp_yahoo[which(pos == "DST"), name_yahoo := convertTeamName(team_yahoo)]
-adp_yahoo[,name := nameMerge(adp_yahoo$name_yahoo)]
+adp_yahoo[,name := nameMerge(name_yahoo)]
 
 #Merge ADP & avgCost
-cost_yahoo <- merge(avgCost_yahoo[,c("name","name_yahoo","pos","team_yahoo","costProjected_yahoo","cost_yahoo","draftedPct_yahoo"), with=FALSE], adp_yahoo[,c("name","pos","adp_yahoo","avgRound_yahoo"), with=FALSE], by=c("name","pos"), all=TRUE)
+costADP_yahoo <- merge(avgCost_yahoo[,c("name","name_yahoo","pos","team_yahoo","costProjected_yahoo","cost_yahoo","draftedPct_yahoo"), with=FALSE], adp_yahoo[,c("name","pos","adp_yahoo","avgRound_yahoo"), with=FALSE], by=c("name","pos"), all=TRUE)
 
 #Remove special characters
-cost_yahoo[,c("costProjected_yahoo","cost_yahoo","draftedPct_yahoo")] <- apply(cost_yahoo[,c("costProjected_yahoo","cost_yahoo","draftedPct_yahoo")], 2, function(x) gsub("\\%", "", gsub("\\$", "", x)))
+numericVars <- c("costProjected_yahoo","cost_yahoo","draftedPct_yahoo","adp_yahoo","avgRound_yahoo")
+costADP_yahoo[, (numericVars) := lapply(.SD, function(x) gsub("\\%", "", gsub("\\$", "", x))), .SDcols = numericVars]
 
 #Convert to numeric
-cost_yahoo[,c("costProjected_yahoo","cost_yahoo","draftedPct_yahoo","adp_yahoo","avgRound_yahoo")] <- convert.magic(cost_yahoo[,c("costProjected_yahoo","cost_yahoo","draftedPct_yahoo","adp_yahoo","avgRound_yahoo")], "numeric")
+costADP_yahoo[, (numericVars) := lapply(.SD, function(x) as.numeric(as.character(x))), .SDcols = numericVars]
 
 #Calculations
-cost_yahoo$costAvg_yahoo <- rowMeans(cost_yahoo[,c("costProjected_yahoo","cost_yahoo")], na.rm=TRUE)
-cost_yahoo$costMax_yahoo <- apply(cost_yahoo[,c("costProjected_yahoo","cost_yahoo")], 1, function(x) max(x, na.rm=TRUE))
-cost_yahoo$pos_yahoo <- cost_yahoo$pos
+costADP_yahoo[,costAvg_yahoo := rowMeans(costADP_yahoo[,c("costProjected_yahoo","cost_yahoo"), with=FALSE], na.rm=TRUE)]
+costADP_yahoo[,costMax_yahoo := apply(costADP_yahoo[,c("costProjected_yahoo","cost_yahoo"), with=FALSE], 1, function(x) max(x, na.rm=TRUE))]
 
 #Rename players
 #projections_yahoo[projections_yahoo$name=="STEVIEJOHNSON", "name"] <- "STEVEJOHNSON"
 
 #Subset
-cost_yahoo <- cost_yahoo[,c("name","name_yahoo","pos_yahoo","team_yahoo","cost_yahoo","costProjected_yahoo","costAvg_yahoo","costMax_yahoo","adp_yahoo")]
+costADP_yahoo <- costADP_yahoo[,c("name","name_yahoo","pos","team_yahoo","cost_yahoo","costProjected_yahoo","costAvg_yahoo","costMax_yahoo","adp_yahoo"), with=FALSE]
 
 ###############
 # ESPN
 ###############
 
 #Scrape data
-qbCost_espn <- readHTMLTable("http://games.espn.go.com/ffl/livedraftresults?position=QB", stringsAsFactors = FALSE)$`NULL`
-rbCost_espn <- readHTMLTable("http://games.espn.go.com/ffl/livedraftresults?position=RB", stringsAsFactors = FALSE)$`NULL`
-wrCost_espn <- readHTMLTable("http://games.espn.go.com/ffl/livedraftresults?position=WR", stringsAsFactors = FALSE)$`NULL`
-teCost_espn <- readHTMLTable("http://games.espn.go.com/ffl/livedraftresults?position=TE", stringsAsFactors = FALSE)$`NULL`
+espn_baseurl <- "http://games.espn.go.com/ffl/livedraftresults?"
+espn_pos <- list(QB="QB", RB="RB", WR="WR", TE="TE", K="K", DST="D/ST", DT="DT", DE="DE", LB="LB", CB="CB", S="S")
+espn_urls <- paste0(espn_baseurl, "position=", espn_pos)
+espn <- lapply(espn_urls, function(x) {data.table(readHTMLTable(x, stringsAsFactors = FALSE)$`NULL`)})
+espnList <- espn
 
-#Subset data
-qbCost2_espn <- qbCost_espn[5:(nrow(qbCost_espn) - 1),2:ncol(qbCost_espn)]
-rbCost2_espn <- rbCost_espn[5:(nrow(rbCost_espn) - 1),2:ncol(rbCost_espn)]
-wrCost2_espn <- wrCost_espn[5:(nrow(wrCost_espn) - 1),2:ncol(wrCost_espn)]
-teCost2_espn <- teCost_espn[5:(nrow(teCost_espn) - 1),2:ncol(teCost_espn)]
-
-#Add variable names to each object
-names(qbCost2_espn) <- names(rbCost2_espn) <- names(wrCost2_espn) <- names(teCost2_espn) <- c("player","pos","adp_espn","adp7Day","cost_espn","costAvg7Day_espn","draftedPct_espn")
+for(i in 1:length(espnList)){
+  #Add variable names
+  setnames(espnList[[i]], c("info","player","pos","adp_espn","adp7Day","cost_espn","costAvg7Day_espn","draftedPct_espn"))
+  
+  #Trim Dimensions
+  espnList[[i]] <- espnList[[i]][-c(1:4, nrow(espnList[[i]])),]
+  
+  #Add position to projection
+  espnList[[i]][,pos := names(espn_pos)[i]]
+  espnList[[i]][,pos := as.factor(pos)]
+}
 
 #Merge players across positions
-avgCost_espn <- rbind(qbCost2_espn, rbCost2_espn, wrCost2_espn, teCost2_espn)
+avgCost_espn <- rbindlist(espnList, use.names=TRUE, fill=TRUE)
 
 #Player names
-avgCost_espn$name_espn <- str_sub(avgCost_espn$player, end=str_locate(string=avgCost_espn$player, ",")[,1]-1)
-avgCost_espn$name_espn <- str_replace_all(avgCost_espn$name_espn, "\\*", "")
-avgCost_espn$name <- nameMerge(avgCost_espn$name_espn)
+avgCost_espn[,name_espn := str_sub(player, end=str_locate(string=player, ",")[,1]-1)]
+avgCost_espn[,name_espn := str_replace_all(name_espn, "\\*", "")]
+avgCost_espn[,name := nameMerge(avgCost_espn$name_espn)]
 
 #Player teams
-avgCost_espn$team_espn <- str_sub(avgCost_espn$player, start=str_locate(string=avgCost_espn$player, ",")[,1]+2, end = str_locate(string=avgCost_espn$player, ",")[,1]+4)
-avgCost_espn$team_espn <- str_trim(avgCost_espn$team_espn, side="right")
-avgCost_espn$team_espn <- toupper(avgCost_espn$team_espn)
-
-#Convert pos to factor
-avgCost_espn$pos_espn <- as.factor(avgCost_espn$pos)
+avgCost_espn[,team_espn := str_sub(player, start=str_locate(string=player, ",")[,1]+2, end = str_locate(string=player, ",")[,1]+4)]
+avgCost_espn[,team_espn := str_trim(avgCost_espn$team_espn, side="right")]
+avgCost_espn[,team_espn := toupper(team_espn)]
 
 #Remove special characters
-avgCost_espn[,c("adp7Day","costAvg7Day_espn")] <- apply(avgCost_espn[,c("adp7Day","costAvg7Day_espn")], 2, function(x) gsub("\\+", "", x))
+numericVars <- c("adp_espn","adp7Day","cost_espn","costAvg7Day_espn","draftedPct_espn")
+avgCost_espn[, (numericVars) := lapply(.SD, function(x) gsub("\\+", "", x)), .SDcols = numericVars]
 
 #Convert to numeric
-avgCost_espn[,c("adp_espn","adp7Day","cost_espn","costAvg7Day_espn","draftedPct_espn")] <- convert.magic(avgCost_espn[,c("adp_espn","adp7Day","cost_espn","costAvg7Day_espn","draftedPct_espn")], "numeric")
+avgCost_espn[, (numericVars) := lapply(.SD, function(x) as.numeric(as.character(x))), .SDcols = numericVars]
 
 #Subset
-cost_espn <- avgCost_espn[,c("name","name_espn","pos_espn","team_espn","cost_espn","adp_espn")]
+avgCost_espn <- avgCost_espn[,c("name","name_espn","pos","team_espn","cost_espn","adp_espn"), with=FALSE]
 
 ###############
 # FantasyPros
