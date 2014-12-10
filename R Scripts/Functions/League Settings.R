@@ -58,6 +58,26 @@ fumlMultiplier <- -3        #-3 pts per fumble lost
 sourcesOfProjections <- c("CBS", "ESPN", "Yahoo") #c("Accuscore", "CBS1", "CBS2", "EDSfootball", "ESPN", "FantasyFootballNerd", "FantasyPros", "FantasySharks", "FFtoday", "Footballguys1", "Footballguys2", "Footballguys3", "Footballguys4", "FOX", "NFL", "numberFire", "WalterFootball", "Yahoo")
 sourcesOfProjectionsAbbreviation <- c("cbs", "espn", "yahoo") #c("accu", "cbs1", "cbs2", "eds", "espn", "ffn", "fp", "fs", "fftoday", "fbg1", "fbg2", "fbg3", "fbg4", "fox", "nfl", "nf", "wf", "yahoo")
 
+#Weights applied to each source in calculation of weighted average of projections
+weight_accu <- 1    #Accuscore
+weight_cbs1 <- 1    #Jamey Eisenberg
+weight_cbs2 <- 1    #Dave Richard"
+weight_eds <- 1     #EDS Football
+weight_espn <- 1    #ESPN
+weight_ffn <- 1     #Fantasy Football Nerd
+weight_fbg1 <- 1    #Footballguys: David Dodds
+weight_fbg2 <- 1    #Footballguys: Bob Henry
+weight_fbg3 <- 1    #Footballguys: Maurile Tremblay
+weight_fbg4 <- 1    #Footballguys: Jason Wood
+weight_fox <- 1    #FOX
+weight_fp <- 1      #FantasyPros
+weight_fs <- 1      #FantasySharks
+weight_fftoday <- 1 #FFtoday
+weight_nfl <- 1     #NFL.com
+weight_nf <- 1      #numberFire
+weight_wf <- 1      #WalterFootball
+weight_yahoo <- 1   #Yahoo 
+
 #Number of players at each position drafted in Top 100 (adjust for your league)
 qbReplacements <- 15
 rbReplacements <- 37

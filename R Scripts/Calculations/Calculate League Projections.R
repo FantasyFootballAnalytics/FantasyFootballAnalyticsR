@@ -46,6 +46,9 @@ teamNames <- melt(projections,
 setkeyv(teamNames, cols=c("name","pos"))
 projections <- projections[unique(teamNames)]
 
+#Modify team names
+projections[team_espn == "CHI", team := "CHI"]
+
 #Identify duplicate cases
 cases <- projections[, c("name","pos","team"), with=FALSE]
 uniqueCases <- unique(projections[, c("name","pos","team"), with=FALSE])
@@ -62,17 +65,28 @@ duplicateCases[duplicated(duplicateCases) | duplicated(duplicateCases, fromLast=
 #Calculate stat categories for each source
 projections[,passIncomp := passAtt - passComp]
 
-#Calculate average of categories 
-projectionsAvg <- projections[, lapply(.SD, mean, na.rm=TRUE), by=c("name","player","pos","team"), .SDcols=names(projections)[names(projections) %in% scoreCategories]]
+#Calculate average of categories
+availableVars <- names(projections)[names(projections) %in% scoreCategories]
+projectionsAvg <- projections[, lapply(.SD, mean, na.rm=TRUE), by=c("name","player","pos","team"), .SDcols=availableVars]
 projectionsAvg$sourceName <- "average"
 
 #Calculate Hodges-Lehmann (pseudo-median) robust average of categories
-projectionsRobustAvg <- projections[, lapply(.SD, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE))), by=c("name","player","pos","team"), .SDcols=names(projections)[names(projections) %in% scoreCategories]]
+projectionsRobustAvg <- projections[, lapply(.SD, function(x) tryCatch(wilcox.test(x, conf.int=TRUE, na.action="na.exclude")$estimate, error=function(e) median(x, na.rm=TRUE))), by=c("name","player","pos","team"), .SDcols=availableVars]
 projectionsRobustAvg$sourceName <- "averageRobust"
 
+#Calculate Weighted Average
+setkeyv(projections, cols=c("name","player","pos","team","sourceName"))
+projectionsAllSources <- projections[CJ.dt(unique(data.table(name, player, pos, team)), unique(sourceName))] #if error, check for duplicate cases: table(projectionsAllSources$name)[table(projectionsAllSources$name) != length(unique(projections$sourceName))]
+weights <- as.vector(sapply(paste("weight", unique(projections$sourceName), sep="_"), get))
+allWeights <- rep(weights, nrow(projectionsAllSources)/length(weights))
+
+setkeyv(projectionsAllSources, cols=c("name","player","pos","team","sourceName"))
+projectionsWeightedAvg <- projectionsAllSources[, lapply(.SD, function(x) weighted.mean(x, weights, na.rm=TRUE)), by=c("name","player","pos","team"), .SDcols=availableVars]
+
+projectionsWeightedAvg$sourceName <- "averageWeighted"
+
 #Merge
-projectionCalculations <- rbind(projectionsAvg, projectionsRobustAvg, fill=TRUE)
-#setkeyv(projectionCalculations, cols=c("name","pos","team","sourceName"))
+projectionCalculations <- rbind(projectionsAvg, projectionsRobustAvg, projectionsWeightedAvg, fill=TRUE)
 
 projections <- rbind(projections, projectionCalculations, fill=TRUE)
 
@@ -87,12 +101,16 @@ for(i in 1:length(unique(projections$sourceName))){
   
   sourceIndex <- unique(projections$sourceName)[i]
   playerIDs <- projections$playerID[which(projections$sourceName == sourceIndex)]
-  availableVars <- names(projections)[names(projections) %in% scoreCategories]
   
-  if(sourceIndex != "average" & sourceIndex != "averageRobust"){
+  if(sourceIndex != "average" & sourceIndex != "averageRobust" & sourceIndex != "averageWeighted"){
     missingVars <- availableVars[projections[which(projections$sourceName == sourceIndex), apply(.SD, 2, function(x) all(is.na(x))), .SDcols=availableVars]]
     projections[which(projections$sourceName == sourceIndex), (missingVars) := projections[which(projections$sourceName == "average" & projections$playerID %in% playerIDs), missingVars, with=FALSE]]
   }
+}
+
+#Convert NAs to Zeroes
+for(col in availableVars){
+  projections[is.na(get(col)) & (sourceName == "average" | sourceName == "averageRobust" | sourceName == "averageWeighted"), (col) := 0]
 }
 
 #Calculate projections for each source

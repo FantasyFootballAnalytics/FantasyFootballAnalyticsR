@@ -372,3 +372,9 @@ cleanTeamAbbreviations <- function(x){
   
   return(x)
 }
+
+#Function for adding missing rows to a data.table by cross-join
+CJ.dt = function(...) {
+  rows = do.call(CJ, lapply(list(...), function(x) if(is.data.frame(x)) seq_len(nrow(x)) else seq_along(x)));
+  do.call(data.table, Map(function(x, y) x[y], list(...), rows))
+}
