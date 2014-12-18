@@ -69,7 +69,7 @@ projections[,sdPtsZ := scale(sdPts), by="pos"]
 projections[,risk := rowMeans(projections[,c("sdPickZ","sdPtsZ"), with=FALSE], na.rm=TRUE)]
 
 #Rescale risk with mean~5 and sd~2
-projections$risk <- ((projections$risk * 2/(sd(projections$risk, na.rm=TRUE))) + (5-(mean(projections$risk, na.rm=TRUE))))
+projections[,risk := ((risk * 2/(sd(risk, na.rm=TRUE))) + (5-(mean(risk, na.rm=TRUE))))]
 
 #Select and order variables
 newVars <- c("pick","risk","sdPts","sdPick")

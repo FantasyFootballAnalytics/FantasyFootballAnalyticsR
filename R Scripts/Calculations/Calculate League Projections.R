@@ -47,7 +47,7 @@ setkeyv(teamNames, cols=c("name","pos"))
 projections <- projections[unique(teamNames)]
 
 #Modify team names
-projections[team_espn == "CHI", team := "CHI"]
+projections[name == "ZACHMILLER" & team_espn == "CHI", team := "CHI"]
 
 #Identify duplicate cases
 cases <- projections[, c("name","pos","team"), with=FALSE]

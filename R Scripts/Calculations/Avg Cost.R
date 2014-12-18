@@ -203,18 +203,21 @@ avgCost <- Reduce(function(x, y){
 #avgCost <- avgCost[unique(playerNames)]
 
 #Set team name as most common instance across sources
-#teamNames <- melt(avgCost,
-#                  id.vars = c("name","pos"),
-#                  measure.vars = paste("team", sourcesOfCost, sep="_"),
-#                  na.rm=TRUE,
-#                  value.name="team")[,team := names(which.max(table(team))),
-#                                     by=list(name, pos)][order(name), -3, with=FALSE]
+teamNames <- melt(avgCost,
+                  id.vars = c("name","pos"),
+                  measure.vars = paste("team", sourcesOfCost, sep="_"),
+                  na.rm=TRUE,
+                  value.name="team")[,team := names(which.max(table(team))),
+                                     by=list(name, pos)][order(name), -3, with=FALSE]
 
-#setkeyv(teamNames, cols=c("name","pos"))
-#avgCost <- avgCost[unique(teamNames)]
+setkeyv(teamNames, cols=c("name","pos"))
+avgCost <- avgCost[unique(teamNames)]
+
+#Modify team names
+avgCost[name == "ZACHMILLER" & team_espn == "CHI", team := "CHI"]
 
 #Subset
-avgCost <- avgCost[, c("name","pos","adp_yahoo","adp_espn","adp_fp","adp_ffc","adpSD_ffc","cost_yahoo","costProjected_yahoo","costAvg_yahoo","costMax_yahoo","cost_espn","cost_fp"), with=FALSE]
+avgCost <- avgCost[, c("name","pos","team","adp_yahoo","adp_espn","adp_fp","adp_ffc","adpSD_ffc","cost_yahoo","costProjected_yahoo","costAvg_yahoo","costMax_yahoo","cost_espn","cost_fp"), with=FALSE]
 
 #Remove duplicate cases
 #avgCost[avgCost$name %in% avgCost$name[duplicated(avgCost$name)],]
@@ -236,9 +239,9 @@ avgCost <- avgCost[, c("name","pos","adp_yahoo","adp_espn","adp_fp","adp_ffc","a
 #avgCost <- avgCost[,!names(avgCost) %in% drops]
 
 #Merge
-setkeyv(projections, cols=c("name","pos"))
-setkeyv(avgCost, cols=c("name","pos"))
-projections <- merge(projections, avgCost, by=c("name","pos"), all.x=TRUE, allow.cartesian=TRUE)
+setkeyv(projections, cols=c("name","pos","team"))
+setkeyv(avgCost, cols=c("name","pos","team"))
+projections <- merge(projections, avgCost, by=c("name","pos","team"), all.x=TRUE, allow.cartesian=TRUE)
 
 #Remove duplicate cases
 #projections[projections$name %in% projections$name[duplicated(projections$name)],]
