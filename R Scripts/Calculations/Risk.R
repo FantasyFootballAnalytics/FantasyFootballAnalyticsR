@@ -57,7 +57,7 @@ projections <- merge(projections, risk, by="name", all.x=TRUE)
 #Calculate risk
 projections[,pick := rowMeans(projections[,c("pick_experts", "pick_crowd"), with=FALSE], na.rm=TRUE)]
 
-projections[-which(sourceName %in% c("average","averageRobust","averageWeighted")), sdPts := sd(points), by=c("name","player","pos","team","playerID")]
+projections[-which(sourceName %in% c("average","averageRobust","averageWeighted")), sdPts := mad(points, na.rm=TRUE), by=c("name","player","pos","team","playerID")]
 projections[,sdPts := mean(sdPts, na.rm=TRUE), by=c("name","player","pos","team","playerID")]
 
 projections[,sdPick := rowMeans(projections[,c("sdPick_experts","sdPick_crowd"), with=FALSE], na.rm=TRUE)]

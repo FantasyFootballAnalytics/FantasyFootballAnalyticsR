@@ -13,6 +13,7 @@ maxRisk <- 4.6
 
 #Library
 library("Rglpk")
+library("data.table")
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))

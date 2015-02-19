@@ -134,8 +134,8 @@ scoreCategoriesPoints <- names(projections)[names(projections) %in% paste0(score
 projections[,points := mySum(projections[,scoreCategoriesPoints, with=FALSE])]
 
 #Calculate 95% CI around robust average
-projections[-which(sourceName %in% c("average","averageRobust")), pointsLo := tryCatch(wilcox.test(points, conf.int=TRUE, na.action="na.exclude")$conf.int[1], error=function(e) median(points, na.rm=TRUE)), by=c("name","player","pos","team","playerID")]
-projections[-which(sourceName %in% c("average","averageRobust")), pointsHi := tryCatch(wilcox.test(points, conf.int=TRUE, na.action="na.exclude")$conf.int[2], error=function(e) median(points, na.rm=TRUE)), by=c("name","player","pos","team","playerID")]
+projections[-which(sourceName %in% c("average","averageRobust","averageWeighted")), pointsLo := tryCatch(wilcox.test(points, conf.int=TRUE, na.action="na.exclude")$conf.int[1], error=function(e) median(points, na.rm=TRUE)), by=c("name","player","pos","team","playerID")]
+projections[-which(sourceName %in% c("average","averageRobust","averageWeighted")), pointsHi := tryCatch(wilcox.test(points, conf.int=TRUE, na.action="na.exclude")$conf.int[2], error=function(e) median(points, na.rm=TRUE)), by=c("name","player","pos","team","playerID")]
 
 projections[,pointsLo := mean(pointsLo, na.rm=TRUE), by=c("name","player","pos","team","playerID")]
 projections[,pointsHi := mean(pointsHi, na.rm=TRUE), by=c("name","player","pos","team","playerID")]
