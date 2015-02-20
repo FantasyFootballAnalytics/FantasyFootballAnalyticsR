@@ -11,7 +11,7 @@
 #####################
 # UPDATE
 #####################
-year <- 2013 #can only scrape Yahoo data from past 2 years (2012 or 2013), but can load data from other years if already scraped & saved
+year <- 2014 #can only scrape Yahoo data from past 2 years (2012 or 2013), but can load data from other years if already scraped & saved
 yahooLeagueID <- 39345
 pagesToGrab <- 15
 
@@ -27,7 +27,7 @@ source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
 ###IMPORTANT###
-# If already data are already scraped and download, skip to section 2
+# If data are already scraped and download, skip to section 2
 
 #####################
 # 1. Scrape and Process Historical Actual Points
@@ -48,15 +48,15 @@ for(i in 1:pagesToGrab){
 actualPoints <- rbind(yahoo1,yahoo2,yahoo3,yahoo4,yahoo5,yahoo6,yahoo7,yahoo8,yahoo9,yahoo10,yahoo11,yahoo12,yahoo13,yahoo14,yahoo15)
 
 #Variable Names
-names(actualPoints) <- c("star","player","add","owner","pts","ownedPct","proj","actual","passYds","passTds","passInt","rushYds","rushTds","recYds","recTds","returnTDs","twoPts","fumbles","missing")
+names(actualPoints) <- c("star","player","add","owner","pts","ownedPct","proj","actual","passYds","passTds","passInt","rushAtt","rushYds","rushTds","recTgts","rec","recYds","recTds","returnTDs","twoPts","fumbles","missing")
 
 #Remove special characters(commas)
-actualPoints[,c("passYds","passTds","passInt","rushYds","rushTds","recYds","recTds","returnTDs","twoPts","fumbles","pts")] <-
-  apply(actualPoints[,c("passYds","passTds","passInt","rushYds","rushTds","recYds","recTds","returnTDs","twoPts","fumbles","pts")], 2, function(x) gsub("\\,", "", x))
+actualPoints[,c("passYds","passTds","passInt","rushAtt","rushYds","rushTds","recTgts","rec","recYds","recTds","returnTDs","twoPts","fumbles","pts")] <-
+  apply(actualPoints[,c("passYds","passTds","passInt","rushAtt","rushYds","rushTds","recTgts","rec","recYds","recTds","returnTDs","twoPts","fumbles","pts")], 2, function(x) gsub("\\,", "", x))
 
 #Convert variables from character strings to numeric
-actualPoints[,c("passYds","passTds","passInt","rushYds","rushTds","recYds","recTds","returnTDs","twoPts","fumbles","pts")] <- 
-  convert.magic(actualPoints[,c("passYds","passTds","passInt","rushYds","rushTds","recYds","recTds","returnTDs","twoPts","fumbles","pts")], "numeric")
+actualPoints[,c("passYds","passTds","passInt","rushAtt","rushYds","rushTds","recTgts","rec","recYds","recTds","returnTDs","twoPts","fumbles","pts")] <- 
+  convert.magic(actualPoints[,c("passYds","passTds","passInt","rushAtt","rushYds","rushTds","recTgts","rec","recYds","recTds","returnTDs","twoPts","fumbles","pts")], "numeric")
 
 #Player name, position, and team
 actualPoints$player <- str_trim(sapply(str_split(actualPoints$player, "\n"), "[[", 2))
@@ -66,7 +66,7 @@ actualPoints$name <- nameMerge(actualPoints$name_yahoo)
 actualPoints$team_yahoo <- toupper(str_trim(str_sub(actualPoints$player, start=str_locate(actualPoints$player, "-")[,1]-4, end=str_locate(actualPoints$player, "-")[,1]-2)))
 
 #Select variables to keep
-actualPoints <- actualPoints[,c("name","name_yahoo","pos","team_yahoo","passYds","passTds","passInt","rushYds","rushTds","recYds","recTds","returnTDs","twoPts","fumbles","pts")]
+actualPoints <- actualPoints[,c("name","name_yahoo","pos","team_yahoo","passYds","passTds","passInt","rushAtt","rushYds","rushTds","recTgts","rec","recYds","recTds","returnTDs","twoPts","fumbles","pts")]
 
 #Save historical actual data
 write.csv(actualPoints, file=paste(getwd(),"/Data/Historical Actual Points/Yahoo-actualpoints-", year, ".csv", sep=""), row.names=FALSE)
@@ -77,17 +77,30 @@ write.csv(actualPoints, file=paste(getwd(),"/Data/Historical Actual Points/Yahoo
 
 actualPoints <- read.csv(paste(getwd(),"/Data/Historical Actual Points/Yahoo-actualpoints-", year, ".csv", sep=""))
 
+#Check if variables exist, if not, create them
+statList <- c("passYds","passTds","passInt","rushAtt","rushYds","rushTds","recTgts","rec","recYds","recTds","returnTDs","twoPts","fumbles")
+
+for(i in 1:length(statList)){
+  if(!(statList[i] %in% names(actualPoints))){
+    actualPoints[statList[i]] <- NA
+  }
+}
+
 #Calculate actual fantasy points for your league based on actual stats
 actualPoints$passYdsPts <- actualPoints$passYds * passYdsMultiplier
 actualPoints$passTdsPts <- actualPoints$passTds * passTdsMultiplier
 actualPoints$passIntPts <- actualPoints$passInt * passIntMultiplier
+actualPoints$rushAttPts <- actualPoints$rushAtt * rushAttMultiplier
 actualPoints$rushYdsPts <- actualPoints$rushYds * rushYdsMultiplier
 actualPoints$rushTdsPts <- actualPoints$rushTds * rushTdsMultiplier
+actualPoints$recPts <- actualPoints$rec * recMultiplier
 actualPoints$recYdsPts <- actualPoints$recYds * recYdsMultiplier
 actualPoints$recTdsPts <- actualPoints$recTds * recTdsMultiplier
+actualPoints$returnTdsPts <- actualPoints$returnTDs * returnTdsMultiplier
+actualPoints$twoPtsPts <- actualPoints$twoPts * twoPtsMultiplier
 actualPoints$fumblesPts <- actualPoints$fumbles * fumlMultiplier
 
-actualPoints$actualPts <- rowSums(actualPoints[,c("passYdsPts","passTdsPts","passIntPts","rushYdsPts","rushTdsPts","recYdsPts","recTdsPts","twoPts","fumblesPts")], na.rm=T)
+actualPoints$actualPts <- rowSums(actualPoints[,c("passYdsPts","passTdsPts","passIntPts","rushAttPts","rushYdsPts","rushTdsPts","recPts","recYdsPts","recTdsPts","returnTdsPts","twoPtsPts","fumblesPts")], na.rm=T)
 
 actualPoints <- actualPoints[,c("name","name_yahoo","pos","team_yahoo","actualPts")]
 row.names(actualPoints) <- 1:dim(actualPoints)[1]
@@ -125,15 +138,54 @@ projectedWithActualPts[projectedWithActualPts$name %in% projectedWithActualPts[d
 #####################
 
 #Correlation between projections and actual points
-cor(projectedWithActualPts[,c("projectedPts_espn","projectedPts_cbs","projectedPts_nfl","projectedPts_fp","projectedPtsAvg","projectedPtsLatent","actualPts")], use="pairwise.complete.obs")
+cor(projectedWithActualPts[,c("projectedPts_accu","projectedPts_cbs1","projectedPts_cbs2","projectedPts_eds","projectedPts_espn","projectedPts_ffn","projectedPts_fp","projectedPts_fs","projectedPts_fftoday",
+                              "projectedPts_fbg1","projectedPts_fbg2","projectedPts_fbg3","projectedPts_fbg4",
+                              "projectedPts_fox","projectedPts_nfl","projectedPts_nf","projectedPts_wf","projectedPts_yahoo",
+                              "projectedPtsMean","projectedPtsMedian","actualPts")], use="pairwise.complete.obs")
 
 #R-squared
+summary(lm(actualPts ~ projectedPts_accu, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPts_cbs1, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPts_cbs2, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPts_eds, data=projectedWithActualPts))$r.squared
 summary(lm(actualPts ~ projectedPts_espn, data=projectedWithActualPts))$r.squared
-summary(lm(actualPts ~ projectedPts_cbs, data=projectedWithActualPts))$r.squared
-summary(lm(actualPts ~ projectedPts_nfl, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPts_ffn, data=projectedWithActualPts))$r.squared
 summary(lm(actualPts ~ projectedPts_fp, data=projectedWithActualPts))$r.squared
-summary(lm(actualPts ~ projectedPtsAvg, data=projectedWithActualPts))$r.squared
-summary(lm(actualPts ~ projectedPtsLatent, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPts_fs, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPts_fftoday, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPts_fbg1, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPts_fbg2, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPts_fbg3, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPts_fbg4, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPts_fox, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPts_nfl, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPts_nf, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPts_wf, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPts_yahoo, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPtsMean, data=projectedWithActualPts))$r.squared
+summary(lm(actualPts ~ projectedPtsMedian, data=projectedWithActualPts))$r.squared
+
+#Mean Absolute Scaled Error (MASE)
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_accu")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_accu")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_cbs1")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_cbs1")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_cbs2")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_cbs2")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_eds")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_eds")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_espn")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_espn")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_ffn")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_ffn")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fp")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fp")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fs")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fs")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fftoday")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fftoday")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fbg1")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fbg1")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fbg2")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fbg2")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fbg3")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fbg3")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fbg4")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fbg4")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fox")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fox")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_nfl")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_nfl")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_nf")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_nf")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_wf")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_wf")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_yahoo")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_yahoo")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPtsMean")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPtsMean")])[[2]])
+calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPtsMedian")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPtsMedian")])[[2]])
 
 #Harrell's c-index & Somers Dxy
 rcorrcens(actualPts ~ projectedPts_espn, data=projectedWithActualPts)
@@ -158,14 +210,6 @@ accuracy(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_nfl")])[[1]
 accuracy(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fp")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fp")])[[2]])
 accuracy(na.omit(projectedWithActualPts[,c("actualPts","projectedPtsAvg")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPtsAvg")])[[2]])
 accuracy(na.omit(projectedWithActualPts[,c("actualPts","projectedPtsLatent")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPtsLatent")])[[2]])
-
-#Mean Absolute Scaled Error (MASE)
-calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_espn")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_espn")])[[2]])
-calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_cbs")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_cbs")])[[2]])
-calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_nfl")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_nfl")])[[2]])
-calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fp")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPts_fp")])[[2]])
-calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPtsAvg")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPtsAvg")])[[2]])
-calculateMASE(na.omit(projectedWithActualPts[,c("actualPts","projectedPtsLatent")])[[1]], na.omit(projectedWithActualPts[,c("actualPts","projectedPtsLatent")])[[2]])
 
 #After removing cases with projected points of 0
 projectedWithActualPtsNoZeros <- projectedWithActualPts[which(projectedWithActualPts$projectedPtsAvg!=0),]
@@ -219,8 +263,8 @@ summary(lm(actualPts ~ projections + risk, data=na.omit(projections[,c("actualPt
 summary(lm(actualPts ~ projections + risk, data=na.omit(projections[,c("actualPts","projections","risk")])))
 
 #Plot
-ggplot(data=projectedWithActualPts, aes(x=projectedPts_fp, y=actualPts)) + geom_point() + geom_smooth() + xlab("Projected Fantasy Football Points") + ylab("Actual Fantasy Football Points") + ggtitle("Association Between Projected Fantasy Points and Actual Points") +
-  annotate("text", x = 80, y = max(projectedWithActualPts$projections, na.rm=TRUE), label = paste("R-Squared = ",round(summary(lm(actualPts ~ projectedPts_fp, data=projectedWithActualPts))$r.squared,2),sep=""))
+ggplot(data=projectedWithActualPts, aes(x=projectedPtsMean, y=actualPts)) + geom_point() + geom_smooth() + xlab("Projected Fantasy Football Points") + ylab("Actual Fantasy Football Points") + ggtitle("Association Between Projected Fantasy Points and Actual Points") +
+  annotate("text", x = 80, y = max(projectedWithActualPts$projections, na.rm=TRUE), label = paste("R-Squared = ",round(summary(lm(actualPts ~ projectedPtsMean, data=projectedWithActualPts))$r.squared,2),sep=""))
 ggsave(paste(getwd(),"/Figures/Evaluate Projections.jpg", sep=""), width=10, height=10)
 dev.off()
 
