@@ -14,6 +14,7 @@ library("ggplot2")
 library("plyr")
 library("data.table")
 library("httr")
+library("pbapply")
 
 #Functions
 source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
@@ -38,6 +39,7 @@ siteTable <- merge(projAnalysts, projSites, by = "projDataSiteId")
 siteTable <- merge(siteTable, sitePositions, by = "projDataSiteId", allow.cartesian = TRUE)
 siteTable <- subset(siteTable, apply(siteTable, 1, function(x)(is.na(x["limitPos"])| (length(grep(x["sitePosName"], x["limitPos"]))>0))))
 siteTable <- subset(siteTable, projDataSiteId < 7)
+
 # Filtering out the ones that do season and/or weekly projections
 if(weekNo == 0){
   siteTable <- subset(siteTable, seasonProj == 1)
@@ -49,12 +51,14 @@ if(weekNo == 0){
 siteList <- apply(siteTable, 1, urlList)
 siteUrls <- rbindlist(siteList)
 rm(siteList, siteTable)
+
 # Scrape the data
-scrapeData <- apply(siteUrls, 1, scrapeUrl)
+scrapeData <- pbapply(siteUrls, 1, scrapeUrl)
 
 # Create a list of row numbers from the site URL table that represents each position
 posRows <- lapply(posList, function(p)which(siteUrls$posId == p))
 rm(siteUrls)
+
 # Combine all of the projections for each position
 posProj <- lapply(posRows, function(r)rbindlist(scrapeData[r], fill = TRUE))
 
