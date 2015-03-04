@@ -62,5 +62,37 @@ rm(siteUrls)
 # Combine all of the projections for each position
 posProj <- lapply(posRows, function(r)rbindlist(scrapeData[r], fill = TRUE))
 
+# Calculate average stats and points
+avgProj <- lapply(posList, function(pId){
+  setkeyv(posProj[[pId]], "playerId")
+  dataCols <- setdiff(names(posProj[[pId]]), c("playerId", "projAnalystId", "nobs"))
+  proj <- posProj[[pId]][, lapply(.SD, function(col)mean(col, na.rm = TRUE)), by = key(posProj[[pId]]), .SDcols = dataCols]
+  proj[ , projAnalystId := 18]
+})
+
+hle <- function(vec){
+  n <- length(vec)
+  wAvg <- rep(0, n * (n + 1) / 2)
+  pair <- 1
+  for (i in 1:n){
+    for (j in i:n){
+      wAvg[pair] <- mean(c(vec[i], vec[j]), na.rm = TRUE)
+      pair <- pair + 1
+    }
+  }
+  return(median(wAvg, na.rm = TRUE))
+}
+
+# Calculate robust average from Hodges-Lehman and points
+medProj <- lapply(posList, function(pId){
+  setkeyv(posProj[[pId]], "playerId")
+  dataCols <- setdiff(names(posProj[[pId]]), c("playerId", "projAnalystId", "nobs"))
+  proj <- posProj[[pId]][, lapply(.SD, function(col)hle(col)), by = key(posProj[[pId]]), .SDcols = dataCols]
+  proj[ , projAnalystId := 17]
+})
+
+aggProj <- lapply(posList, function(p)rbindlist(list(medProj[[p]], avgProj[[p]])))
+
+save(aggProj, paste(getwd(), "/Data/aggProj.RData"))
 rm(scrapeData)
 gc()
