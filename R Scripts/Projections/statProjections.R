@@ -6,7 +6,6 @@
 # Notes:
 # To do: 
 ###########################
-
 #Load libraries
 library("XML")
 library("stringr")
@@ -105,7 +104,18 @@ for(pId in posList){
   aggProj[[pId]][, points := sum(.SD * multiply, na.rm = TRUE) + ifelse(pId == 6, dstPts(dstPtsAllowed, scoringRules$ptsBracket), 0), .SDcols = scoringCols, by = c("playerId", "analystId")]
 }
 
-save(aggProj, posProj, file = paste(getwd(), "/Data/consolidatedProj.RData", sep =""))
+aggPoints <- rbindlist(lapply(posList, function(pId){
+  merge(
+    unique(posProj[[pId]][, c("playerId", "player", "name", "points.Lo", "points.Hi"), with = FALSE]), 
+    merge(aggProj[[pId]][analystId == 17, c("playerId", "points"), with = FALSE], aggProj[[pId]][analystId == 18, c("playerId", "points"), with= FALSE], suffixes = c(".med", ".avg"), by = "playerId"),
+    by = "playerId"
+  )
+}))
+
+save(aggProj, posProj, aggPoints, file = paste(getwd(), "/Data/consolidatedProj.RData", sep =""))
 
 rm(scrapeData)
 gc()
+
+
+
