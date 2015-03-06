@@ -378,3 +378,35 @@ CJ.dt = function(...) {
   rows = do.call(CJ, lapply(list(...), function(x) if(is.data.frame(x)) seq_len(nrow(x)) else seq_along(x)));
   do.call(data.table, Map(function(x, y) x[y], list(...), rows))
 }
+
+# Function to calculate the location estimate for the wilcox test
+wilcox.loc <- function(vec){
+  n <- length(vec)
+  
+  # If number of observations is less than 2 then we just return mean as location estimate
+  if(n <= 2){
+    return(mean(vec, na.rm = TRUE))
+  }
+  
+  # Calculating the paired avagerages
+  pairAvg <- sort(c(vec, combn(vec, 2, function(x)mean(x, na.rm = TRUE))))
+  
+  return(median(pairAvg, na.rm = TRUE))
+}
+
+# Function to calculate DST points from the ptsAllowed brackets
+dstPts <- function(ptsAllow, brackets){
+  is.season <- all(ptsAllow > 100)
+  if(is.season){
+    ptsAllow <- ptsAllow / 16
+  }
+  pts <- rep(0, length(ptsAllow))
+  for(r in nrow(brackets):1){
+    pts[ptsAllow <= brackets$threshold[r]] <- brackets$points[r]
+  }
+  
+  if(is.season){
+    pts <- pts * 16
+  }
+  return(as.numeric(pts))
+}
