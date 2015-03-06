@@ -8,7 +8,8 @@
 ###########################
 
 #Season
-season <- 2015
+season <- 2014
+weekNo <- 0   # Set weekNo = 0 for seasonal projections
 
 #Roster
 numQBstarters <- 1
@@ -54,8 +55,28 @@ returnTdsMultiplier <- 6    #6 pts per return touchdown
 twoPtsMultiplier <- 2       #2 pts per 2-point conversion
 fumlMultiplier <- -3        #-3 pts per fumble lost
 
+scoringRules <- list(
+    QB = data.frame(dataCol = c("passYds", "passTds", "passInt", "rushYds", "rushTds", "twoPts", "fumbles"),
+                    multiplier = c(1/25, 4, -3, 1/10, 6, 2, -3 )),
+    RB = data.frame(dataCol = c("rushYds", "rushTds", "rec", "recYds", "recTds", "returnTds", "twoPts", "fumbles"),
+                    multiplier = c(1/10, 6, 0, 1/8, 6, 6, 2, -3)), 
+    WR = data.frame(dataCol = c("rushYds", "rushTds", "rec", "recYds", "recTds", "returnTds", "twoPts", "fumbles"),
+                    multiplier = c(1/10, 6, 0, 1/8, 6, 6, 2, -3)),
+    TE = data.frame(dataCol = c("rushYds", "rushTds", "rec", "recYds", "recTds", "returnTds", "twoPts", "fumbles"),
+                    multiplier = c(1/10, 6, 0, 1/8, 6, 6, 2, -3)),
+    K = data.frame(dataCol = c("xp", "fg", "fg0019", "fg2029", "fg3039", "fg4049", "fg50"),
+                   multiplier = c(1, 3, 3, 3, 3, 4, 5)),
+    DST = data.frame(dataCol = c("dstFumlRec", "dstInt", "dstSafety", "dstSack", "dstTd", "dstBlk"),
+                     multiplier = c(2, 2, 2, 1, 6, 1.5)),
+    ptsBracket = data.frame(threshold = c(0, 6, 20, 34, 99),
+                             points = c(10, 7, 4, 0, -4))
+  )
+
+
 #Projections
-sourcesOfProjections <- c("CBS", "ESPN", "Yahoo") #c("Accuscore", "CBS1", "CBS2", "EDSfootball", "ESPN", "FantasyFootballNerd", "FantasyPros", "FantasySharks", "FFtoday", "Footballguys1", "Footballguys2", "Footballguys3", "Footballguys4", "FOX", "NFL", "numberFire", "WalterFootball", "Yahoo")
+#c("CBS", "ESPN", "Yahoo") #c("Accuscore", "CBS1", "CBS2", "EDSfootball", "ESPN", "FantasyFootballNerd", "FantasyPros", "FantasySharks", "FFtoday", "Footballguys1", "Footballguys2", "Footballguys3", "Footballguys4", "FOX", "NFL", "numberFire", "WalterFootball", "Yahoo")
+sourcesOfProjections <- c("Jamey Eisenberg", "Dave Richard", "Yahoo Sports" , "ESPN", "NFL", "FOX Sports", "FFtoday", 
+                          "NumberFire", "FantasyPros") #, "Dodds-Norton", "Dodds", "Tremblay", "Herman", "Henry", "Wood", "Bloom") 
 sourcesOfProjectionsAbbreviation <- c("cbs", "espn", "yahoo") #c("accu", "cbs1", "cbs2", "eds", "espn", "ffn", "fp", "fs", "fftoday", "fbg1", "fbg2", "fbg3", "fbg4", "fox", "nfl", "nf", "wf", "yahoo")
 
 #Weights applied to each source in calculation of weighted average of projections
