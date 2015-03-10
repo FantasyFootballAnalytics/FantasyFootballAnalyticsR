@@ -118,7 +118,7 @@ scrapeUrl <- function(x) {
   
   # Merging with player data from NFL.com to find the playerId.
   nflPos <- c("QB", "RB", "WR", "TE", "K", "DEF")
-  ##if(x["projSiteId"] != 6){
+  if(dataSrc != "NFL"){
     if(idCol %in% names(nflPlayers) & x["posId"] != 6 & "playerId" %in% names(dataTable) ){
       setnames(dataTable, "playerId", idCol)
       dataTable <- merge(dataTable, nflPlayers[, c("playerId", idCol), with = FALSE], by=idCol)
@@ -126,7 +126,7 @@ scrapeUrl <- function(x) {
       dataTable$playerId <- NULL
       dataTable <- merge(dataTable, nflPlayers[playerPos == nflPos[as.numeric(x["posId"])], c("playerId", "player"), with = FALSE], by= "player")
     }
-  ##}
+  }
 
   #Separate pass completions from attempts
   if(exists("passCompAtt", dataTable)){

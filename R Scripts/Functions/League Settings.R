@@ -33,7 +33,7 @@ scoreCategories <- c("passAtt","passComp","passIncomp","passYds","passTds","pass
                      "returnTds","twoPts","fumbles",
                      "idpSolo","idpAst","idpSack","idpFumlRec","idpFumlForce","idpInt","idpPD",
                      "dstPtsAllowed","dstYdsAllowed","dstSack","dstSafety","dstInt","dstFumlRec","dstFumlForce","dstBlk","dstTd",
-                     "fg","fgAtt","fg019","fg2029","fg3039","fg4049","fg50","xp")
+                     "fg","fgAtt","fg0019","fg2029","fg3039","fg4049","fg50","xp")
 calculatedVars <- c("positionRank","overallRank","points","pointsLo","pointsHi","vor","pick","risk","sdPts","sdPick")
 varNames <- c(calculatedVars, scoreCategories)
 finalVarNames <- c("name","pos","team","sourceName","player","playerID","season", "playerId", "analystId", varNames)
@@ -98,6 +98,26 @@ weight_nfl <- 1     #NFL.com
 weight_nf <- 1      #numberFire
 weight_wf <- 1      #WalterFootball
 weight_yahoo <- 1   #Yahoo 
+
+sourceWeights <- c(
+  "Jamey Eisenberg"   = 1, 
+  "Dave Richard"      = 1, 
+  "Yahoo Sports"      = 1, 
+  "ESPN"              = 1, 
+  "NFL"               = 1, 
+  "FOX Sports"        = 1, 
+  "FFtoday"           = 1,
+  "NumberFire"        = 1, 
+  "FantasyPros"       = 1,
+  "Dodds-Norton"      = 1, 
+  "Dodds"             = 1, 
+  "Tremblay"          = 1, 
+  "Herman"            = 1, 
+  "Henry"             = 1, 
+  "Wood"              = 1, 
+  "Bloom"             = 1
+  ) 
+
 
 #Number of players at each position drafted in Top 100 (adjust for your league)
 qbReplacements <- 15
