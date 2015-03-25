@@ -75,7 +75,8 @@ scoringRules <- list(
 
 #Projections
 #c("CBS", "ESPN", "Yahoo") #c("Accuscore", "CBS1", "CBS2", "EDSfootball", "ESPN", "FantasyFootballNerd", "FantasyPros", "FantasySharks", "FFtoday", "Footballguys1", "Footballguys2", "Footballguys3", "Footballguys4", "FOX", "NFL", "numberFire", "WalterFootball", "Yahoo")
-sourcesOfProjections <- c("Jamey Eisenberg", "Dave Richard", "Yahoo Sports" , "ESPN", "NFL", "FOX Sports", "FFtoday", 
+sourcesOfProjections <- c("Jamey Eisenberg", "Dave Richard", #"Yahoo Sports" , 
+                          "ESPN", "NFL", "FOX Sports", "FFToday", "FFToday - IDP",
                           "NumberFire", "FantasyPros") #, "Dodds-Norton", "Dodds", "Tremblay", "Herman", "Henry", "Wood", "Bloom") 
 sourcesOfProjectionsAbbreviation <- c("cbs", "espn", "yahoo") #c("accu", "cbs1", "cbs2", "eds", "espn", "ffn", "fp", "fs", "fftoday", "fbg1", "fbg2", "fbg3", "fbg4", "fox", "nfl", "nf", "wf", "yahoo")
 

@@ -20,32 +20,38 @@ source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
 source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 
 source(paste(getwd(),"/R Scripts/Functions/scrapeFunctions.R", sep=""))
-load(paste(getwd(), "/Config/siteConfig.RData", sep=""))
-load(paste(getwd(), "/Config/nflPlayers.RData", sep=""))
-setnames(nflPlayers, "playerName", "player")
+source(paste(getwd(),"/R Scripts/Functions/mySqlDBFunctions.R", sep=""))
 
 # Helper variables
 is.season <- (weekNo == 0)
-periodSelect <- ifelse(is.season, "Season", "Week")
-posList <- list(qb = 1, rb = 2, wr = 3, te = 4, k = 5, dst = 6)
+periodSelect <- ifelse(is.season, "season", "week")
+#posList <- list(qb = 1, rb = 2, wr = 3, te = 4, k = 5, dst = 6)
+
+playerDb <- connectDb("ffplayerinfo")
+siteDb <- connectDb("projectionsites")
+
+nflPlayers <- data.table(dbReadTable(playerDb, "players"))
+urlTable <- dbReadTable(siteDb, "urlinfo")
+urlTable <- urlTable[urlTable$urlPeriod == periodSelect,]
+
+analysts <- dbReadTable(siteDb, "analysts")
+sites <- dbReadTable(siteDb, "sites")
+siteTables <- dbReadTable(siteDb, "siteTables")
+tableColumns <- dbReadTable(siteDb, "tablecolumns")
+dataColumns <- dbReadTable(siteDb, "datacolumns")
+tableColumns <- tableColumns[tableColumns$columnPeriod == periodSelect,]
+tableColumns <- merge (x = tableColumns, y = dataColumns, by.x = "dataColID", by.y = "dataColId")
+tableRowRemove <- dbReadTable(siteDb, "tablerowremove")
+
+selectAnalysts <- analysts$analystId[analysts$analystName %in% sourcesOfProjections]
 
 # Generate table of scrape sites
-siteTable <- merge(projAnalysts, projSites, by = "projDataSiteId")
-siteTable <- merge(siteTable, sitePositions, by = "projDataSiteId", allow.cartesian = TRUE)
-siteTable <- subset(siteTable, apply(siteTable, 1, function(x)(is.na(x["limitPos"])| (length(grep(x["sitePosName"], x["limitPos"]))>0))))
-siteTable <- subset(siteTable, analystName %in% sourcesOfProjections)
-
-# Filtering out the ones that do season and/or weekly projections
-if(weekNo == 0){
-  siteTable <- subset(siteTable, seasonProj == 1)
-} else {
-  siteTable <- subset(siteTable, weekProj == 1)
-}
+urlTable <- urlTable[urlTable$analystId %in% selectAnalysts, ]
 
 # Generate the list of site URLs to use for scrapes
-siteList <- apply(siteTable, 1, urlList)
+siteList <- apply(urlTable, 1, urlList)
 siteUrls <- rbindlist(siteList)
-rm(siteList, siteTable)
+rm(siteList, urlTable)
 
 # Scrape the data
 scrapeData <- pbapply(siteUrls, 1, scrapeUrl)

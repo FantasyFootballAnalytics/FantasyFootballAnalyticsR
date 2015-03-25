@@ -18,7 +18,9 @@ readUrl <- function(inpUrl, dataSrc, colTypes, nameCol , removeRow, fbgUserName,
                   amember_redirect_url = inpUrl)
     )
   }
+  dataTbl <- data.table()
   
+  tryCatch(
   dataTbl <- switch(dataSrc,
                     "CBS"           = readHTMLTable(inpUrl, stringsAsFactors = FALSE, skip.rows = removeRow, colClasses = colTypes)[7]$`NULL`,
                     "FOX"           = readHTMLTable(inpUrl, stringsAsFactors = FALSE, colClasses = colTypes)$playerTable,
@@ -29,11 +31,16 @@ readUrl <- function(inpUrl, dataSrc, colTypes, nameCol , removeRow, fbgUserName,
                     "Yahoo"         = readHTMLTable(inpUrl, stringsAsFactors = FALSE, header = FALSE, colClasses = colTypes)[2]$`NULL`,
                     "NumberFire"    = readHTMLTable(inpUrl, stringsAsFactors = FALSE, header = FALSE, colClasses = colTypes)$`complete-projection`,
                     "FantasyPros"   = readHTMLTable(inpUrl, stringsAsFactors = FALSE, colClasses = colTypes)$data
-  )
-  if(is.null(nrow(dataTbl))){
-    return(data.frame())
+  ),
+  error = function(e){
+    print(paste("Error retriving data from", dataSrc, inpUrl))
+    return(data.table())
   }
-  
+  )
+  if(is.null(nrow(dataTbl)) | is.null(dataTbl)){
+    print(paste("Empty data table from", dataSrc, inpUrl))
+    return(data.table())
+  }
   if(dataSrc == "CBS"){
     if(length(grep("Pages:", dataTbl[,nameCol], fixed = TRUE))>0){
       dataTbl <- dataTbl[-grep("Pages:", dataTbl[,nameCol], fixed = TRUE),]
@@ -65,33 +72,40 @@ readUrl <- function(inpUrl, dataSrc, colTypes, nameCol , removeRow, fbgUserName,
 # The url list generates a list of urls for each site and position based on the configuatko files
 urlList <- function(siteRow){
   retValue = data.table()  
-  for(pg in seq(from= as.numeric(siteRow["startPge"]), to= as.numeric(siteRow["endPge"]), by = as.numeric(siteRow["stepPge"]))){
-    tmpUrl <- ifelse(is.season, siteRow["seasonUrl"], siteRow["weekUrl"])
-    replPar <- c("{$Pos}", "{$SrcID}", "{$PosID}", "{$WeekNo}", "{$PgeID}", "{$Season}")
-    replVal <- c(siteRow["sitePosName"], siteRow["analystQryId"],  siteRow["sitePosQryId"], weekNo, pg, season)
+  for(pg in seq(from= as.numeric(siteRow["startPage"]), to= as.numeric(siteRow["endPage"]), by = as.numeric(siteRow["stepPage"]))){
+    tmpUrl <- siteRow["siteUrl"]
+    replPar <- c("{$WeekNo}", "{$PgeID}", "{$Season}")
+    replVal <- c(weekNo, pg, season)
     for(i in 1:length(replPar)){
       tmpUrl <- gsub(replPar[i], as.character(replVal[i]), tmpUrl, fixed = TRUE)
     }
-    retValue <- rbind.fill(retValue, data.table(projSiteId = siteRow["projDataSiteId"], projAnalystId = siteRow["projAnalystId"],
-                                                nameCol = ifelse(weekNo == 0, siteRow["nameColSeason"], siteRow["nameColWeek"]), posId = siteRow["posId"],
-                                                sitePosId = siteRow["sitePosId"], siteUrl = tmpUrl))
+    retValue <- rbind.fill(retValue, data.table(siteTableId = siteRow["siteTableId"], analystId = siteRow["analystId"], 
+                                                urlData = siteRow["urlData"], nameCol = siteRow["nameCol"], siteUrl = tmpUrl))
   }
   return(retValue)
 }
 
 # scrapeUrl calls readUrl to retrieve data and then cleans it up
 scrapeUrl <- function(x) {
-  siteId <- as.numeric(x["projSiteId"])
-  pos <- as.numeric(x["posId"])
+  if(!dbIsValid(siteDb)){
+    siteDb <- connectDb("projectionsites")
+  }
   
-  dataSrc <- projSites[projDataSiteId == siteId , projSiteName]
-  colTypes <- sitePositionTables[posId == pos & dataSiteId == siteId & colPeriod == periodSelect, colType]
-  colNames <- sitePositionTables[posId == pos & dataSiteId == siteId & colPeriod == periodSelect, colName]
+  analystId <- as.numeric(x["analystId"])
+  siteId <- analysts[analysts$analystId == analystId, "siteID"]
+  dataSrc <- sites[sites$siteID == siteId , "siteName"]
+  tblId <- as.numeric(x["siteTableId"])
+  urlCols <- tableColumns[tableColumns$siteTableID == tblId,]
+  urlCols <- urlCols[with(urlCols, order(columnOrder)),]
+  colTypes <- urlCols$columnType
+  colNames <- urlCols$columnName
+  posId <- siteTables[siteTables$siteTableId == tblId, "positionId"]
   
-  rows2Remove <- siteRowsRemove[sitePosId == as.numeric(x["sitePosId"]), rowRemove]
+  rows2Remove <- tableRowRemove[tableRowRemove$siteTableId == tblId, "rowRemove"]
+
   fbgUserName = ""
   fbgPassword = ""  
-  
+
   dataTable <- data.table(readUrl(x["siteUrl"], dataSrc, colTypes, nameCol = as.numeric(x["nameCol"]), removeRow = rows2Remove, fbgUserName, fbgPassword)) 
   
   if(length(dataTable) > 0){
@@ -118,13 +132,14 @@ scrapeUrl <- function(x) {
   
   # Merging with player data from NFL.com to find the playerId.
   nflPos <- c("QB", "RB", "WR", "TE", "K", "DEF")
+  
   if(dataSrc != "NFL"){
-    if(idCol %in% names(nflPlayers) & x["posId"] != 6 & "playerId" %in% names(dataTable) ){
+    if(idCol %in% names(nflPlayers) & posId != 6 & "playerId" %in% names(dataTable) ){
       setnames(dataTable, "playerId", idCol)
       dataTable <- merge(dataTable, nflPlayers[, c("playerId", idCol), with = FALSE], by=idCol)
     }else{
       dataTable$playerId <- NULL
-      dataTable <- merge(dataTable, nflPlayers[playerPos == nflPos[as.numeric(x["posId"])], c("playerId", "player"), with = FALSE], by= "player")
+      dataTable <- merge(dataTable, nflPlayers[position == nflPos[as.numeric(posId)], c("playerId", "player"), with = FALSE], by= "player")
     }
   }
 
