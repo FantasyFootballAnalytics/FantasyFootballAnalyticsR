@@ -32,7 +32,7 @@ scoreCategories <- c("passAtt","passComp","passIncomp","passYds","passTds","pass
                      "rec","recTgt","recYds","recTds",
                      "returnTds","twoPts","fumbles",
                      "idpSolo","idpAst","idpSack","idpFumlRec","idpFumlForce","idpInt","idpPD",
-                     "dstPtsAllowed","dstYdsAllowed","dstSack","dstSafety","dstInt","dstFumlRec","dstFumlForce","dstBlk","dstTd",
+                     "dstPtsAllow","dstYdsAllowed","dstSack","dstSafety","dstInt","dstFumlRec","dstFumlForce","dstBlk","dstTd",
                      "fg","fgAtt","fg0019","fg2029","fg3039","fg4049","fg50","xp")
 calculatedVars <- c("positionRank","overallRank","points","pointsLo","pointsHi","vor","pick","risk","sdPts","sdPick")
 varNames <- c(calculatedVars, scoreCategories)
