@@ -7,6 +7,79 @@
 # To do:
 ###########################
 
+fbgUrl <- function(inpUrl, userName, password){
+  # Validating input
+  if(length(userName) == 0 | length(password) == 0){
+    stop("Please specify your Footballguys.com User Name and password.", call. = FALSE)
+  }
+  
+  if(missing(userName) | missing(password) | nchar(userName) == 0 | nchar(password) == 0){
+    stop("Please specify your Footballguys.com User Name and password.", call. = FALSE)
+  }
+  
+  if(lenght(inpUrl) == 0){
+    stop("URL not specified", call. = FALSE)
+  }
+  
+  if(missing(inpUrl) | nchar(inpUrl) == 0){
+    stop("URL not specified", call. = FALSE)
+  }
+  
+  if(length(grep("footballguys", inpUrl)) == 0){
+    stop("URL is not a footballguys.com URL", call. = FALSE)
+  }
+  
+  ## Submitting input to retrieve data
+  dataPge <- POST(
+    handle = handle("http://subscribers.footballguys.com"),
+    path = "amember/login.php",
+    body = list(amember_login = userName,
+                amember_pass = password,
+                amember_redirect_url = inpUrl)
+  )
+  return(content(dataPge))
+}
+
+
+retrieveData <- function(inpUrl, columnTypes, columnNames, nameColumn, removeRow = NULL, 
+                         whichTable, dataType = "html", playerLinkString = "", userName, password){
+  
+  is.fbg <- length(grep("footballguys", tolower(inpUrl))) > 0 
+  is.fft <- length(grep("fftoday", tolower(inpUrl))) > 0 
+  
+  if(is.fbg){
+    inpUrl <- fbgUrl(inpUrl, userName, password)
+  }
+  
+  dataTable <- switch(dataType, 
+                      "html" = readHTMLTable(inpUrl, stringsAsFactors = FALSE, skip.rows = removeRow, 
+                                             colClasses = colTypes, which = whichTable),
+                      "csv" = read.csv(inpUrl),
+                      "xml" = t(xpathSApply(xmlParse(inpUrl), "//Player", fun = xmlToList)) # This only works for fantasyfootballnerd
+  )
+  
+  pgeLinks <- getHTMLLinks(inpUrl)
+  
+  playerId <- NULL
+  
+  if(is.fbg){
+    playerId <- gsub("../players/player-all-info.php?id=","",pgeLinks[grep("player-all-info.php?", pgeLinks)], fixed = TRUE)
+  } else if(is.fft){
+    playerId <- unique(gsub("[^0-9]","",  gsub("LeagueID=[0-9]{1,6}", "", pgeLinks[grep("/stats/players/", pgeLinks)]))),
+  } else if(nchar(playerLinkSting) >0){
+    playerId <- unique(gsub("[^0-9]", "", pgeLinks[grep(playerLinkString, pgeLinks)]))  
+  }
+  
+  ## On CBS.com the last rows of the table includes links to additional pages, so we remove those:
+  if(length(grep("Pages:", dataTable[,nameCol], fixed = TRUE))>0){
+    dataTable <- dataTable[-grep("Pages:", dataTable[,nameCol], fixed = TRUE),]
+  }
+  
+  
+  
+}
+
+
 readUrl <- function(inpUrl, dataSrc, colTypes, nameCol , removeRow, fbgUserName, fbgPassword){
   if(dataSrc == "Footballguys"){
     
@@ -56,7 +129,7 @@ readUrl <- function(inpUrl, dataSrc, colTypes, nameCol , removeRow, fbgUserName,
   }
   
   playerId <- switch(dataSrc,
-                     "CBS" =            unique(gsub("[^0-9]", "", pgeLinks[grep("/fantasyfootball/players/playerpage/[0-9]{3,6}",      pgeLinks)])),
+*                     "CBS" =            unique(gsub("[^0-9]", "", pgeLinks[grep("/fantasyfootball/players/playerpage/[0-9]{3,6}",      pgeLinks)])),
                      "FOX" =            unique(gsub("[^0-9]", "", pgeLinks[grep("/fantasy/football/commissioner/Players/Profile.aspx", pgeLinks)])),
                      "NFL" =            unique(gsub("[^0-9]", "", pgeLinks[grep("playerId=[0-9]{3,7}$",                                pgeLinks)])),
                      "FFToday" =        unique(gsub("[^0-9]","",  gsub("LeagueID=[0-9]{1,6}", "", pgeLinks[grep("/stats/players/", pgeLinks)]))),

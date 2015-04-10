@@ -12,7 +12,7 @@
 ##############################################################
 require(RMySQL)
 # Set the path and filename for the credentials file here:
-CREDENTIAL_FILE = paste(getwd(), "/Config/mysqlaccess.txt", sep = "")
+CREDENTIAL_FILE = paste(getwd(), "/Config/mysqlaccess_local.txt", sep = "")
 
 ## This functions reads the credential file and find the database
 ## requested by db and connects
@@ -41,21 +41,28 @@ connectDb <- function(db){
 
 ## Function to look up scrapeId based on week and season values
 lookupScrapeId <- function(weekNo, season){
+  if(!exists("playerProj")){
+    playerProj <- connectDb("playerprojections")
+  }
   if(!dbIsValid(playerProj)){
     playerProj <- connectDb("playerprojections")  
   }
+  
   id <- dbGetQuery(playerProj, paste("SELECT dataScrapeId from datascrapes where weekNo =", weekNo, " and seasonYear=", season, ";"))$dataScrapeId
   return(id)
 }
 
 ## Function to return the scrapeId based on week and season values
 getScrapeId <- function(weekNo, season){
+  if(!exists("playerProj")){
+    playerProj <- connectDb("playerprojections")
+  }
   if(!dbIsValid(playerProj)){
     playerProj <- connectDb("playerprojections")  
   }
   scrapeId <- lookupScrapeId(weekNo, season)
-  if(!(scrapeId > 0)){
-    res <- dbSendQuery(playerProj, paste("Insert into dataScrapes (weekNo, seasonYear, scrapeDate) values (", weekNo, ",", season, ",'", Sys.time(), "')"))
+  if(length(scrapeId) == 0 ){
+    res <- dbSendQuery(playerProj, paste("Insert into datascrapes (weekNo, seasonYear, scrapeDate) values (", weekNo, ",", season, ",'", Sys.time(), "')"))
     dbClearResult(res)
     scrapeId <- lookupScrapeId(weekNo, season)
   }
@@ -64,14 +71,21 @@ getScrapeId <- function(weekNo, season){
 
 ## Function to write projections data to the database
 writeProj2DB <- function(scrapeId, projData, projAnalysts = vector(), dataType = "projections"){
+  
+  if(!exists("playerProj")){
+    playerProj <- connectDb("playerprojections")
+  }
+  
+  if(!dbIsValid(playerProj)){
+    playerProj <- connectDb("playerprojections")
+  }
+  
   for(nm in names(projData)){
+
+    if(nrow(projData[[nm]]) > 0){
     data <- data.frame(projData[[nm]])
     tblName <- paste(tolower(nm), tolower(dataType), sep = "")
     if(dbExistsTable(playerProj, tblName)){
-      if(!dbIsValid(playerProj)){
-        playerProj <- connectDb("playerprojections")
-      }
-      
       data$dataScrapeId <- scrapeId
       colNames <- as.character(dbColumnInfo(playerProj, tblName)$name)
       colNames <- colNames[colNames != "projectionId"]
@@ -79,7 +93,7 @@ writeProj2DB <- function(scrapeId, projData, projAnalysts = vector(), dataType =
       colNames <- intersect(colNames, names(data))
       
       data <- data[, colNames]
-      valueList <- apply(data,1, function(x)paste("(", paste(as.numeric(x), collapse = ","), ")", sep = ""))
+      valueList <- apply(data,1, function(x)paste("(", paste(x, collapse = ","), ")", sep = ""))
       valueList <- gsub("NA", "NULL", valueList, fixed = TRUE)
       valueList <- gsub("NaN", "NULL", valueList, fixed = TRUE)
       
@@ -97,25 +111,36 @@ writeProj2DB <- function(scrapeId, projData, projAnalysts = vector(), dataType =
                          paste(valueList, collapse = ",") ,";")
       res <- dbSendQuery(playerProj, qryString)
       dbClearResult(res)
-    }
+    }}
   }
 }
 
 ## Function to read projection data from the database
-readProjFromDB <- function(scrapeId, positionList){
-  lapply(names(positionList), function(pnme){
+readProjFromDB <- function(scrapeId, positions, analystIds){
+  if(!exists("playerProj")){
+    playerProj <- connectDb("playerprojections")
+  }
+  if(!dbIsValid(playerProj)){
+    playerProj <- connectDb("playerprojections")
+  }
+  dbData <- lapply(positions, function(pnme){
     tblName <- paste(tolower(pnme), "projections", sep = "")
     if(dbExistsTable(playerProj, tblName)){
-      if(!dbIsValid(playerProj)){
-        playerProj <- connectDb("playerprojections")
-      }
+      
       colNames <- as.character(dbColumnInfo(playerProj, tblName)$name)
       colNames <- colNames[colNames != "projectionId"]
       
       data <- dbGetQuery(playerProj, paste("select ", paste(colNames, collapse = ","), " from ", tblName, 
-                                           " where dataScrapeId = ", scrapeId ,";", sep = ""))
+                                           " where dataScrapeId = ", scrapeId ,
+                                           " and analystId in (", paste(analystIds, collapse =","), ");", sep = ""))
       return(data.table(data))
     }
     else {return(data.table())}
   })
+  names(dbData) <- positions
+  return(dbData)
+}
+
+dbCloseAll <- function(){
+  res <- lapply(dbListConnections(RMySQL::MySQL()), dbDisconnect)
 }
