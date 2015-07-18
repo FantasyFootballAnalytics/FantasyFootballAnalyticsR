@@ -37,8 +37,8 @@ row.names(aavDataLong) <- NULL
 aavDataLong <- merge(aavDataLong, aavData[,c("player","teams10")], by="player")
 aavDataLong$teams10[which(is.na(aavDataLong$teams10))] <- 0
 
-#Convert position to factor
-aavDataLong$position <- as.factor(aavDataLong$position)
+#Convert position to factor with IDP as reference group
+aavDataLong$position <- factor(aavDataLong$position, levels=c("IDP","QB","RB","WR","TE","K","DST"))
 
 #Impute zeros for missing AAV values
 aavDataLong$aavImputeZeros <- aavDataLong$aav
@@ -147,22 +147,22 @@ anova(fixedSlopes12_reml,randomSlopes1c)
 #anova(fixedSlopes12_reml,randomSlopes1d)
 
 #AAV
-aavModel <- lme(aav ~ 1 + teams + I(teams^2) + teams10 + positionRank + position + teams*I(teams^2)*teams10*positionRank*position, random = ~ 1 + teams|player, method="REML", data=aavDataLong, na.action=na.exclude, control=list(opt="optim", msMaxIter=20000))
+aavModel <- lme(aav ~ 1 + teams*I(teams^2)*teams10*positionRank*position, random = ~ 1 + teams|player, method="REML", data=aavDataLong, na.action=na.exclude, control=list(opt="optim", msMaxIter=20000))
 summary(aavModel)
 cor(getResponse(aavModel), predict(aavModel), use="pairwise.complete.obs", method="pearson")^2
 
 #AAV with Imputed Zeros
-aavImputedModel <- lme(aavImputeZeros ~ 1 + teams + I(teams^2) + teams10 + positionRank + position + teams*I(teams^2)*teams10*positionRank*position, random = ~ 1 + teams|player, method="REML", data=aavDataLong, na.action=na.exclude, control=list(opt="optim", msMaxIter=20000))
+aavImputedModel <- lme(aavImputeZeros ~ 1 + teams*I(teams^2)*teams10*positionRank*position, random = ~ 1 + teams|player, method="REML", data=aavDataLong, na.action=na.exclude, control=list(opt="optim", msMaxIter=20000))
 summary(aavImputedModel)
 cor(getResponse(aavImputedModel), predict(aavImputedModel), use="pairwise.complete.obs", method="pearson")^2
 
 #AAV Percent
-aavPercentModel <- lme(aavPercent ~ 1 + teams + I(teams^2) + teams10 + positionRank + position + teams*I(teams^2)*teams10*positionRank*position, random = ~ 1 + teams|player, method="REML", data=aavDataLong, na.action=na.exclude, control=list(opt="optim", msMaxIter=20000))
+aavPercentModel <- lme(aavPercent ~ 1 + teams*I(teams^2)*teams10*positionRank*position, random = ~ 1 + teams|player, method="REML", data=aavDataLong, na.action=na.exclude, control=list(opt="optim", msMaxIter=20000))
 summary(aavPercentModel)
 cor(getResponse(aavPercentModel), predict(aavPercentModel), use="pairwise.complete.obs", method="pearson")^2
 
 #AAV Percent with Imputed Zeros
-aavImputedPercentModel <- lme(aavImputeZerosPercent ~ 1 + teams + I(teams^2) + teams10 + positionRank + position + teams*I(teams^2)*teams10*positionRank*position, random = ~ 1 + teams|player, method="REML", data=aavDataLong, na.action=na.exclude, control=list(opt="optim", msMaxIter=20000))
+aavImputedPercentModel <- lme(aavImputeZerosPercent ~ 1 + teams*I(teams^2)*teams10*positionRank*position, random = ~ 1 + teams|player, method="REML", data=aavDataLong, na.action=na.exclude, control=list(opt="optim", msMaxIter=20000))
 summary(aavImputedPercentModel)
 cor(getResponse(aavImputedPercentModel), predict(aavImputedPercentModel), use="pairwise.complete.obs", method="pearson")^2
 
@@ -172,7 +172,7 @@ finalModelAAVPercent <- aavImputedPercentModel
 
 #Fitted Values
 aavDataLong$aavFitted <- predict(finalModelAAV)
-aavDataLong$aavPercentFitted <- predict(finalModelAAVPercent)
+aavDataLong$aavPercentFitted <- predict(finalModelAAVPercent, level=1) #level=1 for data-specific estimates (based on player-specific random effects)
 aavDataLong$aavPercentToAAVFitted <- (aavDataLong$aavPercentFitted/100) * (200*aavDataLong$teams)
 
 #Convert negative to 0
@@ -183,25 +183,33 @@ aavDataLong$aavPercentToAAVFitted[which(aavDataLong$aavPercentToAAVFitted < 0)] 
 calculateMASE(aavDataLong$aavFitted, aavDataLong$aav) #more accurate
 calculateMASE(aavDataLong$aavPercentToAAVFitted, aavDataLong$aav)
 
-#New Data
-newdata <- aavDataLong #subset(aavDataLong, position %in% c("QB","RB") & positionRank < 10)
-newdata$name <- newdata$player
-newdata$player <- NULL
-newdata$predictedAAV <- aavDataLong$predictedAAV <- predict(finalModelAAV, newdata=newdata, level=0)
-newdata$predictedAAVPercent <- aavDataLong$predictedAAVPercent <- predict(finalModelAAVPercent, newdata=newdata, level=0)
+#Test accuracy of population estimates for existing data set
+existingData <- aavDataLong
+existingData$name <- existingData$player
+existingData$player <- NULL
+existingData$predictedAAV <- aavDataLong$predictedAAV <- predict(finalModelAAV, newdata=existingData, level=0)
+existingData$predictedAAVPercent <- aavDataLong$predictedAAVPercent <- predict(finalModelAAVPercent, newdata=existingData, level=0) #level=0 for population estimates (ignore random component), level=1 for data-specific estimates (need player name)
 
-newdata$predictedAAVPercentToAAV <- (newdata$predictedAAVPercent/100) * (200*newdata$teams)
+existingData$predictedAAVPercentToAAV <- (existingData$predictedAAVPercent/100) * (200*existingData$teams)
 aavDataLong$predictedAAVPercentToAAV <- (aavDataLong$predictedAAVPercent/100) * (200*aavDataLong$teams)
   
-newdata$predictedAAV[which(newdata$predictedAAV < 0)] <- 0
-newdata$predictedAAVPercent[which(newdata$predictedAAVPercent < 0)] <- 0
-newdata$predictedAAVPercentToAAV[which(newdata$predictedAAVPercentToAAV < 0)] <- 0
+existingData$predictedAAV[which(existingData$predictedAAV < 0)] <- 0
+existingData$predictedAAVPercent[which(existingData$predictedAAVPercent < 0)] <- 0
+existingData$predictedAAVPercentToAAV[which(existingData$predictedAAVPercentToAAV < 0)] <- 0
 aavDataLong$predictedAAV[which(aavDataLong$predictedAAV < 0)] <- 0
 aavDataLong$predictedAAVPercent[which(aavDataLong$predictedAAVPercent < 0)] <- 0
 aavDataLong$predictedAAVPercentToAAV[which(aavDataLong$predictedAAVPercentToAAV < 0)] <- 0
 
-calculateMASE(newdata$predictedAAV, newdata$aav)
-calculateMASE(newdata$predictedAAVPercentToAAV, newdata$aav) #more accurate
+calculateMASE(existingData$predictedAAV, existingData$aav)
+calculateMASE(existingData$predictedAAVPercentToAAV, existingData$aav) #more accurate
+
+#Examine population estimates for new data set
+newData <- data.frame(position = factor(c("QB","QB","QB","RB","RB","RB","WR","WR","WR","TE","TE","TE","K","K","K","DST","DST","DST","IDP","IDP","IDP")),
+                      positionRank = c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),
+                      teams10 = c(60,60,60,60,60,60,60,60,60,60,60,60,1,1,1,1,1,1,1,1,1),
+                      teams = c(4,10,20,4,10,20,4,10,20,4,10,20,4,10,20,4,10,20,4,10,20))
+newData$aavPercent <- predict(finalModelAAVPercent, newdata=newData, level=0)
+newData$aavPercentToAAV <- (newData$aavPercent/100) * (200*newData$teams)
 
 #####################
 # Plots
@@ -210,60 +218,104 @@ calculateMASE(newdata$predictedAAVPercentToAAV, newdata$aav) #more accurate
 #### AAV
 
 #QB
-ggplot(data = subset(aavDataLong, position=="QB"), aes(x = teams, y = aav, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 60)) + ggtitle("QB AAV")
-ggplot(data = subset(aavDataLong, position=="QB"), aes(x = teams, y = predictedAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 60)) + ggtitle("QB AAV")
-ggplot(data = subset(aavDataLong, position=="QB"), aes(x = teams, y = predictedAAVPercentToAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 60)) + ggtitle("QB AAV")
+qbAAV <- ggplot(data = subset(aavDataLong, position=="QB"), aes(x = teams, y = aavImputeZeros, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 62)) + ggtitle("QB AAV") + xlab("Number of Teams in League") + ylab("AAV") + theme(legend.position="none")
+qbAAVFitted <- ggplot(data = subset(aavDataLong, position=="QB"), aes(x = teams, y = predictedAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 62)) + ggtitle("QB AAV (Predicted)") + xlab("Number of Teams in League") + ylab("Predicted AAV")
+qbAAVFittedBasedOnPercent <- ggplot(data = subset(aavDataLong, position=="QB"), aes(x = teams, y = predictedAAVPercentToAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 62)) + ggtitle("QB AAV (Predicted)") + xlab("Number of Teams in League") + ylab("Predicted AAV")
 
 #RB
-ggplot(data = subset(aavDataLong, position=="RB"), aes(x = teams, y = aav, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 60)) + ggtitle("RB AAV")
-ggplot(data = subset(aavDataLong, position=="RB"), aes(x = teams, y = predictedAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 60)) + ggtitle("RB AAV")
-ggplot(data = subset(aavDataLong, position=="RB"), aes(x = teams, y = predictedAAVPercentToAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 60)) + ggtitle("RB AAV")
+rbAAV <- ggplot(data = subset(aavDataLong, position=="RB"), aes(x = teams, y = aavImputeZeros, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 62)) + ggtitle("RB AAV") + xlab("Number of Teams in League") + ylab("AAV") + theme(legend.position="none")
+rbAAVFitted <- ggplot(data = subset(aavDataLong, position=="RB"), aes(x = teams, y = predictedAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 62)) + ggtitle("RB AAV (Predicted)") + xlab("Number of Teams in League") + ylab("Predicted AAV") + theme(legend.text=element_text(size=6), legend.key.size = unit(0.15, "cm"))
+rbAAVFittedBasedOnPercent <- ggplot(data = subset(aavDataLong, position=="RB"), aes(x = teams, y = predictedAAVPercentToAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 62)) + ggtitle("RB AAV (Predicted)") + xlab("Number of Teams in League") + ylab("Predicted AAV") + theme(legend.text=element_text(size=6), legend.key.size = unit(0.15, "cm"))
 
 #WR
-ggplot(data = subset(aavDataLong, position=="WR"), aes(x = teams, y = aav, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 60)) + ggtitle("WR AAV")
-ggplot(data = subset(aavDataLong, position=="WR"), aes(x = teams, y = predictedAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 60)) + ggtitle("WR AAV")
-ggplot(data = subset(aavDataLong, position=="WR"), aes(x = teams, y = predictedAAVPercentToAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 60)) + ggtitle("WR AAV")
+wrAAV <- ggplot(data = subset(aavDataLong, position=="WR"), aes(x = teams, y = aavImputeZeros, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 62)) + ggtitle("WR AAV") + xlab("Number of Teams in League") + ylab("AAV") + theme(legend.position="none")
+wrAAVFitted <- ggplot(data = subset(aavDataLong, position=="WR"), aes(x = teams, y = predictedAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 62)) + ggtitle("WR AAV (Predicted)") + xlab("Number of Teams in League") + ylab("Predicted AAV") + theme(legend.text=element_text(size=6), legend.key.size = unit(0.15, "cm"))
+wrAAVFittedBasedOnPercent <- ggplot(data = subset(aavDataLong, position=="WR"), aes(x = teams, y = predictedAAVPercentToAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 62)) + ggtitle("WR AAV (Predicted)") + xlab("Number of Teams in League") + ylab("Predicted AAV") + theme(legend.text=element_text(size=6), legend.key.size = unit(0.15, "cm"))
 
 #TE
-ggplot(data = subset(aavDataLong, position=="TE"), aes(x = teams, y = aav, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 60)) + ggtitle("TE AAV")
-ggplot(data = subset(aavDataLong, position=="TE"), aes(x = teams, y = predictedAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 60)) + ggtitle("TE AAV")
-ggplot(data = subset(aavDataLong, position=="TE"), aes(x = teams, y = predictedAAVPercentToAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 60)) + ggtitle("TE AAV")
+teAAV <- ggplot(data = subset(aavDataLong, position=="TE"), aes(x = teams, y = aavImputeZeros, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 62)) + ggtitle("TE AAV") + xlab("Number of Teams in League") + ylab("AAV") + theme(legend.position="none")
+teAAVFitted <- ggplot(data = subset(aavDataLong, position=="TE"), aes(x = teams, y = predictedAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 62)) + ggtitle("TE AAV (Predicted)") + xlab("Number of Teams in League") + ylab("Predicted AAV")
+teAAVFittedBasedOnPercent <- ggplot(data = subset(aavDataLong, position=="TE"), aes(x = teams, y = predictedAAVPercentToAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 62)) + ggtitle("TE AAV (Predicted)") + xlab("Number of Teams in League") + ylab("Predicted AAV")
 
 #K
-ggplot(data = subset(aavDataLong, position=="K"), aes(x = teams, y = aav, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 60)) + ggtitle("K AAV")
-ggplot(data = subset(aavDataLong, position=="K"), aes(x = teams, y = predictedAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 60)) + ggtitle("K AAV")
-ggplot(data = subset(aavDataLong, position=="K"), aes(x = teams, y = predictedAAVPercentToAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 60)) + ggtitle("K AAV")
+kAAV <- ggplot(data = subset(aavDataLong, position=="K"), aes(x = teams, y = aav, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 62)) + ggtitle("K AAV") + xlab("Number of Teams in League") + ylab("AAV") + theme(legend.position="none")
+kAAVFitted <- ggplot(data = subset(aavDataLong, position=="K"), aes(x = teams, y = predictedAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 62)) + ggtitle("K AAV (Predicted)") + xlab("Number of Teams in League") + ylab("Predicted AAV")
+kAAVFittedBasedOnPercent <- ggplot(data = subset(aavDataLong, position=="K"), aes(x = teams, y = predictedAAVPercentToAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 62)) + ggtitle("K AAV (Predicted)") + xlab("Number of Teams in League") + ylab("Predicted AAV")
 
 #DST
-ggplot(data = subset(aavDataLong, position=="DST"), aes(x = teams, y = aav, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 60)) + ggtitle("DST AAV")
-ggplot(data = subset(aavDataLong, position=="DST"), aes(x = teams, y = predictedAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 60)) + ggtitle("DST AAV")
-ggplot(data = subset(aavDataLong, position=="DST"), aes(x = teams, y = predictedAAVPercentToAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 60)) + ggtitle("DST AAV")
+dstAAV <- ggplot(data = subset(aavDataLong, position=="DST"), aes(x = teams, y = aavImputeZeros, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 62)) + ggtitle("DST AAV") + xlab("Number of Teams in League") + ylab("AAV") + theme(legend.position="none")
+dstAAVFitted <- ggplot(data = subset(aavDataLong, position=="DST"), aes(x = teams, y = predictedAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 62)) + ggtitle("DST AAV (Predicted)") + xlab("Number of Teams in League") + ylab("Predicted AAV")
+dstAAVFittedBasedOnPercent <- ggplot(data = subset(aavDataLong, position=="DST"), aes(x = teams, y = predictedAAVPercentToAAV, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 62)) + ggtitle("DST AAV (Predicted)") + xlab("Number of Teams in League") + ylab("Predicted AAV")
 
 #### AAV Percent
 
 #QB
-ggplot(data = subset(aavDataLong, position=="QB"), aes(x = teams, y = aavPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("QB AAV Percent")
-ggplot(data = subset(aavDataLong, position=="QB"), aes(x = teams, y = predictedAAVPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("QB AAV Percent")
+qbAAVPercent <- ggplot(data = subset(aavDataLong, position=="QB"), aes(x = teams, y = aavImputeZerosPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("QB AAV Percent") + xlab("Number of Teams in League") + ylab("AAV (Percent of Total Cap across Teams)") + theme(legend.position="none")
+qbAAVPercentFitted <- ggplot(data = subset(aavDataLong, position=="QB"), aes(x = teams, y = predictedAAVPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("QB AAV Percent (Predicted)") + xlab("Number of Teams in League") + ylab("Predicted AAV (Percent of Total Cap across Teams)")
 
 #RB
-ggplot(data = subset(aavDataLong, position=="RB"), aes(x = teams, y = aavPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("RB AAV Percent")
-ggplot(data = subset(aavDataLong, position=="RB"), aes(x = teams, y = predictedAAVPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("RB AAV Percent")
+rbAAVPercent <- ggplot(data = subset(aavDataLong, position=="RB"), aes(x = teams, y = aavImputeZerosPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("RB AAV Percent") + xlab("Number of Teams in League") + ylab("AAV (Percent of Total Cap across Teams)") + theme(legend.position="none")
+rbAAVPercentFitted <- ggplot(data = subset(aavDataLong, position=="RB"), aes(x = teams, y = predictedAAVPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("RB AAV Percent (Predicted)") + xlab("Number of Teams in League") + ylab("Predicted AAV (Percent of Total Cap across Teams)") + theme(legend.text=element_text(size=6), legend.key.size = unit(0.15, "cm"))
 
 #WR
-ggplot(data = subset(aavDataLong, position=="WR"), aes(x = teams, y = aavPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("WR AAV Percent")
-ggplot(data = subset(aavDataLong, position=="WR"), aes(x = teams, y = predictedAAVPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("WR AAV Percent")
+wrAAVPercent <- ggplot(data = subset(aavDataLong, position=="WR"), aes(x = teams, y = aavImputeZerosPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("WR AAV Percent") + xlab("Number of Teams in League") + ylab("AAV (Percent of Total Cap across Teams)") + theme(legend.position="none")
+wrAAVPercentFitted <- ggplot(data = subset(aavDataLong, position=="WR"), aes(x = teams, y = predictedAAVPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("WR AAV Percent (Predicted)") + xlab("Number of Teams in League") + ylab("Predicted AAV (Percent of Total Cap across Teams)") + theme(legend.text=element_text(size=6), legend.key.size = unit(0.15, "cm"))
 
 #TE
-ggplot(data = subset(aavDataLong, position=="TE"), aes(x = teams, y = aavPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("TE AAV Percent")
-ggplot(data = subset(aavDataLong, position=="TE"), aes(x = teams, y = predictedAAVPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("TE AAV Percent")
+teAAVPercent <- ggplot(data = subset(aavDataLong, position=="TE"), aes(x = teams, y = aavImputeZerosPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("TE AAV Percent") + xlab("Number of Teams in League") + ylab("AAV (Percent of Total Cap across Teams)") + theme(legend.position="none")
+teAAVPercentFitted <- ggplot(data = subset(aavDataLong, position=="TE"), aes(x = teams, y = predictedAAVPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("TE AAV Percent (Predicted)") + xlab("Number of Teams in League") + ylab("Predicted AAV (Percent of Total Cap across Teams)")
 
 #K
-ggplot(data = subset(aavDataLong, position=="K"), aes(x = teams, y = aavPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("K AAV Percent")
-ggplot(data = subset(aavDataLong, position=="K"), aes(x = teams, y = predictedAAVPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("K AAV Percent")
+kAAVPercent <- ggplot(data = subset(aavDataLong, position=="K"), aes(x = teams, y = aavImputeZerosPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("K AAV Percent") + xlab("Number of Teams in League") + ylab("AAV (Percent of Total Cap across Teams)") + theme(legend.position="none")
+kAAVPercentFitted <- ggplot(data = subset(aavDataLong, position=="K"), aes(x = teams, y = predictedAAVPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("K AAV Percent (Predicted)") + xlab("Number of Teams in League") + ylab("Predicted AAV (Percent of Total Cap across Teams)")
 
 #DST
-ggplot(data = subset(aavDataLong, position=="DST"), aes(x = teams, y = aavPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("DST AAV Percent")
-ggplot(data = subset(aavDataLong, position=="DST"), aes(x = teams, y = predictedAAVPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("DST AAV Percent")
+dstAAVPercent <- ggplot(data = subset(aavDataLong, position=="DST"), aes(x = teams, y = aavImputeZerosPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("DST AAV Percent") + xlab("Number of Teams in League") + ylab("AAV (Percent of Total Cap across Teams)") + theme(legend.position="none")
+dstAAVPercentFitted <- ggplot(data = subset(aavDataLong, position=="DST"), aes(x = teams, y = predictedAAVPercent, color = player)) + geom_line(aes(group = player)) + geom_point() + scale_x_continuous(breaks=seq(from=4, to=20, by=2)) + scale_y_continuous(limits = c(0, 5)) + ggtitle("DST AAV Percent (Predicted)") + xlab("Number of Teams in League") + ylab("Predicted AAV (Percent of Total Cap across Teams)")
+
+#### Save Plots
+png(paste(getwd(),"/R Scripts/Posts/AAV by Teams and Position/Figures/QB AAV.png", sep=""), width=14, height=8, units="in", res=300)
+grid.arrange(qbAAV, qbAAVFittedBasedOnPercent, ncol=2, widths=c(6.25,7.75))
+dev.off()
+
+png(paste(getwd(),"/R Scripts/Posts/AAV by Teams and Position/Figures/RB AAV.png", sep=""), width=14, height=8, units="in", res=300)
+grid.arrange(rbAAV, rbAAVFittedBasedOnPercent, ncol=2, widths=c(6.25,7.75))
+dev.off()
+
+png(paste(getwd(),"/R Scripts/Posts/AAV by Teams and Position/Figures/WR AAV.png", sep=""), width=14, height=8, units="in", res=300)
+grid.arrange(wrAAV, wrAAVFittedBasedOnPercent, ncol=2, widths=c(6.25,7.75))
+dev.off()
+
+png(paste(getwd(),"/R Scripts/Posts/AAV by Teams and Position/Figures/TE AAV.png", sep=""), width=14, height=8, units="in", res=300)
+grid.arrange(teAAV, teAAVFittedBasedOnPercent, ncol=2, widths=c(6.25,7.75))
+dev.off()
+
+png(paste(getwd(),"/R Scripts/Posts/AAV by Teams and Position/Figures/K AAV.png", sep=""), width=14, height=8, units="in", res=300)
+grid.arrange(kAAV, kAAVFittedBasedOnPercent, ncol=2, widths=c(6.25,7.75))
+dev.off()
+
+png(paste(getwd(),"/R Scripts/Posts/AAV by Teams and Position/Figures/DST AAV.png", sep=""), width=14, height=8, units="in", res=300)
+grid.arrange(dstAAV, dstAAVFittedBasedOnPercent, ncol=2, widths=c(6.25,7.75))
+dev.off()
+
+#####################
+# Model for OpenCPU
+#####################
+
+#Rename variables
+aavDataLong$numTeams <- aavDataLong$teams
+aavDataLong$auctionValue <- aavDataLong$teams10
+
+#Model
+adjustAAV <- lme(aavImputeZerosPercent ~ 1 + teams*I(teams^2)*teams10*positionRank*position, random = ~ 1 + teams|player, method="REML", data=aavDataLong, na.action=na.exclude, control=list(opt="optim", msMaxIter=20000))
+
+#Adjusted AAV
+aavDataLong$aavPercent <- predict(adjustAAV, newdata = aavDataLong, level=0)
+aavDataLong$aavAdjusted <- (aavDataLong$aavPercent/100) * (200*aavDataLong$numTeams)
+aavDataLong$aavAdjusted[which(aavDataLong$aavAdjusted < 0)] <- 0
+
+#Save model object
+save(adjustAAV, file=paste(getwd(), "/R Scripts/Posts/AAV by Teams and Position/Data/adjustAAV.Rdata", sep=""))
 
 #####################
 # Save Data
