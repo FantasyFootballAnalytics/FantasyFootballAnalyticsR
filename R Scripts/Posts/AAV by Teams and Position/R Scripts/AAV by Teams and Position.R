@@ -307,7 +307,7 @@ aavDataLong$numTeams <- aavDataLong$teams
 aavDataLong$auctionValue <- aavDataLong$teams10
 
 #Model
-adjustAAV <- lme(aavImputeZerosPercent ~ 1 + teams*I(teams^2)*teams10*positionRank*position, random = ~ 1 + teams|player, method="REML", data=aavDataLong, na.action=na.exclude, control=list(opt="optim", msMaxIter=20000))
+adjustAAV <- lme(aavImputeZerosPercent ~ 1 + numTeams*I(numTeams^2)*auctionValue*positionRank*position, random = ~ 1 + numTeams|player, method="REML", data=aavDataLong, na.action=na.exclude, control=list(opt="optim", msMaxIter=20000))
 
 #Adjusted AAV
 aavDataLong$aavPercent <- predict(adjustAAV, newdata = aavDataLong, level=0)
