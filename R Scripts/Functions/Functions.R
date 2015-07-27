@@ -37,10 +37,15 @@ nameMerge <- function(name){
 }
 
 #Function for calculating Mean Absolute Scaled Error (MASE)
-calculateMASE <- function(f,y) { # f = vector with forecasts, y = vector with actuals
-  if(length(f)!=length(y)){ stop("Vector length is not equal") }
-  n <- length(f)
-  return(mean(abs((y - f) / ((1/(n-1)) * sum(abs(y[2:n]-y[1:n-1]))))))
+calculateMASE <- function(forecast, actual){
+  mydata <- data.frame(na.omit(cbind(forecast, actual)))
+
+  errors <- mydata$actual - mydata$forecast
+  scalingFactor <- mean(abs(mydata$actual - mean(mydata$forecast)))
+  scaledErrors <- errors/scalingFactor
+  
+  MASE <- mean(abs(scaledErrors))
+  return(MASE)
 }
 
 #Function for calculating the weighted standard deviation for mean/sd rescaling (used in the function below)
