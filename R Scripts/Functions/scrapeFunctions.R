@@ -7,6 +7,79 @@
 # To do:
 ###########################
 
+fbgUrl <- function(inpUrl, userName, password){
+  # Validating input
+  if(length(userName) == 0 | length(password) == 0){
+    stop("Please specify your Footballguys.com User Name and password.", call. = FALSE)
+  }
+  
+  if(missing(userName) | missing(password) | nchar(userName) == 0 | nchar(password) == 0){
+    stop("Please specify your Footballguys.com User Name and password.", call. = FALSE)
+  }
+  
+  if(lenght(inpUrl) == 0){
+    stop("URL not specified", call. = FALSE)
+  }
+  
+  if(missing(inpUrl) | nchar(inpUrl) == 0){
+    stop("URL not specified", call. = FALSE)
+  }
+  
+  if(length(grep("footballguys", inpUrl)) == 0){
+    stop("URL is not a footballguys.com URL", call. = FALSE)
+  }
+  
+  ## Submitting input to retrieve data
+  dataPge <- POST(
+    handle = handle("http://subscribers.footballguys.com"),
+    path = "amember/login.php",
+    body = list(amember_login = userName,
+                amember_pass = password,
+                amember_redirect_url = inpUrl)
+  )
+  return(content(dataPge))
+}
+
+
+retrieveData <- function(inpUrl, columnTypes, columnNames, nameColumn, removeRow = NULL, 
+                         whichTable, dataType = "html", playerLinkString = "", userName, password){
+  
+  is.fbg <- length(grep("footballguys", tolower(inpUrl))) > 0 
+  is.fft <- length(grep("fftoday", tolower(inpUrl))) > 0 
+  
+  if(is.fbg){
+    inpUrl <- fbgUrl(inpUrl, userName, password)
+  }
+  
+  dataTable <- switch(dataType, 
+                      "html" = readHTMLTable(inpUrl, stringsAsFactors = FALSE, skip.rows = removeRow, 
+                                             colClasses = colTypes, which = whichTable),
+                      "csv" = read.csv(inpUrl),
+                      "xml" = t(xpathSApply(xmlParse(inpUrl), "//Player", fun = xmlToList)) # This only works for fantasyfootballnerd
+  )
+  
+  pgeLinks <- getHTMLLinks(inpUrl)
+  
+  playerId <- NULL
+  
+  if(is.fbg){
+    playerId <- gsub("../players/player-all-info.php?id=","",pgeLinks[grep("player-all-info.php?", pgeLinks)], fixed = TRUE)
+  } else if(is.fft){
+    playerId <- unique(gsub("[^0-9]","",  gsub("LeagueID=[0-9]{1,6}", "", pgeLinks[grep("/stats/players/", pgeLinks)]))),
+  } else if(nchar(playerLinkSting) >0){
+    playerId <- unique(gsub("[^0-9]", "", pgeLinks[grep(playerLinkString, pgeLinks)]))  
+  }
+  
+  ## On CBS.com the last rows of the table includes links to additional pages, so we remove those:
+  if(length(grep("Pages:", dataTable[,nameCol], fixed = TRUE))>0){
+    dataTable <- dataTable[-grep("Pages:", dataTable[,nameCol], fixed = TRUE),]
+  }
+  
+  
+  
+}
+
+
 readUrl <- function(inpUrl, dataSrc, colTypes, nameCol , removeRow, fbgUserName, fbgPassword){
   if(dataSrc == "Footballguys"){
     
@@ -18,22 +91,30 @@ readUrl <- function(inpUrl, dataSrc, colTypes, nameCol , removeRow, fbgUserName,
                   amember_redirect_url = inpUrl)
     )
   }
+  dataTbl <- data.table()
   
+  tryCatch(
   dataTbl <- switch(dataSrc,
                     "CBS"           = readHTMLTable(inpUrl, stringsAsFactors = FALSE, skip.rows = removeRow, colClasses = colTypes)[7]$`NULL`,
                     "FOX"           = readHTMLTable(inpUrl, stringsAsFactors = FALSE, colClasses = colTypes)$playerTable,
                     "ESPN"          = readHTMLTable(inpUrl, stringsAsFactors = FALSE, skip.rows = removeRow, colClasses = colTypes)$playertable_0,
                     "NFL"           = readHTMLTable(inpUrl, stringsAsFactors = FALSE, colClasses = colTypes)$`NULL`,
                     "FFToday"       = readHTMLTable(inpUrl, stringsAsFactors = FALSE, skip.rows = removeRow, colClasses = colTypes)[11]$`NULL`,
+                    "FFToday - IDP" = readHTMLTable(inpUrl, stringsAsFactors = FALSE, skip.rows = removeRow, colClasses = colTypes)[11]$`NULL`,
                     "Footballguys"  = readHTMLTable(content(dataPge), stringsAsFactors = FALSE, colClasses = colTypes)$`NULL`,
                     "Yahoo"         = readHTMLTable(inpUrl, stringsAsFactors = FALSE, header = FALSE, colClasses = colTypes)[2]$`NULL`,
                     "NumberFire"    = readHTMLTable(inpUrl, stringsAsFactors = FALSE, header = FALSE, colClasses = colTypes)$`complete-projection`,
                     "FantasyPros"   = readHTMLTable(inpUrl, stringsAsFactors = FALSE, colClasses = colTypes)$data
-  )
-  if(is.null(nrow(dataTbl))){
-    return(data.frame())
+  ),
+  error = function(e){
+    print(paste("Error retriving data from", dataSrc, inpUrl))
+    return(data.table())
   }
-  
+  )
+  if(is.null(nrow(dataTbl)) | is.null(dataTbl)){
+    print(paste("Empty data table from", dataSrc, inpUrl))
+    return(data.table())
+  }
   if(dataSrc == "CBS"){
     if(length(grep("Pages:", dataTbl[,nameCol], fixed = TRUE))>0){
       dataTbl <- dataTbl[-grep("Pages:", dataTbl[,nameCol], fixed = TRUE),]
@@ -48,11 +129,12 @@ readUrl <- function(inpUrl, dataSrc, colTypes, nameCol , removeRow, fbgUserName,
   }
   
   playerId <- switch(dataSrc,
-                     "CBS" = unique(gsub("[^0-9]", "", pgeLinks[grep("/fantasyfootball/players/playerpage/[0-9]{3,6}", pgeLinks)])),
-                     "FOX" = unique(gsub("[^0-9]", "", pgeLinks[grep("/fantasy/football/commissioner/Players/Profile.aspx", pgeLinks)])),
-                     "NFL" = unique(gsub("[^0-9]", "", pgeLinks[grep("playerId=[0-9]{3,7}$", pgeLinks)])),
-                     "FFToday" = unique(gsub("[^0-9]","", gsub("LeagueID=[0-9]{1,6}", "", pgeLinks[grep("/stats/players/", pgeLinks)]))),
-                     "Yahoo" = unique(gsub("[^0-9]", "", pgeLinks[grep("http://sports.yahoo.com/nfl/players/[0-9]{3,6}", pgeLinks)])),
+*                     "CBS" =            unique(gsub("[^0-9]", "", pgeLinks[grep("/fantasyfootball/players/playerpage/[0-9]{3,6}",      pgeLinks)])),
+                     "FOX" =            unique(gsub("[^0-9]", "", pgeLinks[grep("/fantasy/football/commissioner/Players/Profile.aspx", pgeLinks)])),
+                     "NFL" =            unique(gsub("[^0-9]", "", pgeLinks[grep("playerId=[0-9]{3,7}$",                                pgeLinks)])),
+                     "FFToday" =        unique(gsub("[^0-9]","",  gsub("LeagueID=[0-9]{1,6}", "", pgeLinks[grep("/stats/players/", pgeLinks)]))),
+                     "FFToday - IDP" =  unique(gsub("[^0-9]","", gsub("LeagueID=[0-9]{1,6}", "", pgeLinks[grep("/stats/players/", pgeLinks)]))),
+                     "Yahoo" =          unique(gsub("[^0-9]", "", pgeLinks[grep("http://sports.yahoo.com/nfl/players/[0-9]{3,6}",     pgeLinks)])),
                      "Footballguys" = gsub("../players/player-all-info.php?id=","",pgeLinks[grep("player-all-info.php?", pgeLinks)], fixed = TRUE)
                      )
   
@@ -65,30 +147,38 @@ readUrl <- function(inpUrl, dataSrc, colTypes, nameCol , removeRow, fbgUserName,
 # The url list generates a list of urls for each site and position based on the configuatko files
 urlList <- function(siteRow){
   retValue = data.table()  
-  for(pg in seq(from= as.numeric(siteRow["startPge"]), to= as.numeric(siteRow["endPge"]), by = as.numeric(siteRow["stepPge"]))){
-    tmpUrl <- ifelse(is.season, siteRow["seasonUrl"], siteRow["weekUrl"])
-    replPar <- c("{$Pos}", "{$SrcID}", "{$PosID}", "{$WeekNo}", "{$PgeID}", "{$Season}")
-    replVal <- c(siteRow["sitePosName"], siteRow["analystQryId"],  siteRow["sitePosQryId"], weekNo, pg, season)
+  for(pg in seq(from= as.numeric(siteRow["startPage"]), to= as.numeric(siteRow["endPage"]), by = as.numeric(siteRow["stepPage"]))){
+    tmpUrl <- siteRow["siteUrl"]
+    replPar <- c("{$WeekNo}", "{$PgeID}", "{$Season}")
+    replVal <- c(weekNo, pg, season)
     for(i in 1:length(replPar)){
       tmpUrl <- gsub(replPar[i], as.character(replVal[i]), tmpUrl, fixed = TRUE)
     }
-    retValue <- rbind.fill(retValue, data.table(projSiteId = siteRow["projDataSiteId"], projAnalystId = siteRow["projAnalystId"],
-                                                nameCol = ifelse(weekNo == 0, siteRow["nameColSeason"], siteRow["nameColWeek"]), posId = siteRow["posId"],
-                                                sitePosId = siteRow["sitePosId"], siteUrl = tmpUrl))
+    retValue <- rbind.fill(retValue, data.table(siteTableId = siteRow["siteTableId"], analystId = siteRow["analystId"], positionId = siteRow["positionId"], 
+                                                urlData = siteRow["urlData"], nameCol = siteRow["nameCol"], siteUrl = tmpUrl))
   }
   return(retValue)
 }
 
 # scrapeUrl calls readUrl to retrieve data and then cleans it up
 scrapeUrl <- function(x) {
-  siteId <- as.numeric(x["projSiteId"])
-  pos <- as.numeric(x["posId"])
+  if(!dbIsValid(siteDb)){
+    siteDb <- connectDb("projectionsites")
+  }
   
-  dataSrc <- projSites[projDataSiteId == siteId , projSiteName]
-  colTypes <- sitePositionTables[posId == pos & dataSiteId == siteId & colPeriod == periodSelect, colType]
-  colNames <- sitePositionTables[posId == pos & dataSiteId == siteId & colPeriod == periodSelect, colName]
+  analyst <- as.numeric(x["analystId"])
   
-  rows2Remove <- siteRowsRemove[sitePosId == as.numeric(x["sitePosId"]), rowRemove]
+  siteId <- analysts[analysts$analystId == analyst, "siteID"]
+  dataSrc <- sites[sites$siteID == siteId , "siteName"]
+  tblId <- as.numeric(x["siteTableId"])
+  urlCols <- tableColumns[tableColumns$siteTableID == tblId,]
+  urlCols <- urlCols[with(urlCols, order(columnOrder)),]
+  colTypes <- urlCols$columnType
+  colNames <- urlCols$columnName
+  posId <- siteTables[siteTables$siteTableId == tblId, "positionId"]
+  posName <- positions[positions$positionId == posId, "positionName"]
+  rows2Remove <- tableRowRemove[tableRowRemove$siteTableId == tblId, "rowRemove"]
+
   fbgUserName = ""
   fbgPassword = ""  
   
@@ -110,6 +200,7 @@ scrapeUrl <- function(x) {
                   "CBS" = "cbsId",
                   "FOX" = "foxId",
                   "FFToday" = "fftId",
+                  "FFToday - IDP" = "fftId",
                   "ESPN" = "None",
                   "FantasyPros" = "None",
                   "NumberFire" = "None",
@@ -117,16 +208,17 @@ scrapeUrl <- function(x) {
   )
   
   # Merging with player data from NFL.com to find the playerId.
-  nflPos <- c("QB", "RB", "WR", "TE", "K", "DEF")
-  ##if(x["projSiteId"] != 6){
-    if(idCol %in% names(nflPlayers) & x["posId"] != 6 & "playerId" %in% names(dataTable) ){
+  detailPos <- posMap[posMap$positionCode == posName, "detailPosition"]
+  
+  if(dataSrc != "NFL"){
+    if(idCol %in% names(nflPlayers) & posId != 6 & "playerId" %in% names(dataTable) ){
       setnames(dataTable, "playerId", idCol)
       dataTable <- merge(dataTable, nflPlayers[, c("playerId", idCol), with = FALSE], by=idCol)
     }else{
       dataTable$playerId <- NULL
-      dataTable <- merge(dataTable, nflPlayers[playerPos == nflPos[as.numeric(x["posId"])], c("playerId", "player"), with = FALSE], by= "player")
+      dataTable <- merge(dataTable, nflPlayers[position %in% detailPos, c("playerId", "player"), with = FALSE], by= "player")
     }
-  ##}
+  }
 
   #Separate pass completions from attempts
   if(exists("passCompAtt", dataTable)){
@@ -150,7 +242,8 @@ scrapeUrl <- function(x) {
   if(exists("dstPtsPerGm", dataTable)){
     dataTable[, c("dstPtsAllowed", "dstYdsAllowed") := list(dstPtsPerGm*16, dstYdsPerGm*16)]
   }
-  dataTable[, analystId := x["projAnalystId"]]
+
+  dataTable[, analystId := analyst]
   dataTable[,name := nameMerge(dataTable$player)]
   
   #Remove duplicate cases

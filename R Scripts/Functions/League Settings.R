@@ -32,8 +32,8 @@ scoreCategories <- c("passAtt","passComp","passIncomp","passYds","passTds","pass
                      "rec","recTgt","recYds","recTds",
                      "returnTds","twoPts","fumbles",
                      "idpSolo","idpAst","idpSack","idpFumlRec","idpFumlForce","idpInt","idpPD",
-                     "dstPtsAllowed","dstYdsAllowed","dstSack","dstSafety","dstInt","dstFumlRec","dstFumlForce","dstBlk","dstTd",
-                     "fg","fgAtt","fg019","fg2029","fg3039","fg4049","fg50","xp")
+                     "dstPtsAllow","dstYdsAllowed","dstSack","dstSafety","dstInt","dstFumlRec","dstFumlForce","dstBlk","dstTd",
+                     "fg","fgAtt","fg0019","fg2029","fg3039","fg4049","fg50","xp")
 calculatedVars <- c("positionRank","overallRank","points","pointsLo","pointsHi","vor","pick","risk","sdPts","sdPick")
 varNames <- c(calculatedVars, scoreCategories)
 finalVarNames <- c("name","pos","team","sourceName","player","playerID","season", "playerId", "analystId", varNames)
@@ -75,7 +75,8 @@ scoringRules <- list(
 
 #Projections
 #c("CBS", "ESPN", "Yahoo") #c("Accuscore", "CBS1", "CBS2", "EDSfootball", "ESPN", "FantasyFootballNerd", "FantasyPros", "FantasySharks", "FFtoday", "Footballguys1", "Footballguys2", "Footballguys3", "Footballguys4", "FOX", "NFL", "numberFire", "WalterFootball", "Yahoo")
-sourcesOfProjections <- c("Jamey Eisenberg", "Dave Richard", "Yahoo Sports" , "ESPN", "NFL", "FOX Sports", "FFtoday", 
+sourcesOfProjections <- c("Jamey Eisenberg", "Dave Richard", #"Yahoo Sports" , 
+                          "ESPN", "NFL", "FOX Sports", "FFToday", "FFToday - IDP",
                           "NumberFire", "FantasyPros") #, "Dodds-Norton", "Dodds", "Tremblay", "Herman", "Henry", "Wood", "Bloom") 
 sourcesOfProjectionsAbbreviation <- c("cbs", "espn", "yahoo") #c("accu", "cbs1", "cbs2", "eds", "espn", "ffn", "fp", "fs", "fftoday", "fbg1", "fbg2", "fbg3", "fbg4", "fox", "nfl", "nf", "wf", "yahoo")
 
@@ -98,6 +99,26 @@ weight_nfl <- 1     #NFL.com
 weight_nf <- 1      #numberFire
 weight_wf <- 1      #WalterFootball
 weight_yahoo <- 1   #Yahoo 
+
+sourceWeights <- c(
+  "Jamey Eisenberg"   = 1, 
+  "Dave Richard"      = 1, 
+  "Yahoo Sports"      = 1, 
+  "ESPN"              = 1, 
+  "NFL"               = 1, 
+  "FOX Sports"        = 1, 
+  "FFtoday"           = 1,
+  "NumberFire"        = 1, 
+  "FantasyPros"       = 1,
+  "Dodds-Norton"      = 1, 
+  "Dodds"             = 1, 
+  "Tremblay"          = 1, 
+  "Herman"            = 1, 
+  "Henry"             = 1, 
+  "Wood"              = 1, 
+  "Bloom"             = 1
+  ) 
+
 
 #Number of players at each position drafted in Top 100 (adjust for your league)
 qbReplacements <- 15
