@@ -7,13 +7,13 @@ library(data.table)
 library(ggplot2)
 
 ## Read the data
-qbProjections <- data.table(read.csv("Data/Posts/qbprojections.csv", stringsAsFactors = FALSE))
-rbProjections <- data.table(read.csv("Data/Posts/rbprojections.csv", stringsAsFactors = FALSE))
-wrProjections <- data.table(read.csv("Data/Posts/wrprojections.csv", stringsAsFactors = FALSE))
-teProjections <- data.table(read.csv("Data/Posts/teprojections.csv", stringsAsFactors = FALSE))
+qbProjections <- data.table(read.csv("R Scripts/Posts/Value Gap analysis/Data/Posts/qbprojections.csv", stringsAsFactors = FALSE))
+rbProjections <- data.table(read.csv("R Scripts/Posts/Value Gap analysis/Data/Posts/rbprojections.csv", stringsAsFactors = FALSE))
+wrProjections <- data.table(read.csv("R Scripts/Posts/Value Gap analysis/Data/Posts/wrprojections.csv", stringsAsFactors = FALSE))
+teProjections <- data.table(read.csv("R Scripts/Posts/Value Gap analysis/Data/Posts/teprojections.csv", stringsAsFactors = FALSE))
 
-playerTeams <- data.table(read.csv("Data/Posts/playerteams.csv", stringsAsFactors = FALSE))
-players <- data.table(read.csv("Data/Posts/players.csv", stringsAsFactors = FALSE))
+playerTeams <- data.table(read.csv("R Scripts/Posts/Value Gap analysis/Data/Posts/playerteams.csv", stringsAsFactors = FALSE))
+players <- data.table(read.csv("R Scripts/Posts/Value Gap analysis/Data/Posts/players.csv", stringsAsFactors = FALSE))
 
 ## Merge team information
 qbProjections <- merge(qbProjections, playerTeams[, c("playerId", "team"), with = FALSE], by = "playerId")
@@ -75,7 +75,7 @@ tblData <- tblData[team != "FA" ]
 tblData <- tblData[,team := reorder(team, passYdsDiff, function(x)-x)]
 ggplot(tblData, aes(x =team , y=passYdsDiff, fill = passYdsDiff > 0),  position = 'dodge' ) + 
     geom_bar(stat = "identity") + xlab("Team") + ylab("PassYds - RecYds") +scale_fill_discrete(guide = 'none') + ggtitle("Pass and Receiving Yard difference")
-ggsave("Figures/passYdsDiffernce.png", width = 900/72, height = 545/72, units = "in")
+ggsave("R Scripts/Posts/Value Gap analysis/Figures/passYdsDiffernce.png", width = 900/72, height = 545/72, units = "in")
 
 ## Generate bar plot for receiving td difference
 tdData <-  data.table(aggregate(teamData$passTdDiff, by = list(teamData$team), FUN = mean, data = teamData))
@@ -85,7 +85,7 @@ tdData <- tdData[,team := reorder(team, passTdDiff, function(x)-x)]
 
 ggplot(tdData, aes(x =team , y=passTdDiff, fill = passTdDiff > 0),  position = 'dodge' ) + 
     geom_bar(stat = "identity") + xlab("Team") + ylab("PassTds - RecTds") +scale_fill_discrete(guide = 'none') + ggtitle("Pass and Receiving Touchdown difference")
-ggsave("Figures/passTdDiffernce.png",  width = 900/72, height = 545/72, units = "in")
+ggsave("R Scripts/Posts/Value Gap analysis/Figures/passTdDiffernce.png",  width = 900/72, height = 545/72, units = "in")
 
 ## Generate bar plot for reception difference
 recData <-  data.table(aggregate(teamData$passRecDiff, by = list(teamData$team), FUN = mean, data = teamData))
@@ -94,5 +94,5 @@ recData <- recData[team != "FA" ]
 recData <- recData[,team := reorder(team, passRecDiff, function(x)-x)]
 ggplot(recData, aes(x =team , y=passRecDiff, fill = passRecDiff > 0),  position = 'dodge' ) + 
     geom_bar(stat = "identity") + xlab("Team") + ylab("Completions - Recepetions") +scale_fill_discrete(guide = 'none') + ggtitle("Pass Completions and Receptions")
-ggsave("Figures/passCompDiffernce.png",  width = 900/72, height = 545/72, units = "in")
+ggsave("R Scripts/Posts/Value Gap analysis/Figures/passCompDiffernce.png",  width = 900/72, height = 545/72, units = "in")
 
