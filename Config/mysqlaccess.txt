@@ -1,4 +1,0 @@
-ffplayerinfo,us-cdbr-azure-west-a.cloudapp.net,b5ec458fea0ac7,7de20984
-projectionsites,us-cdbr-azure-east-b.cloudapp.net,bf9553ecc4e60f,c98831e8
-playerprojections,localhost,ffmaster,dean0905
-

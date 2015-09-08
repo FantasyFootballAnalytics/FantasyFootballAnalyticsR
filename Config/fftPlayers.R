@@ -1,5 +1,5 @@
 require(data.table)
-season = 2014
+season = 2015
 week = 0
 
 
@@ -13,7 +13,7 @@ fft <- analysts[analysts$analystName %in% c("FFToday", "FFToday - IDP"), "analys
 
 siteUrls <- siteUrls[siteUrls$analystId %in% fft & siteUrls$urlPeriod == 'season', ]
 
-urlTable <- apply(siteUrls,1,urlList)
+urlTable <- apply(siteUrls,1,urlList, week, season)
 urlTable <- rbindlist(urlTable)
 
 nameTable <- apply(urlTable, 1, function(x){
