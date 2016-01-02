@@ -1,3 +1,4 @@
+source("../scripts/connectDb.R")
 getFbgPlayers <- function(posData){
   inpUrl <- paste("http://subscribers.footballguys.com/players/ppindex-", posData[["name"]], ".php", sep = "")
   playerTbl <- readHTMLTable(inpUrl, header = FALSE, stringsAsFactors = FALSE)$`NULL`[,1]

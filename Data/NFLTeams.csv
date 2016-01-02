@@ -1,33 +1,33 @@
-TeamCode,TeamArea,TeamName
-ARI,Arizona,Cardinals
-ATL,Atlanta,Falcons
-BAL,Baltimore,Ravens
-BUF,Buffalo,Bills
-CAR,Carolina,Panthers
-CHI,Chicago,Bears
-CIN,Cincinnati,Bengals
-CLE,Cleveland,Browns
-DAL,Dallas,Cowboys
-DEN,Denver,Broncos
-DET,Detroit,Lions
-GNB,Green Bay,Packers
-HOU,Houston,Texans
-IND,Indianapolis,Colts
-JAC,Jacksonville,Jaguars
-KAN,Kansas City,Chiefs
-MIA,Miami,Dolphins
-MIN,Minnesota,Vikings
-NOR,New Orleans,Saints
-NWE,New England,Patriots
-NYG,New York,Giants
-NYJ,New York,Jets
-PHI,Philadelphia,Eagles
-PIT,Pittsburgh,Steelers
-SDG,San Diego,Chargers
-SFO,San Francisco,49ers
-STL,St. Louis,Rams
-TAM,Tampa Bay,Buccaneers
-TEN,Tennessee,Titans
-WAS,Washington,Redskins
-SEA,Seattle,Seahawks
-OAK,Oakland,Raiders
+TeamCode,TeamArea,TeamName,TeamId
+ARI,Arizona,Cardinals,100026
+ATL,Atlanta,Falcons,100001
+BAL,Baltimore,Ravens,100002
+BUF,Buffalo,Bills,100003
+CAR,Carolina,Panthers,100004
+CHI,Chicago,Bears,100005
+CIN,Cincinnati,Bengals,100006
+CLE,Cleveland,Browns,100007
+DAL,Dallas,Cowboys,100008
+DEN,Denver,Broncos,100009
+DET,Detroit,Lions,100010
+GNB,Green Bay,Packers,100011
+HOU,Houston,Texans,100013
+IND,Indianapolis,Colts,100014
+JAC,Jacksonville,Jaguars,100015
+KAN,Kansas City,Chiefs,100016
+MIA,Miami,Dolphins,100019
+MIN,Minnesota,Vikings,100020
+NOR,New Orleans,Saints,100022
+NWE,New England,Patriots,100021
+NYG,New York,Giants,100023
+NYJ,New York,Jets,100024
+PHI,Philadelphia,Eagles,100025
+PIT,Pittsburgh,Steelers,100027
+SDG,San Diego,Chargers,100028
+SFO,San Francisco,49ers,100029
+STL,St. Louis,Rams,100017
+TAM,Tampa Bay,Buccaneers,100031
+TEN,Tennessee,Titans,100012
+WAS,Washington,Redskins,100032
+SEA,Seattle,Seahawks,100030
+OAK,Oakland,Raiders,100018
