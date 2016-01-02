@@ -18,14 +18,14 @@ source(paste(getwd(),"/R Scripts/Functions/League Settings.R", sep=""))
 #Risk - "Experts"
 IDP <- readHTMLTable("http://www.fantasypros.com/nfl/rankings/idp-cheatsheets.php", stringsAsFactors = FALSE)$data
 
-IDP$player <- str_sub(IDP[,c("Player (team/bye)")], end=str_locate(IDP[,c("Player (team/bye)")], '\\(')[,1]-2)
+IDP$player <- str_sub(IDP[,c("Player (team, bye)")], end=str_locate(IDP[,c("Player (team, bye)")], '[:upper:]{2,3},')[,1]-2)
 IDP$name <- nameMerge(IDP$player)
-IDP$team <- str_sub(IDP[,c("Player (team/bye)")], start=str_locate(IDP[,c("Player (team/bye)")], '\\(')[,1]+1, end=str_locate(IDP[,c("Player (team/bye)")], '\\/')[,1]-1)
+IDP$team <- str_sub(IDP[,c("Player (team, bye)")], start=str_locate(IDP[,c("Player (team, bye)")], '[:upper:]{2,3}')[,1], end=str_locate(IDP[,c("Player (team, bye)")], ',')[,1]-1)
 
 IDP$pos <- IDP$Pos
-IDP$pos <- gsub("\\d", "", IDP$pos)
+IDP$pos <- gsub("\\d+", "", IDP$pos)
 
-IDP$rank <- as.numeric(IDP[,"Ave"])
+IDP$rank <- as.numeric(IDP[,"Avg"])
 IDP$risk <- as.numeric(IDP[,"Std Dev"])
 
 #Subset columns
