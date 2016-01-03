@@ -31,7 +31,7 @@ getNflPlayers <- function(posData){
   lastName <- nameMatrix[,1]
   nflPlayers$PlayerName <- paste(firstName, lastName, sep = " ")
   
-  nflPlayers$PlayerName <- getPlayerName(nflPlayers$PlayerName)
+  nflPlayers$PlayerName <-  getPlayerName(getPlayerName(getPlayerName(nflPlayers$PlayerName)))
 
   
   nflPlayers$Pos[nflPlayers$Pos == "FB"] <- "RB"

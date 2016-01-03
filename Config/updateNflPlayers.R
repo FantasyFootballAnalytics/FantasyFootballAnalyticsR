@@ -8,7 +8,7 @@
 ## what is retrieved from NFL.com. 
 #####################################################################################
 require(RMySQL)
-source(paste(getwd(), "/R Scripts/Functions/nflPlayers.R", sep =""))
+#source(paste(getwd(), "/R Scripts/Functions/nflPlayers.R", sep =""))
 
 ## Retrieve all NFL Players -- this takes a while as it retrieves QB, RB, WR, TE, K, 
 ## DEF and IDP positions.
