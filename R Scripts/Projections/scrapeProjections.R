@@ -1,6 +1,6 @@
 source("R Scripts/Functions/scrapeFunctions.R")
 source("R Scripts/Functions/dualPositionData.R")
-source("R Scripts/Functions/adjustFieldGoalStas.R")
+source("R Scripts/Functions/adjustFieldGoalStats.R")
 source("R Scripts/Functions/updateADP.R")
 source("R Scripts/Functions/getRanks.R")
 source("R Scripts/Functions/createUrls.R")
