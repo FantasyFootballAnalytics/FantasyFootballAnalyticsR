@@ -1,0 +1,10 @@
+positionId,positionCode,positionName
+1,QB,Quarterback
+2,RB,Runningback
+3,WR,Wide Receiver
+4,TE,Tight End
+5,K,Kicker
+6,DST,Team Defense
+7,DL,Defensive Linesman
+8,LB,Linebacker
+9,DB,Defensive Back

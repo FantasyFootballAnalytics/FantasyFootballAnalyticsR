@@ -385,18 +385,18 @@ CJ.dt = function(...) {
 }
 
 # Function to calculate the location estimate for the wilcox test
-wilcox.loc <- function(vec){
+wilcox.loc <- function(vec, na.rm = FALSE){
   n <- length(vec)
   
   # If number of observations is less than 2 then we just return mean as location estimate
   if(n <= 2){
-    return(mean(vec, na.rm = TRUE))
+    return(mean(vec, na.rm = na.rm))
   }
   
   # Calculating the paired avagerages
-  pairAvg <- sort(c(vec, combn(vec, 2, function(x)mean(x, na.rm = TRUE))))
+  pairAvg <- sort(c(vec, combn(vec, 2, function(x)mean(x, na.rm = na.rm))))
   
-  return(median(pairAvg, na.rm = TRUE))
+  return(median(pairAvg, na.rm = na.rm))
 }
 
 # Function to calculate DST points from the ptsAllowed brackets

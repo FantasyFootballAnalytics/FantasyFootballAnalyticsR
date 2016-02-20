@@ -1,0 +1,18 @@
+siteId,siteName,subscription,playerIdCol
+accu,Accuscore,1,
+cbs,CBS,0,cbsId
+yahoo,Yahoo,0,yahooId
+espn,ESPN,0,
+nfl,NFL,0,NflId
+fox,FOX,0,
+fft,FFToday,0,fftId
+nmf,NumberFire,0,
+ffp,FantasyPros,0,
+fbg,Footballguys,1,fbgId
+eds,EDS Football,0,
+fs,FantasySharks,0,
+ffn,Fantasyfootballnerd,0,
+wf,WalterFootball,0,
+fff,4for4,1,
+roto,Rotowire,1,
+rts,RTSports.com,0,

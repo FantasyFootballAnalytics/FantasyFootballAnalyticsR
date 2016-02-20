@@ -22,6 +22,7 @@ mflData <- function(y){
   
   mflPlayers <- rbindlist(lapply(mflPlayers, function(pl)data.table(t(pl))), fill = TRUE)
   
+  
   # Reducing the NFL IDs to be just numbers
   mflPlayers[, nfl_id := gsub("[^0-9]", "", mflPlayers$nfl_id)]
   
@@ -42,9 +43,8 @@ mflData <- function(y){
   mflPlayers[position == "Def", position := "DST"]
   
   # Only keep players that we are actually projecting (excluding coaches and team positions)
-  mflPlayers <- mflPlayers[position %in% c("QB", "RB", "WR", "TE", "PK", "DST", "DL", "LB", "DB" )]
+  mflPlayers <- mflPlayers[position %in% c("QB", "RB", "WR", "TE", "K", "DST", "DL", "LB", "DB" )]
   setnames(mflPlayers, c("nfl_id", "stats_id", "cbs_id", "name"), c("playerId", "yahooId", "cbsId", "player"))
-  
   return(mflPlayers)
 }
 
@@ -55,6 +55,7 @@ getPlayerData <- function(season){
   
   #  Update names to be uniform
   mflPlayers[, player := getPlayerName(getPlayerName(getPlayerName(firstLast(player))))]
+  
   
   # Update team names
   nflTeams <- data.table(read.csv(paste(getwd(), "/Data/NFLTeams.csv", sep =""), stringsAsFactors = FALSE))
@@ -76,9 +77,11 @@ getPlayerData <- function(season){
   nflAllPlayers <- data.table(readNflPlayers())
   
   # Update position names
-  nflAllPlayers[Pos %in% c("DE", "DT"), Pos := "DL"]
+  nflAllPlayers[Pos %in% c("DE", "DT", "NT"), Pos := "DL"]
   nflAllPlayers[Pos %in% c("OLB", "ILB", "MLB"), Pos := "LB"]
   nflAllPlayers[Pos %in% c("CB", "SS", "FS", "SAF"), Pos := "DB"]
+  
+  
   
   # Update column names
   setnames(nflAllPlayers, c("Pos", "Num", "PlayerName", "Status", "Team", "playerId"), c("position", "jersey", "player", "status", "team", "playerId"))
@@ -95,7 +98,7 @@ getPlayerData <- function(season){
   setnames(playerData, c("playerId.x", "team.x"), c("playerId", "team"))
   
   # Save and return data
-  save(playerData, file = "Data/playerData.RData")
-  write.csv(playerData, file = "Data/playerData.csv", row.names = FALSE)
+  save(playerData, file = "Config/Data/playerData.RData")
+  write.csv(playerData, file = "Config/Data/playerData.csv", row.names = FALSE)
   return(playerData)
 }
