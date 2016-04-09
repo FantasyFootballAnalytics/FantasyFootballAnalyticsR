@@ -1,0 +1,9 @@
+Name: Run Scrape
+Description: Run a data scrape
+Binding: Run_Scrape
+Interactive: true
+
+Name: Calculate Projections
+Description: Calculate Projections
+Binding: Run_Projection
+Interactive: true
