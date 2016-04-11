@@ -1,5 +1,8 @@
 ###########################
 # File: AccuracyOfRankingsVsProjections.R
+# Description: Compare Accuracy of Rankings vs. Projections
+# Date: 4/4/2016
+# Author: Isaac Petersen (isaac@fantasyfootballanalytics.net)
 # Notes:
 # To do: 
 ###########################
