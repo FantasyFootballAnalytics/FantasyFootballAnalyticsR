@@ -1,19 +1,309 @@
 ###########################
-# File: scrapeFunctions.R
+# File: scrapefunctions.R
 # Description: Helper functions for the data scrapes.
 # Date: 2/23/2015
 # Author: Dennis Andersen (andersen.dennis@live.com)
 # Notes:
+# This file contains functions that are used for the data scrapes.
 # To do:
 ###########################
+require(RCurl)
+require(stringr)
+require(XML)
+require(data.table)
+require(plyr)
 
+source("R Scripts/Functions/sharkSegment.R")
 
-firstLast <- function(lastFirst){
-  nameMatrix <- matrix(unlist(strsplit(lastFirst, ", ")), ncol =2, byrow = TRUE)
-  fullName <- paste(nameMatrix[,2], nameMatrix[,1])
-  return(fullName)
+# League ID for the "dummy" Yahoo league that is setup to use for data scrapes
+yahooLeague <- 170716
+
+# API Key to access the Fantasy Football Nerd API. Register here http://www.fantasyfootballnerd.com/fantasy-football-api
+ffnAPIKey <- "test"
+
+# Load configuration data.
+nameCorrect <- data.table(read.csv("Data/NameCorrections.csv", stringsAsFactors = FALSE))
+teamCorrect <- data.table(read.csv("Data/NFLTeams.csv", stringsAsFactors = FALSE))
+allUrls <- data.table(read.csv("Config/Data/allUrls.csv", stringsAsFactors = FALSE))
+dataColumns <- data.table(read.csv("Config/Data/dataColumns.csv", stringsAsFactors = FALSE))
+playerPositions <- data.table(read.csv("Config/Data/playerPositions.csv", stringsAsFactors = FALSE))
+posMap <- data.table(read.csv("Config/Data/positionMap.csv", stringsAsFactors = FALSE))
+siteAnalysts <- data.table(read.csv("Config/Data/analysts.csv", stringsAsFactors = FALSE))
+dataSites <- data.table(read.csv("Config/Data/dataSites.csv", stringsAsFactors = FALSE))
+removeRows <- data.table(read.csv("Config/Data/rowRemove.csv", stringsAsFactors = FALSE))
+
+# Check if player Data file exists, and if not create it.
+if(!file.exists("Config/Data/playerData.csv")){
+  source("Config/playerData.R")
+  if(month(Sys.time()) <= 2){
+    yr <- year(Sys.time()) - 1
+    }
+  else {
+    yr <- year(Sys.time())
+  }
+  
+  players <-  data.table(getPlayerData(yr))
+} else {
+  players <- data.table(read.csv("Config/Data/playerData.csv", stringsAsFactors = FALSE))
 }
 
+
+# getPlayerName - cleans the player column for projection data.
+getPlayerName <- function(playerCol){
+  playerCol <- gsub("49ers", "Niners", playerCol, fixed = TRUE)
+  playerCol <- gsub("New York NYG", "Giants", playerCol, fixed = TRUE)
+  playerCol <- gsub("New York NYJ", "Jets", playerCol, fixed = TRUE)
+  playerCol <- gsub("New York.+\\(NYG", "Giants", playerCol)
+  playerCol <- gsub("New York.+\\(NYJ", "Jets", playerCol)
+  playerCol <- gsub("New York Giants", "Giants", playerCol)
+  playerCol <- gsub("New York Jets", "Jets", playerCol)
+  playerCol <- gsub("New England Patriots", "Patriots", playerCol)
+  playerCol <- gsub("New England", "Patriots", playerCol)
+  playerCol <- gsub("New Orleans Saints", "Saints", playerCol)
+  playerCol <- gsub("New Orleans", "Saints", playerCol)
+  
+  playerCol <- gsub("Questionable|Probable|Injured Reserve|Out|SSPD|Final|View|Videos|News|Video|(N|n)ote|(N|n)otes|(P|p)layer|^No new|New ", "", playerCol)
+  playerCol <- gsub("(B(AL|al)|B(UF|uf)|C(HI|hi)|C(IN|in)|C(LE|le)|D(AL|al)|D(EN|en)|D(ET|et)|GB|H(OU|ou)|I(ND|nd)|J(AC|ac)|J(AX|ax)|KC|K(AN|an)|NO|O(AK|ak)|P(IT|it)|P(HI|hi)|NYG|NYJ|NE|S(EA|ea)|A(TL|tl)|A(RI|ri)|M(IA|ia)|SD|S(T|t)(L|l)|C(AR|ar)|SF|T(EN|en)|W(AS|as)|TB|M(IN|in)|W(SH|sh)) ", "", playerCol)
+  playerCol <- gsub(",\\s(B(AL|al)|B(UF|uf)|C(HI|hi)|C(IN|in)|C(LE|le)|D(AL|al)|D(EN|en)|D(ET|et)|GB|H(OU|ou)|I(ND|nd)|J(AC|ac)|J(AX|ax)|KC|K(AN|an)|NO|O(AK|ak)|P(IT|it)|P(HI|hi)|NYG|NYJ|NE|S(EA|ea)|A(TL|tl)|A(RI|ri)|M(IA|ia)|SD|S(T|t)(L|l)|C(AR|ar)|SF|T(EN|en)|W(AS|as)|TB|M(IN|in)|W(SH|sh))", "", playerCol)
+  playerCol <- gsub("(B(AL|al)|B(UF|uf)|C(HI|hi)|C(IN|in)|C(LE|le)|D(AL|al)|D(EN|en)|D(ET|et)|GB|H(OU|ou)|I(ND|nd)|J(AC|ac)|J(AX|ax)|KC|K(AN|an)|NO|O(AK|ak)|P(IT|it)|P(HI|hi)|NYG|NYJ|NE|S(EA|ea)|A(TL|tl)|A(RI|ri)|M(IA|ia)|SD|S(T|t)(L|l)|C(AR|ar)|SF|T(EN|en)|W(AS|as)|TB|M(IN|in)|W(SH|sh))$", "", playerCol)
+  playerCol <- gsub("BAL|BUF|CHI|CIN|CLE|DAL|DEN|DET|GB|HOU|IND|JAC|JAX|KC|KAN|NO|OAK|PIT|PHI|NYG|NYJ|NE|SEA|ATL|ARI|MIA|SD|STL|CAR|SF|TEN|WAS|TB|MIN|WSH", "", playerCol)
+  
+  playerCol <- gsub("\\s+((P|Q|O|D|S)$|IR|EXE|SUS|PUP|DNP|LP)|\\s(P|Q|O|D|S)\\s|^\\[(Q|P|O|D|S)\\]\\s|(P|Q|O|D|S|IR)$", "", playerCol)
+  playerCol <- gsub(" Jr.| Sr.| Jr| Sr| III", "", playerCol)
+  playerCol <- gsub("\\sat|\\svs.","", playerCol)
+  playerCol <- gsub("[^a-zA-Z \\.\\-]", "", playerCol)
+  playerCol <- gsub("Niners", "49ers", playerCol, fixed = TRUE)
+  playerCol <- gsub(" {2,99}", "", playerCol)
+  playerCol <- gsub("vs$", "", playerCol)
+  playerCol <- gsub("(W|L)$", "", playerCol)
+  
+  playerCol <- gsub("RBTE$|RBWR$|TERB$|WRRB$|WRTE$|TEWR$|QBRB$|RBQB$|QBWR$|WRQB$|TEQB$|QBTE$|QB$|RB$|WR$|TE$|K$|DEF$|DST$|FA$|DL$|LB$|DB$| FA|DST D", "", playerCol)
+  playerCol <- gsub("^\\s+|\\s$", "", playerCol)
+  
+  playerCol <- gsub("\\-$", "", playerCol)
+  playerCol <- gsub(" - DEF(W|L)$", "", playerCol)
+  for(n in 1:nrow(nameCorrect)){
+    playerCol[playerCol == nameCorrect[n,]$NameFrom] <- nameCorrect[n,]$NameTo
+  }
+  
+  for(n in 1:nrow(teamCorrect)){
+    
+    playerCol[playerCol == teamCorrect[n,]$TeamArea] <- teamCorrect[n,]$TeamName
+    playerCol[playerCol == paste(teamCorrect[n,]$TeamArea, teamCorrect[n,]$TeamName)] <- teamCorrect[n,]$TeamName
+    
+  }
+  playerCol <- gsub("^\\s+|\\s$", "", playerCol)
+  
+  return(playerCol)
+}
+
+# Retrieve ADP Values from Fantasy Football Calculator
+getFFCValues <- function(format = "standard", teams = 12){
+  ffcFile <- url(paste("https://fantasyfootballcalculator.com/adp_csv.php?format=", format, "&teams=", teams, sep = ""), open = "rt")
+  
+  ffcTbl <- data.table(read.csv(ffcFile, skip = 4, stringsAsFactors = FALSE))
+  close(ffcFile)
+  ffcTbl[, Name := getPlayerName(Name)]
+  ffcTbl[Position == "PK", Position := "K"]
+  ffcTbl[Position == "DEF", Position := "DST"]
+  ffcTbl[, ADP := NULL]
+  setnames(ffcTbl, c("Overall", "Name", "Position"), c("adp", "player", "position"))
+  ffcTbl[, leagueType := ifelse(format == "standard", "std", format)]
+  return(ffcTbl[!is.na(adp), c("player", "position", "adp", "leagueType"), with = FALSE])
+  
+}
+
+# Retrieve ADP and Auction Values from ESPN
+getESPNValues <- function(){
+    espnPos <- c("QB", "RB", "WR", "TE", "K", "D/ST", "DT", "DE", "CB", "S", "LB")
+    espnData <- lapply(espnPos, function(p){
+        espnUrl <-paste("http://games.espn.go.com/ffl/livedraftresults?position=", p, sep ="")
+        espnTbl <- data.table(readHTMLTable(espnUrl, which = 2, skip.rows=c(1,2), stringsAsFactors = FALSE))
+        setnames(espnTbl, c(1:8), c("rank", "player", "position", "adp", "snake7day", "aav", "value7day", "pctOwn"))
+        espnTbl[, player := getPlayerName(encodeString(player))]
+        espnTbl <- espnTbl[!is.na(player)]
+        espnTbl[position == "D/ST", position := "DST"]
+        espnTbl[position %in% c("DT", "DE") , position := "DL"]
+        espnTbl[position %in% c("CB", "S") , position := "DB"]
+        espnTbl[, leagueType := "std"]
+        return(espnTbl)
+    })
+    espnData <- rbindlist(espnData) 
+  return(espnData[,c("player", "position", "adp","aav", "leagueType"), with = FALSE])
+}
+
+# Retrieve ADP values from CBS
+getCBSValues <-function(){
+    cbsVal <- data.table(readHTMLTable("http://www.cbssports.com/fantasy/football/draft/averages?&print_rows=9999", which = 1, stringsAsFactors = FALSE, skip.rows = 1))
+    pgeLinks <- getHTMLLinks("http://www.cbssports.com/fantasy/football/draft/averages?&print_rows=9999")
+    pId <- as.numeric(unique(gsub("[^0-9]", "", pgeLinks[grep("/fantasy/football/players/[0-9]{3,6}", pgeLinks)])))
+    setnames(cbsVal, c(1:6), c("rank", "player", "trend", "adp", "HiLo", "pctOwn"))
+    cbsVal <- cbsVal[!is.na(player)]
+    cbsVal[, player := getPlayerName(player)]
+    cbsVal[, cbsId := pId]
+    plyrs <- players[, c("playerId", "cbsId"), with = FALSE]
+    cbsVal <- merge(cbsVal, plyrs, by = "cbsId")
+    cbsVal[, leagueType := "std"]
+    cbsVal <- cbsVal[, c("playerId", "adp", "leagueType"), with = FALSE]
+    return(cbsVal)
+}
+
+# Retrieve ADP and auction values from NFL
+getNFLValues <- function(season){
+    pgs <- seq(from = 1, to = 826, by = 25)
+    nflValues <- data.table(data.frame(playerId = as.numeric(), player = as.character(), adp = as.numeric(), avgRd = as.numeric(), aav = as.numeric()))
+    for (pg in pgs){
+        nflUrl <- paste("http://fantasy.nfl.com/draftcenter/breakdown?offset=", pg, "&position=all&season=", season, "&sort=draftAveragePosition", sep = "")
+        nfldata <- data.table(readHTMLTable(nflUrl, stringsAsFactors = FALSE, which = 1))
+        names(nfldata) <- c("player", "adp", "avgRd", "aav")
+        pgeLinks <- getHTMLLinks(nflUrl)
+        pId <- as.numeric(unique(gsub("[^0-9]", "", pgeLinks[grep("playerId=[0-9]{3,7}$", pgeLinks)])))
+        nfldata[, playerId := pId]
+        nflValues <- rbindlist(list(nflValues, nfldata), fill = TRUE)
+    }
+    
+    nflValues[, player := getPlayerName(getPlayerName(getPlayerName(player)))]
+    nflValues <- nflValues[, leagueType := "std"]
+    return(nflValues[, names(nflValues), with = FALSE])
+}
+
+# Retrive Values from MFL
+getMFLValues <- function(year, type = "adp", league = NULL, week = NULL, ppr = FALSE){
+  type <- ifelse(type == "nflSchedule", type, tolower(type))
+  mflUrl <- paste("http://football.myfantasyleague.com/", year, "/export?TYPE=", type, 
+                  "&L=", league, "&W=", week, "&JSON=0", sep = "")
+  if(type == c("adp")){
+      mflUrl <- paste(mflUrl, "&IS_PPR=", as.numeric(ppr), "&IS_MOCK=0&DAYS=14", sep = "")
+
+  }
+  if(type == c("players")){
+      mflUrl <- paste(mflUrl, "&DETAILS=1", sep = "")
+  }
+  mflTbl <- xmlToList(xmlParse(mflUrl))
+  
+  if(type != "nflSchedule"){
+    mflTbl <- mflTbl[-which(names(mflTbl) == ".attrs")]
+  }
+  
+  if(type == "nflSchedule"){
+    newTbl <- data.table(game = as.numeric(), gameDate = as.character(), timeRemaining = as.numeric())
+    for(g in 1:(length(mflTbl)-1)){
+      data<- mflTbl[[g]][[".attrs"]]
+      
+      gameData <- data.frame(t(data), stringsAsFactors = FALSE)
+      
+      kickoff <- as.numeric(gameData$kickoff)
+      
+      gameDate <- as.Date("1/1/1970 00:00:00", format = "%m/%d/%Y %H:%M:%S")
+      gameDate <- gameDate + kickoff/3600/24 -0.5
+      
+      teams <- lapply(mflTbl[[g]][which(names(mflTbl[[g]])=="team")], function(l)data.frame(t(l), stringsAsFactors = FALSE))
+      teams <- rbindlist(teams)
+      teams[, c("game","gameDate", "timeRemaining")  := list(g,  gameDate, gameData$gameSecondsRemaining)]
+      newTbl <- rbind.fill(data.frame(newTbl), data.frame(teams))
+    }
+    mflTbl <- data.table(newTbl)
+    mflTbl[id == "KCC", id := "KC"]
+    mflTbl[id == "NEP", id := "NE"]
+    mflTbl[id == "SDC", id := "SD"]
+    mflTbl[id == "SFO", id := "SF"]
+    mflTbl[id == "TBB", id := "TB"]
+    mflTbl[id == "NOS", id := "NO"]
+    mflTbl[id == "GBP", id := "GB"]
+  }
+ 
+  if(type %in% c("players", "injuries")){
+    mflTbl <- lapply(mflTbl, function(l)data.frame(t(l), stringsAsFactors = FALSE))
+  }
+  
+  if(type %in% c("aav", "adp")){
+    mflTbl <- lapply(mflTbl, function(l)data.frame(t(as.numeric(l)), stringsAsFactors = FALSE))
+  }
+
+  if(type != "nflSchedule"){
+  mflTbl <- rbindlist(mflTbl, fill = TRUE)  
+  }
+  if(exists("id", mflTbl) & type != "nflSchedule"){
+    mflTbl$id <- as.numeric(mflTbl$id)
+  }
+  
+  if(type == "players"){
+    nameMatrix <- matrix(unlist(strsplit(as.character(mflTbl$name), ", ", fixed = TRUE)), ncol = 2, byrow = TRUE)
+    mflTbl$name <- getPlayerName(paste(nameMatrix[,2], nameMatrix[,1]))
+    setnames(mflTbl, c("id", "name"), c("playerId", "player"))
+  }
+  
+  if(type == "adp"){
+    setnames(mflTbl, c("playerId", "selectedInDraft", "adp", "minPick", "maxPick"))
+    mflTbl <- mflTbl[, c("playerId", "adp"), with = FALSE]
+    mflTbl[, leagueType := ifelse(ppr, "ppr", "std")]
+    mflTbl <- mflTbl[order(adp)]
+  }
+  if(type == "aav"){
+    setnames(mflTbl, c("playerId", "selectedInAuct", "aav"))
+    mflTbl <- mflTbl[, c("playerId", "aav"), with = FALSE]
+    mflTbl[, leagueType := "std"]
+    mflTbl <- mflTbl[order(aav)]
+  }
+  if(type == "injuries"){
+    setnames(mflTbl, c("playerId", "status", "details"))
+  }
+  
+  return(mflTbl)
+}
+
+# Retrieve ADP and Auction Values from Yahoo
+getYahooValues <- function(type = "SD"){
+  #yahooUrl <- paste("http://football.fantasysports.yahoo.com/f1/draftanalysis?tab=", type, "&pos=", pos, "&sort=DA_AP&count=", sep = "")
+  
+  if(type == "SD"){
+    yahooPos <- list(QB = c(0), RB = c(0), WR =c(0,50), TE = c(0), K = c(0), DEF = c(0))
+  }
+  if(type == "AD"){
+    yahooPos <- list(QB = c(0, 50, 100), RB = seq(0, 200, 50), WR =seq(0, 350, 50), TE = seq(0, 200, 50), K = c(0, 50), DEF = c(0))
+  }
+  
+  yahooDataUrls <- lapply(names(yahooPos), function(pos){
+    
+    yahooUrl <- paste("http://football.fantasysports.yahoo.com/f1/draftanalysis?tab=", type, "&pos=", pos, "&sort=DA_AP&count=", sep = "")
+    yahooPgs <- lapply(yahooPos[[pos]], function(pg)data.table(url = paste(yahooUrl, pg, sep = "")))
+    pos <- ifelse(pos == "DEF", "DST", pos)
+    if(length(yahooPgs) > 1){
+      yahooPgs <- rbindlist(yahooPgs)
+    }
+    else{
+      yahooPgs <- yahooPgs[[1]]
+    }
+    
+    yahooPgs[, position := pos]
+    return(yahooPgs)
+  })
+  
+  yahooDataUrls <- rbindlist(yahooDataUrls)
+  yahooData <- apply(yahooDataUrls, 1, function(u){
+    data <- data.table(readHTMLTable(u["url"], stringsAsFactors = FALSE)$draftanalysistable)
+    if(nrow(data) > 0){
+      data[, position := u["position"]]
+      return(data)
+    }
+    })
+  yahooData <- rbindlist(yahooData)
+  if(type == "SD"){
+  setnames(yahooData, c("player", "adp", "avgRound", "pctDraft", "position"))
+  }
+  if(type == "AD"){
+    setnames(yahooData, c("player", "aav", "avgCost", "pctDraft", "position"))
+    yahooData[, aav := as.numeric(gsub("$", "", aav, fixed = TRUE))]
+    yahooData[, avgCost :=  as.numeric(gsub("$", "", avgCost, fixed = TRUE))]
+  }
+  
+  yahooData[, player := gsub("Sun 10:00 am|Sun 5:30 pm|Mon 4:10 pm|Sun 1:25 pm|Thu 5:30 pm|Mon 7:20 pm|Sun 1:05 pm", "", player)]
+  yahooData[, player := getPlayerName(getPlayerName(getPlayerName(player)))] 
+  yahooData[, leagueType := "std"]
+  return(yahooData[,c("player", "position", ifelse(type == "SD", "adp", "aav"), "leagueType"), with = FALSE])
+}
+
+# Function to retrieve html data from footballguys.com
 fbgUrl <- function(inpUrl, userName, password){
   # Validating input
   if(length(userName) == 0 | length(password) == 0){
@@ -24,7 +314,7 @@ fbgUrl <- function(inpUrl, userName, password){
     stop("Please specify your Footballguys.com User Name and password.", call. = FALSE)
   }
   
-  if(lenght(inpUrl) == 0){
+  if(length(inpUrl) == 0){
     stop("URL not specified", call. = FALSE)
   }
   
@@ -47,192 +337,283 @@ fbgUrl <- function(inpUrl, userName, password){
   return(content(dataPge))
 }
 
+# helper function to convert a text value to numeric
+tryAsNumeric = function(node) {
+    val = xmlValue(node)
+    ans = as.numeric(gsub("Â", "", val))
+    if(is.na(ans))
+        val
+    else
+        ans
+}
 
-retrieveData <- function(inpUrl, columnTypes, columnNames, nameColumn, removeRow = NULL, 
+# Function to retrieve data from a website table either as html, csv or xml data
+# Returns data.table with data
+retrieveData <- function(inpUrl, columnTypes, columnNames, removeRow = integer(), 
                          whichTable, dataType = "html", playerLinkString = "", userName, password){
   
+  orgUrl <- inpUrl
   is.fbg <- length(grep("footballguys", tolower(inpUrl))) > 0 
   is.fft <- length(grep("fftoday", tolower(inpUrl))) > 0 
+  is.shark <- length(grep("fantasysharks", tolower(inpUrl))) > 0
+  is.walter <- length(grep("walterfootball", tolower(inpUrl))) > 0 
+  is.yahoo <- length(grep("yahoo", tolower(inpUrl))) > 0 
+  is.fox <- length(grep("fox", tolower(inpUrl))) > 0 
+  is.numberfire <- length(grep("numberfire", tolower(inpUrl))) > 0
+  is.rotowire <- length(grep("rotowire", tolower(inpUrl))) > 0
+  is.rtsports <- length(grep("rtsports", tolower(inpUrl))) > 0
+  is.nerd <- length(grep("fantasyfootballnerd", tolower(inpUrl))) > 0
+  stRow <- 1
+  if(is.numberfire){
+      stRow <- 2
+  }
+  
+  nameColumn <- which(columnNames == "player")
   
   if(is.fbg){
     inpUrl <- fbgUrl(inpUrl, userName, password)
   }
+  if(length(removeRow) == 0){
+    removeRow <- NULL
+  }
+  if(dataType == "file" & !is.walter){
+      whichTable <- 1
+  }
+  if(is.walter){
+    whichTable <- switch(whichTable,
+                         "1" = "QBs",
+                         "2" = "RBs",
+                         "3" = "WRs",
+                         "4" = "TEs",
+                         "5" = "Ks",
+                         "6" = "DEFs"
+                         )
+  }
   
+  
+  if(is.rtsports){
+    rtColTypes <- columnTypes
+    columnTypes <- rep("character", length(rtColTypes))
+  }
+
   dataTable <- switch(dataType, 
                       "html" = readHTMLTable(inpUrl, stringsAsFactors = FALSE, skip.rows = removeRow, 
-                                             colClasses = colTypes, which = whichTable),
-                      "csv" = read.csv(inpUrl),
-                      "xml" = t(xpathSApply(xmlParse(inpUrl), "//Player", fun = xmlToList)) # This only works for fantasyfootballnerd
+                                             colClasses = columnTypes, which = as.numeric(whichTable)),
+                      "csv" = data.table(read.csv(inpUrl, stringsAsFactors = FALSE)),
+                      "xml" = t(xpathSApply(xmlParse(inpUrl), "//Player", fun = xmlToList)), # This only works for fantasyfootballnerd
+                      "xls" = readWorksheetFromFile(file = dataFile, sheet = whichTable , header = TRUE),
+                      "file" = readWorksheetFromFile(file = inpUrl, sheet = whichTable, header = TRUE, startRow = stRow)
   )
   
-  pgeLinks <- getHTMLLinks(inpUrl)
-  
-  playerId <- NULL
-  
-  if(is.fbg){
-    playerId <- gsub("../players/player-all-info.php?id=","",pgeLinks[grep("player-all-info.php?", pgeLinks)], fixed = TRUE)
-  } else if(is.fft){
-    playerId <- unique(gsub("[^0-9]","",  gsub("LeagueID=[0-9]{1,6}", "", pgeLinks[grep("/stats/players/", pgeLinks)])))
-  } else if(nchar(playerLinkSting) >0){
-    playerId <- unique(gsub("[^0-9]", "", pgeLinks[grep(playerLinkString, pgeLinks)]))  
-  }
-  
-  ## On CBS.com the last rows of the table includes links to additional pages, so we remove those:
-  if(length(grep("Pages:", dataTable[,nameCol], fixed = TRUE))>0){
-    dataTable <- dataTable[-grep("Pages:", dataTable[,nameCol], fixed = TRUE),]
+  if(is.rtsports){
+      dataTable <- data.table(sapply(dataTable, function(x)gsub("[^A-Za-z0-9,. ]", "", x) ))
   }
   
   
-  
-}
-
-
-readUrl <- function(inpUrl, dataSrc, colTypes, nameCol , removeRow, fbgUserName, fbgPassword){
-  if(dataSrc == "Footballguys"){
-    
-    dataPge <- POST(
-      handle = handle("http://subscribers.footballguys.com"),
-      path = "amember/login.php",
-      body = list(amember_login = fbgUserName,
-                  amember_pass = fbgPassword,
-                  amember_redirect_url = inpUrl)
-    )
-  }
-  dataTbl <- data.table()
-  
-  tryCatch(
-    dataTbl <- switch(dataSrc,
-                      "CBS"           = readHTMLTable(inpUrl, stringsAsFactors = FALSE, skip.rows = removeRow, colClasses = colTypes)[7]$`NULL`,
-                      "FOX"           = readHTMLTable(inpUrl, stringsAsFactors = FALSE, colClasses = colTypes)$playerTable,
-                      "ESPN"          = readHTMLTable(inpUrl, stringsAsFactors = FALSE, skip.rows = removeRow, colClasses = colTypes)$playertable_0,
-                      "NFL"           = readHTMLTable(inpUrl, stringsAsFactors = FALSE, colClasses = colTypes)$`NULL`,
-                      "FFToday"       = readHTMLTable(inpUrl, stringsAsFactors = FALSE, skip.rows = removeRow, colClasses = colTypes)[11]$`NULL`,
-                      "FFToday - IDP" = readHTMLTable(inpUrl, stringsAsFactors = FALSE, skip.rows = removeRow, colClasses = colTypes)[11]$`NULL`,
-                      "Footballguys"  = readHTMLTable(content(dataPge), stringsAsFactors = FALSE, colClasses = colTypes)$`NULL`,
-                      "Yahoo"         = readHTMLTable(inpUrl, stringsAsFactors = FALSE, header = FALSE, colClasses = colTypes)[2]$`NULL`,
-                      "NumberFire"    = readHTMLTable(inpUrl, stringsAsFactors = FALSE, header = FALSE, colClasses = colTypes)$`complete-projection`,
-                      "FantasyPros"   = readHTMLTable(inpUrl, stringsAsFactors = FALSE, colClasses = colTypes)$data
-    ),
-    error = function(e){
-      print(paste("Error retriving data from", dataSrc, inpUrl))
-      return(data.table())
-    }
-  )
-  if(is.null(nrow(dataTbl)) | is.null(dataTbl)){
-    print(paste("Empty data table from", dataSrc, inpUrl))
+  if(length(dataTable) == 0 | is.null(dataTable) ){
+    warning(cat("Empty data table retrieved from\n", orgUrl), call. = FALSE)
     return(data.table())
   }
-  if(dataSrc == "CBS"){
-    if(length(grep("Pages:", dataTbl[,nameCol], fixed = TRUE))>0){
-      dataTbl <- dataTbl[-grep("Pages:", dataTbl[,nameCol], fixed = TRUE),]
+  
+  if(nrow(dataTable) == 0 ){
+    warning(cat("Empty data table retrieved from\n", orgUrl), call. = FALSE)
+    return(dataTable)
+  }
+  ## On CBS.com the last rows of the table includes links to additional pages, so we remove those:
+  if(length(grep("Pages:", dataTable[,nameColumn], fixed = TRUE))>0){
+    dataTable <- dataTable[-grep("Pages:", dataTable[,nameColumn], fixed = TRUE),]
+  }
+  
+  
+  ## Setting names on the columns
+  dataTable <- data.table(dataTable)
+  if(length(columnNames) != length(dataTable)){
+      
+      if(is.fox){
+          fox.try = 0
+          while(length(dataTable) > 1 & (length(columnNames) != length(dataTable)) & fox.try < 10 ){
+              print("Retrying fox")
+          dataTable <- switch(dataType, 
+                              "html" = readHTMLTable(inpUrl, stringsAsFactors = FALSE, skip.rows = removeRow, 
+                                                     colClasses = columnTypes, which = as.numeric(whichTable)),
+                              "csv" = data.table(read.csv(inpUrl, stringsAsFactors = FALSE)),
+                              "xml" = t(xpathSApply(xmlParse(inpUrl), "//Player", fun = xmlToList)), # This only works for fantasyfootballnerd
+                              "xls" = readWorksheetFromFile(file = dataFile, sheet = whichTable , header = TRUE),
+                              "file" = readWorksheetFromFile(file = inpUrl, sheet = whichTable, header = TRUE, startRow = stRow)
+            
+          )
+          fox.try <- fox.try + 1
+          }
+          if(length(dataTable) > 1 & (length(columnNames) != length(dataTable)) & fox.try >= 10){
+              dataTable   <- data.table(t(columnNames))
+              setnames(dataTable, columnNames)
+              dataTable <- dataTable[0]
+          }
+          dataTable <- data.table(dataTable)
+      }
+      else {
+    cat(paste("Mismatch in columns from \n", orgUrl, sep = ""))
+    print(paste("Table columns:", paste(names(dataTable), collapse = ", ")))
+    print(paste("Expected columns:", paste(columnNames, collapse =", ")))}
+  }
+  
+  colCount <- min(length(columnNames), length(dataTable))
+  setnames(dataTable, 1:colCount, columnNames[1:colCount])
+  
+  if(is.shark | is.rotowire){
+      if(exists("position", dataTable)){
+          dataTable[position == "Def", position := "DST"]
+          dataTable[position == "D", position := "DST"]
+          dataTable[position == "PK", position := "K"]
+          dataTable[position %in% c("CB", "S"), position := "DB"]
+          dataTable[position %in% c("DE", "DT"), position := "DL"]
+      }
+      if(exists("firstName", dataTable)){
+          dataTable[, player := paste(firstName, lastName)]
+      } else {
+      dataTable[, player:= firstLast(player)]
+          }
+  }  
+  if(is.nerd & exists("position", dataTable)){
+      dataTable[, position := as.character(position)]
+  }
+  if(is.walter){
+    dataTable[, player := paste(firstName, lastName)]
+  }
+  
+  if(is.yahoo){
+    dataTable[, player := gsub("Sun 10:00 am|Sun 5:30 pm|Mon 4:10 pm|Sun 1:25 pm|Thu 5:30 pm|Mon 7:20 pm|Sun 1:05 pm", "", player)]
+  }
+
+  if(is.numberfire & dataType == "file"){
+      wbfile <- loadWorkbook(inpUrl)
+      sheet <- getSheets(wbfile)
+      if(sheet == "IDP"){
+          dataTable[, position := str_extract(dataTable$player, "DB|LB|DL")]
+      }
+  }  
+  
+  # Cleaning up player names
+  dataTable[, player := getPlayerName(getPlayerName(getPlayerName(player)))]
+ 
+  
+  ## Finding playerId for the sources that has that
+  if(dataType == "html"){  
+    pgeLinks <- getHTMLLinks(inpUrl)
+    playerId <- NA
+    if(is.fbg){
+      playerId <- gsub("../players/player-all-info.php?id=","",pgeLinks[grep("player-all-info.php?", pgeLinks)], fixed = TRUE)
+    } else if(is.fft){
+      playerId <- as.numeric(unique(gsub("[^0-9]","",  gsub("LeagueID=[0-9]{1,6}", "", pgeLinks[grep("/stats/players/", pgeLinks)]))))
+    } else if(nchar(playerLinkString) >0){
+      playerId <- as.numeric(unique(gsub("[^0-9]", "", pgeLinks[grep(playerLinkString, pgeLinks)])))
+    }
+    
+    
+    if(length(playerId) > 1 & length(playerId) != nrow(dataTable)){
+      warning(paste("Number of playerIds doesn't match number of players for \n", inpUrl))
+    }
+    
+    if(length(playerId) == nrow(dataTable)){
+      dataTable <- data.table(playerId, dataTable)
     }
   }
-  
-  if(dataSrc == "Footballguys"){
-    pgeLinks <-  getHTMLLinks(content(dataPge))
-  }
-  else{
-    pgeLinks <- getHTMLLinks(inpUrl)
-  }
-  
-  playerId <- switch(dataSrc,
-                     "CBS" =            unique(gsub("[^0-9]", "", pgeLinks[grep("/fantasyfootball/players/playerpage/[0-9]{3,6}",      pgeLinks)])),
-                     "FOX" =            unique(gsub("[^0-9]", "", pgeLinks[grep("/fantasy/football/commissioner/Players/Profile.aspx", pgeLinks)])),
-                     "NFL" =            unique(gsub("[^0-9]", "", pgeLinks[grep("playerId=[0-9]{3,7}$",                                pgeLinks)])),
-                     "FFToday" =        unique(gsub("[^0-9]","",  gsub("LeagueID=[0-9]{1,6}", "", pgeLinks[grep("/stats/players/", pgeLinks)]))),
-                     "FFToday - IDP" =  unique(gsub("[^0-9]","", gsub("LeagueID=[0-9]{1,6}", "", pgeLinks[grep("/stats/players/", pgeLinks)]))),
-                     "Yahoo" =          unique(gsub("[^0-9]", "", pgeLinks[grep("http://sports.yahoo.com/nfl/players/[0-9]{3,6}",     pgeLinks)])),
-                     "Footballguys" = gsub("../players/player-all-info.php?id=","",pgeLinks[grep("player-all-info.php?", pgeLinks)], fixed = TRUE)
-  )
-  
-  if(length(playerId) > 0 & length(dataTbl[,nameCol]) > 0){  
-    dataTbl$playerId <- ifelse(is.na(as.numeric(playerId)), playerId, as.numeric(playerId))
-  }
-  return(dataTbl)  
+  return(data.table(dataTable))
 }
 
-# The url list generates a list of urls for each site and position based on the configuatko files
-urlList <- function(siteRow){
-  retValue = data.table()  
-  for(pg in seq(from= as.numeric(siteRow["startPage"]), to= as.numeric(siteRow["endPage"]), by = as.numeric(siteRow["stepPage"]))){
-    tmpUrl <- siteRow["siteUrl"]
-    replPar <- c("{$WeekNo}", "{$PgeID}", "{$Season}")
-    replVal <- c(weekNo, pg, season)
-    for(i in 1:length(replPar)){
-      tmpUrl <- gsub(replPar[i], as.character(replVal[i]), tmpUrl, fixed = TRUE)
-    }
-    retValue <- rbind.fill(retValue, data.table(siteTableId = siteRow["siteTableId"], analystId = siteRow["analystId"], positionId = siteRow["positionId"], 
-                                                urlData = siteRow["urlData"], nameCol = siteRow["nameCol"], siteUrl = tmpUrl))
-  }
-  return(retValue)
-}
+
+
 
 # scrapeUrl calls readUrl to retrieve data and then cleans it up
-scrapeUrl <- function(x) {
-  if(!dbIsValid(siteDb)){
-    siteDb <- connectDb("projectionsites")
-  }
+scrapeUrl <- function(urlData, siteCredentials = list()) {
   
-  analyst <- as.numeric(x["analystId"])
   
-  siteId <- analysts[analysts$analystId == analyst, "siteID"]
-  dataSrc <- sites[sites$siteID == siteId , "siteName"]
-  tblId <- as.numeric(x["siteTableId"])
-  urlCols <- tableColumns[tableColumns$siteTableID == tblId,]
-  urlCols <- urlCols[with(urlCols, order(columnOrder)),]
-  colTypes <- urlCols$columnType
-  colNames <- urlCols$columnName
-  posId <- siteTables[siteTables$siteTableId == tblId, "positionId"]
-  posName <- positions[positions$positionId == posId, "positionName"]
-  rows2Remove <- tableRowRemove[tableRowRemove$siteTableId == tblId, "rowRemove"]
+  table <- urlData["siteTableId"]
+  analyst <-urlData["analystId"]
+  period <- urlData["urlPeriod"]
+  posId <- as.numeric(urlData["positionId"])
   
-  fbgUserName = ""
-  fbgPassword = ""  
-  
-  dataTable <- data.table(readUrl(x["siteUrl"], dataSrc, colTypes, nameCol = as.numeric(x["nameCol"]), removeRow = rows2Remove, fbgUserName, fbgPassword)) 
-  
-  if(length(dataTable) > 0){
-    colCount <- min(length(colNames), length(dataTable))
-    setnames(dataTable, 1:colCount, colNames[1:colCount])
-  }
-  else {
+  posName <- playerPositions$positionCode[playerPositions$positionId == posId]
+  tblColumns <- dataColumns[siteTableId == table & columnPeriod == period]
+
+  if(nrow(tblColumns) == 0){
     return(data.table())
   }
+  site <- siteAnalysts$siteID[siteAnalysts$analystId == analyst]
   
-  dataTable[, player := getPlayerName(getPlayerName(getPlayerName(player)))]
+  siteInfo <- dataSites[siteId == site]
+  subscription <- as.logical(siteInfo$subscription)
+  siteName <- tolower(siteInfo$siteName)
+  rows2remove <- removeRows$rowRemove[removeRows$siteTableId == table]
+ 
+  if(length(rows2remove) == 0){
+    rows2remove <- integer()
+  }
   
-  idCol <- switch(dataSrc,
-                  "Yahoo" = "yahooId",
-                  "Footballguys" = "fbgId",
-                  "CBS" = "cbsId",
-                  "FOX" = "foxId",
-                  "FFToday" = "fftId",
-                  "FFToday - IDP" = "fftId",
-                  "ESPN" = "None",
-                  "FantasyPros" = "None",
-                  "NumberFire" = "None",
-                  "NFL" = "nflId"
-  )
+  un <- as.character()
+  pw <- as.character()
+  
+  if(subscription){
+    un <- siteCredentials[[siteName]][["user"]]
+    pw <- siteCredentials[[siteName]][["pwd"]]
+  }
+ 
+  dataTable <- retrieveData(inpUrl = as.character(urlData[["siteUrl"]]),
+                            columnTypes = tblColumns$columnType,
+                            columnNames = make.unique(tblColumns$columnName),
+                            removeRow = rows2remove,
+                            whichTable = as.numeric(as.character(urlData["whichTable"])),
+                            dataType = as.character(urlData["urlData"]),
+                            playerLinkString = as.character(urlData["playerLinkString"]),
+                            userName = un, 
+                            password = pw) 
+  
+  if(nrow(dataTable) == 0){
+    return(data.table())
+  }
+  idCol <- siteInfo$playerIdCol
+  
+  if(exists("position", dataTable)){
+   dataTable <- dataTable[position == posName,]
+  }
+  
   
   # Merging with player data from NFL.com to find the playerId.
-  detailPos <- posMap[posMap$positionCode == posName, "detailPosition"]
-  
-  if(dataSrc != "NFL"){
-    if(idCol %in% names(nflPlayers) & posId != 6 & "playerId" %in% names(dataTable) ){
+  detailPos <- posMap[posMap$positionCode == posName, "detailPosition", with = FALSE]$detailPosition
+  if(siteInfo$siteName != "NFL"){
+    if(idCol %in% names(players) & posId != 6 & "playerId" %in% names(dataTable) ){
       setnames(dataTable, "playerId", idCol)
-      dataTable <- merge(dataTable, nflPlayers[, c("playerId", idCol), with = FALSE], by=idCol)
+      dataTable <- merge(dataTable, players[, c("playerId", idCol), with = FALSE], by=idCol)
+      dataTable[, c(idCol) := NULL]
     }else{
-      dataTable$playerId <- NULL
-      dataTable <- merge(dataTable, nflPlayers[position %in% detailPos, c("playerId", "player"), with = FALSE], by= "player")
+        if(exists("playerId", dataTable)){
+            dataTable$playerId <- NULL
+        }
+        players[, pname := toupper(player)]
+        dataTable[, pname := toupper(player)]
+        dataTable <- merge(dataTable, players[position %in% detailPos, c("playerId", "pname"), with = FALSE], by= "pname")
+        players[, pname := NULL]
+        dataTable[, pname := NULL]
     }
   }
   
-  #Separate pass completions from attempts
+  dataTable[, player:=NULL]
+  
+  dataTable <- merge(dataTable, players[, c("playerId", "player"), with = FALSE], by = "playerId")
+  
+  # Separate pass completions from attempts
   if(exists("passCompAtt", dataTable)){
     dataTable[, passComp := str_sub(string=passCompAtt, end=str_locate(string=passCompAtt, '/')[,1]-1)]
-    dataTable[, passAtt := str_sub(string=passCompAtt, start=str_locate(string=passCompAtt, '/')[,1]+1)]
+    dataTable[, passAtt :=  str_sub(string=passCompAtt, start=str_locate(string=passCompAtt, '/')[,1]+1)]
+    dataTable[, passCompAtt := NULL]
   }
   
+  # Calculate pass incompletions and pass completion percentage
+  if(exists("passComp", dataTable) & exists("passAtt", dataTable)){
+      dataTable[, c("passComp", "passAtt") := list(as.numeric(passComp), as.numeric(passAtt))]
+      dataTable[!is.na(passAtt) & !is.na(passComp), passInc := passAtt - passComp]
+      dataTable[!is.na(passAtt) & !is.na(passComp) & passAtt > 0, passCompPct := passComp / passAtt * 100]
+  }
   if(exists("dstBlkPunt", dataTable)){
     dataTable[, dstBlk := dstBlkFg + dstBlkPunt + dstBlkPAT] 
   }
@@ -242,71 +623,54 @@ scrapeUrl <- function(x) {
     dataTable[, dstRetTd := dstPuntRetTds + dstKickRetTds]
   }
   
+  # Combine Kick and Punt Return Yards
+  if(exists("kickRetYds", dataTable)){
+      dataTable[, returnYds := kickRetYds + puntRetYds]
+  }
+  
+  # Convert yards allowed per game to total yards allowed
   if(exists("dstPassYdsPerGm", dataTable)){
     dataTable[, dstYdsAllowed := (dstPassYdsPerGm + dstRushYdsPerGm)*16]
   }
   
+  # Convert points per game to total points
   if(exists("dstPtsPerGm", dataTable)){
-    dataTable[, c("dstPtsAllowed", "dstYdsAllowed") := list(dstPtsPerGm*16, dstYdsPerGm*16)]
+    dataTable[, c("dstPtsAllow", "dstYdsAllowed") := list(dstPtsPerGm*16, dstYdsPerGm*16)]
   }
+  
+  # Adding up Field goals by distance to total field goals
+  if(exists("fg0019", dataTable) & exists("fg50", dataTable) & !exists("fg", dataTable)){
+      dataTable[, fg := ifelse(is.na(fg0019), 0, fg0019) + ifelse(is.na(fg2029), 0, fg2029) + ifelse(is.na(fg3039), 0, fg3039) +
+                    ifelse(is.na(fg4049), 0, fg4049) + ifelse(is.na(fg50), 0, fg50)]
+  }
+   
+  # Calculate field goal attempts if missing
+  if(exists("fgMiss", dataTable) & exists("fg", dataTable) & !exists("fgAtt", dataTable)){
+      dataTable[, fgAtt := fgMiss + fg]
+  }
+  
+  if(!exists("fgMiss", dataTable) & exists("fg", dataTable) & exists("fgAtt", dataTable)){
+      dataTable[, fgMiss := as.numeric(fgAtt) - as.numeric(fg)]
+  }
+  
   
   dataTable[, analystId := analyst]
-  dataTable[,name := nameMerge(dataTable$player)]
+  removeCols <- tblColumns$columnName[as.numeric(tblColumns$removeColumn) == 1]
   
-  #Remove duplicate cases
-  duplicateCases <- dataTable[duplicated(name)]$name
-  dataTable[which(name %in% duplicateCases),]
+  # Removing columns not needed.
+  if(length(removeCols) >0 ){
+    dataTable <- dataTable[, !removeCols, with = FALSE]
+  }
   
-  return(dataTable[, intersect(names(dataTable), finalVarNames), with = FALSE])  
+  return(dataTable)  
 }
 
-# getPlayerName - cleans the player column for projection data.
-getPlayerName <- function(playerCol){
-  nameCorrect <- read.csv(paste(getwd(), "/Data/NameCorrections.csv", sep = ""), stringsAsFactors = FALSE)
-  teamCorrect <- read.csv(paste(getwd(), "/Data/NFLTeams.csv", sep =""), stringsAsFactors = FALSE)
-  playerCol <- gsub("49ers", "Niners", playerCol, fixed = TRUE)
-  playerCol <- gsub("New York NYG", "Giants", playerCol, fixed = TRUE)
-  playerCol <- gsub("New York NYJ", "Jets", playerCol, fixed = TRUE)
-  playerCol <- gsub("New York.+\\(NYG", "Giants", playerCol)
-  playerCol <- gsub("New York.+\\(NYJ", "Jets", playerCol)
-  playerCol <- gsub("New York Giants", "Giants", playerCol)
-  playerCol <- gsub("New York Jets", "Jets", playerCol)
-  playerCol <- gsub("New England Patriots", "Patriots", playerCol)
-  playerCol <- gsub("New England", "Patriots", playerCol)
-  playerCol <- gsub("New Orleans Saints", "Saints", playerCol)
-  playerCol <- gsub("New Orleans", "Saints", playerCol)
-  
-  playerCol <- gsub("Questionable|Probable|Injured Reserve|Out|SSPD|Final|View|Videos|News|Video|(N|n)ote|(N|n)otes|(P|p)layer|^No new|New ", "", playerCol)
-  
-  playerCol <- gsub("(B(AL|al)|B(UF|uf)|C(HI|hi)|C(IN|in)|C(LE|le)|D(AL|al)|D(EN|en)|D(ET|et)|GB|H(OU|ou)|I(ND|nd)|J(AC|ac)|J(AX|ax)|KC|K(AN|an)|NO|O(AK|ak)|P(IT|it)|P(HI|hi)|NYG|NYJ|NE|S(EA|ea)|A(TL|tl)|A(RI|ri)|M(IA|ia)|SD|S(T|t)(L|l)|C(AR|ar)|SF|T(EN|en)|W(AS|as)|TB|M(IN|in)|W(SH|sh)) ", "", playerCol)
-  playerCol <- gsub(",\\s(B(AL|al)|B(UF|uf)|C(HI|hi)|C(IN|in)|C(LE|le)|D(AL|al)|D(EN|en)|D(ET|et)|GB|H(OU|ou)|I(ND|nd)|J(AC|ac)|J(AX|ax)|KC|K(AN|an)|NO|O(AK|ak)|P(IT|it)|P(HI|hi)|NYG|NYJ|NE|S(EA|ea)|A(TL|tl)|A(RI|ri)|M(IA|ia)|SD|S(T|t)(L|l)|C(AR|ar)|SF|T(EN|en)|W(AS|as)|TB|M(IN|in)|W(SH|sh))", "", playerCol)
-  playerCol <- gsub("(B(AL|al)|B(UF|uf)|C(HI|hi)|C(IN|in)|C(LE|le)|D(AL|al)|D(EN|en)|D(ET|et)|GB|H(OU|ou)|I(ND|nd)|J(AC|ac)|J(AX|ax)|KC|K(AN|an)|NO|O(AK|ak)|P(IT|it)|P(HI|hi)|NYG|NYJ|NE|S(EA|ea)|A(TL|tl)|A(RI|ri)|M(IA|ia)|SD|S(T|t)(L|l)|C(AR|ar)|SF|T(EN|en)|W(AS|as)|TB|M(IN|in)|W(SH|sh))$", "", playerCol)
-  playerCol <- gsub("BAL|BUF|CHI|CIN|CLE|DAL|DEN|DET|GB|HOU|IND|JAC|JAX|KC|KAN|NO|OAK|PIT|PHI|NYG|NYJ|NE|SEA|ATL|ARI|MIA|SD|STL|CAR|SF|TEN|WAS|TB|MIN|WSH", "", playerCol)
-  
-  playerCol <- gsub("\\s+((P|Q|O|D|S)$|IR|EXE|SUS|PUP|DNP|LP)|\\s(P|Q|O|D|S)\\s|^\\[(Q|P|O|D|S)\\]\\s|(P|Q|O|D|S|IR)$", "", playerCol)
-  playerCol <- gsub(" Jr.| Sr.| Jr| Sr| III", "", playerCol)
-  playerCol <- gsub("\\sat|\\svs.","", playerCol)
-  playerCol <- gsub("[^a-zA-Z \\.\\-]", "", playerCol)
-  playerCol <- gsub("Niners", "49ers", playerCol, fixed = TRUE)
-  playerCol <- gsub(" {2,99}", "", playerCol)
-  playerCol <- gsub("vs$", "", playerCol)
-  playerCol <- gsub("(W|L)$", "", playerCol)
-  
-  playerCol <- gsub("RBTE$|RBWR$|TERB$|WRRB$|WRTE$|TEWR$|QBRB$|RBQB$|QBWR$|WRQB$|TEQB$|QBTE$|QB$|RB$|WR$|TE$|K$|DEF$|DST$|FA$|DL$|LB$|DB$| FA|DST D", "", playerCol)
-  playerCol <- gsub("^\\s+|\\s$", "", playerCol)
-  
-  playerCol <- gsub("\\-$", "", playerCol)
-  playerCol <- gsub(" - DEF(W|L)$", "", playerCol)
-  for(n in 1:nrow(nameCorrect)){
-    
-    playerCol[playerCol == nameCorrect[n,]$NameFrom] <- nameCorrect[n,]$NameTo
-  }
-  
-  for(n in 1:nrow(teamCorrect)){
-    
-    playerCol[playerCol == teamCorrect[n,]$teamArea] <- teamCorrect[n,]$teamName
-    playerCol[playerCol == paste(teamCorrect[n,]$teamArea, teamCorrect[n,]$teamName)] <- teamCorrect[n,]$teamName
-  }
-  rm(nameCorrect, teamCorrect)
-  return(playerCol)
+
+
+
+
+firstLast <- function(lastFirst){
+  nameMatrix <- matrix(unlist(strsplit(lastFirst, ", ")), ncol =2, byrow = TRUE)
+  fullName <- paste(nameMatrix[,2], nameMatrix[,1])
+  return(fullName)
 }

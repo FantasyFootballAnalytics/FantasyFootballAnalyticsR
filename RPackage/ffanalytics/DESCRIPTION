@@ -1,0 +1,52 @@
+Package: ffanalytics
+Type: Package
+Title: Scrape Data and Calculate Fantasy Football Projections
+Version: 0.1.1
+Author: Dennis Andersen
+Maintainer: Dennis Andersen <andersen.dennis@live.com>
+Description: Scrape data from multiple sources and calculate projected fantasy
+    points for your drafts.
+License: GPL2
+LazyData: TRUE
+Depends:
+    shiny,
+    miniUI
+Imports:
+    data.table, stringr, DT, XML, httr
+RoxygenNote: 5.0.1
+Collate:
+    'calcStdDev.R'
+    'calculatePoints.R'
+    'calculateRisk.R'
+    'calculationDataPrep.R'
+    'columnVariables.R'
+    'confidenceInterval.R'
+    'createObject.R'
+    'data.R'
+    'dataGadget.R'
+    'dataPeriod.R'
+    'dataResult.R'
+    'externalConstants.R'
+    'ffanalytics.R'
+    'getAdpAav.R'
+    'getAdpData.R'
+    'getPlayerData.R'
+    'getPlayerName.R'
+    'getProjections.R'
+    'getRanks.R'
+    'sourceSite.R'
+    'sourceAnalyst.R'
+    'sourceTable.R'
+    'getUrls.R'
+    'helperFunctions.R'
+    'internalConstants.R'
+    'leagueScoring.R'
+    'mflPlayers.R'
+    'nflPlayerData.R'
+    'projectPoints.R'
+    'projectionGadget.R'
+    'readUrl.R'
+    'retriveData.R'
+    'runScrape.R'
+    'scoringUI.R'
+    'scrapeGadget.R'

@@ -1,0 +1,94 @@
+id,abbr,name,shortName,ffanalytics
+1,GP,Games Played,GP,games
+2,Att,Passing Attempts,Pass Att,passAtt
+3,Comp,Passing Completions,Pass Comp,passComp
+4,Inc,Incomplete Passes,Pass Inc,passInc
+5,Yds,Passing Yards,Pass Yds,passYds
+6,TD,Passing Touchdowns,Pass TD,passTds
+7,Int,Interceptions Thrown,Pass Int,passInt
+8,Sacked,Every Time Sacked,Sacked,sacks
+9,300-399,300-399 Passing Yards Bonus,300-399 Pass Yds,pass300
+10,400+,400+ Passing Yards Bonus,400+ Pass Yds,pass400
+11,40+ TD,40+ Passing Yard TD Bonus,40+ Pass TD,passTd40
+12,50+ TD,50+ Passing Yards TD Bonus,50+ Pass TD,passTd50
+13,Att,Rushing Attempts,Rush Att,rushAtt
+14,Yds,Rushing Yards,Rush Yds,rushYds
+15,TD,Rushing Touchdowns,Rush TD,rushTds
+16,40+ TD,40+ Rushing Yard TD Bonus,40+ Rush TD,rushTd40
+17,50+ TD,50+ Rushing Yard TD Bonus,50+ Rush TD,rushTd50
+18,100-199,100-199 Rushing Yards Bonus,100-199 Rush Yds,rush100
+19,200+,200+ Rushing Yards Bonus,200+ Rush Yds,rush200
+20,Rect,Receptions,Receptions,rec
+21,Yds,Receiving Yards,Rec Yds,recYds
+22,TD,Receiving Touchdowns,Rec TD,recTds
+23,40+ TD,40+ Receiving Yard TD Bonus,40+ Rec TD,recTd40
+24,50+ TD,50+ Receiving Yard TD Bonus,50+ Rec TD,recTd50
+25,100-199,100-199 Receiving Yards Bonus,100-199 Rec Yds,rec100
+26,200+,200+ Receiving Yards Bonus,200+ Rec Yds,rec200
+27,Yds,Kickoff and Punt Return Yards,Return Yds,returnYds
+28,TD,Kickoff and Punt Return Touchdowns,Return TD,returnTds
+29,Fum TD,Fumble Recovered for TD,Fum TD,fumRecTd
+30,Lost,Fumbles Lost,Fum Lost,fumbles
+31,Fum,Fumble,Fum,fum
+32,2PT,2-Point Conversions,2PT,twoPts
+33,Made,PAT Made,PAT Made,xp
+34,Miss,PAT Missed,PAT Miss,xpMiss
+35,0-19,FG Made 0-19,FG 0-19,fg0019
+36,20-29,FG Made 20-29,FG 20-29,fg2029
+37,30-39,FG Made 30-39,FG 30-39,fg3039
+38,40-49,FG Made 40-49,FG 40-49,fg4049
+39,50+,FG Made 50+,FG 50+,fg50
+40,0-19,FG Missed 0-19,FG Miss 0-19,fgMiss0019
+41,20-29,FG Missed 20-29,FG Miss 20-29,fgMiss2029
+42,30-39,FG Missed 30-39,FG Miss 30-39,fgMiss3039
+43,40-49,FG Missed 40-49,FG Miss 40-49,fgMiss4049
+44,50+,FG Missed 50+,FG Miss 50+,fgMiss50
+45,Sack,Sacks,Sack,dstSack
+46,Int,Interceptions,Int,dstInt
+47,Fum Rec,Fumbles Recovered,Fum Rec,dstFumRec
+48,Fum F,Fumbles Forced,Fum Forc,dstFumForce
+49,Saf,Safeties,Saf,dstSafety
+50,TD,Touchdowns,TD,dstTd
+51,Block,Blocked Kicks,Block,dstBlk
+52,Yds,Kickoff and Punt Return Yards,Return Yds,dstRetYds
+53,TD,Kickoff and Punt Return Touchdowns,Return TD,dstRetTd
+54,Pts Allow,Points Allowed,Pts Allow,dstPtsAllow
+55,Pts Allow,Points Allowed 0,Pts Allow 0,dstPtsAllow0
+56,Pts Allow,Points Allowed 1-6,Pts Allow 1-6,dstPtsAllow16
+57,Pts Allow,Points Allowed 7-13,Pts Allow 7-13,dstPtsAllow713
+58,Pts Allow,Points Allowed 14-20,Pts Allow 14-20,dstPtsAllow1420
+59,Pts Allow,Points Allowed 21-27,Pts Allow 21-27,dstPtsAllow2127
+60,Pts Allow,Points Allowed 28-34,Pts Allow 28-34,dstPtsAllow2834
+61,Pts Allowed,Points Allowed 35+,Pts Allowed 35+,dstPtsAllowed35
+62,Yds Allow,Yards Allowed,Yds Allow,dstYdsAllowed
+63,0-99 Yds,Less than 100 Total Yards Allowed,Less 100 Yds Allowed,dstLess100YdsAllowed
+64,100-199 Yds,100-199 Yards Allowed,100-199 Yds Allow,dst100199YdsAllow
+65,200-299 Yds,200-299 Yards Allowed,200-299 Yds Allow,dst200299YdsAllow
+66,300-399 Yds,300-399 Yards Allowed,300-399 Yds Allow,dst300399YdsAllow
+67,400-449 Yds,400-449 Yards Allowed,400-449 Yds Allow,dst400449YdsAllow
+68,450-499 Yds,450-499 Yards Allowed,450-499 Yds Allow,dst450499YdsAllow
+69,500+ Yds,500+ Yards Allowed,500+ Yds Allow,dst500YdsAllow
+70,Tot,Tackle,Tack,idpSolo
+71,Ast,Assisted Tackles,Ast,idpAst
+72,Sck,Sack,Sack,idpSack
+73,Int,Defense Interception,Int,idpInt
+74,Frc Fum,Forced Fumble,Frc Fum,dstFumForce
+75,Fum Rec,Fumbles Recovery,Fum Rec,dstFumRec
+76,Int TD,Touchdown (Interception return),Int TD,dstIntTd
+77,Fum TD,Touchdown (Fumble return),Fum TD,dstFumTd
+78,Blk TD,Touchdown (Blocked kick),Blk TD,dstBlkTd
+79,Blk,"Blocked Kick (punt, FG, PAT)",Blk,idpBlk
+80,Saf,Safety,Saf,idpSafety
+81,PDef,Pass Defended,Pass Def,idpPD
+82,Int Yds,Interception Return Yards,Int Yds,dstIntYds
+83,Fum Yds,Fumble Return Yards,Fum Yds,dstFumYds
+84,TFL,Tackles for Loss Bonus,TFL,idpTFL
+85,QB Hit,QB Hit,QB Hit,dstQbHit
+86,Sck Yds,Sack Yards,Sck Yds,dstSckYds
+87,10+ Tackles,10+ Tackles Bonus,10+ Tack,dst10Tack
+88,2+ Sacks,2+ Sacks Bonus,2+ Sck,dst2Sck
+89,3+ Passes Defended,3+ Passes Defended Bonus,3+ Pas Def,dst3PasDef
+90,50+ Yard INT Return TD,50+ Yard INT Return TD Bonus,50+ Yard INT TD,dst50YardIntTd
+91,50+ Yard Fumble Return TD,50+ Yard Fumble Return TD Bonus,50+ Yard Fum Ret TD,dst50YardFumRetTd
+92,DP 2pt Ret,Def 2-point Return,Def Player 2pt Ret,dstDefPlayer2PtRet
+93,DST 2pt Ret,Team Def 2-point Return,Team Def 2pt Ret,dstTeamDef2PtRet

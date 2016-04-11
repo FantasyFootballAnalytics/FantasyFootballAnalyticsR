@@ -1,0 +1,69 @@
+
+---
+title: "Are Subscription Sources More Accurate?"
+author: "Dennis Andersen"
+
+output: 
+  html_document:
+    theme: readable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE, message=FALSE,results='hide',warning=FALSE}
+# Read functions required for calculations
+source("../../R Scripts/Functions/Functions.R")
+source("../../R Scripts/Posts/Subscription Accuracy/accuracyCalculations.R")
+# Get Data
+srcPoints <- data.table::data.table(read.csv("../../R Scripts/Posts/Subscription Accuracy/comparePoints.csv"))
+```
+## Introduction
+In this article, we examine whether there are advantages to subsribing to projections for fantasy football. Specifically we tested whether data from subscription sources have higher accuracy than projections from free, publicly available sources. There are arguments for subscription sources would be more accurate as you may expect to get better accuracy as part of what you are paying for. We examined projections from the 2015 season for QB, RB, WR and TE positions.
+
+## Overall accuracy
+We calculated the projected seasonal points based on standard scoring settings as used in our 
+[projection tool](http://apps.fantasyfootballanalytics.net/projections) 
+and compared with the actual points. For the aggregation of sources we used the regular mean. We have `r length(unique(srcPoints$analystId[srcPoints$subscription == 0]))` free sources and `r length(unique(srcPoints$analystId[srcPoints$subscription == 1]))` subscription sources. The free sources were: CBS, Yahoo, ESPN, FOX, NFL, FFToday, NumberFire, EDS Football, WalterFootball and RTSports. Since the subscription sources are not publicly available we are unable to disclose the names of the sources.
+For each of the groups we calculated _R^2^_ (higher is better) and MASE (lower is better) values as well as values for both groups combined. The results are below.
+
+```{r, echo=FALSE, results='asis'}
+srcPoints <- data.table::data.table(srcPoints)
+knitr::kable(overallAccuracy(srcPoints), digits = 3, caption = "Overall accuracy")
+```
+
+Based on the results, the subscription sources are less accurate than the free sources but add to the overall accuracy. In light of that, one possible reason the subscription sources were less accurate could be because there were more free sources than subscription sources. To investigate that possibility, we examined the accuracy of all possible combinations of `r length(unique(srcPoints$analystId[srcPoints$subscription == 1]))` sources among the free sources. The results below show the mean  _R^2^_ and MASE values for all the combinations. Reducing the number of free sources does reduce the accuracy measures, but not below the accuracy of the subscription sources. In other words, even after accounting for how many sources of projections were included, free projections were more accurate than subscription projection.
+
+```{r, echo=FALSE, results='asis'}
+srcPoints <- data.table::data.table(srcPoints)
+knitr::kable(freeCombinations(srcPoints), digits = 3, caption = "All Possible Combinations of 6 Free Sources")
+```
+
+## Position Accuracy
+Let’s examine whether the results are different when we look at individual positions:
+```{r, echo=FALSE, results='asis'}
+srcPoints <- data.table::data.table(srcPoints)
+allAcc <- positionAccuracy(srcPoints)
+pos <- c("QB", "RB", "WR", "TE")
+for(p in pos){
+  pTable <- data.table::copy(allAcc)[Position == p]
+  pTable$Position <- NULL
+  tblCaption <- paste(p, "Accuracy")
+  print(knitr::kable(pTable, digits = 3, caption = tblCaption))
+}
+```
+
+For the QB and TE positions the free sources were slightly more accuracte than the subscription source, while the subscription sources were slightly more accurate for the RB position measured by _R^2^_ but slightly less accurate as measured by MASE. The free sources projected WR points more accurately than the subscription sources. Except for the QB position, combining the free and subscription sources also increased the overall accuracy.
+
+We also calculated all possible combinations of `r length(unique(srcPoints$analystId[srcPoints$subscription == 1]))` sources among the free sources by position. As the results below show the accuracy for the free sources did decrease, but as was the case with overall accuracy not below the accuracy of the subscription sources.
+
+```{r, echo=FALSE, results='asis'}
+srcPoints <- data.table::data.table(srcPoints)
+knitr::kable(freeCombinationsPos(srcPoints), digits = 3, caption = "All Possible Combinations of 6 Free Sources By Position")
+```
+
+## Conclusion
+We have seen that subscription sources are not more accurate than the free sources (in general free projections were more accurate than subscription projections), but that they do help the accuracy both overall and for positions (except quarterbacks). As we have 
+[demonstrated before](http://fantasyfootballanalytics.net/2016/03/best-fantasy-football-projections-2016-update.html),
+individual analysts do not reliably beat the “Wisdom of the Crowd” and this analysis further supports that. So while free sources seems to be a bit more accuracte than the subscription sources, it is combining them that adds to the accuracy of the overall projections. So if you are asking whether you should use free or subscription sources for your projections, the answer is: use both!
