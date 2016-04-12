@@ -15,19 +15,37 @@ Right now the package is only available through our GitHub repository, and insta
 ```{r eval= FALSE}
 devtools::install_github("dadrivr/FantasyFootballAnalyticsR", subdir = "RPackage/ffanalytics")
 ```
-There is also a [tarball](https://github.com/dadrivr/FantasyFootballAnalyticsR/RPackage/) available in the GitHub repository that you can download and install with `install.packages`. After the package is installed you can then use `library(ffanalytics)` to attach the package.
+There is also a [tarball](https://github.com/dadrivr/FantasyFootballAnalyticsR/tree/master/RPackage) available in the GitHub repository that you can download and install with `install.packages`. After the package is installed you can then use `library(ffanalytics)` to attach the package.
 
 ## Package manual
-The package includes a reference manual in standard package format. You can also find this in the help pane in RStudio. The full PDF version of the manual is [here](https://github.com/dadrivr/FantasyFootballAnalyticsR/blob/master/RPackage/ffanalytics/ffanalytics.pdf)
+The package includes a reference manual in standard package format. You can also find this in the help pane in RStudio. The full PDF version of the manual is [here](https://github.com/dadrivr/FantasyFootballAnalyticsR/blob/master/RPackage/ffanalytics/ffanalytics.pdf).
 
 # Addins
-The `ffanalytics` package includes a couple of [RStudio addins](http://rstudio.github.io/rstudioaddins/) to help you processing with data. To be able to fully take advandtage of this you will need to run RStudio (v0.99.878 or later). The first addin `Run Scrape` will just execute a data scrape while `Run Projections` will execute the data scrape as well as calculate projected points. The addins will construct code and return them to the console in RStudio to be executed.
+The `ffanalytics` package includes a couple of [RStudio addins](http://rstudio.github.io/rstudioaddins/) to help you processing with data. To be able to fully take advandtage of this you will need to run RStudio (v0.99.878 or later). The first addin `Run Scrape` will just execute a data scrape while `Run Projections` will execute the data scrape as well as calculate projected points. The addins will construct code and return them to the console in RStudio to be executed. Since the `Run Projections` addin contains functionality of the `Run Scrape` addin we will just focus on the projections addin here.
 
 ## Run Projections addin
 The `Run Projection` addin consists of three tabs that you will need to review before running the projections. 
 
 ### Sources and positions
 When you start the projections addin you should see the tab where you can select which sources and positions you want to use. Note that this includes the ability to use subscription based sources but you will need to either download the data separately or provide user name and password for those sites. Also, set the period you want to scrape for. Note that historical data scrapes are nearly impossible to do as sites usually don't store their historical projections.
-![](Project_Gadget_Scrape.png)
+
+### Scoring Settings
+You can review and set the scoring settings for the calculations on the scoring settings tab. There is a panel for each position with the names of the variables to score. These settings are similar to the ones we use in our [projection tool](http://apps.fantasyfootballanalytics.net/projections). Just use the scoring setting that matches your league
+
+### Calculation Settings
+On the calculations tab you can set which average you want to use for the calculations as well as select sources for the ADP values. It also allows you to select which MFL drafts types to use when getting the ADP data. 
 
 # Execute R code
+You can also execute the code to run directly from R or RStudio. If you want to run a data scrape then you can execute
+```{r eval= FALSE}
+runScrape(week = 0, season = 2016, analysts = c(-1, 5, 7, 18, 27), positions = c("QB", "RB", "WR", "TE", "K", "DST"))
+```
+
+This runs a data scrape for the 2016 season for 5 different analysts for the Non-IDP positions. Refer to the `analysts` table in the package to identify the analysts you want to use.
+
+If you want to run the projection calculation from R or RStudio you will need the output from the `runScrape` function. Then you can execute:
+```{r eval= FALSE}
+getProjections(scrapeData, avgMethod = "average", leagueScoring = userScoring, teams = 12, format = "standard", mflMocks = -1, mflLeagues = -1, adpSources = c("CBS", "ESPN", "FFC", "MFL", "NFL"))
+```
+
+Where `scrapeData` is the output from the `runScrape` function and `userScoring` is your defined scoring rules. See `scoringRules` in the package for an example of defining scoring rules.
