@@ -1,20 +1,24 @@
-#' Run a data scrape
+#' Scrape Projections
 #'
-#' Executing a data scrape based on inputs of week, season, analysts and positions.
-#' If no inputs are specified the user will be prompted.
+#' Executes a scrape of players' fantasy football projections based on the selected
+#' season, week, analysts, and positions. If no inputs are specified, the user is prompted.
 #'
-#' @note Historical scrapes are nearly impossible to do as very few if any sites
-#' actually stores their historical projections. An attempt to scrape historical
-#' projections will likely produce current projectsions in most cases.
-#' @param week The week number that the scrape is going to be executed for
-#' @param season The season that the scrape will be executed for
-#' @param analysts An integer vector of analystIds specifying which analysts to
-#' execute the scrape for. See \link{analysts} data set for values.
+#' @note Scraping past seasons/weeks is nearly impossible because very few if any sites
+#' make their historical projections available. An attempt to scrape historical
+#' projections will likely produce current projections in most cases.
+#' #' @param season The season of projections to scrape (e.g., 2015).
+#' @param week The week number of projections to scrape (e.g., 16).
+#' Week number should be an integer between 0 and 21.
+#' Week number 0 reflects seasonal projections.
+#' Week number between 1 and 17 reflects regular season projections.
+#' Week number between 18 and 21 reflects playoff projections.
+#' @param analysts An integer vector of analystIds specifying which analysts' projections to
+#' scrape. See \link{analysts} data set for values of analystIds.
 #' @param positions A character vector of position names specifying which positions
-#' to execute the scrape for
+#' to scrape: \code{c("QB", "RB", "WR", "TE", "K", "DST", "DL", "LB", "DB")}.
 #' @return list of \link{dataResults}. One entry per position scraped.
 #' @export runScrape
-runScrape <- function(week = NULL, season = NULL,
+runScrape <- function(season = NULL, week = NULL,
                       analysts = NULL, positions = NULL){
 
   # Request input from user to determine period to scrape
