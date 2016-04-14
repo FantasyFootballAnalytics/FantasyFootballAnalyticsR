@@ -1,11 +1,12 @@
-#' Projected points
+#' Calculate Projected Points
 #'
-#' Calculate projected points, confidence intervals, risk, tiers etc.
-#' @param scrapeData The scraped data from \link{runScrape}
-#' @param avgMethod Which average method should be used for calculating averages
+#' Calculate projected fantasy points, confidence intervals, risk, tiers, etc.
+#' @param scrapeData The scraped projections data from \link{runScrape}.
+#' @param avgMethod Which average method should be used for aggregating the
+#' projections from different sources.
 #' @param leagueScoring List of scoring rules for the league see \link{scoringRules}
-#' for and example
-#' @param teams Number of teams in the league
+#' for an example
+#' @param teams Number of teams in the league (integer)
 #' @param format League format
 #' @param mflMocks Include mock drafts from MFL. Set to 1 if only mock drafts
 #' should be used, 0 if only real drafts should be used. If not speficied all
@@ -13,7 +14,7 @@
 #' @param mflLeagues What type of leagues to include for MFL. Set to 0 to use
 #' redraft leagues only; 1 to only use keeper leagues, 2 for rookie drafts, and
 #' 3 for MFL Public Leagues. If not speficied all types of drafts will be used.
-#' @param ADPsource Character vector with one or more of \code{"CBS", "ESPN", "FFC", "MFL", "NFL"}
+#' @param ADPsource Character vector with one or more of \code{c("CBS", "ESPN", "FFC", "MFL", "NFL")}
 #' @export getProjections
 getProjections <- function(scrapeData = NULL,
                            avgMethod = "average",

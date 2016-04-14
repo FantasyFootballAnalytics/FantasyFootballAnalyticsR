@@ -1,12 +1,13 @@
 Package: ffanalytics
 Type: Package
-Title: Scrape Data and Calculate Fantasy Football Projections
+Title: Fantasy Football Analytics
 Version: 0.1.1
-Author: Dennis Andersen
+Author: Dennis Andersen, Isaac Petersen
 Maintainer: Dennis Andersen <andersen.dennis@live.com>
-Description: Scrape data from multiple sources and calculate projected fantasy
+Description: Scrape fantasy football projections from multiple sources and calculate projected fantasy
     points for your drafts.
-License: GPL2
+License: GPL-3
+URL: http://fantasyfootballanalytics.net/
 LazyData: TRUE
 Depends:
     shiny,
