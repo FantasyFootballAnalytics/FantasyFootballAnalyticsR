@@ -4,6 +4,7 @@ Run_Scrape <- function(){
   curYear <- as.POSIXlt(Sys.Date())$year + 1900
   weekList <- 0:17
   names(weekList) <- c("Season", paste("Week", 1:17))
+  fbgs <- analysts[siteId == sites[siteName == "Footballguys"]$siteId]$analystId
   ui <- miniPage(
     gadgetTitleBar("Run Data Srape"),
     miniContentPanel(
@@ -12,7 +13,7 @@ Run_Scrape <- function(){
                 selectInput("scrapeSeason", "Season", 2008:curYear,
                             selected = curYear, width = "90%"),
                 selectInput("scrapeWeek", "Week",weekList, selected = 0, width = "90%"),
-                "",""),
+                "", ""),
 
               fillRow(
                 fillCol(flex = c(1,10),
@@ -20,13 +21,14 @@ Run_Scrape <- function(){
                                         actionButton("nonSubs","Free"),
                                         actionButton("noAnalyst", "None")),
                         uiOutput("avail_analysts")),
-                fillCol(flex = c(1,10),
+                fillCol(flex = c(1,5,5),
                         miniButtonBlock(actionButton("allPosition", "All"),
                                         actionButton("offPosition", "Offense"),
                                         actionButton("nonIdpPosition", "Non-IDP"),
                                         actionButton("noPosition", "None")),
                         checkboxGroupInput("selectPositions", "Select Positions",
-                                           position.name))))
+                                           position.name),
+                        uiOutput("fbg_cred"))))
     )
   )
 
@@ -42,6 +44,17 @@ Run_Scrape <- function(){
       checkboxGroupInput("selectAnalyst", "Select Analysts", analyst_list)
     })
 
+    output$fbg_cred <- renderUI({
+      req(input$selectAnalyst)
+      selectedAnalysts <- input$selectAnalyst
+      if(any(fbgs %in% selectedAnalysts)){
+        inp <- tags$div(
+          textInput("fbgUser", "Footballguys User Name"),
+          passwordInput("fgbPwd","Footballguys Password")
+        )
+        return(inp)
+      }
+    })
     observeEvent(input$allAnalyst, {
       allAnalysts <-analystOptions(scrapePeriod())
       updateCheckboxGroupInput(session, "selectAnalyst",

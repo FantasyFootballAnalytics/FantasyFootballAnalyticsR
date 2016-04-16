@@ -15,7 +15,7 @@ dataResult <- setClass(Class = "dataResult",
 setMethod("show",
           "dataResult",
           function(object){
-            cat("Data for:", object@position, "\n")
+            cat("\nData for:", object@position, "\n")
             cat("============\n")
             print(object@resultData)
           }

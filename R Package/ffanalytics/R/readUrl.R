@@ -52,7 +52,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow, dat
 
   # Will try up to 10 times to get data from the source
   while(read.try <= 10 ){
-    srcData <-
+    srcData <-tryCatch(
       switch(dataType,
              "html" = XML::readHTMLTable(inpUrl, stringsAsFactors = FALSE,
                                          skip.rows = removeRow,
@@ -70,7 +70,8 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow, dat
                                                        header = TRUE,
                                                        startRow = stRow),
              "json" = httr::content(httr::GET(inpUrl))
-      )
+      ),
+      error = function(e)data.table::data.table())
     if(dataType != "json")
       srcData <- data.table::data.table(srcData)
     if((length(srcData) > 1 &  length(columnNames) <= length(srcData)) | dataType == "json")

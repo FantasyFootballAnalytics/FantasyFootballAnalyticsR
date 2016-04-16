@@ -2,7 +2,11 @@ Package: ffanalytics
 Type: Package
 Title: Fantasy Football Analytics
 Version: 0.1.1
-Author: Dennis Andersen, Isaac Petersen
+Authors@R: c(person("Dennis", "Andersen", email = "andersen.dennis@live.com",
+                  role = c("aut", "cre")),
+              person("Isaac", "Petersen", email = "isaac@fantasyfootballanalytics.net",
+                  role = c("ctb")))
+Author: Dennis Andersen [aut, cre], Isaac Petersen [ctb]
 Maintainer: Dennis Andersen <andersen.dennis@live.com>
 Description: Scrape fantasy football projections from multiple sources and calculate projected fantasy
     points for your drafts.
@@ -13,7 +17,7 @@ Depends:
     shiny,
     miniUI
 Imports:
-    data.table, stringr, DT, XML, httr
+    data.table, stringr, DT, XML, httr, tcltk
 RoxygenNote: 5.0.1
 Collate:
     'calcStdDev.R'

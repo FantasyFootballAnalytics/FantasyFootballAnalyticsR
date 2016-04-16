@@ -2,7 +2,7 @@
 % Please edit documentation in R/getProjections.R
 \name{getProjections}
 \alias{getProjections}
-\title{Projected points}
+\title{Calculate Projected Points}
 \usage{
 getProjections(scrapeData = NULL, avgMethod = "average",
   leagueScoring = scoringRules, teams = 12, format = "standard",
@@ -10,14 +10,15 @@ getProjections(scrapeData = NULL, avgMethod = "average",
   "MFL", "NFL"))
 }
 \arguments{
-\item{scrapeData}{The scraped data from \link{runScrape}}
+\item{scrapeData}{The scraped projections data from \link{runScrape}.}
 
-\item{avgMethod}{Which average method should be used for calculating averages}
+\item{avgMethod}{Which average method should be used for aggregating the
+projections from different sources.}
 
 \item{leagueScoring}{List of scoring rules for the league see \link{scoringRules}
-for and example}
+for an example}
 
-\item{teams}{Number of teams in the league}
+\item{teams}{Number of teams in the league (integer)}
 
 \item{format}{League format}
 
@@ -29,9 +30,9 @@ types of drafts will be used.}
 redraft leagues only; 1 to only use keeper leagues, 2 for rookie drafts, and
 3 for MFL Public Leagues. If not speficied all types of drafts will be used.}
 
-\item{ADPsource}{Character vector with one or more of \code{"CBS", "ESPN", "FFC", "MFL", "NFL"}}
+\item{ADPsource}{Character vector with one or more of \code{c("CBS", "ESPN", "FFC", "MFL", "NFL")}}
 }
 \description{
-Calculate projected points, confidence intervals, risk, tiers etc.
+Calculate projected fantasy points, confidence intervals, risk, tiers, etc.
 }
 
