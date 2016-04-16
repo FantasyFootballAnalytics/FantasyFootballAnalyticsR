@@ -3,7 +3,10 @@
 #' Executes a scrape of players' fantasy football projections based on the selected
 #' season, week, analysts, and positions. If no inputs are specified, the user is prompted.
 #'
-#' @note Scraping past seasons/weeks is nearly impossible because very few if any sites
+#' @note The function has the ability to include subscription based sources,
+#' but you will need to either download subscription projections separately or
+#' provide a user name and password for those sites.
+#' Scraping past seasons/weeks is nearly impossible because very few if any sites
 #' make their historical projections available. An attempt to scrape historical
 #' projections will likely produce current projections in most cases.
 #' #' @param season The season of projections to scrape (e.g., 2015).
