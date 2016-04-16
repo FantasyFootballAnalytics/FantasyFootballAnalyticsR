@@ -7,7 +7,7 @@ Run_Projection <- function(){
   ui <-miniPage(
     gadgetTitleBar("Get Projections"),
     miniTabstripPanel(
-      miniTabPanel("Scrape", icon = icon("bars"),
+      miniTabPanel("Scrape Settings", icon = icon("bars"),
                    miniContentPanel(
                      fillCol(flex = c(1,9),
                              fillRow(
@@ -32,7 +32,7 @@ Run_Projection <- function(){
                                        uiOutput("fbg_cred"))))
                    )
       ),
-      miniTabPanel("Scoring",  icon = icon("sliders"),
+      miniTabPanel("Scoring Settings",  icon = icon("sliders"),
                    miniContentPanel(
                      fillRow(uiOutput("scoring")))
       ),
