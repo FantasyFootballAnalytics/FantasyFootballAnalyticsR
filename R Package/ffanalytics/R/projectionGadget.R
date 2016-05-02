@@ -3,6 +3,7 @@ Run_Projection <- function(){
   curYear <- as.POSIXlt(Sys.Date())$year + 1900
   weekList <- 0:17
   names(weekList) <- c("Season", paste("Week", 1:17))
+  fbgs <- analysts[siteId == sites[siteName == "Footballguys"]$siteId]$analystId
   ui <-miniPage(
     gadgetTitleBar("Get Projections"),
     miniTabstripPanel(
@@ -21,13 +22,14 @@ Run_Projection <- function(){
                                                        actionButton("nonSubs","Free"),
                                                        actionButton("noAnalyst", "None")),
                                        uiOutput("avail_analysts")),
-                               fillCol(flex = c(1,10),
+                               fillCol(flex = c(1,5,5),
                                        miniButtonBlock(actionButton("allPosition", "All"),
                                                        actionButton("offPosition", "Offense"),
                                                        actionButton("nonIdpPosition", "Non-IDP"),
                                                        actionButton("noPosition", "None")),
                                        checkboxGroupInput("selectPositions", "Select Positions",
-                                                          position.name))))
+                                                          position.name),
+                                       uiOutput("fbg_cred"))))
                    )
       ),
       miniTabPanel("Scoring Settings",  icon = icon("sliders"),
@@ -45,7 +47,7 @@ Run_Projection <- function(){
                                                  choices = c("Standard", "PPR"),
                                                  width = "80%"),
                                      checkboxGroupInput("adp", "ADP sources",
-                                                        c("CBS", "ESPN", "FFC", "MFL", "NFL"),
+                                                        c("CBS", "ESPN", "FFC", "MFL", "NFL", "All"),
                                                         inline = TRUE)),
                              fillRow(selectInput("averageType", "Average",
                                                  choices = c("Average", "Robust", "Weighted"),
@@ -57,8 +59,9 @@ Run_Projection <- function(){
                                                  choices = c(All = -1, "Redraft Leagues" = 0,
                                                              "Keeper League" = 1, "Rookie League" = 2,
                                                              "Public Leagues" = 3), width = "95%")
-                             )
-                             ,""))
+                             ),
+                             fillRow(uiOutput("vorData"))
+                             ))
       )
     )
   )
@@ -73,6 +76,18 @@ Run_Projection <- function(){
       checkboxGroupInput("selectAnalyst", "Select Analysts", analyst_list,
                          selected = NULL)
     })
+    output$fbg_cred <- renderUI({
+      req(input$selectAnalyst)
+      selectedAnalysts <- input$selectAnalyst
+      if(any(fbgs %in% selectedAnalysts)){
+        inp <- tags$div(
+          textInput("fbgUser", "Footballguys User Name"),
+          passwordInput("fbgPwd","Footballguys Password")
+        )
+        return(inp)
+      }
+    })
+
 
     availPositions <- reactive({
       analystCheck <- input$selectAnalyst
@@ -97,12 +112,14 @@ Run_Projection <- function(){
     })
 
     output$scoring <- renderUI(scoringUI(input$selectPositions))
+    output$vorData <- renderUI(vorUI(input$selectPositions))
 
     observeEvent(input$allAnalyst, {
       allAnalysts <-analystOptions(scrapePeriod())
       updateCheckboxGroupInput(session, "selectAnalyst",
                                selected = as.character(allAnalysts))
     })
+
     observeEvent(input$nonSubs, {
       allAnalysts <-analystOptions(scrapePeriod())
       subSites <- sites[subscription == 1]
@@ -129,7 +146,15 @@ Run_Projection <- function(){
     })
 
     observeEvent(input$noPosition, {
-      updateCheckboxGroupInput(session, "selectPositions", selected = character(0))
+      updateCheckboxGroupInput(session, "selectPositions", selected = "")
+    })
+
+
+
+    observeEvent(input$adp, {
+      if(any(input$adp == "All")){
+        updateCheckboxGroupInput(session, "adp", selected =  c("CBS", "ESPN", "FFC", "MFL", "NFL", "All"))
+      }
     })
 
     getScoringRules <- function(positions){
@@ -146,37 +171,83 @@ Run_Projection <- function(){
       })
       names(scoringTables) <- positions
 
-      dstBracket <- ptsBracket
-      for(r in 1:nrow(dstBracket)){
-        if(!is.na(input[[paste0("limit", r)]])){
-          dstBracket[r, c("threshold", "points") := list(as.numeric(input[[paste0("limit", r)]]),
-                                                        as.numeric(input[[paste0("points", r)]]))]
+      if(any(positions == "DST")){
+        dstBracket <- ptsBracket
+        for(r in 1:nrow(dstBracket)){
+          if(!is.na(input[[paste0("limit", r)]])){
+            dstBracket[r, c("threshold", "points") := list(as.numeric(input[[paste0("limit", r)]]),
+                                                           as.numeric(input[[paste0("points", r)]]))]
+          }
         }
-      }
       scoringTables$ptsBracket <- dstBracket[!is.na(threshold)]
+      }
       return(scoringTables)
+    }
+
+    getVORbaseline <- function(positions){
+      vorPos <- intersect(position.name, positions)
+      vorValues <- unlist(lapply(vorPos, function(p)as.numeric(input[[paste0(p, "_vor")]])))
+      names(vorValues) <- vorPos
+      return(vorValues)
+    }
+
+    getVORtypes <- function(positions){
+      vorPos <- intersect(position.name, positions)
+      vorTypes <- unlist(lapply(vorPos, function(p)input[[paste0(p, "_vorType")]]))
+      names(vorTypes) <- vorPos
+      return(vorTypes)
+    }
+
+    getScoreThreshold <- function(positions){
+      tierPos <- intersect(position.name, positions)
+      tierPoints <- unlist(lapply(tierPos, function(p)as.numeric(input[[paste0(p, "_tierPoints")]])))
+      names(tierPoints) <- tierPos
+      return(tierPoints)
+    }
+
+    getTierGroups <- function(positions){
+      tierPos <- intersect(position.name, positions)
+      tierGroups <- unlist(lapply(tierPos, function(p)as.numeric(input[[paste0(p, "_tierGroups")]])))
+      names(tierGroups) <- tierPos
+      return(tierGroups)
     }
 
     observeEvent(input$done,{
       analystVector <- "NULL"
       positionVector <- "NULL"
       adpVector <- "NULL"
+
       if(!is.null(input$selectAnalyst))
         analystVector <- paste0("c(", paste(input$selectAnalyst, collapse = ", "), ")")
       if(!is.null(input$selectPositions))
         positionVector <- paste0("c(\"", paste(input$selectPositions, collapse = "\", \""), "\")")
       if(!is.null(input$adp))
-        adpVector <- paste0("c(\"", paste(input$adp, collapse = "\", \""), "\")")
+        adpVector <- paste0("c(\"", paste(input$adp[input$adp != "All"], collapse = "\", \""), "\")")
 
       scrapeCode <- paste0("runScrape(week = ", input$scrapeWeek,
-                      ", season = ", input$scrapeSeason,
-                      ", analysts = ", analystVector,
-                      ", positions = ", positionVector, ")")
+                           ", season = ", input$scrapeSeason,
+                           ", analysts = ", analystVector,
+                           ", positions = ", positionVector)
+      if(length(input$fbgUser) == 0){
+        scrapeCode <- paste0(scrapeCode, ")")
+      } else {
+        if(nchar(input$fbgUser) > 0){
+          scrapeCode <- paste0(scrapeCode,
+                               ", fbgUser = \"", input$fbgUser,
+                               "\", fbgPwd = \"", input$fbgPwd, "\")")
+        } else {
+          scrapeCode <- paste0(scrapeCode, ")")
+        }
+      }
       userScoring <<- getScoringRules(input$selectPositions)
+      vorBaseline <<- getVORbaseline(input$selectPositions)
+      vorType <<- getVORtypes(input$selectPositions)
+      scoreThreshold <<- getScoreThreshold(input$selectPositions)
+      tierGroups <<- getTierGroups(input$selectPositions)
       rCode <- paste0("getProjections(scrapeData=", scrapeCode ,
                       ", avgMethod = \"", tolower(input$averageType),
-                      "\", leagueScoring = userScoring",
-                      ", teams = ", input$numTeams,
+                      "\", leagueScoring = userScoring, vorBaseline, vorType",
+                      ", scoreThreshold, tierGroups, teams = ", input$numTeams,
                       ", format = \"", tolower(input$leagueType),
                       "\", mflMocks = ", input$mockMFL,
                       ", mflLeagues = ", input$leagueMFL,

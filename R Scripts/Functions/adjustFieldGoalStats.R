@@ -7,7 +7,7 @@
 # 
 # To do:
 ###########################
-adjustFieldGoalStats <- function(kickerData = data.table(), idVars = c("playerId", "analystId"), 
+adjustFieldGoalStats <- function(kickerData = data.table::data.table(), idVars = c("playerId", "analystId"), 
                                  fgTotal = "fg",
                                  fgVars = c("fg0019", "fg2029", "fg3039", "fg4049", "fg50", "fg0039"),
                                  missTotal = "fgMiss",
@@ -26,12 +26,13 @@ adjustFieldGoalStats <- function(kickerData = data.table(), idVars = c("playerId
   
   
   # Transposing the data set around idVars (default player and analyst)
-  meltKicker <- melt.data.table(kickerData, id.vars = idVars, measure.vars = c(fgTotal, fgVars, missTotal, missVar), variable.name = "dataVar")
+  meltKicker <- data.table::melt(kickerData, id.vars = idVars, measure.vars = c(fgTotal, fgVars, missTotal, missVar), variable.name = "dataVar")
   
   # Calculating the total number of Field goals from field goals per distance, and using that value where either the total
   # number of field goals are missing or the total number of field goals are less than sum of field goals by distance
   meltKicker <- merge(meltKicker,meltKicker[dataVar %in% fgVars, .(totalFg = sum(value, na.rm = TRUE)), by = idVars], by = idVars)
-  meltKicker[dataVar == fgTotal & (is.na(value) || value < totalFg), value := totalFg]
+  
+  meltKicker[dataVar == fgTotal & (is.na(value) | value < totalFg), value := totalFg]
   
   meltKicker <- merge(meltKicker, meltKicker[dataVar %in% missVar, .(totalMiss = sum(value, na.rm = TRUE)), by = idVars], by = idVars)
   meltKicker[dataVar == missTotal, value := totalMiss]
@@ -40,7 +41,7 @@ adjustFieldGoalStats <- function(kickerData = data.table(), idVars = c("playerId
   
   castFormula <- as.formula(paste(paste(idVars, collapse = "+"), " ~ ", "dataVar"))
   
-  kickerData <- dcast.data.table(meltKicker, castFormula, fun = sum)
+  kickerData <- data.table::dcast(meltKicker, castFormula, fun = sum)
 
   return(kickerData[,  names(kickerData)[!sapply(kickerData, function(x)all(is.na(x)))], with = FALSE])
 }

@@ -69,7 +69,6 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
   tableNum <- srcTbl@urlTable
   dataType <- srcTbl@urlType
 
-
   playerLinkString <- srcTbl@playerLink
   if(is.null(playerLinkString))
     playerLinkString <- ""
@@ -135,7 +134,7 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
   }
 
   scrapeTable <- as.numeric(srcTbl@tableId)
-    scrapeColumns <- tableColumns[tableId == scrapeTable &
+  scrapeColumns <- tableColumns[tableId == scrapeTable &
                                   columnPeriod == tolower(periodType(srcPeriod))]
 
   scrapeColumns <- scrapeColumns[order(columnOrder)]
@@ -152,7 +151,7 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
                                                whichTable = tableNum,
                                                removeRow = removeRows,
                                                dataType, idVar, srcTbl@playerLink))
-  , fill = TRUE)
+    , fill = TRUE)
 
   # Separate pass completions from attempts
   if(exists("passCompAtt", dataTable)){
@@ -214,7 +213,7 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
 
   dataTable[, analyst := srcTbl@analystId]
 
-  if(idVar != "playerId"){
+  if(idVar != "playerId"){# & exists(ifelse(nchar(idVar) > 0, idVar, "_none_"), dataTable)){
 
     idTbl <- playerData[position == srcTbl@sourcePosition,c("playerId", "player", "cbsId", "mflId", "yahooId" ), with = FALSE]
 
@@ -238,6 +237,8 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
       dupeNames <- dataTable$player[duplicated(dataTable$player)]
 
       # First matching with player names that are not duplicated
+      if(class(dataTable$player) != "character")
+        dataTable[, player := as.character(player)]
       dataTable <- merge(dataTable,
                          idTbl[!(player %in% dupeIdNames), c("player", "playerId"),
                                with = FALSE],
@@ -248,14 +249,17 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
 
     }
   }
+  if(exists("playerId", dataTable)){
+    dataTable <- dataTable[!is.na(playerId)]
+    if(exists("player", dataTable))
+      dataTable[, player := NULL]
+    playerData$playerId <- as.numeric(playerData$playerId)
+    dataTable$playerId <- as.numeric(dataTable$playerId)
+    dataTable <- merge(dataTable, playerData[, c("playerId", "player"), with = FALSE], by = "playerId")
+  } else {
 
-  dataTable <- dataTable[!is.na(playerId)]
-  if(exists("player", dataTable))
-    dataTable[, player := NULL]
-  playerData$playerId <- as.numeric(playerData$playerId)
-  dataTable$playerId <- as.numeric(dataTable$playerId)
-  dataTable <- merge(dataTable, playerData[, c("playerId", "player"), with = FALSE], by = "playerId")
-
+    dataTable <- dataTable[0]
+  }
   return(dataResult(resultData = dataTable, position = srcTbl@sourcePosition))
 }
 

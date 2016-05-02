@@ -1,24 +1,3 @@
-#' Analyst options for a period
-#'
-#' Find the analysts that are projecting stats for the provided period
-#'
-#' @param scrapePeriod A \link{dataPeriod} object
-analystOptions <- function(scrapePeriod = dataPeriod()){
-  theAnalysts <-   switch (periodType(scrapePeriod),
-                           "Week" = analysts[weekly == 1],
-                           "Season" = analysts[season == 1]
-  )
-
-  theAnalysts <- merge(theAnalysts, sites[, c("siteId", "siteName"), with = FALSE],
-                       by = "siteId")
-  multiSite <- theAnalysts$siteName[duplicated(theAnalysts$siteName)]
-  theAnalysts[siteName %in% multiSite, displayName := paste0(siteName, ": ", analystName)]
-  theAnalysts[is.na(displayName), displayName := analystName]
-
-  showAnalyst <- theAnalysts$analystId
-  names(showAnalyst) <- theAnalysts$displayName
-  return(showAnalyst)
-}
 
 #' URLs to scrape
 #'

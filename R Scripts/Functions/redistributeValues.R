@@ -15,11 +15,13 @@ redistributeValues <- function(valueTable = data.table(), valueVar = "value", da
   if(!all(c(valueVar, dataVar, playerVar, analystVar) %in% names(valueTable)))
     stop("Not all specified columns are present in the table", call. = FALSE)
   
-  if(calcType == "weighted" & !(weightVar %in% names(valueTable))){
-    warning("calcType is weighted but no weights specified. Using even weights", call. = FALSE)
+  if(!(weightVar %in% names(valueTable))){
+    if(calcType == "weighted")
+      warning("calcType is weighted but no weights specified. Using even weights", call. = FALSE)
     weightVar <- "weight"
     valueTable[, (weightVar) := 1]
   }
+  
   
   if(length(excludeAnalyst) > 1)
     stop("Only specify one analyst to exclude", call. = FALSE)
@@ -28,9 +30,7 @@ redistributeValues <- function(valueTable = data.table(), valueVar = "value", da
     stop("Please specify one variable to distribute from", call. = FALSE)
   
   allAnalysts <- valueTable[[analystVar]]
-  allValues <- valueTable[[valueVar]]
   allVars <- valueTable[[dataVar]]
-  allWeights <- valueTable[[weightVar]]
   
   if(any(allAnalysts == excludeAnalyst)){
     fromSelection <- which(allAnalysts == excludeAnalyst & allVars == fromVar)
@@ -44,9 +44,9 @@ redistributeValues <- function(valueTable = data.table(), valueVar = "value", da
   fromTable[, (dataVar) := NULL]
   
   avgTable <- valueTable[toSelection, 
-                         .(totalValue = avgValue(calcMethod = calcType, dataValue = allValues[toSelection], 
-                                                 dataWeights = allWeights[toSelection], na.rm = TRUE)), 
-                         by = c(playerVar, dataVar, positionVar)]
+                         .(totalValue = avgValue(calcMethod = calcType, dataValue = .SD[[1]], 
+                                                 dataWeights = .SD[[2]], na.rm = TRUE)), 
+                         by = c(playerVar, dataVar, positionVar), .SDcols = c(valueVar, weightVar)]
   
   allAvgVars <- avgTable[[dataVar]]
   

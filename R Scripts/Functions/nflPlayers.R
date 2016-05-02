@@ -3,7 +3,7 @@ require(XML)
 
 getNflPlayers <- function(posData){
   nflPlayers <- data.frame(Pos = as.character(), Num = as.numeric(), PlayerName= as.character(), 
-                            Status = as.character(), Team = as.character())
+                           Status = as.character(), Team = as.character())
   playerTblCol <- c("Pos", "Num","PlayerName","Status", "Team")
   for (p in 1:posData[["pgs"]])
   { 
@@ -17,22 +17,22 @@ getNflPlayers <- function(posData){
     )
     if (length(playerTbl) > 0 )
     {
-    names(playerTbl) <- playerTblCol
-    pgeLinks <- getHTMLLinks(urlQry)
-    playerTbl$playerId <- unique(gsub("[^0-9]","",
-                                       pgeLinks[grep("/profile$", pgeLinks)]
-    ))
-    nflPlayers <- rbind.fill(nflPlayers, playerTbl)
+      names(playerTbl) <- playerTblCol
+      pgeLinks <- getHTMLLinks(urlQry)
+      playerTbl$playerId <- unique(gsub("[^0-9]","",
+                                        pgeLinks[grep("/profile$", pgeLinks)]
+      ))
+      nflPlayers <- rbind.fill(nflPlayers, playerTbl)
     }
   }
-
+  
   nameMatrix <- matrix(unlist(strsplit(nflPlayers$PlayerName, ", ", fixed=TRUE)), nrow=nrow(nflPlayers), byrow=TRUE)
   firstName <- nameMatrix[,2]
   lastName <- nameMatrix[,1]
   nflPlayers$PlayerName <- paste(firstName, lastName, sep = " ")
   
   nflPlayers$PlayerName <-  getPlayerName(getPlayerName(getPlayerName(nflPlayers$PlayerName)))
-
+  
   
   nflPlayers$Pos[nflPlayers$Pos == "FB"] <- "RB"
   

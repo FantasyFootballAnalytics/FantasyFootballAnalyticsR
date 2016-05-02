@@ -13,7 +13,7 @@ require(XML)
 require(data.table)
 require(plyr)
 
-source("R Scripts/Functions/sharkSegment.R")
+#source("R Scripts/Functions/sharkSegment.R")
 
 # League ID for the "dummy" Yahoo league that is setup to use for data scrapes
 yahooLeague <- 170716
@@ -22,15 +22,15 @@ yahooLeague <- 170716
 ffnAPIKey <- "test"
 
 # Load configuration data.
-nameCorrect <- data.table(read.csv("Data/NameCorrections.csv", stringsAsFactors = FALSE))
-teamCorrect <- data.table(read.csv("Data/NFLTeams.csv", stringsAsFactors = FALSE))
-allUrls <- data.table(read.csv("Config/Data/allUrls.csv", stringsAsFactors = FALSE))
-dataColumns <- data.table(read.csv("Config/Data/dataColumns.csv", stringsAsFactors = FALSE))
-playerPositions <- data.table(read.csv("Config/Data/playerPositions.csv", stringsAsFactors = FALSE))
-posMap <- data.table(read.csv("Config/Data/positionMap.csv", stringsAsFactors = FALSE))
-siteAnalysts <- data.table(read.csv("Config/Data/analysts.csv", stringsAsFactors = FALSE))
-dataSites <- data.table(read.csv("Config/Data/dataSites.csv", stringsAsFactors = FALSE))
-removeRows <- data.table(read.csv("Config/Data/rowRemove.csv", stringsAsFactors = FALSE))
+nameCorrect <- data.table::data.table(read.csv("Data/NameCorrections.csv", stringsAsFactors = FALSE))
+teamCorrect <- data.table::data.table(read.csv("Data/NFLTeams.csv", stringsAsFactors = FALSE))
+allUrls <- data.table::data.table(read.csv("Config/Data/allUrls.csv", stringsAsFactors = FALSE))
+dataColumns <- data.table::data.table(read.csv("Config/Data/dataColumns.csv", stringsAsFactors = FALSE))
+playerPositions <- data.table::data.table(read.csv("Config/Data/playerPositions.csv", stringsAsFactors = FALSE))
+posMap <- data.table::data.table(read.csv("Config/Data/positionMap.csv", stringsAsFactors = FALSE))
+siteAnalysts <- data.table::data.table(read.csv("Config/Data/analysts.csv", stringsAsFactors = FALSE))
+dataSites <- data.table::data.table(read.csv("Config/Data/dataSites.csv", stringsAsFactors = FALSE))
+removeRows <- data.table::data.table(read.csv("Config/Data/rowRemove.csv", stringsAsFactors = FALSE))
 
 # Check if player Data file exists, and if not create it.
 if(!file.exists("Config/Data/playerData.csv")){
@@ -42,9 +42,9 @@ if(!file.exists("Config/Data/playerData.csv")){
     yr <- year(Sys.time())
   }
   
-  players <-  data.table(getPlayerData(yr))
+  players <-  data.table::data.table(getPlayerData(yr))
 } else {
-  players <- data.table(read.csv("Config/Data/playerData.csv", stringsAsFactors = FALSE))
+  players <- data.table::data.table(read.csv("Config/Data/playerData.csv", stringsAsFactors = FALSE))
 }
 
 
@@ -101,13 +101,13 @@ getPlayerName <- function(playerCol){
 getFFCValues <- function(format = "standard", teams = 12){
   ffcFile <- url(paste("https://fantasyfootballcalculator.com/adp_csv.php?format=", format, "&teams=", teams, sep = ""), open = "rt")
   
-  ffcTbl <- data.table(read.csv(ffcFile, skip = 4, stringsAsFactors = FALSE))
+  ffcTbl <- data.table::data.table(read.csv(ffcFile, skip = 4, stringsAsFactors = FALSE))
   close(ffcFile)
   ffcTbl[, Name := getPlayerName(Name)]
   ffcTbl[Position == "PK", Position := "K"]
   ffcTbl[Position == "DEF", Position := "DST"]
   ffcTbl[, ADP := NULL]
-  setnames(ffcTbl, c("Overall", "Name", "Position"), c("adp", "player", "position"))
+  data.table::setnames(ffcTbl, c("Overall", "Name", "Position"), c("adp", "player", "position"))
   ffcTbl[, leagueType := ifelse(format == "standard", "std", format)]
   return(ffcTbl[!is.na(adp), c("player", "position", "adp", "leagueType"), with = FALSE])
   
@@ -118,7 +118,7 @@ getESPNValues <- function(){
     espnPos <- c("QB", "RB", "WR", "TE", "K", "D/ST", "DT", "DE", "CB", "S", "LB")
     espnData <- lapply(espnPos, function(p){
         espnUrl <-paste("http://games.espn.go.com/ffl/livedraftresults?position=", p, sep ="")
-        espnTbl <- data.table(readHTMLTable(espnUrl, which = 2, skip.rows=c(1,2), stringsAsFactors = FALSE))
+        espnTbl <- data.table::data.table(XML::readHTMLTable(espnUrl, which = 2, skip.rows=c(1,2), stringsAsFactors = FALSE))
         setnames(espnTbl, c(1:8), c("rank", "player", "position", "adp", "snake7day", "aav", "value7day", "pctOwn"))
         espnTbl[, player := getPlayerName(encodeString(player))]
         espnTbl <- espnTbl[!is.na(player)]
@@ -128,14 +128,14 @@ getESPNValues <- function(){
         espnTbl[, leagueType := "std"]
         return(espnTbl)
     })
-    espnData <- rbindlist(espnData) 
+    espnData <- data.table::rbindlist(espnData) 
   return(espnData[,c("player", "position", "adp","aav", "leagueType"), with = FALSE])
 }
 
 # Retrieve ADP values from CBS
 getCBSValues <-function(){
-    cbsVal <- data.table(readHTMLTable("http://www.cbssports.com/fantasy/football/draft/averages?&print_rows=9999", which = 1, stringsAsFactors = FALSE, skip.rows = 1))
-    pgeLinks <- getHTMLLinks("http://www.cbssports.com/fantasy/football/draft/averages?&print_rows=9999")
+    cbsVal <- data.table::data.table(XML::readHTMLTable("http://www.cbssports.com/fantasy/football/draft/averages?&print_rows=9999", which = 1, stringsAsFactors = FALSE, skip.rows = 1))
+    pgeLinks <- XML::getHTMLLinks("http://www.cbssports.com/fantasy/football/draft/averages?&print_rows=9999")
     pId <- as.numeric(unique(gsub("[^0-9]", "", pgeLinks[grep("/fantasy/football/players/[0-9]{3,6}", pgeLinks)])))
     setnames(cbsVal, c(1:6), c("rank", "player", "trend", "adp", "HiLo", "pctOwn"))
     cbsVal <- cbsVal[!is.na(player)]
@@ -151,15 +151,15 @@ getCBSValues <-function(){
 # Retrieve ADP and auction values from NFL
 getNFLValues <- function(season){
     pgs <- seq(from = 1, to = 826, by = 25)
-    nflValues <- data.table(data.frame(playerId = as.numeric(), player = as.character(), adp = as.numeric(), avgRd = as.numeric(), aav = as.numeric()))
+    nflValues <- data.table::data.table(playerId = as.numeric(), player = as.character(), adp = as.numeric(), avgRd = as.numeric(), aav = as.numeric())
     for (pg in pgs){
         nflUrl <- paste("http://fantasy.nfl.com/draftcenter/breakdown?offset=", pg, "&position=all&season=", season, "&sort=draftAveragePosition", sep = "")
-        nfldata <- data.table(readHTMLTable(nflUrl, stringsAsFactors = FALSE, which = 1))
+        nfldata <- data.table::data.table(XML::readHTMLTable(nflUrl, stringsAsFactors = FALSE, which = 1))
         names(nfldata) <- c("player", "adp", "avgRd", "aav")
-        pgeLinks <- getHTMLLinks(nflUrl)
+        pgeLinks <- XML::getHTMLLinks(nflUrl)
         pId <- as.numeric(unique(gsub("[^0-9]", "", pgeLinks[grep("playerId=[0-9]{3,7}$", pgeLinks)])))
         nfldata[, playerId := pId]
-        nflValues <- rbindlist(list(nflValues, nfldata), fill = TRUE)
+        nflValues <- data.table::rbindlist(list(nflValues, nfldata), fill = TRUE)
     }
     
     nflValues[, player := getPlayerName(getPlayerName(getPlayerName(player)))]
@@ -179,14 +179,14 @@ getMFLValues <- function(year, type = "adp", league = NULL, week = NULL, ppr = F
   if(type == c("players")){
       mflUrl <- paste(mflUrl, "&DETAILS=1", sep = "")
   }
-  mflTbl <- xmlToList(xmlParse(mflUrl))
+  mflTbl <- XML::xmlToList(xmlParse(mflUrl))
   
   if(type != "nflSchedule"){
     mflTbl <- mflTbl[-which(names(mflTbl) == ".attrs")]
   }
   
   if(type == "nflSchedule"){
-    newTbl <- data.table(game = as.numeric(), gameDate = as.character(), timeRemaining = as.numeric())
+    newTbl <- data.table::data.table(game = as.numeric(), gameDate = as.character(), timeRemaining = as.numeric())
     for(g in 1:(length(mflTbl)-1)){
       data<- mflTbl[[g]][[".attrs"]]
       
@@ -198,9 +198,9 @@ getMFLValues <- function(year, type = "adp", league = NULL, week = NULL, ppr = F
       gameDate <- gameDate + kickoff/3600/24 -0.5
       
       teams <- lapply(mflTbl[[g]][which(names(mflTbl[[g]])=="team")], function(l)data.frame(t(l), stringsAsFactors = FALSE))
-      teams <- rbindlist(teams)
+      teams <- data.table::rbindlist(teams)
       teams[, c("game","gameDate", "timeRemaining")  := list(g,  gameDate, gameData$gameSecondsRemaining)]
-      newTbl <- rbind.fill(data.frame(newTbl), data.frame(teams))
+      newTbl <- plyr::rbind.fill(data.frame(newTbl), data.frame(teams))
     }
     mflTbl <- data.table(newTbl)
     mflTbl[id == "KCC", id := "KC"]
@@ -221,7 +221,7 @@ getMFLValues <- function(year, type = "adp", league = NULL, week = NULL, ppr = F
   }
 
   if(type != "nflSchedule"){
-  mflTbl <- rbindlist(mflTbl, fill = TRUE)  
+  mflTbl <- data.table::rbindlist(mflTbl, fill = TRUE)  
   }
   if(exists("id", mflTbl) & type != "nflSchedule"){
     mflTbl$id <- as.numeric(mflTbl$id)
@@ -230,23 +230,23 @@ getMFLValues <- function(year, type = "adp", league = NULL, week = NULL, ppr = F
   if(type == "players"){
     nameMatrix <- matrix(unlist(strsplit(as.character(mflTbl$name), ", ", fixed = TRUE)), ncol = 2, byrow = TRUE)
     mflTbl$name <- getPlayerName(paste(nameMatrix[,2], nameMatrix[,1]))
-    setnames(mflTbl, c("id", "name"), c("playerId", "player"))
+    data.table::setnames(mflTbl, c("id", "name"), c("playerId", "player"))
   }
   
   if(type == "adp"){
-    setnames(mflTbl, c("playerId", "selectedInDraft", "adp", "minPick", "maxPick"))
+    data.table::setnames(mflTbl, c("playerId", "selectedInDraft", "adp", "minPick", "maxPick"))
     mflTbl <- mflTbl[, c("playerId", "adp"), with = FALSE]
     mflTbl[, leagueType := ifelse(ppr, "ppr", "std")]
     mflTbl <- mflTbl[order(adp)]
   }
   if(type == "aav"){
-    setnames(mflTbl, c("playerId", "selectedInAuct", "aav"))
+    data.table::setnames(mflTbl, c("playerId", "selectedInAuct", "aav"))
     mflTbl <- mflTbl[, c("playerId", "aav"), with = FALSE]
     mflTbl[, leagueType := "std"]
     mflTbl <- mflTbl[order(aav)]
   }
   if(type == "injuries"){
-    setnames(mflTbl, c("playerId", "status", "details"))
+    data.table::setnames(mflTbl, c("playerId", "status", "details"))
   }
   
   return(mflTbl)
@@ -279,20 +279,20 @@ getYahooValues <- function(type = "SD"){
     return(yahooPgs)
   })
   
-  yahooDataUrls <- rbindlist(yahooDataUrls)
+  yahooDataUrls <- data.table::rbindlist(yahooDataUrls)
   yahooData <- apply(yahooDataUrls, 1, function(u){
-    data <- data.table(readHTMLTable(u["url"], stringsAsFactors = FALSE)$draftanalysistable)
+    data <- data.table::data.table(XML::readHTMLTable(u["url"], stringsAsFactors = FALSE)$draftanalysistable)
     if(nrow(data) > 0){
       data[, position := u["position"]]
       return(data)
     }
     })
-  yahooData <- rbindlist(yahooData)
+  yahooData <- data.table::rbindlist(yahooData)
   if(type == "SD"){
-  setnames(yahooData, c("player", "adp", "avgRound", "pctDraft", "position"))
+    data.table::setnames(yahooData, c("player", "adp", "avgRound", "pctDraft", "position"))
   }
   if(type == "AD"){
-    setnames(yahooData, c("player", "aav", "avgCost", "pctDraft", "position"))
+    data.table::setnames(yahooData, c("player", "aav", "avgCost", "pctDraft", "position"))
     yahooData[, aav := as.numeric(gsub("$", "", aav, fixed = TRUE))]
     yahooData[, avgCost :=  as.numeric(gsub("$", "", avgCost, fixed = TRUE))]
   }
@@ -327,7 +327,7 @@ fbgUrl <- function(inpUrl, userName, password){
   }
   
   ## Submitting input to retrieve data
-  dataPge <- POST(
+  dataPge <- httr::POST(
     handle = handle("http://subscribers.footballguys.com"),
     path = "amember/login.php",
     body = list(amember_login = userName,
@@ -339,7 +339,7 @@ fbgUrl <- function(inpUrl, userName, password){
 
 # helper function to convert a text value to numeric
 tryAsNumeric = function(node) {
-    val = xmlValue(node)
+    val = XML::xmlValue(node)
     ans = as.numeric(gsub("Â", "", val))
     if(is.na(ans))
         val
@@ -397,16 +397,16 @@ retrieveData <- function(inpUrl, columnTypes, columnNames, removeRow = integer()
   }
 
   dataTable <- switch(dataType, 
-                      "html" = readHTMLTable(inpUrl, stringsAsFactors = FALSE, skip.rows = removeRow, 
+                      "html" = XML::readHTMLTable(inpUrl, stringsAsFactors = FALSE, skip.rows = removeRow, 
                                              colClasses = columnTypes, which = as.numeric(whichTable)),
-                      "csv" = data.table(read.csv(inpUrl, stringsAsFactors = FALSE)),
-                      "xml" = t(xpathSApply(xmlParse(inpUrl), "//Player", fun = xmlToList)), # This only works for fantasyfootballnerd
-                      "xls" = readWorksheetFromFile(file = dataFile, sheet = whichTable , header = TRUE),
-                      "file" = readWorksheetFromFile(file = inpUrl, sheet = whichTable, header = TRUE, startRow = stRow)
+                      "csv" = data.table::data.table(read.csv(inpUrl, stringsAsFactors = FALSE)),
+                      "xml" = t(XML::xpathSApply(XML::xmlParse(inpUrl), "//Player", fun = xmlToList)), # This only works for fantasyfootballnerd
+                      "xls" = XLConnect::readWorksheetFromFile(file = dataFile, sheet = whichTable , header = TRUE),
+                      "file" = XLConnect::readWorksheetFromFile(file = inpUrl, sheet = whichTable, header = TRUE, startRow = stRow)
   )
   
   if(is.rtsports){
-      dataTable <- data.table(sapply(dataTable, function(x)gsub("[^A-Za-z0-9,. ]", "", x) ))
+      dataTable <- data.table::data.table(sapply(dataTable, function(x)gsub("[^A-Za-z0-9,. ]", "", x) ))
   }
   
   
@@ -434,22 +434,22 @@ retrieveData <- function(inpUrl, columnTypes, columnNames, removeRow = integer()
           while(length(dataTable) > 1 & (length(columnNames) != length(dataTable)) & fox.try < 10 ){
               print("Retrying fox")
           dataTable <- switch(dataType, 
-                              "html" = readHTMLTable(inpUrl, stringsAsFactors = FALSE, skip.rows = removeRow, 
+                              "html" = XML::readHTMLTable(inpUrl, stringsAsFactors = FALSE, skip.rows = removeRow, 
                                                      colClasses = columnTypes, which = as.numeric(whichTable)),
-                              "csv" = data.table(read.csv(inpUrl, stringsAsFactors = FALSE)),
-                              "xml" = t(xpathSApply(xmlParse(inpUrl), "//Player", fun = xmlToList)), # This only works for fantasyfootballnerd
-                              "xls" = readWorksheetFromFile(file = dataFile, sheet = whichTable , header = TRUE),
-                              "file" = readWorksheetFromFile(file = inpUrl, sheet = whichTable, header = TRUE, startRow = stRow)
+                              "csv" = data.table::data.table(read.csv(inpUrl, stringsAsFactors = FALSE)),
+                              "xml" = t(XML::xpathSApply(XML::xmlParse(inpUrl), "//Player", fun = xmlToList)), # This only works for fantasyfootballnerd
+                              "xls" = XLConnect::readWorksheetFromFile(file = dataFile, sheet = whichTable , header = TRUE),
+                              "file" = XLConnect::readWorksheetFromFile(file = inpUrl, sheet = whichTable, header = TRUE, startRow = stRow)
             
           )
           fox.try <- fox.try + 1
           }
           if(length(dataTable) > 1 & (length(columnNames) != length(dataTable)) & fox.try >= 10){
-              dataTable   <- data.table(t(columnNames))
-              setnames(dataTable, columnNames)
+              dataTable   <- data.table::data.table(t(columnNames))
+              data.table::setnames(dataTable, columnNames)
               dataTable <- dataTable[0]
           }
-          dataTable <- data.table(dataTable)
+          dataTable <- data.table::data.table(dataTable)
       }
       else {
     cat(paste("Mismatch in columns from \n", orgUrl, sep = ""))
@@ -458,7 +458,7 @@ retrieveData <- function(inpUrl, columnTypes, columnNames, removeRow = integer()
   }
   
   colCount <- min(length(columnNames), length(dataTable))
-  setnames(dataTable, 1:colCount, columnNames[1:colCount])
+  data.table::setnames(dataTable, 1:colCount, columnNames[1:colCount])
   
   if(is.shark | is.rotowire){
       if(exists("position", dataTable)){
@@ -486,10 +486,10 @@ retrieveData <- function(inpUrl, columnTypes, columnNames, removeRow = integer()
   }
 
   if(is.numberfire & dataType == "file"){
-      wbfile <- loadWorkbook(inpUrl)
-      sheet <- getSheets(wbfile)
+      wbfile <- XLConnect::loadWorkbook(inpUrl)
+      sheet <- XLConnect::getSheets(wbfile)
       if(sheet == "IDP"){
-          dataTable[, position := str_extract(dataTable$player, "DB|LB|DL")]
+          dataTable[, position := stringr::str_extract(dataTable$player, "DB|LB|DL")]
       }
   }  
   
@@ -499,7 +499,7 @@ retrieveData <- function(inpUrl, columnTypes, columnNames, removeRow = integer()
   
   ## Finding playerId for the sources that has that
   if(dataType == "html"){  
-    pgeLinks <- getHTMLLinks(inpUrl)
+    pgeLinks <- XML::getHTMLLinks(inpUrl)
     playerId <- NA
     if(is.fbg){
       playerId <- gsub("../players/player-all-info.php?id=","",pgeLinks[grep("player-all-info.php?", pgeLinks)], fixed = TRUE)
@@ -515,10 +515,10 @@ retrieveData <- function(inpUrl, columnTypes, columnNames, removeRow = integer()
     }
     
     if(length(playerId) == nrow(dataTable)){
-      dataTable <- data.table(playerId, dataTable)
+      dataTable <- data.table::data.table(playerId, dataTable)
     }
   }
-  return(data.table(dataTable))
+  return(data.table::data.table(dataTable))
 }
 
 
@@ -537,7 +537,7 @@ scrapeUrl <- function(urlData, siteCredentials = list()) {
   tblColumns <- dataColumns[siteTableId == table & columnPeriod == period]
 
   if(nrow(tblColumns) == 0){
-    return(data.table())
+    return(data.table::data.table())
   }
   site <- siteAnalysts$siteID[siteAnalysts$analystId == analyst]
   
@@ -569,7 +569,7 @@ scrapeUrl <- function(urlData, siteCredentials = list()) {
                             password = pw) 
   
   if(nrow(dataTable) == 0){
-    return(data.table())
+    return(data.table::data.table())
   }
   idCol <- siteInfo$playerIdCol
   
@@ -580,9 +580,10 @@ scrapeUrl <- function(urlData, siteCredentials = list()) {
   
   # Merging with player data from NFL.com to find the playerId.
   detailPos <- posMap[posMap$positionCode == posName, "detailPosition", with = FALSE]$detailPosition
+  
   if(siteInfo$siteName != "NFL"){
     if(idCol %in% names(players) & posId != 6 & "playerId" %in% names(dataTable) ){
-      setnames(dataTable, "playerId", idCol)
+      data.table::setnames(dataTable, "playerId", idCol)
       dataTable <- merge(dataTable, players[, c("playerId", idCol), with = FALSE], by=idCol)
       dataTable[, c(idCol) := NULL]
     }else{
@@ -596,6 +597,9 @@ scrapeUrl <- function(urlData, siteCredentials = list()) {
         dataTable[, pname := NULL]
     }
   }
+  if(posId == 6){
+    print(dataTable)
+  }
   
   dataTable[, player:=NULL]
   
@@ -603,8 +607,8 @@ scrapeUrl <- function(urlData, siteCredentials = list()) {
   
   # Separate pass completions from attempts
   if(exists("passCompAtt", dataTable)){
-    dataTable[, passComp := str_sub(string=passCompAtt, end=str_locate(string=passCompAtt, '/')[,1]-1)]
-    dataTable[, passAtt :=  str_sub(string=passCompAtt, start=str_locate(string=passCompAtt, '/')[,1]+1)]
+    dataTable[, passComp := stringr::str_sub(string=passCompAtt, end=str_locate(string=passCompAtt, '/')[,1]-1)]
+    dataTable[, passAtt :=  stringr::str_sub(string=passCompAtt, start=str_locate(string=passCompAtt, '/')[,1]+1)]
     dataTable[, passCompAtt := NULL]
   }
   
