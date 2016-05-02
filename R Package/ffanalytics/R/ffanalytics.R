@@ -19,7 +19,7 @@ NULL
 #>
 .onLoad <- function(libname, pkgname){
   vorBaseline <<- ffa.vorBaseline
-  vorAdjustment <<- ffa.vorAdjustment
+  vorType <<- rep("Rank", length(ffa.vorBaseline))
   scoreThreshold <<- ffa.scoreThreshold
   tierGroups <<- ffa.tierGroups
 }

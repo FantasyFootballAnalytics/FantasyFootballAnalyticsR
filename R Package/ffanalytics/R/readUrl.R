@@ -17,8 +17,8 @@
 #' @param dataType A character indicating the type of data (HTML, XML, file, xls)
 #' @return Returns a \link{data.table} with data from URL.
 #' @export readUrl
-readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow, dataType, idVar,
-                    playerLinkString){
+readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
+                    dataType, idVar, playerLinkString){
   if(length(columnNames) > 0){
     srcData <- data.table::data.table(t(rep(NA, length(columnNames))))[0]
     data.table::setnames(srcData, columnNames)
@@ -49,7 +49,10 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow, dat
     whichTable <- names(position.Id)[which(position.Id == as.numeric(whichTable))]
   }
   read.try = 0
-
+  stRow <- 1
+  if(urlSite == "numberfire"){
+    stRow <- 2
+  }
   # Will try up to 10 times to get data from the source
   while(read.try <= 10 ){
     srcData <-tryCatch(
@@ -95,7 +98,17 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow, dat
 
     }
     ), fill = TRUE)
+    if(length(srcData) == 0 | is.null(srcData) ){
+      warning(cat("Empty data table retrieved from\n", inpUrl, "\n"),
+              call. = FALSE)
+      return(emptyData)
+    }
 
+    if(nrow(srcData) == 0 ){
+      warning(cat("Empty data table retrieved from\n", inpUrl, "\n"),
+              call. = FALSE)
+      return(emptyData)
+    }
   } else {
     # Chekcing for matches between number of columns in dataTable and
     # number of columns specified by names
@@ -157,6 +170,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow, dat
   if(urlSite == "fantasysharks"){
     srcData[, player := firstLast(player)]
   }
+
 
   srcData[, player := getPlayerName(getPlayerName(getPlayerName(player)))]
 

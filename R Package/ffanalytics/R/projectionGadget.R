@@ -38,7 +38,7 @@ Run_Projection <- function(){
       ),
       miniTabPanel("Calculation Settings",  icon = icon("cogs"),
                    miniContentPanel(
-                     fillCol(flex = c(1,1,1,7),
+                     fillCol(flex = c(1,1,8),
                              fillRow(flex = c(2,2,4),
                                      numericInput("numTeams", "Teams", 12,
                                                   min = 8, max = 20, step = 1,
@@ -61,7 +61,7 @@ Run_Projection <- function(){
                                                              "Public Leagues" = 3), width = "95%")
                              ),
                              fillRow(uiOutput("vorData"))
-                             ,""))
+                             ))
       )
     )
   )
@@ -82,7 +82,7 @@ Run_Projection <- function(){
       if(any(fbgs %in% selectedAnalysts)){
         inp <- tags$div(
           textInput("fbgUser", "Footballguys User Name"),
-          passwordInput("fgbPwd","Footballguys Password")
+          passwordInput("fbgPwd","Footballguys Password")
         )
         return(inp)
       }
@@ -113,6 +113,7 @@ Run_Projection <- function(){
 
     output$scoring <- renderUI(scoringUI(input$selectPositions))
     output$vorData <- renderUI(vorUI(input$selectPositions))
+
     observeEvent(input$allAnalyst, {
       allAnalysts <-analystOptions(scrapePeriod())
       updateCheckboxGroupInput(session, "selectAnalyst",
@@ -148,6 +149,14 @@ Run_Projection <- function(){
       updateCheckboxGroupInput(session, "selectPositions", selected = "")
     })
 
+
+
+    observeEvent(input$adp, {
+      if(any(input$adp == "All")){
+        updateCheckboxGroupInput(session, "adp", selected =  c("CBS", "ESPN", "FFC", "MFL", "NFL", "All"))
+      }
+    })
+
     getScoringRules <- function(positions){
       scoringTables <- lapply(positions, function(p){
         scoringVars <- names(defaultScoring[[p]])
@@ -162,26 +171,52 @@ Run_Projection <- function(){
       })
       names(scoringTables) <- positions
 
-      dstBracket <- ptsBracket
-      for(r in 1:nrow(dstBracket)){
-        if(!is.na(input[[paste0("limit", r)]])){
-          dstBracket[r, c("threshold", "points") := list(as.numeric(input[[paste0("limit", r)]]),
-                                                        as.numeric(input[[paste0("points", r)]]))]
+      if(any(positions == "DST")){
+        dstBracket <- ptsBracket
+        for(r in 1:nrow(dstBracket)){
+          if(!is.na(input[[paste0("limit", r)]])){
+            dstBracket[r, c("threshold", "points") := list(as.numeric(input[[paste0("limit", r)]]),
+                                                           as.numeric(input[[paste0("points", r)]]))]
+          }
         }
-      }
       scoringTables$ptsBracket <- dstBracket[!is.na(threshold)]
+      }
       return(scoringTables)
     }
 
-    observeEvent(input$adp, {
-      if(any(input$adp == "All")){
-        updateCheckboxGroupInput(session, "adp", selected =  c("CBS", "ESPN", "FFC", "MFL", "NFL", "All"))
-      }
-    })
+    getVORbaseline <- function(positions){
+      vorPos <- intersect(position.name, positions)
+      vorValues <- unlist(lapply(vorPos, function(p)as.numeric(input[[paste0(p, "_vor")]])))
+      names(vorValues) <- vorPos
+      return(vorValues)
+    }
+
+    getVORtypes <- function(positions){
+      vorPos <- intersect(position.name, positions)
+      vorTypes <- unlist(lapply(vorPos, function(p)input[[paste0(p, "_vorType")]]))
+      names(vorTypes) <- vorPos
+      return(vorTypes)
+    }
+
+    getScoreThreshold <- function(positions){
+      tierPos <- intersect(position.name, positions)
+      tierPoints <- unlist(lapply(tierPos, function(p)as.numeric(input[[paste0(p, "_tierPoints")]])))
+      names(tierPoints) <- tierPos
+      return(tierPoints)
+    }
+
+    getTierGroups <- function(positions){
+      tierPos <- intersect(position.name, positions)
+      tierGroups <- unlist(lapply(tierPos, function(p)as.numeric(input[[paste0(p, "_tierGroups")]])))
+      names(tierGroups) <- tierPos
+      return(tierGroups)
+    }
+
     observeEvent(input$done,{
       analystVector <- "NULL"
       positionVector <- "NULL"
       adpVector <- "NULL"
+
       if(!is.null(input$selectAnalyst))
         analystVector <- paste0("c(", paste(input$selectAnalyst, collapse = ", "), ")")
       if(!is.null(input$selectPositions))
@@ -190,14 +225,29 @@ Run_Projection <- function(){
         adpVector <- paste0("c(\"", paste(input$adp[input$adp != "All"], collapse = "\", \""), "\")")
 
       scrapeCode <- paste0("runScrape(week = ", input$scrapeWeek,
-                      ", season = ", input$scrapeSeason,
-                      ", analysts = ", analystVector,
-                      ", positions = ", positionVector, ")")
+                           ", season = ", input$scrapeSeason,
+                           ", analysts = ", analystVector,
+                           ", positions = ", positionVector)
+      if(length(input$fbgUser) == 0){
+        scrapeCode <- paste0(scrapeCode, ")")
+      } else {
+        if(nchar(input$fbgUser) > 0){
+          scrapeCode <- paste0(scrapeCode,
+                               ", fbgUser = \"", input$fbgUser,
+                               "\", fbgPwd = \"", input$fbgPwd, "\")")
+        } else {
+          scrapeCode <- paste0(scrapeCode, ")")
+        }
+      }
       userScoring <<- getScoringRules(input$selectPositions)
+      vorBaseline <<- getVORbaseline(input$selectPositions)
+      vorType <<- getVORtypes(input$selectPositions)
+      scoreThreshold <<- getScoreThreshold(input$selectPositions)
+      tierGroups <<- getTierGroups(input$selectPositions)
       rCode <- paste0("getProjections(scrapeData=", scrapeCode ,
                       ", avgMethod = \"", tolower(input$averageType),
-                      "\", leagueScoring = userScoring",
-                      ", teams = ", input$numTeams,
+                      "\", leagueScoring = userScoring, vorBaseline, vorType",
+                      ", scoreThreshold, tierGroups, teams = ", input$numTeams,
                       ", format = \"", tolower(input$leagueType),
                       "\", mflMocks = ", input$mockMFL,
                       ", mflLeagues = ", input$leagueMFL,

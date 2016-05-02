@@ -29,8 +29,19 @@ Executes a scrape of players' fantasy football projections based on the selected
 season, week, analysts, and positions. If no inputs are specified, the user is prompted.
 }
 \note{
+The function has the ability to include subscription based sources,
+but you will need to either download subscription projections separately or
+provide a user name and password for those sites.
 Scraping past seasons/weeks is nearly impossible because very few if any sites
 make their historical projections available. An attempt to scrape historical
 projections will likely produce current projections in most cases.
+}
+\examples{
+runScrape(season = 2016, week = 0,         ## Scrape 2016 season data for all
+         analysts = 99, positions = "All") ## available analysts and positions
+
+runScrape(season = 2016, week = 1,               ## Scrape 2016 week 1 data for
+         analysts = c(-1, 5),                    ## CBS Average and NFL.com
+         positions = c("QB", "RB", "WR", "TE",)) ## and offensive positions
 }
 

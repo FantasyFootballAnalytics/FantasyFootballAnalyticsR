@@ -26,9 +26,9 @@ ffa.vorBaseline <- c(QB = 13, RB = 35, WR = 36, TE = 10, K= 8, DST = 3, DL = 10,
 ffa.vorAdjustment <- c(QB = 0, RB = 0, WR = 0, TE = 0, K = 18, DST = 6, DL = 0, B = 0, DB = 0)
 
 #' Default Scoring threshold for tiers
-#' @export scoreThreshold
-ffa.scoreThreshold <- c(QB = 20, RB =20, WE = 20, TE = 20, K=10, DST = 10, DL =10, LB = 10, DB = 10)
+#' @export ffa.scoreThreshold
+ffa.scoreThreshold <- c(QB = 20, RB =20, WR = 20, TE = 20, K=10, DST = 10, DL =10, LB = 10, DB = 10)
 
 #' Default number of tiers for clusters
-#' @export tierGroups
+#' @export ffa.tierGroups
 ffa.tierGroups <- c(QB = 10, RB = 10, WR = 10, TE = 7, K = 7, DST =5, DL =10, LB = 10, DB =10)

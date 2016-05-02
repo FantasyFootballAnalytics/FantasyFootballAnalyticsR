@@ -20,9 +20,17 @@
 #' @param positions A character vector of position names specifying which positions
 #' to scrape: \code{c("QB", "RB", "WR", "TE", "K", "DST", "DL", "LB", "DB")}.
 #' @return list of \link{dataResults}. One entry per position scraped.
+#' @examples
+#' runScrape(season = 2016, week = 0,         ## Scrape 2016 season data for all
+#'          analysts = 99, positions = "All") ## available analysts and positions
+#'
+#' runScrape(season = 2016, week = 1,               ## Scrape 2016 week 1 data for
+#'          analysts = c(-1, 5),                    ## CBS Average and NFL.com
+#'          positions = c("QB", "RB", "WR", "TE",)) ## and offensive positions
 #' @export runScrape
 runScrape <- function(season = NULL, week = NULL,
-                      analysts = NULL, positions = NULL){
+                      analysts = NULL, positions = NULL,
+                      fbgUser = NULL, fbgPwd){
 
   # Request input from user to determine period to scrape
   if(is.null(week) & is.null(season)){
@@ -44,7 +52,7 @@ runScrape <- function(season = NULL, week = NULL,
   # Request input from user to select the analysts to scrape for
 
   selectAnalysts <- analystOptions(scrapePeriod)
-  if(is.null(analysts)){ #} | ifelse(is.null(analysts), "", analysts) != "all"){
+  if(is.null(analysts)){
     scrapeAnalysts <- selectAnalysts[select.list(names(selectAnalysts),
                                                  title = "Select Analysts to Scrape",
                                                  multiple = TRUE)]
@@ -52,7 +60,11 @@ runScrape <- function(season = NULL, week = NULL,
     if(max(nchar(scrapeAnalysts)) == 0)
       scrapeAnalysts <- selectAnalysts
   } else {
-    scrapeAnalysts <- analysts
+    if(analysts == 99){
+      scrapeAnalysts <- selectAnalysts
+    } else {
+      scrapeAnalysts <- analysts
+    }
   }
 
   selectPositions <- analystPositions$position[analystPositions$analystId %in% scrapeAnalysts]
@@ -62,9 +74,13 @@ runScrape <- function(season = NULL, week = NULL,
                                   title = "Select positions to scrape")
 
     if(max(nchar(scrapePosition)) == 0)
-      scrapePosition <- position.name
+      scrapePosition <- selectPositions
   } else {
-    scrapePosition <- positions
+    if(tolower(positions) == "all"){
+      scrapePositions <- selectPositions
+    } else {
+      scrapePosition <- positions
+    }
   }
   urlTable <- getUrls(scrapeAnalysts, scrapeType, scrapePosition)
   if(nrow(urlTable) == 0){
@@ -73,7 +89,7 @@ runScrape <- function(season = NULL, week = NULL,
 
   cat("Retrieving player data \r")
   playerData <<- getPlayerData(season = scrapeSeason, weekNo = scrapeWeek,
-                              pos = scrapePosition)
+                               pos = scrapePosition)
 
   if(.Platform$OS.type == "windows"){
     progress_bar <- winProgressBar
@@ -95,7 +111,7 @@ runScrape <- function(season = NULL, week = NULL,
     info <- paste("Scraping", analystName,
                   urlInfo[["sourcePosition"]])
     set_progress_bar(pb, get_progress_bar(pb), title = "Scraping Data ...", label = info)
-    scraped <- retrieveData(scrapeSrc, scrapePeriod)
+    scraped <- retrieveData(scrapeSrc, scrapePeriod, fbgUser, fbgPwd)
     pb_value <- get_progress_bar(pb) + 1/numUrls
     set_progress_bar(pb, pb_value, title = "Scraping Data ...", label = info)
     return(scraped)

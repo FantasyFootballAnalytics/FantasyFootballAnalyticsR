@@ -213,7 +213,7 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
 
   dataTable[, analyst := srcTbl@analystId]
 
-  if(idVar != "playerId" & exists(ifelse(nchar(idVar) > 0, idVar, "_none_"), dataTable)){
+  if(idVar != "playerId"){# & exists(ifelse(nchar(idVar) > 0, idVar, "_none_"), dataTable)){
 
     idTbl <- playerData[position == srcTbl@sourcePosition,c("playerId", "player", "cbsId", "mflId", "yahooId" ), with = FALSE]
 
@@ -237,6 +237,8 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
       dupeNames <- dataTable$player[duplicated(dataTable$player)]
 
       # First matching with player names that are not duplicated
+      if(class(dataTable$player) != "character")
+        dataTable[, player := as.character(player)]
       dataTable <- merge(dataTable,
                          idTbl[!(player %in% dupeIdNames), c("player", "playerId"),
                                with = FALSE],
@@ -255,6 +257,7 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
     dataTable$playerId <- as.numeric(dataTable$playerId)
     dataTable <- merge(dataTable, playerData[, c("playerId", "player"), with = FALSE], by = "playerId")
   } else {
+
     dataTable <- dataTable[0]
   }
   return(dataResult(resultData = dataTable, position = srcTbl@sourcePosition))

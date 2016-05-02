@@ -35,6 +35,7 @@ projectPoints <- function(projectionData, scoringRules, avgType = "average"){
   projectedPoints <- merge(projectedPoints, confInterval, by = c("playerId", "position"))
   projectedPoints[, positionRank := rank(-points, ties.method = "min"), by = "position"]
   projectedPoints[, dropoff := dropoffValue(points), by = "position"]
+  projectedPoints[, tier := tierFunction(playerId, points, sourcePoints)$tier, by = "position"]
   return(projectedPoints[order(-points)])
 }
 
@@ -49,9 +50,13 @@ projectPoints <- function(projectionData, scoringRules, avgType = "average"){
 #' and \link{vorAdjustment}
 #' @export calculateVor
 calculateVor <- function(ranks, points, position){
-  vorRank <- vorBaseline[[position]]
-  vorBase <- mean(points[which(ranks >= vorRank - 1 & ranks <= vorRank + 1)],
-                  na.rm = TRUE)
-  vorAdjust <- vorAdjustment[position]
-  return(points - vorBase - vorAdjust)
+  vorValue <- vorBaseline[[position]]
+  vorType <- vorType[[position]]
+  if(vorType == "Rank"){
+    vorBase <- mean(points[which(ranks >= vorValue - 1 & ranks <= vorValue + 1)],
+                    na.rm = TRUE)
+  } else {
+    vorBase <- vorValue
+  }
+  return(points - vorBase)
 }

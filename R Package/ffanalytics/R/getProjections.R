@@ -6,6 +6,13 @@
 #' projections from different sources.
 #' @param leagueScoring List of scoring rules for the league see \link{scoringRules}
 #' for an example
+#' @param vorBaseline The numbers at each position to use for the baseline when
+#' calculating VOR
+#' @param vorType Whether the baseline numbers are ranks or points. Defaults to Ranks
+#' @param scoreThreshold Number of points for each position that an average starter
+#' will score per game. This is used to determine tiers for seasonal data
+#' @param tierGroups Number of groups to use at each position when calculating
+#' tiers for wwekly data.
 #' @param teams Number of teams in the league (integer)
 #' @param format League format
 #' @param mflMocks Include mock drafts from MFL. Set to 1 if only mock drafts
@@ -15,10 +22,21 @@
 #' redraft leagues only; 1 to only use keeper leagues, 2 for rookie drafts, and
 #' 3 for MFL Public Leagues. If not speficied all types of drafts will be used.
 #' @param ADPsource Character vector with one or more of \code{c("CBS", "ESPN", "FFC", "MFL", "NFL")}
+#' @examples
+#' getProjections(scrapeData,                    ## Baseed on data in scrapeData
+#'                avgMethod = "weighted",        ## calculate the weighted projections
+#'                leagueScoring = scoringRules,  ## using defined scoringRules,
+#'                vorBaseline, vorType,          ## VOR Baselines and types
+#'                scoreThreshold, tierGroups,    ## Defined method for tiers
+#'                teams = 12, format = "ppr",    ## for a 12 team ppr league
+#'                mflMocks = 0, mflLeagues = 0,  ## using only real MFL redraft league
+#'                adpSources =  c("FFC", "MFL")) ## and ADP data from MFL and FFC
 #' @export getProjections
 getProjections <- function(scrapeData = NULL,
                            avgMethod = "average",
                            leagueScoring = scoringRules,
+                           vorBaseline, vorType = NULL,
+                           scoreThreshold, tierGroups,
                            teams = 12, format = "standard", mflMocks = NULL,
                            mflLeagues = NULL,
                            adpSources =  c("CBS", "ESPN", "FFC", "MFL", "NFL"))
@@ -162,12 +180,12 @@ getProjections <- function(scrapeData = NULL,
   projectedPoints[, risk := calculateRisk(sdPts, sdRank), by = "position"]
 
   # Set tiers
-  cat("Setting tiers                                                        \r")
-  if(week == 0){
-    projectedPoints[, tier :=  setTier(points, unlist(.BY)), by = "position"]
-  } else {
-    projectedPoints[, tier :=  clusterTier(points, unlist(.BY)), by = "position"]
-  }
+  #cat("Setting tiers                                                        \r")
+  #if(week == 0){
+  #  projectedPoints[, tier :=  setTier(points, unlist(.BY)), by = "position"]
+  #} else {
+  #  projectedPoints[, tier :=  clusterTier(points, unlist(.BY)), by = "position"]
+  #}
 
   if(exists("vor", projectedPoints))
     projectedPoints <- projectedPoints[order(-vor)]
