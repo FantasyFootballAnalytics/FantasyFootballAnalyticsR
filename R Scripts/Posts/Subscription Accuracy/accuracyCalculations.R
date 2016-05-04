@@ -1,3 +1,14 @@
+# Data
+dataTable <- read.csv(paste(getwd(), "/R Scripts/Posts/Subscription Accuracy/comparePoints.csv", sep=""))
+
+# Libraries
+library(data.table)
+
+# Functions
+source(paste(getwd(),"/R Scripts/Functions/Functions.R", sep=""))
+
+# convert to data.table
+dataTable <- data.table(dataTable)
 
 # Compare overall accuracy
 overallAccuracy <- function(dataTable){
@@ -102,3 +113,12 @@ freeCombinationsPos <- function(dataTable){
   
   return(unique(resultTable[, c("Position", "R-Squared", "MASE"), with = FALSE]))
 }
+
+overallAccuracy(dataTable)
+freeCombinations(dataTable)
+positionAccuracy(dataTable)
+freeCombinationsPos(dataTable)
+
+#Subscription analystId = 11,12,14,15,25,26
+dataTable[, .(rsq = summary(lm(points_act ~ points_proj, data = dataTable[analystId == unlist(.BY)]))$r.squared), by = "analystId"]
+dataTable[, .(mase = calculateMASE(points_proj, points_act)), by = "analystId"]
