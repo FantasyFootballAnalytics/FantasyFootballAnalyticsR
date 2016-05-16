@@ -39,6 +39,7 @@ mflPlayers <- function(season = 2016, weekNo = 0, pos = position.name){
   mflData[team == "SDC", team := "SD"]
   mflData[team == "KCC", team := "KC"]
   mflData[team == "NEP", team := "NE"]
+  mflData[team == "RAM", team := "LA"]
 
   # Updating position names
   mflData[position %in% c("DE", "DT"), position := "DL"]

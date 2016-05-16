@@ -8,8 +8,8 @@ Authors@R: c(person("Dennis", "Andersen", email = "andersen.dennis@live.com",
                   role = c("ctb")))
 Author: Dennis Andersen [aut, cre], Isaac Petersen [ctb]
 Maintainer: Dennis Andersen <andersen.dennis@live.com>
-Description: Scrape fantasy football projections from multiple sources and calculate projected fantasy
-    points for your drafts.
+Description: Scrape fantasy football projections from multiple sources and
+    calculate projected fantasy points for your drafts.
 License: GPL-3
 URL: http://fantasyfootballanalytics.net/
 LazyData: TRUE
@@ -17,7 +17,12 @@ Depends:
     shiny,
     miniUI
 Imports:
-    data.table, stringr, DT, XML, httr, tcltk
+    data.table,
+    stringr,
+    DT,
+    XML,
+    httr,
+    tcltk
 RoxygenNote: 5.0.1
 Collate:
     'calcStdDev.R'
@@ -51,7 +56,8 @@ Collate:
     'projectPoints.R'
     'projectionGadget.R'
     'readUrl.R'
-    'retriveData.R'
+    'retrieveData.R'
     'runScrape.R'
     'scoringUI.R'
     'scrapeGadget.R'
+    'tierFunction.R'

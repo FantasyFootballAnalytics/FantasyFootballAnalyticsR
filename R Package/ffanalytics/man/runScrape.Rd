@@ -4,7 +4,8 @@
 \alias{runScrape}
 \title{Scrape Projections}
 \usage{
-runScrape(season = NULL, week = NULL, analysts = NULL, positions = NULL)
+runScrape(season = NULL, week = NULL, analysts = NULL, positions = NULL,
+  fbgUser = NULL, fbgPwd)
 }
 \arguments{
 \item{season}{The season of projections to scrape (e.g., 2015).}
