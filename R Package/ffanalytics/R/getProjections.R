@@ -27,7 +27,6 @@
 #'                avgMethod = "weighted",        ## calculate the weighted projections
 #'                leagueScoring = scoringRules,  ## using defined scoringRules,
 #'                vorBaseline, vorType,          ## VOR Baselines and types
-#'                scoreThreshold, tierGroups,    ## Defined method for tiers
 #'                teams = 12, format = "ppr",    ## for a 12 team ppr league
 #'                mflMocks = 0, mflLeagues = 0,  ## using only real MFL redraft league
 #'                adpSources =  c("FFC", "MFL")) ## and ADP data from MFL and FFC
@@ -36,7 +35,7 @@ getProjections <- function(scrapeData = NULL,
                            avgMethod = "average",
                            leagueScoring = scoringRules,
                            vorBaseline, vorType = NULL,
-                           scoreThreshold, tierGroups,
+                           #scoreThreshold, tierGroups,
                            teams = 12, format = "standard", mflMocks = NULL,
                            mflLeagues = NULL,
                            adpSources =  c("CBS", "ESPN", "FFC", "MFL", "NFL"))
@@ -101,7 +100,6 @@ getProjections <- function(scrapeData = NULL,
 
     allProjections[, (names(allProjections)[grep("_new", names(allProjections))]) := NULL]
   }
-
   # Replacing data that is missing for analysts
   cat("Replacing Missing Data                                               \r")
   missData <- replaceMissingData(statData = allProjections, calcType = avgMethod)
@@ -114,7 +112,7 @@ getProjections <- function(scrapeData = NULL,
 
   # Calculate Points, Confidence intervals, standard deviation, and position ranks
   cat("Calculating Points                                                   \r")
-  projectedPoints <- projectPoints(allProjections, scoringRules, avgType = avgMethod)
+  projectedPoints <- projectPoints(allProjections, leagueScoring, avgType = avgMethod)
 
   # If seasonal data then we will calculate Value Over Replacement. We also
   # get the ADP data for the season
@@ -122,6 +120,7 @@ getProjections <- function(scrapeData = NULL,
     cat("Calculate VOR                                                      \r")
     projectedPoints[, vor := calculateVor(positionRank, points, unlist(.BY)),
                     by = "position"]
+
     projectedPoints[, overallRank := rank(-vor, ties.method = "min")]
 
     cat("Adding ADP data                                                    \r")
@@ -156,7 +155,7 @@ getProjections <- function(scrapeData = NULL,
   cat("Retrieving ECR ranks for position                                    \r")
   rankTable <- data.table::rbindlist(lapply(scrapePositions, getRanks,
                                             leagueType = rankFormat,
-                                            weekNo = week))
+                                            weekNo = week), fill = TRUE)
 
 
   rankTable <- rankTable[, c("player", "position", "team", "ecrRank", "sdRank"),

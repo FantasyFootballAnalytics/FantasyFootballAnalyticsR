@@ -25,7 +25,7 @@ calculatePoints <- function(projectionData = data.table(), scoringRules = list()
     brackets <- brackets[order(threshold)]
 
     # if all the points allowed are over 100 then we assume it is seasonal data
-    is.season <- all(ptsAllow > 100)
+    is.season <- all(ptsAllow[is.finite(ptsAllow)] > 100)
     if(is.season){
       ptsAllow <- ptsAllow / 16
     }
@@ -57,7 +57,9 @@ calculatePoints <- function(projectionData = data.table(), scoringRules = list()
 
   # Combining the scoring rules for the positions
   scoringTbl <- data.table::rbindlist(scoringRules)
-
+  scoringTbl[, c("dataCol", "multiplier", "position") := list(unlist(dataCol),
+                                                              unlist(multiplier),
+                                                              unlist(position))]
   # If points allowed is not in the table we will add a row
   if(!any(scoringTbl[["dataCol"]] == "dstPtsAllow")){
     addTbl <- data.table::data.table("DST", "dstPtsAllow", 0)

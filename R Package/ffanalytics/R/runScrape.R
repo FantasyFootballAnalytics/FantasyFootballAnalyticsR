@@ -76,7 +76,7 @@ runScrape <- function(season = NULL, week = NULL,
     if(max(nchar(scrapePosition)) == 0)
       scrapePosition <- selectPositions
   } else {
-    if(tolower(positions) == "all"){
+    if(any(tolower(positions) == "all")){
       scrapePositions <- selectPositions
     } else {
       scrapePosition <- positions
@@ -104,6 +104,7 @@ runScrape <- function(season = NULL, week = NULL,
   pb_value <- 0
   pb <- progress_bar(title = "Scraping Data ...", label = "Starting Data Scrape",
                      0, 1)
+
   scrapeResults <- apply(urlTable, 1, function(urlInfo){
     scrapeSrc <- createObject("sourceTable", as.list(urlInfo))
     srcId <-as.numeric(urlInfo["analystId"])
@@ -125,6 +126,7 @@ runScrape <- function(season = NULL, week = NULL,
     resData <- data.table::rbindlist(
       lapply(scrapeResults[which(urlTable$sourcePosition == pos)],
              function(sr)sr@resultData), fill = TRUE)
+    resData[, position := pos]
 
     expectedAnalysts <- as.numeric(unique(urlTable$analystId[urlTable$sourcePosition == pos]))
     names(expectedAnalysts) <- unique(urlTable$analystName[urlTable$sourcePosition == pos])
@@ -138,6 +140,8 @@ runScrape <- function(season = NULL, week = NULL,
       pos.summary[, failure := paste(names(expectedAnalysts)[which(expectedAnalysts %in% missingAnalysts)], collapse = ", ")]
 
     scrapeSummary <<- data.table::rbindlist(list(scrapeSummary, pos.summary), fill = TRUE)
+    if(class(resData$position) != "character")
+      resData$position <- as.character(resData$position)
     return(dataResult(resultData = resData, position = pos))
   })
 
