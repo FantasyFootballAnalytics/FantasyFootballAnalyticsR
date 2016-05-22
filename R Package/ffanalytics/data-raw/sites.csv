@@ -1,18 +1,18 @@
-siteID,siteName,subscription,playerIdCol,siteCode
-0,Accuscore,1,NULL,accu
-1,CBS,0,cbsId,cbs
-2,Yahoo,0,yahooId,yahoo
-3,ESPN,0,NULL,espn
-4,NFL,0,playerId,nfl
-5,FOX,0,NULL,fox
-6,FFToday,0,NULL,fft
-7,NumberFire,0,NULL,nmf
-8,FantasyPros,0,NULL,ffp
-9,Footballguys,1,NULL,fbg
-10,EDS Football,0,NULL,eds
-11,FantasySharks,0,NULL,fs
-12,Fantasyfootballnerd,0,NULL,ffn
-13,WalterFootball,0,NULL,wf
-16,4for4,1,NULL,fff
-17,Rotowire,1,NULL,roto
-18,RTSports.com,0,NULL,rts
+"","siteID","siteName","subscription","playerIdCol","siteCode"
+"1",0,"Accuscore",1,NA,"accu"
+"2",1,"CBS",0,"cbsId","cbs"
+"3",2,"Yahoo",0,"yahooId","yahoo"
+"4",3,"ESPN",0,NA,"espn"
+"5",4,"NFL",0,"NflId","nfl"
+"6",5,"FOX",0,NA,"fox"
+"7",6,"FFToday",0,"fftId","fft"
+"8",7,"NumberFire",0,NA,"nmf"
+"9",8,"FantasyPros",0,NA,"ffp"
+"10",9,"Footballguys",1,"fbgId","fbg"
+"11",10,"EDS Football",0,NA,"eds"
+"12",11,"FantasySharks",0,NA,"fs"
+"13",12,"Fantasyfootballnerd",0,NA,"ffn"
+"14",13,"WalterFootball",0,NA,"wf"
+"15",16,"4for4",1,NA,"fff"
+"16",17,"Rotowire",1,NA,"roto"
+"17",18,"RTSports.com",0,NA,"rts"

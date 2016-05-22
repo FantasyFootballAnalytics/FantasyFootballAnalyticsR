@@ -35,7 +35,7 @@ projectPoints <- function(projectionData, scoringRules, avgType = "average"){
   projectedPoints <- merge(projectedPoints, confInterval, by = c("playerId", "position"))
   projectedPoints[, positionRank := rank(-points, ties.method = "min"), by = "position"]
   projectedPoints[, dropoff := dropoffValue(points), by = "position"]
-  projectedPoints[, tier := tierFunction(playerId, points, sourcePoints)$tier, by = "position"]
+  projectedPoints[, tier := tierFunction(playerId, points, sourcePoints, unlist(.BY))$tier, by = "position"]
   return(projectedPoints[order(-points)])
 }
 

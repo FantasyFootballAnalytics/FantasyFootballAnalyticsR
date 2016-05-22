@@ -5,7 +5,8 @@
 #' deviation of 2
 #' @export calculateRisk
 calculateRisk <- function(var1, var2){
-
+  var1 <- as.numeric(var1)
+  var2 <- as.numeric(var2)
   Z_var1 <- scale(var1)
   Z_var2 <- scale(var2)
 

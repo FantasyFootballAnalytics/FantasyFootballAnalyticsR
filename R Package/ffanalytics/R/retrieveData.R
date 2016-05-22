@@ -225,17 +225,19 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
         idTbl$cbsId <- as.numeric(idTbl$cbsId)
         idTbl$yahooId <- as.numeric(idTbl$yahooId)
         idTbl$playerId <- as.numeric(idTbl$playerId)
-
-        dataTable <- merge(dataTable, idTbl[, c("playerId", idVar), with = FALSE],
-                           by = idVar, all.x = TRUE)
+        if(idVar != "playerId"){
+          dataTable <- merge(dataTable, idTbl[, c("playerId", idVar), with = FALSE],
+                             by = idVar, all.x = TRUE)
+          dataTable[, (idVar) := NULL]
+        }
         dataTable <- dataTable[!is.na(playerId)]
-        dataTable[, (idVar) := NULL]
       }
     } else {
       # Finding duplicated names in data table and id table
       dupeIdNames <- idTbl$player[duplicated(idTbl$player)]
       dupeNames <- dataTable$player[duplicated(dataTable$player)]
-
+      if(exists("playerId", dataTable))
+        dataTable[, playerId := NULL]
       # First matching with player names that are not duplicated
       if(class(dataTable$player) != "character")
         dataTable[, player := as.character(player)]

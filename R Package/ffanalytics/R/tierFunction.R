@@ -1,4 +1,4 @@
-tierFunction <- function(player_id, points, srcpoints){
+tierFunction <- function(player_id, points, srcpoints, pos){
   cohens_d <- function(x, y, na.rm = TRUE) {
     if(na.rm){
       x <- x[!is.na(x)]
@@ -10,11 +10,12 @@ tierFunction <- function(player_id, points, srcpoints){
     common.sd <- sqrt((n.x * var(x) + n.y * var(y))/(n.x + n.y))
     return(mean.diff/common.sd)
   }
+  d.threshold <- tierDValues[[pos]]
   tier <- rep(NA, length(points))
   tierNum <- 1
   dValue <- rep(NA, length(points))
 
-  playerObs <- srcpoints[ , .(numObs = .N), by = c("playerId", "positionId")]
+  playerObs <- srcpoints[ , .(numObs = .N), by = c("playerId", "position")]
   singleObs <- playerObs[numObs <=1]
 
   # Finding top player and assigning first tier
@@ -50,7 +51,7 @@ tierFunction <- function(player_id, points, srcpoints){
 
     dValue[player_id == max_player] <- dval
 
-    if(dval > 1.5){
+    if(dval > d.threshold){
       tierNum <- tierNum + 1
     }
 

@@ -53,7 +53,7 @@ getRanks <- function(rank.position = "consensus", leagueType = "std", weekNo = 0
   }
 
   # Generating the URL to scrape the data from
-  url_base <- "http://www.fantasypros.com/nfl/rankings"
+  url_base <- "https://www.fantasypros.com/nfl/rankings"
   if(weekNo != 0){
     url_path <- paste("/", ifelse(leagueType != "std",
                                   paste(tolower(leagueType),
@@ -97,8 +97,7 @@ getRanks <- function(rank.position = "consensus", leagueType = "std", weekNo = 0
   }
 
 
-  rnks <-data.table::data.table(XML::readHTMLTable(inpUrl, colClasses = cTypes,
-                                                   stringsAsFactors = FALSE)$data)
+  rnks <-data.table::data.table(XML::readHTMLTable(RCurl::getURL(inpUrl))$data)
   if(length(rnks) == 0){
     rnks <- data.table::data.table(t(rep(NA, length(cNames))))
     rnks <- rnks[0]

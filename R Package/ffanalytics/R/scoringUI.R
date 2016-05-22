@@ -115,12 +115,9 @@ vorUI <- function(positions){
                                  radioButtons(paste0(p, "_vorType"),label = "Type",
                                               choices = c("Rank", "Points"),
                                               selected = "Rank", inline = TRUE ),
-                                 textInput(paste0(p, "_tierPoints"),
-                                           label = "Tier Points",
-                                           value = ffa.scoreThreshold[[p]]),
-                                 textInput(paste0(p, "_tierGroups"),
-                                           label = "Tier Groups",
-                                           value = ffa.tierGroups[[p]])
+                                 textInput(paste0(p, "_dval"),
+                                           label = "D Value",
+                                           value = tierDValues[[p]])
                         )
 
                ))

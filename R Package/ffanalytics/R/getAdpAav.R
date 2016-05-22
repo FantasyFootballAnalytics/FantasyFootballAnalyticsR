@@ -47,6 +47,12 @@ getESPNValues <- function(){
     espnUrl <-paste("http://games.espn.go.com/ffl/livedraftresults?position=", p, sep ="")
     espnTbl <- data.table::data.table(XML::readHTMLTable(espnUrl, which = 2,
                                                          skip.rows=c(1,2), stringsAsFactors = FALSE))
+    emptyTbl <- data.table(rank = NA)
+    emptyTbl[, c("rank", "player", "position", "team", "adp", "snake7day", "aav",
+                 "value7day", "pctOwn", "leagueType") := NA]
+    emptyTbl[, c("player", "position", "team") := as.character(NA)]
+    if(nrow(espnTbl) <= 1)
+      return(emptyTbl[0])
     data.table::setnames(espnTbl, c(1:8), c("rank", "player", "position", "adp",
                                             "snake7day", "aav", "value7day", "pctOwn"))
     espnTbl[, player := gsub(", Wsh", ", WAS", player, fixed = TRUE)]
@@ -70,7 +76,7 @@ getESPNValues <- function(){
   })
   espnData <- data.table::rbindlist(espnData, fill = TRUE)
 
-  if(any(espnData$position == "DST")){
+  if(any(espnData$position == "DST") & nrow(espnData) > 0){
     espnData[position == "DST", team := nflTeam.abb[nflTeam.name == player], by = "player"]
   }
   return(espnData[,c("player", "position", "team", "adp","aav", "leagueType"), with = FALSE])

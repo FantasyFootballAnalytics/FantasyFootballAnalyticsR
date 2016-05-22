@@ -10,6 +10,7 @@ getMeltedData <- function(dataResult){
   # Variable columns are the remaining columns not identified by the idVars
   varCols <- setdiff(names(statData), idVars)
   # Make sure all variable columns are numric
+
   statData <- statData[, lapply(.SD, as.numeric), .SDcols = varCols, by = idVars]
 
   proj <- data.table::melt.data.table(statData, id.vars = idVars,

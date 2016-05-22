@@ -39,6 +39,9 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
     inpUrl <- fbgUrl(inpUrl, fbgUser, fbgPwd)
   }
 
+  if(urlSite == "fantasypros")
+    inpUrl <- RCurl::getURL(inpUrl)
+
   if(length(removeRow) == 0){
     removeRow <- NULL
   }
@@ -63,8 +66,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
                                          which = as.numeric(whichTable)),
              "csv" = read.csv(inpUrl, stringsAsFactors = FALSE),
              # This only works for fantasyfootballnerd
-             "xml" = t(XML::xpathSApply(XML::xmlParse(inpUrl),
-                                        "//Player", fun = xmlToList)),
+             "xml" = scrapeXMLdata(inpUrl),
              "xls" = XLConnect::readWorksheetFromFile(file = dataFile,
                                                       sheet = whichTable
                                                       , header = TRUE),
@@ -81,6 +83,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
       break
     read.try = read.try + 1
   }
+
 
   if(dataType == "json" & urlSite == "nfl"){
 
@@ -207,5 +210,11 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
       srcData[, (idVar) := as.numeric(playerId)]
     }
   }
+
+  srcData <- srcData[, lapply(.SD, function(col){
+    if(class(col) == "factor")
+      col <- as.character(col)
+    return(as.numeric(col))
+  }), by = intersect(names(srcData), c("playerId", "player"))]
   return(srcData)
 }

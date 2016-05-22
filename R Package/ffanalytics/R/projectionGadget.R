@@ -162,11 +162,11 @@ Run_Projection <- function(){
         scoringVars <- names(defaultScoring[[p]])
         multipliers <- lapply(scoringVars, function(sv){
           multVar <- paste0(p, "_", sv)
-          return(input[[multVar]])
+          return(as.numeric(input[[multVar]]))
         })
 
         scoreTable <- data.table::data.table(dataCol = scoringVars,
-                                             mutiplier = multipliers)
+                                             multiplier = multipliers)
         return(scoreTable)
       })
       names(scoringTables) <- positions
@@ -198,18 +198,12 @@ Run_Projection <- function(){
       return(vorTypes)
     }
 
-    getScoreThreshold <- function(positions){
-      tierPos <- intersect(position.name, positions)
-      tierPoints <- unlist(lapply(tierPos, function(p)as.numeric(input[[paste0(p, "_tierPoints")]])))
-      names(tierPoints) <- tierPos
-      return(tierPoints)
-    }
 
-    getTierGroups <- function(positions){
+    getTierD <- function(positions){
       tierPos <- intersect(position.name, positions)
-      tierGroups <- unlist(lapply(tierPos, function(p)as.numeric(input[[paste0(p, "_tierGroups")]])))
-      names(tierGroups) <- tierPos
-      return(tierGroups)
+      tierD <- unlist(lapply(tierPos, function(p)as.numeric(input[[paste0(p, "_dval")]])))
+      names(tierD) <- tierPos
+      return(tierD)
     }
 
     observeEvent(input$done,{
@@ -242,12 +236,11 @@ Run_Projection <- function(){
       userScoring <<- getScoringRules(input$selectPositions)
       vorBaseline <<- getVORbaseline(input$selectPositions)
       vorType <<- getVORtypes(input$selectPositions)
-      scoreThreshold <<- getScoreThreshold(input$selectPositions)
-      tierGroups <<- getTierGroups(input$selectPositions)
+      tierDValues <<- getTierD(input$selectPositions)
       rCode <- paste0("getProjections(scrapeData=", scrapeCode ,
                       ", avgMethod = \"", tolower(input$averageType),
                       "\", leagueScoring = userScoring, vorBaseline, vorType",
-                      ", scoreThreshold, tierGroups, teams = ", input$numTeams,
+                      ", teams = ", input$numTeams,
                       ", format = \"", tolower(input$leagueType),
                       "\", mflMocks = ", input$mockMFL,
                       ", mflLeagues = ", input$leagueMFL,

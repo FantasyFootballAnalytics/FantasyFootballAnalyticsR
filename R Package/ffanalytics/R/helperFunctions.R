@@ -54,3 +54,11 @@ dropoffValue <- function(dataValue){
   dropoff[descend.order] <- dropoff
   return(dropoff)
 }
+
+scrapeXMLdata <- function(xmlUrl){
+  xmlData <- as.data.frame(t(XML::xpathSApply(XML::xmlParse(xmlUrl),
+                                              "//Player", fun = XML::xmlToList)))
+  xmlData <- as.data.frame(apply(xmlData, 2, unlist))
+  return(xmlData)
+
+}
