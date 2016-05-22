@@ -38,6 +38,9 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
   if(urlSite == "footballguys"){
     inpUrl <- fbgUrl(inpUrl, fbgUser, fbgPwd)
   }
+  print(urlSite)
+  if(urlSite == "fantasypros")
+    inpUrl <- RCurl::getURL(inpUrl)
 
   if(urlSite == "fantasypros")
     inpUrl <- RCurl::getURL(inpUrl)
