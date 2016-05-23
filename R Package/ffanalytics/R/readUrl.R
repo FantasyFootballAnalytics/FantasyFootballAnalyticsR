@@ -19,6 +19,7 @@
 #' @export readUrl
 readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
                     dataType, idVar, playerLinkString){
+
   if(length(columnNames) > 0){
     srcData <- data.table::data.table(t(rep(NA, length(columnNames))))[0]
     data.table::setnames(srcData, columnNames)
@@ -38,9 +39,6 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
   if(urlSite == "footballguys"){
     inpUrl <- fbgUrl(inpUrl, fbgUser, fbgPwd)
   }
-  print(urlSite)
-  if(urlSite == "fantasypros")
-    inpUrl <- RCurl::getURL(inpUrl)
 
   if(urlSite == "fantasypros")
     inpUrl <- RCurl::getURL(inpUrl)
@@ -59,6 +57,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
   if(urlSite == "numberfire"){
     stRow <- 2
   }
+
   # Will try up to 10 times to get data from the source
   while(read.try <= 10 ){
     srcData <-tryCatch(

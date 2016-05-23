@@ -17,7 +17,7 @@ position.Id <- sapply(position.name, function(p)which(position.name == p))
 
 #' @rdname Constants
 #' @format NULL
-yahooLeague <- 170716
+yahooLeague <- 52880
 
 #' @rdname Constants
 #' @format NULL
