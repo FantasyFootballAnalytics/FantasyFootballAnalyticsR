@@ -15,11 +15,12 @@ getUrls <- function(selectAnalysts = analysts$analystId,
                     period = periodType(dataPeriod()),
                     positions = position.name){
   period <- tolower(period)
-  analystInfo <- merge(analysts, analystPositions, by = c("analystId", "season", "weekly"))
+  type <- ifelse(period != "season", "weekly", period)
+  analystInfo <- merge(analysts, analystPositions, by = c("analystId", type))
   siteInfo <- merge(sites, siteUrls, by = "siteId")
 
   urlInfo <- merge(siteInfo, merge(analystInfo,
-                                   siteTables, by = c("siteId", "position", "season", "weekly")),
+                                   siteTables, by = c("siteId", "position", type)),
                    by = "siteId", allow.cartesian = TRUE)
 
   data.table::setnames(urlInfo, "position", "sourcePosition")

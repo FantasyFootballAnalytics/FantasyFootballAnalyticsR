@@ -86,6 +86,8 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
     read.try = read.try + 1
   }
 
+  if(read.try >= 10 & length(srcData) == 1)
+    return(emptyData)
 
   if(dataType == "json" & urlSite == "nfl"){
 
@@ -140,11 +142,16 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
     if(length(srcData) > 1 & (length(columnNames) < length(srcData))){
       warning(cat("Got more columns in data than number of columns",
                   "specified by names from\n", inpUrl,
-                  "\nRemoving columns after column", length(columnNames)))
+                  "\nRemoving columns after column", length(columnNames), "\n"))
       srcData <- srcData[, seq_along(columnNames), with = FALSE]
     }
 
-    data.table::setnames(srcData, columnNames)
+    if(length(srcData) > 1){
+      data.table::setnames(srcData, columnNames)
+    } else {
+      cat("Got a 1 column table from", inpUrl)
+      return(emptyData)
+    }
   }
   # On CBS.com the last rows of the table includes links to
   # additional pages, so we remove those:
@@ -180,7 +187,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
   srcData[, player := getPlayerName(getPlayerName(getPlayerName(player)))]
 
   ## Finding playerId for the sources that has that
-  if(dataType == "html" & length(idVar) > 0){
+  if(dataType == "html" & nchar(idVar) > 0){
     pgeLinks <- XML::getHTMLLinks(inpUrl)
     playerId <- NA
     switch (urlSite,
@@ -212,7 +219,6 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
       srcData[, (idVar) := as.numeric(playerId)]
     }
   }
-
   srcData <- srcData[, lapply(.SD, function(col){
     if(class(col) == "factor")
       col <- as.character(col)
