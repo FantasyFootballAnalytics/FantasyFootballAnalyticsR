@@ -41,7 +41,8 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
   }
 
   if(urlSite == "fantasypros")
-    inpUrl <- RCurl::getURL(inpUrl)
+    inpUrl <- tryCatch(RCurl::getURL(inpUrl),
+                       error = function(e)return(emptyData))
 
   if(length(removeRow) == 0){
     removeRow <- NULL
@@ -67,7 +68,6 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
                                          colClasses = columnTypes,
                                          which = as.numeric(whichTable)),
              "csv" = read.csv(inpUrl, stringsAsFactors = FALSE),
-             # This only works for fantasyfootballnerd
              "xml" = scrapeXMLdata(inpUrl),
              "xls" = XLConnect::readWorksheetFromFile(file = dataFile,
                                                       sheet = whichTable
@@ -76,7 +76,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
                                                        sheet = whichTable,
                                                        header = TRUE,
                                                        startRow = stRow),
-             "json" = httr::content(httr::GET(inpUrl))
+             "json" = scrapeJSONdata(inpUrl)
       ),
       error = function(e)data.table::data.table())
     if(dataType != "json")
@@ -89,34 +89,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
   if(read.try >= 10 & length(srcData) == 1)
     return(emptyData)
 
-  if(dataType == "json" & urlSite == "nfl"){
-
-    nflProjection <- srcData$players
-    srcData <- data.table::rbindlist(lapply(nflProjection, function(np){
-      statTable <- data.table::as.data.table(lapply(np$stats, as.numeric))
-      names(statTable) <- nflstats$ffanalytics[nflstats$id %in% names(statTable)]
-      dt <- data.table::as.data.table(t(np))
-      dt[, stats := NULL]
-      data.table::setnames(dt, c("id", "name", "teamAbbr"), c("playerId", "player", "team"))
-      dt <- dt[, c("playerId", "player", "team"), with = FALSE]
-      dt[, c("playerId", "player", "team") := list(as.numeric(playerId), as.character(player),
-                                                   as.character(team))]
-      return(cbind(dt, statTable))
-
-    }
-    ), fill = TRUE)
-    if(length(srcData) == 0 | is.null(srcData) ){
-      warning(cat("Empty data table retrieved from\n", inpUrl, "\n"),
-              call. = FALSE)
-      return(emptyData)
-    }
-
-    if(nrow(srcData) == 0 ){
-      warning(cat("Empty data table retrieved from\n", inpUrl, "\n"),
-              call. = FALSE)
-      return(emptyData)
-    }
-  } else {
+  if(dataType != "json" ){
     # Chekcing for matches between number of columns in dataTable and
     # number of columns specified by names
     if(length(srcData) > 1 & (length(columnNames) > length(srcData)) & read.try > 10){
@@ -153,6 +126,10 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
       return(emptyData)
     }
   }
+
+  if(length(srcData) == 0)
+    return(data.table::data.table(playerId = as.numeric(NA), player = as.character(NA))[0])
+
   # On CBS.com the last rows of the table includes links to
   # additional pages, so we remove those:
   if(length(grep("Pages:", srcData$player, fixed = TRUE))>0){
@@ -183,8 +160,8 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
     srcData[, player := firstLast(player)]
   }
 
-
-  srcData[, player := getPlayerName(getPlayerName(getPlayerName(player)))]
+  if(exists("player", srcData))
+    srcData[, player := getPlayerName(getPlayerName(getPlayerName(player)))]
 
   ## Finding playerId for the sources that has that
   if(dataType == "html" & nchar(idVar) > 0){
@@ -219,10 +196,12 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
       srcData[, (idVar) := as.numeric(playerId)]
     }
   }
-  srcData <- srcData[, lapply(.SD, function(col){
-    if(class(col) == "factor")
-      col <- as.character(col)
-    return(as.numeric(col))
-  }), by = intersect(names(srcData), c("playerId", "player"))]
+
+  if(length(srcData) > 1)
+    srcData <- srcData[, lapply(.SD, function(col){
+      if(class(col) == "factor")
+        col <- as.character(col)
+      return(as.numeric(col))
+    }), by = intersect(names(srcData), c("playerId", "player"))]
   return(srcData)
 }

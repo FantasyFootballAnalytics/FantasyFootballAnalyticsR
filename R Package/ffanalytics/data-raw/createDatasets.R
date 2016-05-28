@@ -35,7 +35,15 @@ devtools::use_data(analysts, analystPositions, sites, siteTables,
                    siteUrls, tableColumns, tableRowRemove, overwrite = TRUE)
 
 nflstats <- data.table::data.table(read.csv("data-raw/nflstats.csv", stringsAsFactors = FALSE))
-devtools::use_data(nflstats, overwrite = TRUE, internal = )
+yahooStats <- data.table::data.table(read.csv("data-raw/yahooStats.csv", stringsAsFactors = FALSE))
+yahooCred <- list(key = "dj0yJmk9T09TRjdkWWR3TUpLJmQ9WVdrOVRuZFVURVF6TXpJbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD1jOQ--",
+                  secret = "418b1e7115f1b15557fe4c773f79ba1ab51e3b63")
+
+yahoo_endpoint <- httr::oauth_endpoints("yahoo")
+yahoo_app <- httr::oauth_app("yahoo", key = yahooCred$key, secret = yahooCred$secret)
+yahoo_token <- httr::oauth1.0_token
+
+devtools::use_data(nflstats, yahooStats, yahoo_app, yahoo_endpoint, yahoo_token, overwrite = TRUE, internal = TRUE)
 
 
 

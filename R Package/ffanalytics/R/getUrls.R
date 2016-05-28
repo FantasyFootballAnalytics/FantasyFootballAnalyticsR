@@ -22,10 +22,11 @@ getUrls <- function(selectAnalysts = analysts$analystId,
   urlInfo <- merge(siteInfo, merge(analystInfo,
                                    siteTables, by = c("siteId", "position", type)),
                    by = "siteId", allow.cartesian = TRUE)
-
   data.table::setnames(urlInfo, "position", "sourcePosition")
   urlInfo <- urlInfo[analystId %in% selectAnalysts &
             urlPeriod == period & sourcePosition %in% positions]
+  urlInfo[, positionId := position.Id[sourcePosition]]
+  urlInfo <- urlInfo[order(siteId, analystId, positionId)]
   return(urlInfo[, slotNames("sourceTable"), with = FALSE])
 
 }

@@ -60,4 +60,6 @@ Collate:
     'runScrape.R'
     'scoringUI.R'
     'scrapeGadget.R'
+    'scrapeJSONdata.R'
     'tierFunction.R'
+    'yahooBasics.R'

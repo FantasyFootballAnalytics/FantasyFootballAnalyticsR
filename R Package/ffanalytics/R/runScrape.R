@@ -87,7 +87,7 @@ runScrape <- function(season = NULL, week = NULL,
     stop("Nothing to scrape. Please try again with different selection.", call. = FALSE)
   }
 
-  cat("Retrieving player data \r")
+  cat("Retrieving player data \n")
   playerData <<- getPlayerData(season = scrapeSeason, weekNo = scrapeWeek,
                                pos = scrapePosition)
 

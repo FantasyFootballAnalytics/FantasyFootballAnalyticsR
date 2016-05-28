@@ -6,7 +6,7 @@ urlParameters <-  c("{$WeekNo}", "{$Season}", "{$Segment}",  "{$PgeID}", "{$Yaho
 sharkSegment = c("2015" = 522, "2016" = 554)
 
 websites <- c("footballguys", "fftoday", "fantasysharks", "walterfootball", "yahoo", "fox", "numberfire", "rotowire", "rtsports", "fantasyfootballnerd",
-              "cbssports", "4for4", "espn", "nfl.com", "fantasypros")
+              "cbssports", "4for4", "espn", "nfl.com", "fantasypros", "eatdrinkandsleepfootball")
 
 correct.from <- c("Ty Hilton", "Timothy Wright", "Christopher Ivory", "Domanique Davis", "Ben Watson", "Stevie Johnson",	"Lesean McCoy",
                   "Luke Wilson", "Thaddeus Lewis", "Walter Powell",  "Wilson VanHooser", "Steve Hauschka", "Daniel Herron", "Robert Housler" ,

@@ -1,0 +1,85 @@
+stat_id,name,display_name,ffa_column
+0,Games Played,GP,games
+1,Passing Attempts,Pass Att,passAtt
+2,Completions,Comp,passComp
+3,Incomplete Passes,Inc,passInc
+4,Passing Yards,Pass Yds,passYds
+5,Passing Touchdowns,Pass TD,passTds
+6,Interceptions,Int,passInt
+7,Sacks,Sack,sacks
+8,Rushing Attempts,Rush Att,rushAtt
+9,Rushing Yards,Rush Yds,rushYds
+10,Rushing Touchdowns,Rush TD,rushTds
+11,Receptions,Rec,rec
+12,Reception Yards,Rec Yds,recYds
+13,Reception Touchdowns,Rec TD,recTds
+14,Return Yards,Ret Yds,returnYds
+15,Return Touchdowns,Ret TD,returnTds
+16,2-Point Conversions,2-PT,twoPts
+17,Fumbles,Fum,allFumbles
+18,Fumbles Lost,Fum Lost,fumbles
+19,Field Goals 0-19 Yards,FG 0-19,fg0019
+20,Field Goals 20-29 Yards,FG 20-29,fg2029
+21,Field Goals 30-39 Yards,FG 30-39,fg3039
+22,Field Goals 40-49 Yards,FG 40-49,fg4049
+23,Field Goals 50+ Yards,FG 50+,fg50
+24,Field Goals Missed 0-19 Yards,FGM 0-19,fgMiss0019
+25,Field Goals Missed 20-29 Yards,FGM 20-29,fgMiss2029
+26,Field Goals Missed 30-39 Yards,FGM 30-39,fgMiss3039
+27,Field Goals Missed 40-49 Yards,FGM 40-49,fgMiss4049
+28,Field Goals Missed 50+ Yards,FGM 50+,fgMiss50
+29,Point After Attempt Made,PAT Made,xp
+30,Point After Attempt Missed,PAT Miss,xpMiss
+31,Points Allowed,Pts Allow,dstPtsAllow
+32,Sack,Sack,dstSack
+33,Interception,Int,dstInt
+34,Fumble Recovery,Fum Rec,dstFumlRec
+35,Touchdown,TD,dstTd
+36,Safety,Safe,dstSafety
+37,Block Kick,Blk Kick,dstBlk
+38,Tackle Solo,Tack Solo,idpSolo
+39,Tackle Assist,Tack Ast,idpAst
+40,Sack,Sack,idpSack
+41,Interception,Int,idpInt
+42,Fumble Force,Fum Force,idpFumlForce
+43,Fumble Recovery,Fum Rec,idpFumlRec
+44,Defensive Touchdown,TD,idpTd
+45,Safety,Safe,idpSafety
+46,Pass Defended,Pass Def,idpPD
+47,Block Kick,Blk Kick,idbBlk
+48,Return Yards,Ret Yds,idpRetYds
+49,Kickoff and Punt Return Touchdowns,Kick and Punt Ret TD,idpRetTds
+50,Points Allowed 0 points,Pts Allow 0,ptsAllow0
+51,Points Allowed 1-6 points,Pts Allow 1-6,ptsAllow0106
+52,Points Allowed 7-13 points,Pts Allow 7-13,ptsAllow0713
+53,Points Allowed 14-20 points,Pts Allow 14-20,ptsAllow1420
+54,Points Allowed 21-27 points,Pts Allow 21-27,ptsAllow2127
+55,Points Allowed 28-34 points,Pts Allow 28-34,ptsAllow2834
+56,Points Allowed 35+ points,Pts Allow 35+,ptsAllow35
+57,Offensive Fumble Return TD,Fum Ret TD,fumbleTds
+58,Pick Sixes Thrown,Pick Six,pickSix
+59,40+ Yard Completions,40 Yd Comp,pass40
+60,40+ Yard Passing Touchdowns,40 Yd Pass TD,passTd40
+61,40+ Yard Run,40 Yd Rush,rush40
+62,40+ Yard Rushing Touchdowns,40 Yd Rush TD,rushTd40
+63,40+ Yard Receptions,40 Yd Rec,rec40
+64,40+ Yard Reception Touchdowns,40 Yd Rec TD,recTd40
+65,Tackles for Loss,TFL,dstTFL
+66,Turnover Return Yards,TO Ret Yds,toRetYds
+67,4th Down Stops,4 Dwn Stops,fourDownStop
+68,Tackles for Loss,TFL,idpTFL
+69,Defensive Yards Allowed,Def Yds Allow,dstYdsAllowed
+70,Defensive Yards Allowed - Negative,Yds Allow Neg,ydsAllowNeg
+71,Defensive Yards Allowed 0-99,Yds Allow 0-99,ydsAllow000099
+72,Defensive Yards Allowed 100-199,Yds Allow 100-199,ydsAllow100199
+73,Defensive Yards Allowed 200-299,Yds Allow 200-299,ydsAllow200299
+74,Defensive Yards Allowed 300-399,Yds Allow 300-399,ydsAllow300399
+75,Defensive Yards Allowed 400-499,Yds Allow 400-499,ydsAllow400499
+76,Defensive Yards Allowed 500+,Yds Allow 500+,ydsAllow500
+77,Three and Outs Forced,3 and Outs,dstThreeOut
+78,Targets,Targets,target
+79,Passing 1st Downs,Pass 1st Downs,pass1down
+80,Receiving 1st Downs,Rec 1st Downs,rec1down
+81,Rushing 1st Downs,Rush 1st Downs,rush1down
+82,Extra Point Returned,XPR,xpReturn
+83,Extra Point Returned,XPR,xpReturn
