@@ -215,9 +215,11 @@ getYahooPlayerStats <- function(season = NULL, week = 0, league, position = NULL
                                          fill = TRUE)
     startNum <- startNum + 25
   }
+  resultTable[team == "JAX", team := "JAC"]
   return(resultTable)
 }
 
+#' @export getLeagueSettings
 getLeagueSettings <- function(season, league){
   league.key <- getItemKey(season, item.id = league, item.type = "league")
 

@@ -60,7 +60,7 @@ runScrape <- function(season = NULL, week = NULL,
     if(max(nchar(scrapeAnalysts)) == 0)
       scrapeAnalysts <- selectAnalysts
   } else {
-    if(analysts == 99){
+    if(any(analysts == 99)){
       scrapeAnalysts <- selectAnalysts
     } else {
       scrapeAnalysts <- analysts

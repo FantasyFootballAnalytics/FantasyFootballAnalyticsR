@@ -26,7 +26,7 @@ getPlayerData <- function(season, weekNo, pos = position.name){
   nfl <- nflPlayerData(season, weekNo, positions = pos)
 
   # Checking if any of the NFL IDs are missing
-  allPlayers <- merge(mfl, nfl, by = c("player", "position"),
+  allPlayers <- merge(mfl, nfl, by = c("player", "position", "team"),
                       suffixes = c("", "_nfl"), all.x = TRUE)
   allPlayers[is.na(playerId) & !is.na(playerId_nfl), playerId := playerId_nfl]
   allPlayers <- allPlayers[!is.na(playerId)]

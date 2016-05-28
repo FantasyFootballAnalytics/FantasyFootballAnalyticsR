@@ -101,7 +101,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
 
     # Checking for empty dataTables
     if(length(srcData) == 0 | is.null(srcData) ){
-      warning(cat("Empty data table retrieved from\n", inpUrl, "\n"),
+      warning(cat("Empty data table retrieved from\n", unlist(inpUrl), "\n"),
               call. = FALSE)
       return(emptyData)
     }
