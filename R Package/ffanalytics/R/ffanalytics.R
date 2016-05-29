@@ -28,5 +28,5 @@ NULL
   vorType <<- rep("Rank", length(ffa.vorBaseline))
   scoreThreshold <<- ffa.scoreThreshold
   tierGroups <<- ffa.tierGroups
-  tierDValues <<- c(QB = 1.3, RB = 1.5, WR = 1.5, TE = 1.3, K = 1, DST = 1, DL = 1, DB = 1, LB = 1)
+  tierDValues <<- c(QB = 0.2, RB = 0.2, WR = 0.3, TE = 0.3, K = 0.15, DST = 0.1, DL = 0.3, DB = 0.1, LB = 0.3)
 }
