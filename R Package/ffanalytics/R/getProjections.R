@@ -35,7 +35,6 @@ getProjections <- function(scrapeData = NULL,
                            avgMethod = "average",
                            leagueScoring = scoringRules,
                            vorBaseline, vorType = NULL,
-                           #scoreThreshold, tierGroups,
                            teams = 12, format = "standard", mflMocks = NULL,
                            mflLeagues = NULL,
                            adpSources =  c("CBS", "ESPN", "FFC", "MFL", "NFL"))
@@ -178,13 +177,6 @@ getProjections <- function(scrapeData = NULL,
   cat("Calculating risk                                                     \r")
   projectedPoints[, risk := calculateRisk(sdPts, sdRank), by = "position"]
 
-  # Set tiers
-  #cat("Setting tiers                                                        \r")
-  #if(week == 0){
-  #  projectedPoints[, tier :=  setTier(points, unlist(.BY)), by = "position"]
-  #} else {
-  #  projectedPoints[, tier :=  clusterTier(points, unlist(.BY)), by = "position"]
-  #}
 
   if(exists("vor", projectedPoints))
     projectedPoints <- projectedPoints[order(-vor)]

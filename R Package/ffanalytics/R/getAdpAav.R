@@ -271,3 +271,46 @@ getMFLValues <- function(season = as.POSIXlt(Sys.Date())$year + 1900,
   return(MFL_adp)
 }
 
+
+#' @export getYahooDraftData
+getYahooDraftData <- function(season, league){
+  league.key <- getItemKey(season, league, "league")
+  start.num <- 0
+  draftTable <- data.table::data.table(yahooId = as.numeric(),
+                                       adp = as.numeric(), avgRd = as.numeric(),
+                                       aav = as.numeric(), pctDraft = as.numeric())
+  repeat{
+    draft.query <- list(start = start.num)
+    draftUrl <- apiUrl(resource = "league", resourceId = league.key,
+                       subResource = "players/draft_analysis",
+                       queryParams = draft.query)
+
+    draftData <- callAPI(draftUrl)
+    if(length(draftData$league[[2]]$players) == 0)
+      break
+
+    draft.data <- draftData$league[[2]]$players
+    draft.data <- draft.data[!(names(draft.data) == "count")]
+    draftInfo <- data.table::rbindlist(
+      lapply(draft.data, function(pl){
+
+        playerInfo <- as.numeric(unlist(pl[["player"]][[2]][["draft_analysis"]]))
+        playerInfo <- data.table::as.data.table(t(playerInfo))
+        data.table::setnames(playerInfo, c("average_pick", "average_round",
+                                          "average_cost", "percent_drafted"))
+
+        playerInfo[, yahooId := as.numeric(pl[["player"]][[1]][[2]][["player_id"]])]
+        return(playerInfo)
+      }), fill = TRUE
+    )
+
+    data.table::setnames(draftInfo, c("average_pick", "average_round",
+                                      "average_cost", "percent_drafted"),
+                         c("adp", "avgRd", "aav", "pctDraft"))
+
+    draftTable <- data.table::rbindlist(list(draftTable, draftInfo), fill = TRUE)
+    start.num <- start.num + 25
+  }
+  draftTable <- draftTable[!is.na(adp) & !is.na(aav)]
+  return(draftTable[order(adp)])
+}

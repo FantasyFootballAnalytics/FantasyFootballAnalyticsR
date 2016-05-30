@@ -11,7 +11,7 @@
 #' @format NULL
 #' @export staticColumns
 #' @export resultColumns
-staticColumns <- c("playerId", "player", "analyst", "position")
+staticColumns <- c("playerId", "player", "analyst", "position", "analystId")
 #' @rdname tableColumns
 #' @format NULL
 resultColumns <- list(

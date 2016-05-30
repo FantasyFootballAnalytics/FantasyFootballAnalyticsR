@@ -6,7 +6,7 @@
 #' @export getMeltedData
 getMeltedData <- function(dataResult){
   statData <- dataResult@resultData
-  idVars = c("playerId", "player", "position", "analyst")
+  idVars = intersect(names(statData), c("playerId", "player", "position", "analyst", "analystId"))
   # Variable columns are the remaining columns not identified by the idVars
   varCols <- setdiff(names(statData), idVars)
   # Make sure all variable columns are numric
