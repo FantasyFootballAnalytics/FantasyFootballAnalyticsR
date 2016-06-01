@@ -269,6 +269,8 @@ getMFLValues <- function(season = as.POSIXlt(Sys.Date())$year + 1900,
     data.table::setnames(MFL_adp, "averageValue", "aav")
   if(exists("averagePick", MFL_adp))
     data.table::setnames(MFL_adp, "averagePick", "adp")
+  if(length(MFL_adp) == 0)
+    MFL_adp <- data.table::data.table(mflId = NA, adp = NA)[0]
   return(MFL_adp)
 }
 
