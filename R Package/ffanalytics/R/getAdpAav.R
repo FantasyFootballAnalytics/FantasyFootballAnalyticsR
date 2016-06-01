@@ -259,7 +259,7 @@ getMFLValues <- function(season = as.POSIXlt(Sys.Date())$year + 1900,
   MFL_adp <- XML::xmlToList(mfl_url)
   MFL_adp <- data.table::rbindlist(lapply(MFL_adp[names(MFL_adp) == "player"],
                                           function(plList)data.table::as.data.table(as.list(plList))))
-  if(exists, "id", MFL_adp)
+  if(exists("id", MFL_adp))
     data.table::setnames(MFL_adp, "id", "mflId")
   if(exists("draftsSelectedIn", MFL_adp))
     data.table::setnames(MFL_adp, "draftsSelectedIn", "selectedIn")
