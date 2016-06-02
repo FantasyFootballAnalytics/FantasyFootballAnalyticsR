@@ -22,7 +22,7 @@
 #' @return list of \link{dataResults}. One entry per position scraped.
 #' @examples
 #' runScrape(season = 2016, week = 0,         ## Scrape 2016 season data for all
-#'          analysts = 99, positions = "All") ## available analysts and positions
+#'          analysts = 99, positions = "all") ## available analysts and positions
 #'
 #' runScrape(season = 2016, week = 1,               ## Scrape 2016 week 1 data for
 #'          analysts = c(-1, 5),                    ## CBS Average and NFL.com

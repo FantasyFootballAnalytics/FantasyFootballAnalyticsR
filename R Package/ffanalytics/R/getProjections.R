@@ -2,29 +2,24 @@
 #'
 #' Calculate projected fantasy points, confidence intervals, risk, tiers, etc.
 #' @param scrapeData The scraped projections data from \link{runScrape}.
-#' @param avgMethod Which average method should be used for aggregating the
-#' projections from different sources.
+#' @param avgMethod A string specifying which average method to use for aggregating the
+#' projections from different sources: mean ("average"), robust average ("robust"), or weighted average ("weighted"). Defaults to mean.
 #' @param leagueScoring List of scoring rules for the league see \link{scoringRules}
-#' for an example
-#' @param vorBaseline The numbers at each position to use for the baseline when
-#' calculating VOR
-#' @param vorType Whether the baseline numbers are ranks or points. Defaults to Ranks
-#' @param scoreThreshold Number of points for each position that an average starter
-#' will score per game. This is used to determine tiers for seasonal data
-#' @param tierGroups Number of groups to use at each position when calculating
-#' tiers for wwekly data.
-#' @param teams Number of teams in the league (integer)
-#' @param format League format
-#' @param mflMocks Include mock drafts from MFL. Set to 1 if only mock drafts
-#' should be used, 0 if only real drafts should be used. If not speficied all
-#' types of drafts will be used.
-#' @param mflLeagues What type of leagues to include for MFL. Set to 0 to use
-#' redraft leagues only; 1 to only use keeper leagues, 2 for rookie drafts, and
-#' 3 for MFL Public Leagues. If not speficied all types of drafts will be used.
-#' @param ADPsource Character vector with one or more of \code{c("CBS", "ESPN", "FFC", "MFL", "NFL")}
+#' for an example.
+#' @param vorBaseline The numbers (position rank values or point values) at each position to use for the baseline when
+#' calculating VOR.
+#' @param vorType Whether the baseline numbers are ranks or points. Defaults to position ranks.
+#' @param teams Number of teams in the league (integer).
+#' @param format League format ("standard" for standard leagues or "ppr" for Point-Per-Reception leagues).
+#' @param mflMocks Whether to include mock drafts from MyFantasyLeague.com (MFL). Set to 1 to use only mock drafts,
+#' 0 to use only real drafts. If not specified, all draft types will be used.
+#' @param mflLeagues What type of leagues to include for MyFantasyLeague.com (MFL). Set to 0 to use
+#' only redraft leagues; 1 to use only keeper leagues, 2 for rookie drafts, and
+#' 3 for MFL Public Leagues. If not specified, all draft types will be used.
+#' @param ADPsource Character vector with one or more of \code{c("CBS", "ESPN", "FFC", "MFL", "NFL")}.
 #' @examples
-#' getProjections(scrapeData,                    ## Baseed on data in scrapeData
-#'                avgMethod = "weighted",        ## calculate the weighted projections
+#' getProjections(scrapeData,                    ## Based on data in scrapeData
+#'                avgMethod = "weighted",        ## calculate the projections using a weighted average
 #'                leagueScoring = scoringRules,  ## using defined scoringRules,
 #'                vorBaseline, vorType,          ## VOR Baselines and types
 #'                teams = 12, format = "ppr",    ## for a 12 team ppr league
@@ -186,6 +181,3 @@ getProjections <- function(scrapeData = NULL,
   dataGadget(projectedPoints)
   return(projectedPoints)
 }
-
-
-
