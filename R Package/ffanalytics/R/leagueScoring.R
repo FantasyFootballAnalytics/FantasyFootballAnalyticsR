@@ -66,11 +66,11 @@ ffa.vorAdjustment <- c(QB = 0, RB = 0, WR = 0, TE = 0, K = 18, DST = 6, DL = 0, 
 
 #' Default Scoring threshold for tiers
 #' @export ffa.scoreThreshold
-ffa.scoreThreshold <- c(QB = 20, RB =20, WR = 20, TE = 20, K=10, DST = 10, DL =10, LB = 10, DB = 10)
+ffa.scoreThreshold <- c(QB = 20, RB = 20, WR = 20, TE = 20, K = 10, DST = 10, DL = 10, LB = 10, DB = 10)
 
 #' Default number of tiers for clusters
 #' @export ffa.tierGroups
-ffa.tierGroups <- c(QB = 10, RB = 10, WR = 10, TE = 7, K = 7, DST =5, DL =10, LB = 10, DB =10)
+ffa.tierGroups <- c(QB = 10, RB = 10, WR = 10, TE = 7, K = 7, DST = 5, DL = 10, LB = 10, DB =10)
 
 #' @export ffa.vorType
 ffa.vorType <- c(QB = "Rank", RB = "Rank", WR = "Rank", TE = "Rank", K = "Rank",
