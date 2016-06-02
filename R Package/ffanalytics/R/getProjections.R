@@ -29,7 +29,7 @@
 getProjections <- function(scrapeData = NULL,
                            avgMethod = "average",
                            leagueScoring = scoringRules,
-                           vorBaseline, vorType = NULL,
+                           vorBaseline, vorType,
                            teams = 12, format = "standard", mflMocks = NULL,
                            mflLeagues = NULL,
                            adpSources =  c("CBS", "ESPN", "FFC", "MFL", "NFL"))

@@ -141,13 +141,11 @@ redistributeValues <- function(valueTable = data.table(), calcType = "weighted",
 
   toTable[which(allToVars %in% toVars), value := fromValues * ifelse(is.na(varShare), 0, varShare)]
 
-  if("weight" %in% names(toTable)){
-    toTable <- toTable[, c("playerId", "player", "analyst", "position", "dataCol", "value",
-                           "weight"), with = FALSE]
-  } else {
-    toTable <- toTable[, c("playerId", "player", "analyst", "position", "dataCol", "value"), with = FALSE]
-  }
-
+  toCols <- intersect(names(toTable),c("playerId", "player", "analyst", 
+                                       "position", "dataCol", "value", "weight"))
+  
+  toTable <- toTable[, toCols, with = FALSE]
+  
   return(toTable)
 }
 
@@ -159,6 +157,7 @@ redistributeValues <- function(valueTable = data.table(), calcType = "weighted",
 #' \link{getMeltedData} function.
 #' @param calcType A string specifying which calculation method to use for the
 #' average values
+#' @export replaceMissingData
 replaceMissingData <- function(statData = data.table(), calcType = "weighted"){
 
   if(!("weight" %in% names(statData))){

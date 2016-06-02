@@ -20,6 +20,7 @@
 #'
 #' @docType package
 #' @name ffanalytics
+#' @import RCurl
 
 NULL
 #>

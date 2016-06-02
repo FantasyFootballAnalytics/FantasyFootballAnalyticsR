@@ -22,7 +22,7 @@ Imports:
     DT,
     XML,
     httr,
-    tcltk
+    tcltk, RCurl
 RoxygenNote: 5.0.1
 Collate:
     'calcStdDev.R'

@@ -5,50 +5,43 @@
 \title{Calculate Projected Points}
 \usage{
 getProjections(scrapeData = NULL, avgMethod = "average",
-  leagueScoring = scoringRules, vorBaseline, vorType = NULL, teams = 12,
+  leagueScoring = scoringRules, vorBaseline, vorType, teams = 12,
   format = "standard", mflMocks = NULL, mflLeagues = NULL,
   adpSources = c("CBS", "ESPN", "FFC", "MFL", "NFL"))
 }
 \arguments{
 \item{scrapeData}{The scraped projections data from \link{runScrape}.}
 
-\item{avgMethod}{Which average method should be used for aggregating the
-projections from different sources.}
+\item{avgMethod}{A string specifying which average method to use for aggregating the
+projections from different sources: mean ("average"), robust average ("robust"), or weighted average ("weighted"). Defaults to mean.}
 
 \item{leagueScoring}{List of scoring rules for the league see \link{scoringRules}
-for an example}
+for an example.}
 
-\item{vorBaseline}{The numbers at each position to use for the baseline when
-calculating VOR}
+\item{vorBaseline}{The numbers (position rank values or point values) at each position to use for the baseline when
+calculating VOR.}
 
-\item{vorType}{Whether the baseline numbers are ranks or points. Defaults to Ranks}
+\item{vorType}{Whether the baseline numbers are ranks or points. Defaults to position ranks.}
 
-\item{teams}{Number of teams in the league (integer)}
+\item{teams}{Number of teams in the league (integer).}
 
-\item{format}{League format}
+\item{format}{League format ("standard" for standard leagues or "ppr" for Point-Per-Reception leagues).}
 
-\item{mflMocks}{Include mock drafts from MFL. Set to 1 if only mock drafts
-should be used, 0 if only real drafts should be used. If not speficied all
-types of drafts will be used.}
+\item{mflMocks}{Whether to include mock drafts from MyFantasyLeague.com (MFL). Set to 1 to use only mock drafts,
+0 to use only real drafts. If not specified, all draft types will be used.}
 
-\item{mflLeagues}{What type of leagues to include for MFL. Set to 0 to use
-redraft leagues only; 1 to only use keeper leagues, 2 for rookie drafts, and
-3 for MFL Public Leagues. If not speficied all types of drafts will be used.}
+\item{mflLeagues}{What type of leagues to include for MyFantasyLeague.com (MFL). Set to 0 to use
+only redraft leagues; 1 to use only keeper leagues, 2 for rookie drafts, and
+3 for MFL Public Leagues. If not specified, all draft types will be used.}
 
-\item{scoreThreshold}{Number of points for each position that an average starter
-will score per game. This is used to determine tiers for seasonal data}
-
-\item{tierGroups}{Number of groups to use at each position when calculating
-tiers for wwekly data.}
-
-\item{ADPsource}{Character vector with one or more of \code{c("CBS", "ESPN", "FFC", "MFL", "NFL")}}
+\item{ADPsource}{Character vector with one or more of \code{c("CBS", "ESPN", "FFC", "MFL", "NFL")}.}
 }
 \description{
 Calculate projected fantasy points, confidence intervals, risk, tiers, etc.
 }
 \examples{
-getProjections(scrapeData,                    ## Baseed on data in scrapeData
-               avgMethod = "weighted",        ## calculate the weighted projections
+getProjections(scrapeData,                    ## Based on data in scrapeData
+               avgMethod = "weighted",        ## calculate the projections using a weighted average
                leagueScoring = scoringRules,  ## using defined scoringRules,
                vorBaseline, vorType,          ## VOR Baselines and types
                teams = 12, format = "ppr",    ## for a 12 team ppr league
