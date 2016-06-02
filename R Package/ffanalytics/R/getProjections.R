@@ -3,7 +3,7 @@
 #' Calculate projected fantasy points, confidence intervals, risk, tiers, etc.
 #' @param scrapeData The scraped projections data from \link{runScrape}.
 #' @param avgMethod A string specifying which average method to use for aggregating the
-#' projections from different sources: mean ("average"), robust average ("robust"), or weighted average ("weighted"). Defaults to mean.
+#' projections from different sources: mean ("average"), robust average ("robust"), or weighted average ("weighted"). Defaults to mean. Edit the analysts' weights for the weighted average in the \link{analysts} table.
 #' @param leagueScoring List of scoring rules for the league see \link{scoringRules}
 #' for an example.
 #' @param vorBaseline The numbers (position rank values or point values) at each position to use for the baseline when
