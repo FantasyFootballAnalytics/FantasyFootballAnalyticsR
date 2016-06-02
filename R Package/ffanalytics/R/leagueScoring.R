@@ -13,6 +13,12 @@ scoringRules <- list(
                  multiplier = c(1,  3, 3, 3, 4, 5)),
   DST = data.table::data.table(dataCol = c("dstFumlRec", "dstInt", "dstSafety", "dstSack", "dstTd", "dstBlk"),
                    multiplier = c(2, 2, 2, 1, 6, 1.5)),
+  DL = data.table::data.table(dataCol = c("idpSolo", "idpAst", "idpSack", "idpInt", "idpFumlForce", "idpFumlRec", "idpPD", "idpTd", "idpSafety"),
+                              multiplier = c(1, 0.5, 2, 3, 3, 2, 1, 6, 2)),
+  LB =  data.table::data.table(dataCol = c("idpSolo", "idpAst", "idpSack", "idpInt", "idpFumlForce", "idpFumlRec", "idpPD", "idpTd", "idpSafety"),
+                                     multiplier = c(1, 0.5, 2, 3, 3, 2, 1, 6, 2)),
+  DB = data.table::data.table(dataCol = c("idpSolo", "idpAst", "idpSack", "idpInt", "idpFumlForce", "idpFumlRec", "idpPD", "idpTd", "idpSafety"),
+                              multiplier = c(1, 0.5, 2, 3, 3, 2, 1, 6, 2)),
   ptsBracket = data.table::data.table(threshold = c(0, 6, 20, 34, 99),
                           points = c(10, 7, 4, 0, -4))
 )
@@ -32,3 +38,7 @@ ffa.scoreThreshold <- c(QB = 20, RB =20, WR = 20, TE = 20, K=10, DST = 10, DL =1
 #' Default number of tiers for clusters
 #' @export ffa.tierGroups
 ffa.tierGroups <- c(QB = 10, RB = 10, WR = 10, TE = 7, K = 7, DST =5, DL =10, LB = 10, DB =10)
+
+#' @export ffa.vorType
+ffa.vorType <- c(QB = "Rank", RB = "Rank", WR = "Rank", TE = "Rank", K = "Rank",
+                 DST = "Rank", DL = "Rank", LB = "Rank", DB = "Rank")

@@ -20,13 +20,14 @@
 #'
 #' @docType package
 #' @name ffanalytics
-#' @import RCurl
+#' @import RCurl tcltk
 
 NULL
 #>
 .onLoad <- function(libname, pkgname){
   vorBaseline <<- ffa.vorBaseline
-  vorType <<- rep("Rank", length(ffa.vorBaseline))
+
+  vorType <<- ffa.vorType
   scoreThreshold <<- ffa.scoreThreshold
   tierGroups <<- ffa.tierGroups
   tierDValues <<- c(QB = 0.2, RB = 0.2, WR = 0.3, TE = 0.3, K = 0.15, DST = 0.1, DL = 0.3, DB = 0.1, LB = 0.3)
