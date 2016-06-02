@@ -178,6 +178,7 @@ getProjections <- function(scrapeData = NULL,
   write.csv(projectedPoints, file = "projectedPoints.csv", row.names = FALSE,
             na = "")
 
-  dataGadget(projectedPoints)
-  return(projectedPoints)
+  projectedPoints <- dataGadget(projectedPoints)
+
+  return(list(scrape = scrapeData, projections = projectedPoints))
 }

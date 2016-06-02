@@ -3,6 +3,7 @@
 dataGadget <- function(inputData){
 
   ui <- miniPage(
+    gadgetTitleBar("Projections Data"),
     miniContentPanel(
     selectInput("dataPositions", "Positions:", choices = c("All", intersect(position.name,unique(inputData$position))), selected = "All"),
     DT::dataTableOutput("showData")
@@ -33,12 +34,20 @@ dataGadget <- function(inputData){
      , colnames = c("Player", "playerName", "position", "team", "Birth Date", "Points", "Lower", "Upper", "Std. Dev. Pts",
                    "Position Rank", "Drop-Off", "Tier",   "VOR",  "Overall Rank", "ADP", "ADP diff", "Exp", "ECR Position",
                     "Std. Dev. Rank", "ECR Overall", "Risk"),
-     options = list(dom = 'Bfrtip', pageLength = 15,
+     options = list(dom = 'Bfrtip', pageLength = 14,
                     #Buttons = list(list(extend = 'colvis', columns = c(5:7 ,10, 11, 13:16, 18:20))),
                     columnDefs = list(list(targets = c(1,2,3, 8, 9, 18), visible = FALSE),
                                       list(targets = c(0), width = "20%"),
                                       list(targets = c(1:20), with = "3%"))))
+   observeEvent(input$done,{
 
+     stopApp(inputData)
+   })
+
+   observeEvent(input$cancel,{
+
+     stopApp(inputData)
+   })
   }
   runGadget(ui, server, viewer = dialogViewer("Projected Points", width = 1500, height = 1500))
 }
