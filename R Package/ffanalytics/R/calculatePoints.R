@@ -78,8 +78,10 @@ calculatePoints <- function(projectionData = data.table(), scoringRules = list()
 
 
   # Calculating data for DST points allowed
+
   dstData <- projectionData[which(projectionData[["dataCol"]] == "dstPtsAllow")]
-  dstData[, points := dstPts(value, scoringBracket)]
+  if(nrow(scoringBracket) > 0)
+    dstData[, points := dstPts(value, scoringBracket)]
   dstData <- dstData[, c(scoreVars, "points"), with = FALSE]
 
   scoreData <- data.table::rbindlist(list(scoreData, dstData), fill = TRUE)
