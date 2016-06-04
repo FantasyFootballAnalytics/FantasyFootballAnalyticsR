@@ -27,11 +27,12 @@ projectPoints <- function(projectionData, scoringRules, avgType = "average"){
                by = c("playerId", "position")]
 
   confInterval <- unique(confInterval[, c("playerId", "position", "lower", "upper"), with = FALSE])
+  
   ptsStdDev <- sourcePoints[, .(sdPts = calcStdDev(calcMethod = avgType,
                                                    dataValue = points,
                                                    dataWeights = weight, na.rm = FALSE)),
-                            by = c("playerId")]
-  confInterval <- merge(confInterval, ptsStdDev, by = "playerId")
+                            by = c("playerId", "position")]
+  confInterval <- merge(confInterval, ptsStdDev, by = c("playerId", "position"))
   projectedPoints <- merge(projectedPoints, confInterval, by = c("playerId", "position"))
   projectedPoints[, positionRank := rank(-points, ties.method = "min"), by = "position"]
   projectedPoints[, dropoff := dropoffValue(points), by = "position"]

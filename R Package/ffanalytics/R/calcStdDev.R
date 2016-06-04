@@ -10,11 +10,11 @@ calcStdDev <- function(calcMethod = "weighted", dataValue = as.numeric(),
 
   # Function to calculate the weighted standard deviation
   weighted.sd <- function(x, w, na.rm = FALSE){
+
     sum.w <- sum(w, na.rm = na.rm)
     sum.w2 <- sum(w^2, na.rm = na.rm)
     mean.w <- sum(x * w,na.rm = na.rm) / sum(w, na.rm = na.rm)
-    x.sd.w <- sqrt((sum.w / (sum.w^2 - sum.w2)) * sum(w * (x - mean.w)^2),
-                   na.rm = na.rm)
+    x.sd.w <- sqrt((sum.w / (sum.w^2 - sum.w2)) * sum(w * (x - mean.w)^2))
     return(x.sd.w)
   }
 
@@ -28,6 +28,7 @@ calcStdDev <- function(calcMethod = "weighted", dataValue = as.numeric(),
                         "weighted" = weighted.sd)
 
   if(calcMethod == "weighted"){
+
     sdValue <- sdFunction(dataValue, dataWeights)
   } else {
     sdValue <- sdFunction(dataValue, na.rm)
