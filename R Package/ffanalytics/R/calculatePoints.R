@@ -22,7 +22,8 @@ calculatePoints <- function(projectionData = data.table(), scoringRules = list()
   dstPts <- function(ptsAllow, brackets){
 
     # Making sure that the bracket are sorted by threshold value
-    brackets <- brackets[order(threshold)]
+    if(exists("threshold", brackets))
+      brackets <- brackets[order(threshold)]
 
     # if all the points allowed are over 100 then we assume it is seasonal data
     is.season <- all(ptsAllow[is.finite(ptsAllow)] > 100)
