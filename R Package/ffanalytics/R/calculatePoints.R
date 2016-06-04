@@ -22,8 +22,7 @@ calculatePoints <- function(projectionData = data.table(), scoringRules = list()
   dstPts <- function(ptsAllow, brackets){
 
     # Making sure that the bracket are sorted by threshold value
-    if(exists("threshold", brackets))
-      brackets <- brackets[order(threshold)]
+    brackets <- brackets[order(threshold)]
 
     # if all the points allowed are over 100 then we assume it is seasonal data
     is.season <- all(ptsAllow[is.finite(ptsAllow)] > 100)
@@ -62,7 +61,8 @@ calculatePoints <- function(projectionData = data.table(), scoringRules = list()
                                                               unlist(multiplier),
                                                               unlist(position))]
   # If points allowed is not in the table we will add a row
-  if(!any(scoringTbl[["dataCol"]] == "dstPtsAllow")){
+  if(!any(scoringTbl[["dataCol"]] == "dstPtsAllow") & 
+     any(scoringTbl[["position"]] == "DST")){
     addTbl <- data.table::data.table("DST", "dstPtsAllow", 0)
     data.table::setnames(addTbl, c("position", "dataCol", "multiplier"))
     scoringTbl <- data.table::rbindlist(list(scoringTbl, addTbl), fill = TRUE)
@@ -79,13 +79,15 @@ calculatePoints <- function(projectionData = data.table(), scoringRules = list()
 
 
   # Calculating data for DST points allowed
-
-  dstData <- projectionData[which(projectionData[["dataCol"]] == "dstPtsAllow")]
-  if(nrow(scoringBracket) > 0)
-    dstData[, points := dstPts(value, scoringBracket)]
-  dstData <- dstData[, c(scoreVars, "points"), with = FALSE]
-
-  scoreData <- data.table::rbindlist(list(scoreData, dstData), fill = TRUE)
+  if(any(projectionData[["position"]] == "DST") & 
+     any(projectionData[["dataCol"]] == "dstPtsAllow")){
+      dstData <- projectionData[which(projectionData[["dataCol"]] == "dstPtsAllow")]
+      
+      dstData[, points := dstPts(value, scoringBracket)]
+      dstData <- dstData[, c(scoreVars, "points"), with = FALSE]
+      
+      scoreData <- data.table::rbindlist(list(scoreData, dstData), fill = TRUE)
+  }
   scoreData <- scoreData[, .(points = sum(points, na.rm = TRUE)), by = scoreVars]
   return(scoreData)
 }
