@@ -24,5 +24,9 @@ The scrape flow works like this:
 User can next specify which aggregate method to apply and execute the
 calculation scripts on this list to get a data table with projected points,
 confidence intervals, rankings, risk etc.
+
+Tiers are calculated using effect size thresholds based on Cohen's d.
+D value thresholds for determining tiers for each position can be set by:
+\code{tierDValues <- c(QB = 0.25, RB = 0.4, WR = 0.4, TE = 0.35, K = 0.15, DST = 0.1, DL = 0.3, DB = 0.13, LB = 0.3)}
 }
 

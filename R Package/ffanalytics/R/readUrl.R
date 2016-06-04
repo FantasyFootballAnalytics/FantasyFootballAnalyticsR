@@ -18,7 +18,7 @@
 #' @return Returns a \link{data.table} with data from URL.
 #' @export readUrl
 readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
-                    dataType, idVar, playerLinkString){
+                    dataType, idVar, playerLinkString, fbgUser, fbgPwd){
 
   if(length(columnNames) > 0){
     srcData <- data.table::data.table(t(rep(NA, length(columnNames))))[0]
@@ -26,6 +26,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
   } else {
     srcData <- data.table::data.table()
   }
+  orgUrl <- inpUrl
   emptyData <- srcData
   # Determining the site that the urlAddress belongs to
   urlSite <- websites[sapply(websites,
@@ -94,20 +95,20 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
     # number of columns specified by names
     if(length(srcData) > 1 & (length(columnNames) > length(srcData)) & read.try > 10){
       warning(cat("Got fewer columns in data than number of columns",
-                  "specified by names from:\n", inpUrl,
+                  "specified by names from:\n", orgUrl,
                   "\nNOTE: Returning empty dataset"))
       return(emptyData)
     }
 
     # Checking for empty dataTables
     if(length(srcData) == 0 | is.null(srcData) ){
-      warning(cat("Empty data table retrieved from\n", unlist(inpUrl), "\n"),
+      warning(cat("Empty data table retrieved from\n", unlist(orgUrl), "\n"),
               call. = FALSE)
       return(emptyData)
     }
 
     if(nrow(srcData) == 0 ){
-      warning(cat("Empty data table retrieved from\n", inpUrl, "\n"),
+      warning(cat("Empty data table retrieved from\n", orgUrl, "\n"),
               call. = FALSE)
       return(emptyData)
     }

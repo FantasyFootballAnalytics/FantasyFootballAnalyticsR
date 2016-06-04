@@ -7,6 +7,7 @@
 #' @param password The password associated with an active footballguys.com account
 #' @noRd
 #' @import httr
+#' @export fbgUrl
 fbgUrl <- function(inpUrl, userName, password){
   # Validating input
   if(length(userName) == 0 | length(password) == 0){
@@ -37,7 +38,8 @@ fbgUrl <- function(inpUrl, userName, password){
                 amember_pass = password,
                 amember_redirect_url = inpUrl)
   )
-  return(httr::content(dataPge))
+
+  return(XML::htmlParse(httr::content(dataPge)))
 }
 
 #' Retrive data from a source table
@@ -150,7 +152,8 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
                                                columnNames = scrapeColumns$columnName,
                                                whichTable = tableNum,
                                                removeRow = removeRows,
-                                               dataType, idVar, srcTbl@playerLink))
+                                               dataType, idVar, srcTbl@playerLink,
+                                               fbgUser, fbgPwd))
     , fill = TRUE)
 
   # Separate pass completions from attempts

@@ -5,7 +5,7 @@
 \title{Read data from a URL}
 \usage{
 readUrl(inpUrl, columnTypes, columnNames, whichTable, removeRow, dataType,
-  idVar, playerLinkString)
+  idVar, playerLinkString, fbgUser, fbgPwd)
 }
 \arguments{
 \item{inpUrl}{The URL to get data from}
