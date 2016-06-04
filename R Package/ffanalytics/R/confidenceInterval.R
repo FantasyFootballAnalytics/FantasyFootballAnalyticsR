@@ -11,6 +11,7 @@
 #' @param pValues Vector of percentiles for the confidence interval. Defaults to
 #' \code{c(0.1, 0.9)} for 10 and 90 percentiles.
 #' @export confidenceInterval
+#' @import Hmisc
 confidenceInterval <-  function(calcMethod = "weighted", dataValue = as.numeric(),
                                 dataWeights = as.numeric(), pValues= c(0.1, 0.9),
                                 na.rm = FALSE){
@@ -18,7 +19,7 @@ confidenceInterval <-  function(calcMethod = "weighted", dataValue = as.numeric(
   qtFunction <- switch (calcMethod,
                         "average" = quantile,
                         "robust" = quantile,
-                        "weighted" = wtd.quantile)
+                        "weighted" = Hmisc::wtd.quantile)
 
   # If weights are not passed then we use weights of 1 for all dataValues
   if(length(dataWeights) == 0)
