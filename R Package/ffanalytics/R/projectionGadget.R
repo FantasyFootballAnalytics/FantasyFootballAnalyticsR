@@ -47,7 +47,7 @@ Run_Projection <- function(){
                                                  choices = c("Standard", "PPR"),
                                                  width = "80%"),
                                      checkboxGroupInput("adp", "ADP sources",
-                                                        c("CBS", "ESPN", "FFC", "MFL", "NFL", "All"),
+                                                        c("CBS", "ESPN", "FFC", "MFL", "NFL", "Yahoo", "All"),
                                                         inline = TRUE)),
                              fillRow(selectInput("averageType", "Average",
                                                  choices = c("Average", "Robust", "Weighted"),
@@ -153,7 +153,7 @@ Run_Projection <- function(){
 
     observeEvent(input$adp, {
       if(any(input$adp == "All")){
-        updateCheckboxGroupInput(session, "adp", selected =  c("CBS", "ESPN", "FFC", "MFL", "NFL", "All"))
+        updateCheckboxGroupInput(session, "adp", selected =  c("CBS", "ESPN", "FFC", "MFL", "NFL", "Yahoo", "All"))
       }
     })
 
@@ -210,6 +210,8 @@ Run_Projection <- function(){
       analystVector <- "NULL"
       positionVector <- "NULL"
       adpVector <- "NULL"
+      fbg.user <- "NULL"
+      fbg.pwd <- "NULL"
 
       if(!is.null(input$selectAnalyst))
         analystVector <- paste0("c(", paste(input$selectAnalyst, collapse = ", "), ")")
@@ -233,6 +235,13 @@ Run_Projection <- function(){
           scrapeCode <- paste0(scrapeCode, ")")
         }
       }
+
+      if(!is.null(input$fbgUser))
+        fbg.user <- paste0("\"", input$fbgUser, "\"")
+
+      if(!is.null(input$fbgUser))
+        fbg.pwd <- paste0("\"", input$fbgPwd, "\"")
+
       userScoring <<- getScoringRules(input$selectPositions)
       vorBaseline <<- getVORbaseline(input$selectPositions)
       vorType <<- getVORtypes(input$selectPositions)
@@ -244,7 +253,10 @@ Run_Projection <- function(){
                       ", format = \"", tolower(input$leagueType),
                       "\", mflMocks = ", input$mockMFL,
                       ", mflLeagues = ", input$leagueMFL,
-                      ", adpSources = ", adpVector, ")"
+                      ", adpSources = ", adpVector,
+                      ", fbgUser = ", fbg.user,
+                      ", fbgPwd = ", fbg.pwd,
+                      ")"
 
       )
       rstudioapi::insertText(rCode, id = "#console")

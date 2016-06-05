@@ -91,6 +91,14 @@ redistributeValues <- function(valueTable = data.table(), calcType = "weighted",
                                toVars = c("fg0019", "fg2029", "fg3039", "fg4049", "fg50"),
                                excludeAnalyst = 20){
 
+  emptyTable <- data.table::data.table(playerId = as.numeric(NA),
+                                       player = as.character(NA),
+                                       analyst = as.numeric(NA),
+                                       position = as.character(NA),
+                                       dataCol = as.character(NA),
+                                       value = as.numeric(NA),
+                                       weight = as.numeric(NA))
+
   if(!("weight" %in% names(valueTable))){
     if(calcType == "weighted")
       warning("calcType is weighted but no weights specified. Using default weights", call. = FALSE)
@@ -117,6 +125,8 @@ redistributeValues <- function(valueTable = data.table(), calcType = "weighted",
     toSelection <- which(allVars %in% toVars)
   }
 
+  if(length(toSelection) == 0)
+    return(emptyTable[0])
   fromTable <- valueTable[fromSelection,]
   fromTable[, dataCol := NULL]
 
@@ -130,6 +140,7 @@ redistributeValues <- function(valueTable = data.table(), calcType = "weighted",
 
   avgTable[which(allAvgVars %in% toVars), totalVar := sum(totalValue, na.rm = TRUE),
            by = c("playerId", "position")]
+
   avgTable[which(allAvgVars %in% toVars) & totalVar != 0 , varShare := totalValue / totalVar]
 
   toTable <- merge(avgTable, fromTable, suffixes = c("", "_from"),
@@ -141,11 +152,11 @@ redistributeValues <- function(valueTable = data.table(), calcType = "weighted",
 
   toTable[which(allToVars %in% toVars), value := fromValues * ifelse(is.na(varShare), 0, varShare)]
 
-  toCols <- intersect(names(toTable),c("playerId", "player", "analyst", 
+  toCols <- intersect(names(toTable),c("playerId", "player", "analyst",
                                        "position", "dataCol", "value", "weight"))
-  
+
   toTable <- toTable[, toCols, with = FALSE]
-  
+
   return(toTable)
 }
 

@@ -118,9 +118,9 @@ getProjections <- function(scrapeData = NULL,
     projectedPoints[, overallRank := rank(-vor, ties.method = "min")]
 
     cat("Adding ADP data                                                    \r")
-    adpValues <- getADPdata(adpSources, season, teams, format, mflMocks, mflLeagues)
-    adpValues[, playerId := as.numeric(playerId)]
-    projectedPoints <- merge(projectedPoints, adpValues[, c("playerId", "adp"),
+    draftValues <- getDraftData(adpSources, season, teams, format, mflMocks, mflLeagues)
+    draftValues[, playerId := as.numeric(playerId)]
+    projectedPoints <- merge(projectedPoints, draftValues[, c("playerId", "adp", "aav"),
                                                         with = FALSE],
                              by = "playerId", all.x = TRUE)
     projectedPoints[, adpDiff := overallRank - adp]

@@ -50,7 +50,7 @@ Run_Scrape <- function(){
       if(any(fbgs %in% selectedAnalysts)){
         inp <- tags$div(
           textInput("fbgUser", "Footballguys User Name"),
-          passwordInput("fgbPwd","Footballguys Password")
+          passwordInput("fbgPwd","Footballguys Password")
         )
         return(inp)
       }
@@ -94,15 +94,27 @@ Run_Scrape <- function(){
     observeEvent(input$done,{
       analystVector <- "NULL"
       positionVector <- "NULL"
+      fbg.user <- "NULL"
+      fbg.pwd <- "NULL"
       if(!is.null(input$selectAnalyst))
         analystVector <- paste0("c(", paste(input$selectAnalyst, collapse = ", "), ")")
       if(!is.null(input$selectPositions))
         positionVector <- paste0("c(\"", paste(input$selectPositions,
                                                collapse = "\", \""), "\")")
-      rCode <- paste0("runScrape(week = ", input$scrapeWeek,
+      if(!is.null(input$fbgUser))
+        fbg.user <- paste0("\"", input$fbgUser, "\"")
+
+      if(!is.null(input$fbgUser))
+        fbg.pwd <- paste0("\"", input$fbgPwd, "\"")
+
+      rCode <- paste0("myScrapeData <- ",
+                      "runScrape(week = ", input$scrapeWeek,
                       ", season = ", input$scrapeSeason,
                       ", analysts = ", analystVector,
-                      ", positions = ", positionVector, ")")
+                      ", positions = ", positionVector,
+                      ", fbgUser = ", fbg.user,
+                      ", fbgPwd = ", fbg.pwd,
+                      ")")
 
       rstudioapi::insertText(rCode, id = "#console")
       stopApp()

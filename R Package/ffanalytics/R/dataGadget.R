@@ -32,13 +32,13 @@ dataGadget <- function(inputData){
      }
      , rownames = FALSE,  selection = "none"#, extensions = "Buttons"
      , colnames = c("Player", "playerName", "position", "team", "Birth Date", "Points", "Lower", "Upper", "Std. Dev. Pts",
-                   "Position Rank", "Drop-Off", "Tier",   "VOR",  "Overall Rank", "ADP", "ADP diff", "Exp", "ECR Position",
+                   "Position Rank", "Drop-Off", "Tier",   "VOR",  "Overall Rank", "ADP", "AAV",  "ADP diff", "Exp", "ECR Position",
                     "Std. Dev. Rank", "ECR Overall", "Risk"),
      options = list(dom = 'Bfrtip', pageLength = 14,
                     #Buttons = list(list(extend = 'colvis', columns = c(5:7 ,10, 11, 13:16, 18:20))),
-                    columnDefs = list(list(targets = c(1,2,3, 8, 9, 18), visible = FALSE),
+                    columnDefs = list(list(targets = c(1,2,3, 8, 9, 19), visible = FALSE),
                                       list(targets = c(0), width = "20%"),
-                                      list(targets = c(1:20), with = "3%"))))
+                                      list(targets = c(1:21), with = "3%"))))
    observeEvent(input$done,{
 
      stopApp(inputData)
