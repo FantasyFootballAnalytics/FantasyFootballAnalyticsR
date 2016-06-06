@@ -115,7 +115,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
 
     if(length(srcData) > 1 & (length(columnNames) < length(srcData))){
       warning(cat("Got more columns in data than number of columns",
-                  "specified by names from\n", inpUrl,
+                  "specified by names from\n", orgUrl,
                   "\nRemoving columns after column", length(columnNames), "\n"))
       srcData <- srcData[, seq_along(columnNames), with = FALSE]
     }
@@ -123,7 +123,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
     if(length(srcData) > 1){
       data.table::setnames(srcData, columnNames)
     } else {
-      cat("Got a 1 column table from", inpUrl)
+      cat("Got a 1 column table from", orgUrl)
       return(emptyData)
     }
   }
@@ -188,13 +188,14 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
             }
     )
 
+
     if(length(playerId) > 1 & length(playerId) != nrow(srcData)){
       warning(paste("Number of playerIds doesn't match number of",
                     "players for \n", inpUrl))
     }
 
     if(length(playerId) == nrow(srcData)){
-      srcData[, (idVar) := as.numeric(playerId)]
+      srcData[, (idVar) := playerId]
     }
   }
 
@@ -203,6 +204,6 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
       if(class(col) == "factor")
         col <- as.character(col)
       return(as.numeric(col))
-    }), by = intersect(names(srcData), c("playerId", "player"))]
+    }), by = intersect(names(srcData), c("playerId", idVar, "player"))]
   return(srcData)
 }
