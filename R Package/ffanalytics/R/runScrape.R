@@ -30,7 +30,7 @@
 #' @export runScrape
 runScrape <- function(season = NULL, week = NULL,
                       analysts = NULL, positions = NULL,
-                      fbgUser = NULL, fbgPwd){
+                      fbgUser = NULL, fbgPwd, updatePlayers = TRUE){
 
   # Request input from user to determine period to scrape
   if(is.null(week) & is.null(season)){
@@ -87,9 +87,11 @@ runScrape <- function(season = NULL, week = NULL,
     stop("Nothing to scrape. Please try again with different selection.", call. = FALSE)
   }
 
-  cat("Retrieving player data \n")
-  playerData <<- getPlayerData(season = scrapeSeason, weekNo = scrapeWeek,
-                               pos = scrapePosition)
+  if(updatePlayers){
+    cat("Retrieving player data \n")
+    playerData <<- getPlayerData(season = scrapeSeason, weekNo = scrapeWeek,
+                                 pos = scrapePosition)
+  }
 
   if(.Platform$OS.type == "windows"){
     progress_bar <- winProgressBar

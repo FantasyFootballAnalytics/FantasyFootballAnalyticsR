@@ -169,7 +169,7 @@ getDraftData <- function(draftSources = c("CBS", "ESPN", "FFC", "MFL", "NFL", "Y
 
   if("CBS" %in% draftSources){
     cbsDraft <- getCBSValues()[, c("cbsId", "adp"), with = FALSE]
-    cbsDraft[, cbsId := as.character(cbsId)]
+    cbsDraft[, cbsId := as.numeric(cbsId)]
     cbsDraft <- merge(playerData[, c("playerId", "cbsId", "player", "position", "team"), with = FALSE],
                     cbsDraft, by = "cbsId")
     cbsDraft[, cbsId := NULL]
@@ -206,11 +206,12 @@ getDraftData <- function(draftSources = c("CBS", "ESPN", "FFC", "MFL", "NFL", "Y
       mflMocks = -1
     if(is.null(mflLeagues))
       mflLeagues = -1
-    mflADP <- getMFLValues(season, type = "adp", teams, ppr = mflppr,
+    mflADP <- getMFLValues(season = season, type = "adp", teams, ppr = mflppr,
                            mock = mflMocks, keeper = mflLeagues)[, c("mflId", "adp"),  with = FALSE]
-    mflAAV <- getMFLValues(season, type = "aav", teams, ppr = mflppr,
+    mflAAV <- getMFLValues(season = season, type = "aav", teams, ppr = mflppr,
                            mock = mflMocks, keeper = mflLeagues)[, c("mflId", "aav"),  with = FALSE]
     mflDraft <- merge(mflAAV, mflADP, all = TRUE, by = "mflId")
+    mflDraft[,mflId := as.numeric(mflId)]
     mflDraft <- merge(playerData[, c("playerId", "mflId", "player", "position", "team"), with = FALSE],
                       mflDraft, by = "mflId")
     mflDraft[, mflId := NULL]
@@ -229,6 +230,8 @@ getDraftData <- function(draftSources = c("CBS", "ESPN", "FFC", "MFL", "NFL", "Y
 
   calcAvg <- (length(draftData) > 1)
   draftData <- data.table::rbindlist(draftData, fill = TRUE)
+  if(!exists("aav", draftData))
+    draftData[, aav := NA]
   draftData[, adp := as.numeric(adp)]
   draftData[, aav := as.numeric(aav)]
 

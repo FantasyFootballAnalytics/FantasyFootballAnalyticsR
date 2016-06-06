@@ -32,7 +32,8 @@ getRanks <- function(rank.position = "consensus", leagueType = "std", weekNo = 0
 
   defaultTable <- rep(NA, length(returnColumns))
   names(defaultTable) <- returnColumns
-
+  if(leagueType == "half")
+    leagueType <- "half-point-ppr"
   # There aren't ppr rankings for QB, K, DST and IDP, so we use the standard ones
   if(!(rank.position %in% c("RB", "WR", "TE", "consensus")) & leagueType != "std"){
     leagueType = "std"
