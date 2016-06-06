@@ -217,8 +217,8 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
   dataTable[, analyst := srcTbl@analystId]
 
   if(idVar != "playerId" & nrow(dataTable) > 0){# & exists(ifelse(nchar(idVar) > 0, idVar, "_none_"), dataTable)){
-
-    idTbl <- playerData[position == srcTbl@sourcePosition,c("playerId", "player", "cbsId", "mflId", "yahooId" ), with = FALSE]
+    playerIds <- intersect(names(playerData), c("playerId", "player", "cbsId", "mflId", "yahooId", "fbgId"))
+    idTbl <- playerData[position == srcTbl@sourcePosition, playerIds, with = FALSE]
 
     if(length(idVar) > 0 & nchar(idVar) > 0 & srcTbl@sourcePosition != "DST"){
       if(!(idVar %in% names(idTbl))){
