@@ -27,7 +27,7 @@ projectPoints <- function(projectionData, scoringRules, avgType = "average"){
                by = c("playerId", "position")]
 
   confInterval <- unique(confInterval[, c("playerId", "position", "lower", "upper"), with = FALSE])
-  
+
   ptsStdDev <- sourcePoints[, .(sdPts = calcStdDev(calcMethod = avgType,
                                                    dataValue = points,
                                                    dataWeights = weight, na.rm = FALSE)),
@@ -37,7 +37,7 @@ projectPoints <- function(projectionData, scoringRules, avgType = "average"){
   projectedPoints[, positionRank := rank(-points, ties.method = "min"), by = "position"]
   projectedPoints[, dropoff := dropoffValue(points), by = "position"]
   projectedPoints[, tier := tierFunction(playerId, points, sourcePoints, unlist(.BY))$tier, by = "position"]
-  return(projectedPoints[order(-points)])
+  return(list(pointsTable = projectedPoints[order(-points)], avgStats = avgProjections))
 }
 
 #' Calculate Value Over Replacement
@@ -61,3 +61,5 @@ calculateVor <- function(ranks, points, position){
   }
   return(points - vorBase)
 }
+
+

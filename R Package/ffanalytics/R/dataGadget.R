@@ -13,6 +13,8 @@ dataGadget <- function(inputData){
   server <- function(input, output, session){
    output$showData <- DT::renderDataTable({
      data <- data.table::copy(inputData)
+     if(exists("playerId", data))
+       data[, playerId := NULL]
      if(input$dataPositions == "All"){
        data[, Name := paste0(player, ", ", position, positionRank, " - ", team)]
      } else {
@@ -21,8 +23,9 @@ dataGadget <- function(inputData){
      }
 
      colNames <- c("Name", names(data)[which(names(data) != "Name")])
-      numericCols <- c("points",  "lower", "upper", "sdPts", "dropoff", "vor",
-                       "adp", "adpDiff" , "sdRank", "risk")
+      numericCols <- intersect(c("points",  "lower", "upper", "sdPts", "dropoff",
+                                 "vor", "adp", "adpDiff" , "sdRank", "risk"),
+                               names(data))
       otherCols <- names(data)[!(which(names(data) %in% numericCols))]
 
       data <- data[, (numericCols) := lapply(.SD, function(x)ifelse(!is.nan(x) & is.numeric(x), round(x,2),x)),

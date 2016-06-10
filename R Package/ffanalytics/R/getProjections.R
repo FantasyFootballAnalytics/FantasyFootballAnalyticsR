@@ -32,7 +32,8 @@ getProjections <- function(scrapeData = NULL,
                            vorBaseline, vorType,
                            teams = 12, format = "standard", mflMocks = NULL,
                            mflLeagues = NULL,
-                           adpSources =  c("CBS", "ESPN", "FFC", "MFL", "NFL"))
+                           adpSources =  c("CBS", "ESPN", "FFC", "MFL", "NFL"),
+                           getADP = TRUE, getECR = TRUE, writeFile = TRUE)
   {
   # Run data scrape if scrapeData is not passed.
   if(is.null(scrapeData))
@@ -49,6 +50,8 @@ getProjections <- function(scrapeData = NULL,
 
   allProjections <- data.table::rbindlist(lapply(scrapeData[scrapePositions],
                                                  getMeltedData), fill = TRUE)
+  if(exists("analystId", allProjections))
+    data.table::setnames(allProjections, "analystId", "analyst")
   allProjections <- merge(allProjections, analystWeights, by = "analyst")
 
   # Redistributing WalterFootballData
@@ -107,7 +110,8 @@ getProjections <- function(scrapeData = NULL,
   # Calculate Points, Confidence intervals, standard deviation, and position ranks
   cat("Calculating Points                                                   \r")
   projectedPoints <- projectPoints(allProjections, leagueScoring, avgType = avgMethod)
-
+  avgProjections <- projectedPoints$avgStats
+  projectedPoints <- projectedPoints$pointsTable
   # If seasonal data then we will calculate Value Over Replacement. We also
   # get the ADP data for the season
   if(week == 0){
@@ -117,13 +121,15 @@ getProjections <- function(scrapeData = NULL,
 
     projectedPoints[, overallRank := rank(-vor, ties.method = "min")]
 
-    cat("Adding ADP data                                                    \r")
-    draftValues <- getDraftData(adpSources, season, teams, format, mflMocks, mflLeagues)
-    draftValues[, playerId := as.numeric(playerId)]
-    projectedPoints <- merge(projectedPoints, draftValues[, c("playerId", "adp", "aav"),
-                                                        with = FALSE],
-                             by = "playerId", all.x = TRUE)
-    projectedPoints[, adpDiff := overallRank - adp]
+    if(getADP){
+      cat("Adding ADP data                                                    \r")
+      draftValues <- getDraftData(adpSources, season, teams, format, mflMocks, mflLeagues)
+      draftValues[, playerId := as.numeric(playerId)]
+      projectedPoints <- merge(projectedPoints, draftValues[, c("playerId", "adp", "aav"),
+                                                            with = FALSE],
+                               by = "playerId", all.x = TRUE)
+      projectedPoints[, adpDiff := overallRank - adp]
+    }
   }
 
   # Adding player information
@@ -134,51 +140,67 @@ getProjections <- function(scrapeData = NULL,
   projectedPoints <- merge(players, projectedPoints, by = "playerId")
   projectedPoints[, exp := season - as.numeric(draftYear)]
 
-  projectedPoints[, c("playerId", "draftYear") := NULL]
+  projectedPoints[, c("draftYear") := NULL]
 
-  playerColumns <- c("player", "team", "position", "birthdate")
+  playerColumns <- c("playerId", "player", "team", "position", "birthdate")
   dataColumns <- names(projectedPoints)[which(!(names(projectedPoints) %in% playerColumns))]
   projectedPoints <- projectedPoints[, c(playerColumns, dataColumns), with = FALSE]
 
-  # Retrieving expert ranking information
-  if(format == "ppr"){
-    rankFormat = "ppr"
-  } else {
-    rankFormat = "std"
+  if(getECR){
+    # Retrieving expert ranking information
+    if(format == "ppr"){
+      rankFormat = "ppr"
+    } else {
+      rankFormat = "std"
+    }
+
+    cat("Retrieving ECR ranks for position                                    \r")
+    rankTable <- data.table::rbindlist(lapply(scrapePositions, getRanks,
+                                              leagueType = rankFormat,
+                                              weekNo = week), fill = TRUE)
+
+
+    rankTable <- rankTable[, c("player", "position", "team", "ecrRank", "sdRank"),
+                           with = FALSE]
+
+    data.table::setnames(rankTable, "ecrRank", "ecrPosition")
+
+
+    cat("Retrieving overall ECR ranks                                         \r")
+    overallRanks <- getRanks("consensus", leagueType = rankFormat, weekNo = week)
+    overallRanks <- overallRanks[, c("player", "position", "team", "ecrRank"),
+                                 with = FALSE]
+
+    rankTable <- merge(rankTable, overallRanks, by = c("player", "position", "team"))
+
+    # Adding ranking info to table
+    projectedPoints <- merge(projectedPoints, rankTable,
+                             by = c("player", "position", "team"), all.x = TRUE)
+
+    # Caluclate risk
+    cat("Calculating risk                                                     \r")
+    projectedPoints[, risk := calculateRisk(sdPts, sdRank), by = "position"]
   }
-  cat("Retrieving ECR ranks for position                                    \r")
-  rankTable <- data.table::rbindlist(lapply(scrapePositions, getRanks,
-                                            leagueType = rankFormat,
-                                            weekNo = week), fill = TRUE)
-
-
-  rankTable <- rankTable[, c("player", "position", "team", "ecrRank", "sdRank"),
-                         with = FALSE]
-
-  data.table::setnames(rankTable, "ecrRank", "ecrPosition")
-
-  cat("Retrieving overall ECR ranks                                         \r")
-  overallRanks <- getRanks("consensus", leagueType = rankFormat, weekNo = week)
-  overallRanks <- overallRanks[, c("player", "position", "team", "ecrRank"),
-                   with = FALSE]
-
-  rankTable <- merge(rankTable, overallRanks, by = c("player", "position", "team"))
-
-  # Adding ranking info to table
-  projectedPoints <- merge(projectedPoints, rankTable,
-                           by = c("player", "position", "team"), all.x = TRUE)
-
-  # Caluclate risk
-  cat("Calculating risk                                                     \r")
-  projectedPoints[, risk := calculateRisk(sdPts, sdRank), by = "position"]
-
 
   if(exists("vor", projectedPoints))
     projectedPoints <- projectedPoints[order(-vor)]
-  write.csv(projectedPoints, file = "projectedPoints.csv", row.names = FALSE,
-            na = "")
 
-  projectedPoints <- dataGadget(projectedPoints)
+  if(writeFile){
+    write.csv(projectedPoints, file = "projectedPoints.csv", row.names = FALSE,
+              na = "")
+    projectedPoints <- dataGadget(projectedPoints)
+  }
 
-  return(list(scrape = scrapeData, projections = projectedPoints))
+  avgTbl <- lapply(split(avgProjections, avgProjections$position),
+                   data.table::dcast,
+                   as.formula("playerId + position ~ dataCol"))
+
+  avgData <- lapply(names(avgTbl),
+                    function(p)ffanalytics::dataResult(resultData = avgTbl[[p]],
+                                                       position = p))
+  names(avgData) <- names(avgTbl)
+  avgData$period <- scrapeData$period
+  return(list(scrape = scrapeData,
+              avgStats = avgData,
+              projections = projectedPoints))
 }

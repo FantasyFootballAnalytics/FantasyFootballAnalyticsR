@@ -228,6 +228,12 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
         idTbl$cbsId <- as.numeric(idTbl$cbsId)
         idTbl$yahooId <- as.numeric(idTbl$yahooId)
         idTbl$playerId <- as.numeric(idTbl$playerId)
+
+        if(idVar %in% c("cbsId", "yahooId", "playerId")){
+          numeric.id <- as.numeric(dataTable[, idVar, with = FALSE][[1]])
+          dataTable[, (idVar) := numeric.id]
+        }
+
         if(idVar != "playerId"){
           dataTable <- merge(dataTable, idTbl[, c("playerId", idVar), with = FALSE],
                              by = idVar, all.x = TRUE)
