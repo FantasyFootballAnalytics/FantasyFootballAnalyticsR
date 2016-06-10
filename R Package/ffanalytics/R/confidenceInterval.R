@@ -21,6 +21,14 @@ confidenceInterval <-  function(calcMethod = "weighted", dataValue = as.numeric(
                         "robust" = quantile,
                         "weighted" = Hmisc::wtd.quantile)
 
+  # If there are zero data values return NA
+  if(length(dataValue) == 0)
+    return(c(NA, NA))
+  
+  # If there are 1 data value return the data value as limits on the interval
+  if(length(dataValue) == 1)
+    return(c(dataValue, dataValue))
+  
   # If weights are not passed then we use weights of 1 for all dataValues
   if(length(dataWeights) == 0)
     dataWeights <- rep(1, length(dataValue))
