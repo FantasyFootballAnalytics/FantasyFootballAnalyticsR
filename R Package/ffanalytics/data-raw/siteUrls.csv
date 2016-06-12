@@ -1,6 +1,6 @@
 urlID,siteID,siteUrl,urlPeriod,urlData,nameCol,whichTable,playerLinkString
 12,1,http://www.cbssports.com/fantasy/football/stats/weeklyprojections/{$Pos}/{$WeekNo}/{$SrcID}/standard?&print_rows=9999,week,html,1,1,"/fantasyfootball/players/playerpage/[0-9]{3,6}"
-13,-99,http://football.fantasysports.yahoo.com/f1/{$YahooLeague}/players?status=A&pos={$Pos}&cut_type=9&stat1=S_PW_{$WeekNo}&myteam=0&sort=PTS&sdir=1&count={$PgeID},week,html,2,2,"http://sports.yahoo.com/nfl/players/[0-9]{3,6}"
+13,2,http://football.fantasysports.yahoo.com/f1/{$YahooLeague}/players?status=A&pos={$Pos}&cut_type=9&stat1=S_PW_{$WeekNo}&myteam=0&sort=PTS&sdir=1&count={$PgeID},week,html,2,2,"http://sports.yahoo.com/nfl/players/[0-9]{3,6}"
 14,3,http://games.espn.go.com/ffl/tools/projections?&slotCateryId={$Pos}&scoringPeriodId={$WeekNo}&seasonId={$Season}&startIndex={$PgeID},week,html,1,2,NA
 15,4,http://api.fantasy.nfl.com/v1/players/stats?statType=weekProjectedStats&season={$Season}&week={$WeekNo}&position={$Pos}&format=json,week,json,NA,NA,NA
 16,5,http://www.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page={$PgeID}&position={$Pos}&split=4&playerSearchStatus=1,week,html,1,1,NA
@@ -11,7 +11,7 @@ urlID,siteID,siteUrl,urlPeriod,urlData,nameCol,whichTable,playerLinkString
 21,10,http://www.eatdrinkandsleepfootball.com/fantasy/projections/{$Season}/{$Pos}/,week,html,2,2,NA
 22,11,http://www.fantasysharks.com/apps/bert/forecasts/projections.php?csv=1&Sort=&Segment={$Segment}&Position={$Pos}&scoring=1&League=&uid=4&uid2=&printable=,week,csv,0,NA,NA
 23,1,http://www.cbssports.com/fantasy/football/stats/weeklyprojections/{$Pos}/season/{$SrcID}/standard?&print_rows=9999,season,html,1,1,"/fantasyfootball/players/playerpage/[0-9]{3,6}"
-24,-99,http://football.fantasysports.yahoo.com/f1/{$YahooLeague}/players?&sort=PTS&sdir=1&status=A&pos={$Pos}&cut_type=9&stat1=S_PS_{$Season}&jsenabled=1&count={$PgeID},season,html,2,2,"http://sports.yahoo.com/nfl/players/[0-9]{3,6}"
+24,2,http://football.fantasysports.yahoo.com/f1/{$YahooLeague}/players?&sort=PTS&sdir=1&status=A&pos={$Pos}&cut_type=9&stat1=S_PS_{$Season}&jsenabled=1&count={$PgeID},season,html,2,2,"http://sports.yahoo.com/nfl/players/[0-9]{3,6}"
 25,3,http://games.espn.go.com/ffl/tools/projections?&slotCategoryId={$Pos}&startIndex={$PgeID},season,html,2,2,NA
 26,4,http://api.fantasy.nfl.com/v1/players/stats?statType=seasonProjectedStats&season={$Season}&position={$Pos}&format=json,season,json,NA,NA,NA
 27,5,http://www.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page={$PgeID}&position={$Pos}&split=3&playerSearchStatus=1,season,html,1,1,/fantasy/football/commissioner/Players/Profile.aspx
@@ -31,5 +31,5 @@ urlID,siteID,siteUrl,urlPeriod,urlData,nameCol,whichTable,playerLinkString
 59,18,http://www.rtsports.com/football-draft-guide/draft-guide-projected.php?CACHED=0&POS={$Pos},season,html,2,3,NA
 60,16,/4for4/projectionsW{$WeekNo}_{$Season}.csv,week,csv,2,1,NA
 61,8,https://www.fantasypros.com/nfl/projections/{$Pos}.php?week=draft,season,html,1,2,NA
-,2,http://fantasysports.yahooapis.com/{$Pos}?season={$Season}&week={$WeekNo},season,json,NA,NA,NA
-,2,http://fantasysports.yahooapis.com/{$Pos}?season={$Season}&week={$WeekNo},week,json,NA,NA,NA
+,-2,http://fantasysports.yahooapis.com/{$Pos}?season={$Season}&week={$WeekNo},season,json,NA,NA,NA
+,-2,http://fantasysports.yahooapis.com/{$Pos}?season={$Season}&week={$WeekNo},week,json,NA,NA,NA

@@ -245,7 +245,6 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
       # Finding duplicated names in data table and id table
       dupeIdNames <- idTbl$player[duplicated(idTbl$player)]
       dupeNames <- dataTable$player[duplicated(dataTable$player)]
-      print(dataTable)
       if(exists("position", dataTable))
         dataTable <- dataTable[position == srcTbl@sourcePosition]
       if(exists("playerId", dataTable))
