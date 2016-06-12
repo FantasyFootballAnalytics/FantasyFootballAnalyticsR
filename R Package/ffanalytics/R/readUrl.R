@@ -204,6 +204,6 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
       if(class(col) == "factor")
         col <- as.character(col)
       return(as.numeric(col))
-    }), by = intersect(names(srcData), c("playerId", idVar, "player"))]
+    }), by = intersect(names(srcData), c("playerId", idVar, "player", "team", "position"))]
   return(srcData)
 }

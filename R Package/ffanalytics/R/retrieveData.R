@@ -245,6 +245,9 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
       # Finding duplicated names in data table and id table
       dupeIdNames <- idTbl$player[duplicated(idTbl$player)]
       dupeNames <- dataTable$player[duplicated(dataTable$player)]
+      print(dataTable)
+      if(exists("position", dataTable))
+        dataTable <- dataTable[position == srcTbl@sourcePosition]
       if(exists("playerId", dataTable))
         dataTable[, playerId := NULL]
       # First matching with player names that are not duplicated
@@ -253,7 +256,7 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
       dataTable <- merge(dataTable,
                          idTbl[!(player %in% dupeIdNames), c("player", "playerId"),
                                with = FALSE],
-                         by = "player", all.x = TRUE)
+                         by = c("player"), all.x = TRUE)
       # Removing any playerIds that were assigned to duplicated players in
       # the data table
       dataTable[player %in% dupeNames & !is.na(playerId), playerId := NA]
