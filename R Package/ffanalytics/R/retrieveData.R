@@ -244,7 +244,7 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
     } else {
 
       if(exists("position", dataTable)){
-        if(length(unique(dataTable$position)) > 0)
+        if(length(unique(dataTable$position)) > 1)
           dataTable <- dataTable[position == srcTbl@sourcePosition]
       }
       if(exists("playerId", dataTable))
