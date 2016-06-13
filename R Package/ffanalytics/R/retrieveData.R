@@ -242,24 +242,20 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
         dataTable <- dataTable[!is.na(playerId)]
       }
     } else {
-      # Finding duplicated names in data table and id table
-      dupeIdNames <- idTbl$player[duplicated(idTbl$player)]
-      dupeNames <- dataTable$player[duplicated(dataTable$player)]
+
       if(exists("position", dataTable))
         dataTable <- dataTable[position == srcTbl@sourcePosition]
       if(exists("playerId", dataTable))
         dataTable[, playerId := NULL]
-      # First matching with player names that are not duplicated
+
       if(class(dataTable$player) != "character")
         dataTable[, player := as.character(player)]
-      dataTable <- merge(dataTable,
-                         idTbl[!(player %in% dupeIdNames), c("player", "playerId"),
-                               with = FALSE],
-                         by = c("player"), all.x = TRUE)
-      # Removing any playerIds that were assigned to duplicated players in
-      # the data table
-      dataTable[player %in% dupeNames & !is.na(playerId), playerId := NA]
 
+      merge.cols <- intersect(names(dataTable), c("player", "team"))
+
+      dataTable <- merge(dataTable,
+                         idTbl[, c("player", "playerId"), with = FALSE],
+                         by = merge.cols, all.x = TRUE)
     }
   }
   if(exists("playerId", dataTable)){

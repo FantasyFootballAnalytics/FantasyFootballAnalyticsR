@@ -25,6 +25,7 @@ tableColumns <- data.table::data.table(read.csv("data-raw/tableColumns.csv", str
 data.table::setnames(tableColumns, c("dataColID", "siteTableID"), c("dataColId", "tableId"))
 tableColumns <- merge(tableColumns, dataColumns, by = "dataColId")
 tableColumns <- tableColumns[, c("tableId", "columnName", "columnType", "columnOrder", "columnPeriod", "removeColumn"), with = FALSE]
+tableColumns[columnName %in% c("team","games"), removeColumn := 0]
 
 tableRowRemove <- data.table::data.table(read.csv("data-raw/tableRowRemove.csv", stringsAsFactors = FALSE, na.strings = c("NA", "NULL")))
 data.table::setnames(tableRowRemove, "siteTableId", "tableId")
