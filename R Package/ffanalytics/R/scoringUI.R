@@ -116,7 +116,7 @@ vorUI <- function(positions){
                                               choices = c("Rank", "Points"),
                                               selected = "Rank", inline = TRUE ),
                                  textInput(paste0(p, "_dval"),
-                                           label = "D Value",
+                                           label = "d Value",
                                            value = tierDValues[[p]])
                         )
 
