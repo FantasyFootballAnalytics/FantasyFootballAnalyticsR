@@ -217,7 +217,7 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
   dataTable[, analyst := srcTbl@analystId]
 
   if(idVar != "playerId" & nrow(dataTable) > 0){# & exists(ifelse(nchar(idVar) > 0, idVar, "_none_"), dataTable)){
-    playerIds <- intersect(names(playerData), c("playerId", "player", "cbsId", "mflId", "yahooId", "fbgId"))
+    playerIds <- intersect(names(playerData), c("playerId", "player", "team", "cbsId", "mflId", "yahooId", "fbgId"))
     if(srcTbl@sourcePosition %in% c("DL", "LB", "DB")){
       idTbl <- playerData[position  %in% c("DL", "LB", "DB"), playerIds, with = FALSE]
     } else {
@@ -260,7 +260,7 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
       merge.cols <- intersect(names(dataTable), c("player", "team"))
 
       dataTable <- merge(dataTable,
-                         idTbl[, c("player", "playerId"), with = FALSE],
+                         idTbl[, c("player", "playerId", "team"), with = FALSE],
                          by = merge.cols, all.x = TRUE)
     }
   }
