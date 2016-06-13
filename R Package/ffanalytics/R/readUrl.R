@@ -157,7 +157,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
     srcData[, player := gsub("Sun 10:00 am|Sun 5:30 pm|Mon 4:10 pm|Sun 1:25 pm|Thu 5:30 pm|Mon 7:20 pm|Sun 1:05 pm", "", player)]
   }
 
-  if(urlSite == "fantasysharks"){
+  if(urlSite %in% c("fantasysharks", "rotowire")){
     srcData[, player := firstLast(player)]
   }
 

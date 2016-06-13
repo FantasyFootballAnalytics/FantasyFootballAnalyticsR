@@ -1988,8 +1988,8 @@ tableColumnID,dataColID,siteTableID,columnPeriod,columnOrder,removeColumn
 4273,106,125,season,7,0
 4274,110,125,season,8,0
 4275,109,125,season,9,0
-4276,107,125,season,10,0
-4277,108,125,season,11,0
+4276,107,125,season,11,0
+4277,108,125,season,10,0
 4278,111,125,season,12,0
 4279,27,125,season,13,0
 4280,55,125,week,1,1
@@ -2015,8 +2015,8 @@ tableColumnID,dataColID,siteTableID,columnPeriod,columnOrder,removeColumn
 4300,106,126,season,7,0
 4301,110,126,season,8,0
 4302,109,126,season,9,0
-4303,107,126,season,10,0
-4304,108,126,season,11,0
+4303,107,126,season,11,0
+4304,108,126,season,10,0
 4305,111,126,season,12,0
 4306,27,126,season,13,0
 4307,55,126,week,1,1
@@ -2042,8 +2042,8 @@ tableColumnID,dataColID,siteTableID,columnPeriod,columnOrder,removeColumn
 4327,106,127,season,7,0
 4328,110,127,season,8,0
 4329,109,127,season,9,0
-4330,107,127,season,10,0
-4331,108,127,season,11,0
+4330,107,127,season,11,0
+4331,108,127,season,10,0
 4332,111,127,season,12,0
 4333,191,127,season,13,1
 4334,190,127,season,14,1
