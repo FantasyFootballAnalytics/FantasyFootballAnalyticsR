@@ -6,7 +6,7 @@ Run_Scrape <- function(){
   names(weekList) <- c("Season", paste("Week", 1:17))
   fbgs <- analysts[siteId == sites[siteName == "Footballguys"]$siteId]$analystId
   ui <- miniPage(
-    gadgetTitleBar("Run Data Srape"),
+    gadgetTitleBar("Run Data Scrape"),
     miniContentPanel(
       fillCol(flex = c(1,9),
               fillRow(
