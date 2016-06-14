@@ -197,3 +197,60 @@ replaceMissingData <- function(statData = data.table(), calcType = "weighted"){
 
   return(merge(missData, avgData, by = mergeVar, allow.cartesian = TRUE))
 }
+
+
+#' @export dualPositionData
+dualPositionData <- function(scrapeData){
+
+  ## Combining data for dual position players
+  offpos <- intersect(names(scrapeData), c("QB", "RB", "WR", "TE"))
+  defpos <- intersect(names(scrapeData), c("DL", "DB", "LB"))
+
+  if(length(defpos) > 1 & length(offpos) > 1){
+    posComb <- cbind(combn(offpos, 2), combn(defpos, 2))
+  }
+
+  if(length(defpos) == 0 & length(offpos) > 1){
+    posComb <- combn(offpos, 2)
+  }
+
+  if(length(defpos) > 1 & length(offpos) == 0){
+    posComb <- combn(defpos, 2)
+  }
+
+  if(exists("posComb")){
+    copyData <- apply(posComb,2, function(comb){
+      data1 <- scrapeData[comb[1]]@resultData
+      data2 <- scrapeData[comb[2]]@resultData
+      commonPlayers <- intersect(data1$playerId, data2$playerId)
+      newData1 <- data.table()
+      newData2 <- data.table()
+      if (length(commonPlayers) >0){
+        commonData <- intersect(names(data1), names(data2))
+        for(pl in commonPlayers){
+          addSources1 <- setdiff(data1$analystId[data1$playerId == pl], data2$analystId[data2$playerId == pl])
+          addSources2 <- setdiff(data2$analystId[data2$playerId == pl], data1$analystId[data1$playerId == pl])
+
+          if(length(addSources1) >0 ){
+            addData1 <- posProj[[comb[1]]][playerId == pl & analystId %in% addSources1, commonData, with = FALSE]
+            newData2<- rbindlist(list(newData2, addData1), use.names = TRUE, fill = TRUE)
+          }
+          if(length(addSources2) >0 ){
+            addData2 <- posProj[[comb[2]]][playerId == pl & analystId %in% addSources2, commonData, with = FALSE]
+            newData1<- rbindlist(list(newData1, addData2), use.names = TRUE, fill = TRUE)
+          }
+
+        }
+        result = list(newData1, newData2)
+        names(result) <- c(comb[1],comb[2])
+        return(result)
+      }
+    }
+    )
+
+    appendData <- lapply(names(scrapeData), function(pos)rbindlist(lapply(copyData, function(dt)dt[[pos]]), fill = TRUE))
+
+    return(appendData)
+  }
+
+}
