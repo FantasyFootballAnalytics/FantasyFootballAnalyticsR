@@ -147,6 +147,8 @@ runScrape <- function(season = NULL, week = NULL,
     return(dataResult(resultData = resData, position = pos))
   })
 
+
+
   cat("=================\nScrape Summary:\n")
   for(p in unique(urlTable$sourcePosition)){
     cat("\t", p, ":\n")
@@ -154,6 +156,15 @@ runScrape <- function(season = NULL, week = NULL,
     cat("\t\tFailed:", scrapeSummary[pos == p]$failure, "\n")
   }
   names(returnData) <- intersect(position.name, urlTable$sourcePosition)
+  if(any(names(returnData) == "K"))
+    returnData[["K"]]@resultData <- updateFieldGoals(returnData[["K"]]@resultData)
+
+  dualData <- dualPositionData(returnData)
+
+  for(pos in names(dualData)){
+    table.list <- list(returnData[[pos]]@resultData, dualData[[pos]])
+    returnData[[pos]]@resultData <- data.table::rbindlist(table.list)
+  }
   returnData$period <- scrapePeriod
   returnData$analysts <- scrapeAnalysts
 

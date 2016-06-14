@@ -219,25 +219,30 @@ dualPositionData <- function(scrapeData){
   }
 
   if(exists("posComb")){
+
+
     copyData <- apply(posComb,2, function(comb){
-      data1 <- scrapeData[comb[1]]@resultData
-      data2 <- scrapeData[comb[2]]@resultData
-      commonPlayers <- intersect(data1$playerId, data2$playerId)
-      newData1 <- data.table()
-      newData2 <- data.table()
+      data1 <- scrapeData[[comb[1]]]@resultData
+      data2 <- scrapeData[[comb[2]]]@resultData
+
+      commonPlayers <- unique(intersect(data1$playerId, data2$playerId))
+      newData1 <- data.table::data.table()
+      newData2 <- data.table::data.table()
       if (length(commonPlayers) >0){
         commonData <- intersect(names(data1), names(data2))
         for(pl in commonPlayers){
-          addSources1 <- setdiff(data1$analystId[data1$playerId == pl], data2$analystId[data2$playerId == pl])
-          addSources2 <- setdiff(data2$analystId[data2$playerId == pl], data1$analystId[data1$playerId == pl])
+          addSources1 <- setdiff(data1$analyst[data1$playerId == pl], data2$analyst[data2$playerId == pl])
+          addSources2 <- setdiff(data2$analyst[data2$playerId == pl], data1$analyst[data1$playerId == pl])
 
           if(length(addSources1) >0 ){
-            addData1 <- posProj[[comb[1]]][playerId == pl & analystId %in% addSources1, commonData, with = FALSE]
-            newData2<- rbindlist(list(newData2, addData1), use.names = TRUE, fill = TRUE)
+            addData1 <- data1[playerId == pl & analyst %in% addSources1, commonData, with = FALSE]
+            newData2<- data.table::rbindlist(list(newData2, addData1), use.names = TRUE, fill = TRUE)
+            newData2[, position := comb[[2]]]
           }
           if(length(addSources2) >0 ){
-            addData2 <- posProj[[comb[2]]][playerId == pl & analystId %in% addSources2, commonData, with = FALSE]
-            newData1<- rbindlist(list(newData1, addData2), use.names = TRUE, fill = TRUE)
+            addData2 <- data2[playerId == pl & analyst %in% addSources2, commonData, with = FALSE]
+            newData1<- data.table::rbindlist(list(newData1, addData2), use.names = TRUE, fill = TRUE)
+            newData1[, position := comb[[1]]]
           }
 
         }
@@ -247,10 +252,39 @@ dualPositionData <- function(scrapeData){
       }
     }
     )
-
-    appendData <- lapply(names(scrapeData), function(pos)rbindlist(lapply(copyData, function(dt)dt[[pos]]), fill = TRUE))
-
+    scrapePos <- intersect(position.name, names(scrapeData))
+    appendData <- lapply(scrapePos, function(pos)data.table::rbindlist(lapply(copyData, function(dt)dt[[pos]]), fill = TRUE))
+    names(appendData) <- scrapePos
     return(appendData)
   }
+}
 
+
+#' @export updateFieldGoals
+updateFieldGoals <- function(kickerData){
+  fg.cols <- c("fg", "fg0019", "fg2029", "fg3039", "fg4049", "fg50", "fg0039")
+  fg.miss <-  c("fgMiss", "fgMiss0019", "fgMiss2029", "fgMiss3039", "fgMiss4049", "fgMiss50")
+  for(fg.var in fg.cols){
+    if(!exists(fg.var, kickerData) & length(kickerData)>0){
+      kickerData[ , (fg.var) := as.numeric(NA)]
+    }
+  }
+
+  if(exists("fg", kickerData)){
+    kickerData[is.na(fg) ,  fg := sum(.SD, na.rm = TRUE), by = c("playerId", "analyst"),
+               .SDcols = fg.cols[fg.cols != "fg"]]
+  }
+  if(exists("fgMiss0019", kickerData)){
+    kickerData[is.na(fgMiss), fg.Miss := sum(.SD, na.rm = TRUE), by = c("playerId", "analyst"),
+               .SDcols = fg.miss[fg.miss != "fgMiss"]]
+  }
+
+  if(exists("fg0019", kickerData)){
+    kickerData[, fg_check := sum(.SD, na.rm = TRUE), by = c("playerId", "analyst"),
+               .SDcols = fg.cols[fg.cols != "fg"]]
+    kickerData[fg < fg_check, fg := fg_check]
+    kickerData[, fg_check := NULL]
+  }
+
+  return(kickerData)
 }

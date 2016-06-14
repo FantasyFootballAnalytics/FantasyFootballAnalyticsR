@@ -7,7 +7,8 @@
 getProjections(scrapeData = NULL, avgMethod = "average",
   leagueScoring = scoringRules, vorBaseline, vorType, teams = 12,
   format = "standard", mflMocks = NULL, mflLeagues = NULL,
-  adpSources = c("CBS", "ESPN", "FFC", "MFL", "NFL"))
+  adpSources = c("CBS", "ESPN", "FFC", "MFL", "NFL"), getADP = TRUE,
+  getECR = TRUE, writeFile = TRUE)
 }
 \arguments{
 \item{scrapeData}{The scraped projections data from \link{runScrape}.}
