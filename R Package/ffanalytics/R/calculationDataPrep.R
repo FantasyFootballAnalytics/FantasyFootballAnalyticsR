@@ -222,8 +222,12 @@ dualPositionData <- function(scrapeData){
 
 
     copyData <- apply(posComb,2, function(comb){
-      data1 <- scrapeData[[comb[1]]]@resultData
-      data2 <- scrapeData[[comb[2]]]@resultData
+      data1 <- data.table::copy(scrapeData[[comb[1]]]@resultData)
+      data2 <- data.table::copy(scrapeData[[comb[2]]]@resultData)
+      if(exists("analystId", data1))
+        data.table::setnames(data1, "analystId", "analyst")
+      if(exists("analystId", data2))
+        data.table::setnames(data2, "analystId", "analyst")
 
       commonPlayers <- unique(intersect(data1$playerId, data2$playerId))
       newData1 <- data.table::data.table()
@@ -262,6 +266,8 @@ dualPositionData <- function(scrapeData){
 
 #' @export updateFieldGoals
 updateFieldGoals <- function(kickerData){
+  if(exists("analystId", kickerData))
+    data.table::setnames(kickerData, "analystId", "analyst")
   fg.cols <- c("fg", "fg0019", "fg2029", "fg3039", "fg4049", "fg50", "fg0039")
   fg.miss <-  c("fgMiss", "fgMiss0019", "fgMiss2029", "fgMiss3039", "fgMiss4049", "fgMiss50")
   for(fg.var in fg.cols){
