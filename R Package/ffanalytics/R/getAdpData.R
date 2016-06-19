@@ -210,7 +210,8 @@ getDraftData <- function(draftSources = c("CBS", "ESPN", "FFC", "MFL", "NFL", "Y
                            mock = mflMocks, keeper = mflLeagues)[, c("mflId", "adp"),  with = FALSE]
     mflAAV <- getMFLValues(season = season, type = "aav", teams, ppr = mflppr,
                            mock = mflMocks, keeper = mflLeagues)[, c("mflId", "aav"),  with = FALSE]
-    mflDraft <- merge(mflAAV, mflADP, all = TRUE, by = "mflId")
+    mflDraft <- merge(mflAAV[, mflId := as.numeric(mflId)],
+                      mflADP[, mflId := as.numeric(mflId)], all = TRUE, by = "mflId")
     mflDraft[,mflId := as.numeric(mflId)]
     mflDraft <- merge(playerData[, c("playerId", "mflId", "player", "position", "team"), with = FALSE],
                       mflDraft, by = "mflId")

@@ -290,7 +290,9 @@ getYahooDraftData <- function(season, league){
                        subResource = "players/draft_analysis",
                        queryParams = draft.query)
 
-    draftData <- callAPI(draftUrl)
+    draftData <- tryCatch(callAPI(draftUrl),
+                          error = function(e)return(draftTable))
+
     if(length(draftData$league[[2]]$players) == 0)
       break
 

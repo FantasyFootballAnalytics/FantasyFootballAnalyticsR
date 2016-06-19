@@ -19,6 +19,7 @@ siteTables[, positionId := NULL]
 siteUrls <- data.table::data.table(read.csv("data-raw/siteUrls.csv", stringsAsFactors = FALSE, na.strings = c("NA", "NULL")))
 data.table::setnames(siteUrls, c("urlData", "whichTable", "playerLinkString", "siteID"), c("urlType", "urlTable", "playerLink", "siteId"))
 siteUrls[, urlID := NULL]
+siteUrls[siteId == 12, siteUrl := gsub("u6gk8h2vgyyz", "{$FFNKEY}", siteUrl, fixed = TRUE)]
 
 dataColumns <- data.table::data.table(read.csv("data-raw/dataColumns.csv", stringsAsFactors = FALSE, na.strings = c("NA", "NULL")))
 tableColumns <- data.table::data.table(read.csv("data-raw/tableColumns.csv", stringsAsFactors = FALSE, na.strings = c("NA", "NULL")))

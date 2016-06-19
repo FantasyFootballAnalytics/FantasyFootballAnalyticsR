@@ -3,7 +3,6 @@
 \docType{data}
 \name{Constants}
 \alias{Constants}
-\alias{ffnAPI}
 \alias{position.Id}
 \alias{position.name}
 \alias{yahooLeague}
@@ -14,8 +13,6 @@ position.name
 position.Id
 
 yahooLeague
-
-ffnAPI
 }
 \description{
 Constants build into the package

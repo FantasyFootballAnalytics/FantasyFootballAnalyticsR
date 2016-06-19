@@ -6,7 +6,6 @@
 #' @export position.name
 #' @export position.Id
 #' @export yahooLeague
-#' @export ffnAPI
 
 #' @format NULL
 position.name <- c("QB", "RB", "WR", "TE", "K", "DST", "DL", "LB", "DB")
@@ -19,9 +18,6 @@ position.Id <- sapply(position.name, function(p)which(position.name == p))
 #' @format NULL
 yahooLeague <- 52880
 
-#' @rdname Constants
-#' @format NULL
-ffnAPI <- "test"
 
 nflTeam.abb <- c("ARI", "ATL", "BAL", "BUF", "CAR", "CHI", "CIN", "CLE",
                  "DAL", "DEN", "DET", "GB",  "HOU", "IND", "JAC", "KC",
