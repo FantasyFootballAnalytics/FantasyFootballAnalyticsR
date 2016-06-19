@@ -29,7 +29,7 @@ getADPdata <- function(ADPsources = c("CBS", "ESPN", "FFC", "MFL", "NFL"),
 
   if("CBS" %in% ADPsources){
     cbsADP <- getCBSValues()[, c("cbsId", "adp"), with = FALSE]
-    cbsADP[, cbsId := as.character(cbsId)]
+    cbsADP[, cbsId := as.numeric(cbsId)]
     cbsADP <- merge(playerData[, c("playerId", "cbsId", "player", "position", "team"), with = FALSE],
                     cbsADP, by = "cbsId")
     cbsADP[, cbsId := NULL]
