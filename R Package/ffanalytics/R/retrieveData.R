@@ -257,6 +257,18 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
       if(class(dataTable$player) != "character")
         dataTable[, player := as.character(player)]
 
+      if(exists("team", dataTable)){
+        dataTable[team == "KCC", team := "KC"]
+        dataTable[team == "SFO", team := "SF"]
+        dataTable[team == "TBB", team := "TB"]
+        dataTable[team == "NEP", team := "NE"]
+        dataTable[team %in% c("RAM", "LAR"), team := "LA"]
+        dataTable[team == "SDC", team := "SD"]
+        dataTable[team == "ARZ", team := "ARI"]
+        dataTable[team == "NOR", team := "NO"]
+        dataTable[team == "GBP", team := "GB"]
+      }
+
       merge.cols <- intersect(names(dataTable), c("player", "team"))
 
       dataTable <- merge(dataTable,
