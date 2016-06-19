@@ -224,6 +224,7 @@ Run_Projection <- function(){
                            ", season = ", input$scrapeSeason,
                            ", analysts = ", analystVector,
                            ", positions = ", positionVector)
+
       if(length(input$fbgUser) == 0){
         scrapeCode <- paste0(scrapeCode, ")")
       } else {
@@ -236,17 +237,11 @@ Run_Projection <- function(){
         }
       }
 
-      if(!is.null(input$fbgUser))
-        fbg.user <- paste0("\"", input$fbgUser, "\"")
-
-      if(!is.null(input$fbgUser))
-        fbg.pwd <- paste0("\"", input$fbgPwd, "\"")
-
       userScoring <<- getScoringRules(input$selectPositions)
       vorBaseline <<- getVORbaseline(input$selectPositions)
       vorType <<- getVORtypes(input$selectPositions)
       tierDValues <<- getTierD(input$selectPositions)
-      rCode <- paste0("getProjections(scrapeData=", scrapeCode ,
+      rCode <- paste0("myProjections <- getProjections(scrapeData=", scrapeCode ,
                       ", avgMethod = \"", tolower(input$averageType),
                       "\", leagueScoring = userScoring, vorBaseline, vorType",
                       ", teams = ", input$numTeams,
@@ -254,8 +249,6 @@ Run_Projection <- function(){
                       "\", mflMocks = ", input$mockMFL,
                       ", mflLeagues = ", input$leagueMFL,
                       ", adpSources = ", adpVector,
-                      ", fbgUser = ", fbg.user,
-                      ", fbgPwd = ", fbg.pwd,
                       ")"
 
       )

@@ -60,6 +60,7 @@ mflPlayers <- function(season = 2016, weekNo = 0, pos = position.name){
   mflData[, birthdate := as.Date(as.POSIXct(as.numeric(birthdate), origin = "1970-01-01"))]
   mflData[, rookie := as.logical(ifelse(is.na(rookie), "", rookie) == "R")]
   mflData[, cbsId := as.numeric(cbsId)]
+  mflData[, mflId := as.numeric(mflId)]
   return(mflData[,c("playerId", "player", "yahooId", "cbsId",  "mflId", "position",
                     "team", "draftYear", "birthdate", "rookie"), with = FALSE])
 }
