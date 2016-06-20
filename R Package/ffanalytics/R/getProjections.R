@@ -48,6 +48,7 @@ getProjections <- function(scrapeData = NULL,
   analystWeights <- analysts[analystId %in% scrapeAnalysts, c("analystId", "weight"), with = FALSE]
   data.table::setnames(analystWeights, "analystId", "analyst")
 
+
   allProjections <- data.table::rbindlist(lapply(scrapeData[scrapePositions],
                                                  getMeltedData), fill = TRUE)
   if(exists("analystId", allProjections))

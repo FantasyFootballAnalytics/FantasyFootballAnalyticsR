@@ -157,7 +157,7 @@ runScrape <- function(season = NULL, week = NULL,
   }
   names(returnData) <- intersect(position.name, urlTable$sourcePosition)
   if(any(names(returnData) == "K"))
-    returnData[["K"]]@resultData <- updateFieldGoals(returnData[["K"]]@resultData)
+    returnData[["K"]]@resultData <- updateFieldGoals(data.table::copy(returnData[["K"]]@resultData))
 
   dualData <- dualPositionData(returnData)
 
