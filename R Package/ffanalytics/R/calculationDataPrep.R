@@ -277,7 +277,7 @@ updateFieldGoals <- function(kickerData){
   }
 
   if(exists("fg", kickerData)){
-    kickerData[is.na(fg) ,  fg := sum(.SD, na.rm = TRUE), by = c("playerId", "analyst"),
+    kickerData[is.na(fg) | fg == 0 ,  fg := sum(.SD, na.rm = TRUE), by = c("playerId", "analyst"),
                .SDcols = fg.cols[fg.cols != "fg"]]
   }
   if(exists("fgMiss0019", kickerData)){
