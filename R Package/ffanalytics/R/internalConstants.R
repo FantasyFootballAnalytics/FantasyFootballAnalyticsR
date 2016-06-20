@@ -11,7 +11,7 @@ websites <- c("footballguys", "fftoday", "fantasysharks", "walterfootball", "yah
 correct.from <- c("Ty Hilton", "Timothy Wright", "Christopher Ivory", "Domanique Davis", "Ben Watson", "Stevie Johnson",	"Lesean McCoy",
                   "Luke Wilson", "Thaddeus Lewis", "Walter Powell",  "Wilson VanHooser", "Steve Hauschka", "Daniel Herron", "Robert Housler" ,
                   "Corey Philly Brown",  "Foswhitt Whittaker", "CJ Anderson", "TY Hilton", "Boobie Dixon", "EZ Nwachukwu", "Dave Paulson",
-                  "Joe DonDuncan", "T Y Hilton", "Dqwell Jackson", "Art Jones", "Navorro Bowman", "Devante Paker")
+                  "Joe DonDuncan", "T Y Hilton", "Dqwell Jackson", "Art Jones", "Navorro Bowman", "Devante Parker")
 
 correct.to <- c("T.Y. Hilton", "Tim Wright", "Chris Ivory", "Dominique Davis", "Benjamin Watson", "Steve Johnson", "LeSean McCoy",
                 "Luke Willson",	"Thad Lewis", "Walt Powell", "Wilson Van Hooser", "Steven Hauschka", "Dan Herron", "Rob Housler",
