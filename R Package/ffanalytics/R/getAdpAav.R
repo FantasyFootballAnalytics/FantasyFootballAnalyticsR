@@ -55,13 +55,7 @@ getESPNValues <- function(){
       return(emptyTbl[0])
     data.table::setnames(espnTbl, c(1:8), c("rank", "player", "position", "adp",
                                             "snake7day", "aav", "value7day", "pctOwn"))
-    espnTbl[, player := gsub(", Wsh", ", WAS", player, fixed = TRUE)]
-    playerTeams <- toupper(espnTbl$player)
-    playerTeams <- sapply(nflTeam.abb, function(nt)stringr::str_extract(playerTeams, nt))
-    playerTeams <- apply(playerTeams, 1, function(pr)pr[which(!is.na(pr))])
-    playerTeams <- lapply(playerTeams, function(pr)ifelse(length(pr) == 0, "FA", pr))
-    playerTeams <- unlist(playerTeams)
-    espnTbl$team <- playerTeams
+    espnTbl$team <- extractTeams(espnTbl$player, "espn")
     if(!exists("team", espnTbl)){
       espnTbl$team <- ""
     }
