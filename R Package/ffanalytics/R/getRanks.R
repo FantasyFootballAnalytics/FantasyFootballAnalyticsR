@@ -106,7 +106,7 @@ getRanks <- function(rank.position = "consensus", leagueType = "std", weekNo = 0
   data.table::setnames(rnks, cNames)
   if(nrow(rnks) > 0 ){
 
-    rnks$team <- extractTeams(rnks$player, "fantasypros")
+    rnks$team <- extractTeam(rnks$player, "fantasypros")
     # Cleaning player names
     rnks$player <- getPlayerName(rnks$player)
 
