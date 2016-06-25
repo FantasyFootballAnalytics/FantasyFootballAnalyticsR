@@ -22,7 +22,9 @@ Imports:
     DT,
     XML,
     httr,
-    tcltk, RCurl, Hmisc
+    tcltk,
+    RCurl,
+    Hmisc
 RoxygenNote: 5.0.1
 Collate:
     'calcStdDev.R'
@@ -37,6 +39,7 @@ Collate:
     'dataPeriod.R'
     'dataResult.R'
     'externalConstants.R'
+    'extractTeamNames.R'
     'ffanalytics.R'
     'getAdpAav.R'
     'getAdpData.R'
