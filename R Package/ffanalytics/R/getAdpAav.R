@@ -55,7 +55,7 @@ getESPNValues <- function(){
       return(emptyTbl[0])
     data.table::setnames(espnTbl, c(1:8), c("rank", "player", "position", "adp",
                                             "snake7day", "aav", "value7day", "pctOwn"))
-    espnTbl$team <- extractTeams(espnTbl$player, "espn")
+    espnTbl$team <- extractTeam(espnTbl$player, "espn")
     if(!exists("team", espnTbl)){
       espnTbl$team <- ""
     }
