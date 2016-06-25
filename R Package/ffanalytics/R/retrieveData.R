@@ -143,8 +143,6 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
 
   removeRows <- tableRowRemove$rowRemove[tableRowRemove$tableId == scrapeTable]
 
-
-
   # Scraping data from the URL
   dataTable <- data.table::rbindlist(
     lapply(urlAddress, function(inpUrl)readUrl(inpUrl,
@@ -267,6 +265,8 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
         dataTable[team == "ARZ", team := "ARI"]
         dataTable[team == "NOR", team := "NO"]
         dataTable[team == "GBP", team := "GB"]
+        dataTable[team == "JAX", team := "JAC"]
+        dataTable[team == "WSH", team := "WAS"]
       }
 
       merge.cols <- intersect(names(dataTable), c("player", "team"))

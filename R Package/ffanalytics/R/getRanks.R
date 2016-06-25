@@ -105,17 +105,14 @@ getRanks <- function(rank.position = "consensus", leagueType = "std", weekNo = 0
   }
   data.table::setnames(rnks, cNames)
   if(nrow(rnks) > 0 ){
-    playerTeams <- sapply(nflTeam.abb, function(nt)stringr::str_extract(rnks$player, nt))
-    playerTeams <- apply(playerTeams, 1, function(pr)pr[which(!is.na(pr))])
-    playerTeams <- lapply(playerTeams, function(pr)ifelse(length(pr) == 0, "FA", pr))
-    playerTeams <- unlist(playerTeams)
-    rnks$team <- playerTeams
+
+    rnks$team <- extractTeams(rnks$player, "fantasypros")
     # Cleaning player names
     rnks$player <- getPlayerName(rnks$player)
 
     # Removing numbers from the position variable, i.e. RB5, WR14 -> RB, WR
     if(exists("position", rnks)){
-      rnks[, position := gsub("[0-9]", "", position)]
+      rnks[, position := gsub("[0-9]+", "", position)]
     }
 
     # Merging with player data from NFL.com to find the playerId.

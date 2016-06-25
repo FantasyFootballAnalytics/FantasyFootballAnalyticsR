@@ -41,7 +41,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
     inpUrl <- fbgUrl(inpUrl, fbgUser, fbgPwd)
   }
 
-  if(urlSite == "fantasypros")
+  if(urlSite == "fantasypros" | urlSite == "fantasydata")
     inpUrl <- tryCatch(RCurl::getURL(inpUrl),
                        error = function(e)return(emptyData))
 
@@ -160,6 +160,12 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
   if(urlSite %in% c("fantasysharks", "rotowire")){
     srcData[, player := firstLast(player)]
   }
+
+  if(urlSite == "footballguys")
+    srcData[, team := extractTeam(team, urlSite)]
+
+  if(urlSite %in% c("fantasypros", "fox", "numberfire", "espn"))
+    srcData[, team := extractTeam(player, urlSite)]
 
   if(exists("player", srcData))
     srcData[, player := getPlayerName(getPlayerName(getPlayerName(player)))]
