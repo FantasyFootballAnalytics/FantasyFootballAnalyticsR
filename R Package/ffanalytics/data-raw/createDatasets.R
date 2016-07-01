@@ -1,7 +1,8 @@
 source("R/externalConstants.R")
 analysts <- data.table::data.table(read.csv("data-raw/analysts.csv", stringsAsFactors = FALSE, na.strings = c("NA", "NULL")))
 data.table::setnames(analysts,  c("analystQryId", "siteID"), c("sourceId", "siteId"))
-analysts[, analystCode := NULL]
+if(exists("analystCode", analysts))
+  analysts[, analystCode := NULL]
 
 analystPositions <- data.table::data.table(read.csv("data-raw/analystPositions.csv", stringsAsFactors = FALSE, na.strings = c("NA", "NULL")))
 analystPositions[, position := names(position.Id)[which(position.Id == positionId)], by = "analystPosId"]
@@ -9,7 +10,9 @@ analystPositions[, positionId := NULL]
 
 sites <- data.table::data.table(read.csv("data-raw/sites.csv", stringsAsFactors = FALSE, na.strings = c("NA", "NULL")))
 data.table::setnames(sites, c("siteID", "playerIdCol"), c("siteId", "playerId"))
-sites[, siteCode := NULL]
+sites[playerId == "fftId", playerId := NA ]
+if(exists("siteCode", sites))
+  sites[, siteCode := NULL]
 
 siteTables <- data.table::data.table(read.csv("data-raw/siteTables.csv", stringsAsFactors = FALSE, na.strings = c("NA", "NULL")))
 data.table::setnames(siteTables, c("siteTableId",  "positionQryId"), c("tableId", "positionAlias"))
@@ -19,7 +22,8 @@ siteTables[, positionId := NULL]
 siteUrls <- data.table::data.table(read.csv("data-raw/siteUrls.csv", stringsAsFactors = FALSE, na.strings = c("NA", "NULL")))
 data.table::setnames(siteUrls, c("urlData", "whichTable", "playerLinkString", "siteID"), c("urlType", "urlTable", "playerLink", "siteId"))
 siteUrls[, urlID := NULL]
-siteUrls[siteId == 12, siteUrl := gsub("u6gk8h2vgyyz", "{$FFNKEY}", siteUrl, fixed = TRUE)]
+
+siteUrls[, siteUrl := gsub("{$PosID}", "{$Pos}", siteUrl, fixed = TRUE)]
 
 dataColumns <- data.table::data.table(read.csv("data-raw/dataColumns.csv", stringsAsFactors = FALSE, na.strings = c("NA", "NULL")))
 tableColumns <- data.table::data.table(read.csv("data-raw/tableColumns.csv", stringsAsFactors = FALSE, na.strings = c("NA", "NULL")))

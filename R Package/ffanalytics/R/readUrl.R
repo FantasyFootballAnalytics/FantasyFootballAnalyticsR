@@ -41,9 +41,11 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
     inpUrl <- fbgUrl(inpUrl, fbgUser, fbgPwd)
   }
 
-  if(urlSite == "fantasypros" | urlSite == "fantasydata")
+
+  if(urlSite == "fantasypros" | urlSite == "fantasydata"){
     inpUrl <- tryCatch(RCurl::getURL(inpUrl),
                        error = function(e)return(emptyData))
+  }
 
   if(length(removeRow) == 0){
     removeRow <- NULL

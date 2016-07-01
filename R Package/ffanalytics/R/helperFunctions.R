@@ -55,6 +55,7 @@ dropoffValue <- function(dataValue){
   return(dropoff)
 }
 
+#' @export scrapeXMLdata
 scrapeXMLdata <- function(xmlUrl){
   xmlData <- as.data.frame(t(XML::xpathSApply(XML::xmlParse(xmlUrl),
                                               "//Player", fun = XML::xmlToList)))

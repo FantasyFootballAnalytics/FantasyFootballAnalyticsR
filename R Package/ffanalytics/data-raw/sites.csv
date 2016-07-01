@@ -5,10 +5,10 @@
 3,"ESPN",0,NA,"espn"
 4,"NFL",0,"playerId","nfl"
 5,"FOX",0,NA,"fox"
-6,"FFToday",0,NA,"fft"
+6,"FFToday",0,"fftId","fft"
 7,"NumberFire",0,NA,"nmf"
 8,"FantasyPros",0,NA,"ffp"
-9,"Footballguys",1,NA,"fbg"
+9,"Footballguys",1,"fbgId","fbg"
 10,"EDS Football",0,NA,"eds"
 11,"FantasySharks",0,NA,"fs"
 12,"Fantasyfootballnerd",0,NA,"ffn"
@@ -16,3 +16,4 @@
 16,"4for4",1,NA,"fff"
 17,"Rotowire",1,NA,"roto"
 18,"RTSports.com",0,NA,"rts"
+19,"FantasyData",0,NA,NA
