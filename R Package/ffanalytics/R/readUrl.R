@@ -62,6 +62,14 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
     stRow <- 2
   }
 
+  # check if input file exists
+  if(dataType %in% c("csv", "file") & !file.exists(inpUrl)){
+    warning(cat("File ", unlist(orgUrl), " cannot be found. Returning empty data\n"),
+            call. = FALSE)
+    return(emptyData)
+  }
+
+
   # Will try up to 10 times to get data from the source
   while(read.try <= 10 ){
     srcData <-tryCatch(

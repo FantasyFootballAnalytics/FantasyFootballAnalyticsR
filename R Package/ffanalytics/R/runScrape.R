@@ -163,7 +163,7 @@ runScrape <- function(season = NULL, week = NULL,
 
   for(pos in names(dualData)){
     table.list <- list(returnData[[pos]]@resultData, dualData[[pos]])
-    returnData[[pos]]@resultData <- data.table::rbindlist(table.list)
+    returnData[[pos]]@resultData <- data.table::rbindlist(table.list, fill = TRUE)
   }
   returnData$period <- scrapePeriod
   returnData$analysts <- scrapeAnalysts

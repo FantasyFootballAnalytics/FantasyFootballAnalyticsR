@@ -68,8 +68,8 @@ getADPdata <- function(ADPsources = c("CBS", "ESPN", "FFC", "MFL", "NFL"),
       mflLeagues = -1
     mflADP <- getMFLValues(season, type = "adp", teams, ppr = mflppr,
                            mock = mflMocks, keeper = mflLeagues)[, c("mflId", "adp"),  with = FALSE]
-    mflADP <- merge(playerData[, c("playerId", "mflId", "player", "position", "team"), with = FALSE],
-                    mflADP, by = "mflId")
+    mflADP <- merge(playerData[, c("playerId", "mflId", "player", "position", "team"), with = FALSE][, mflId := as.numeric(mflId)],
+                    mflADP[, mflId := as.numeric(mflId)], by = "mflId")
     mflADP[, mflId := NULL]
     adpData$MFL <- mflADP
   }
