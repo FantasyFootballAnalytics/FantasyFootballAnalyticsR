@@ -63,7 +63,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
   }
 
   # check if input file exists
-  if(dataType %in% c("csv", "file") & !file.exists(inpUrl)){
+  if(dataType %in% c("csv", "file") & !file.exists(orgUrl)){
     warning(cat("File ", unlist(orgUrl), " cannot be found. Returning empty data\n"),
             call. = FALSE)
     return(emptyData)
