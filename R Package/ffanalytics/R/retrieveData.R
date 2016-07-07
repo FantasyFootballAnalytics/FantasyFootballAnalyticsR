@@ -267,6 +267,9 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
         dataTable[team == "GBP", team := "GB"]
         dataTable[team == "JAX", team := "JAC"]
         dataTable[team == "WSH", team := "WAS"]
+        dataTable[team == "HST", team := "HOU"]
+        dataTable[team == "CLV", team := "CLE"]
+        dataTable[team == "BLT", team := "BAL"]
       }
 
       merge.cols <- intersect(names(dataTable), c("player", "team"))
@@ -276,6 +279,9 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
                          by = merge.cols, all.x = TRUE)
     }
   }
+
+
+
   if(exists("playerId", dataTable)){
     dataTable <- dataTable[!is.na(playerId)]
     if(exists("player", dataTable))

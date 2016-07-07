@@ -35,4 +35,5 @@ NULL
   scoreThreshold <<- ffa.scoreThreshold
   tierGroups <<- ffa.tierGroups
   tierDValues <<- c(QB = 0.25, RB = 0.4, WR = 0.4, TE = 0.35, K = 0.15, DST = 0.1, DL = 0.3, DB = 0.13, LB = 0.3)
+  projDir <<- Sys.getenv("HOME")
 }

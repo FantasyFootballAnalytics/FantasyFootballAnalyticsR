@@ -26,12 +26,19 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
   } else {
     srcData <- data.table::data.table()
   }
-  orgUrl <- inpUrl
-  emptyData <- srcData
+
   # Determining the site that the urlAddress belongs to
   urlSite <- websites[sapply(websites,
                              function(ws)(length(grep(ws, tolower(inpUrl),
                                                       fixed = TRUE)) >0))]
+  if(dataType %in% c("file", "csv") & urlSite != "fantasysharks"){
+    projDir <- gsub("/$", "", projDir)
+    inpUrl <- gsub("^/|/$", "", inpUrl)
+    inpUrl <- file.path(projDir, inpUrl)
+  }
+  orgUrl <- inpUrl
+  emptyData <- srcData
+
   if(urlSite == "rtsports"){
     rtColTypes <- columnTypes
     columnTypes <- rep("character", length(rtColTypes))
@@ -47,9 +54,13 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
                        error = function(e)return(emptyData))
   }
 
-  if(length(removeRow) == 0){
+  if(length(removeRow) == 0 & dataType != "csv"){
     removeRow <- NULL
   }
+  if(length(removeRow) == 0 & dataType == "csv"){
+    removeRow <- 0
+  }
+
   if(dataType == "file" & urlSite != "walterfootball"){
     whichTable <- 1
   }
@@ -63,7 +74,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
   }
 
   # check if input file exists
-  if(dataType %in% c("csv", "file") & !file.exists(orgUrl)){
+  if(dataType %in% c("csv", "file") & !file.exists(orgUrl) & urlSite != "fantasysharks"){
     warning(cat("File ", unlist(orgUrl), " cannot be found. Returning empty data\n"),
             call. = FALSE)
     return(emptyData)
@@ -78,7 +89,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
                                          skip.rows = removeRow,
                                          colClasses = columnTypes,
                                          which = as.numeric(whichTable)),
-             "csv" = read.csv(inpUrl, stringsAsFactors = FALSE),
+             "csv" = read.csv(inpUrl, stringsAsFactors = FALSE, skip = removeRow),
              "xml" = scrapeXMLdata(inpUrl),
              "xls" = XLConnect::readWorksheetFromFile(file = dataFile,
                                                       sheet = whichTable
@@ -171,7 +182,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
     srcData[, player := firstLast(player)]
   }
 
-  if(urlSite == "footballguys")
+  if(urlSite == "footballguys" & exists("team", srcData))
     srcData[, team := extractTeam(team, urlSite)]
 
   if(urlSite %in% c("fantasypros", "fox", "numberfire", "espn"))
@@ -210,6 +221,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
                     "players for \n", inpUrl))
     }
 
+
     if(length(playerId) == nrow(srcData)){
       srcData[, (idVar) := playerId]
     }
@@ -220,6 +232,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
       if(class(col) == "factor")
         col <- as.character(col)
       return(as.numeric(col))
-    }), by = intersect(names(srcData), c("playerId", idVar, "player", "team", "position","passCompAtt"))]
+    }), by = intersect(names(srcData), c("playerId", idVar, "player", "team",
+                                         "position","passCompAtt"))]
   return(srcData)
 }
