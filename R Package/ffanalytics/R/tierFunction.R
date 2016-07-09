@@ -1,3 +1,4 @@
+#' @export tierFunction
 tierFunction <- function(player_id, points, srcpoints, pos){
   cohens_d <- function(x, y, na.rm = TRUE) {
     if(na.rm){
