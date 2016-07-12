@@ -97,6 +97,20 @@ getProjections <- function(scrapeData = NULL,
     allProjections[is.na(value) & !is.na(value_new), value := value_new]
 
     allProjections[, (names(allProjections)[grep("_new", names(allProjections))]) := NULL]
+
+    kickerFGMiss <- redistributeValues(valueTable = allProjections[position == "K"],
+                                   calcType = avgMethod,
+                                   fromVar = "fgMiss",
+                                   toVars = c("fgMiss0019", "fgMiss2029", "fgMiss3039", "fgMiss4049", "fgMiss50"),
+                                   excludeAnalyst = NULL)
+
+    allProjections <- merge(allProjections, kickerFGMiss[, names(allProjections), with = FALSE],
+                            by = c("playerId", "analyst", "position", "dataCol"),
+                            suffixes = c("", "_new"), all.x = TRUE)
+
+    allProjections[is.na(value) & !is.na(value_new), value := value_new]
+
+    allProjections[, (names(allProjections)[grep("_new", names(allProjections))]) := NULL]
   }
   # Replacing data that is missing for analysts
   cat("Replacing Missing Data                                               \r")

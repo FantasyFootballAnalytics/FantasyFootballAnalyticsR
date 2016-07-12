@@ -23,12 +23,12 @@
 41,12,"http://www.fantasyfootballnerd.com/service/weekly-projections/xml/{$FFNKEY}/{$Pos}/{$WeekNo}","week","xml",28,NA,NA
 51,12,"http://www.fantasyfootballnerd.com/service/draft-projections/xml/{$FFNKEY}/{$Pos}","season","xml",10,NA,NA
 52,15,"http://www.fantasysharks.com/apps/Projections/SeasonCSVIDPProjections.php","season","csv",0,NA,NA
-53,13,"/walterfootball/fantasy{$Season}rankingsexcel.xls","season","file",0,NA,NA
+53,13,"http://walterfootball.com/fantasy{$Season}rankingsexcel.xlsx","season","xls",0,NA,NA
 54,16,"/4for4/4for4_{$Season}_{$WeekNo}.csv","season","csv",2,1,NA
 56,17,"/Rotowire/Rotowire_{$Season}_{$WeekNo}_{$Pos}.csv","season","csv",1,1,NA
 57,17,"/Rotowire/Rotowire_{$Season}_{$WeekNo}_{$Pos}.csv","week","csv",1,1,NA
-58,7,"/Numberfire/Numberfire_{$Season}_{$WeekNo}_{$Pos}.csv","season","csv",1,1,NA
-59,18,"http://www.rtsports.com/football-draft-guide/draft-guide-projected.php?CACHED=0&POS={$PosID}","season","html",2,3,NA
+58,7,"https://www.numberfire.com/nfl/fantasy/remaining-projections/{$Pos}","season","jqry",1,1,NA
+59,18,"https://www.freedraftguide.com/football/draft-guide-rankings.php?POS={$PosID}","season","jqry",2,3,NA
 60,16,"/4for4/4for4_{$Season}_{$WeekNo}.csv","week","csv",2,1,NA
 61,19,"https://fantasydata.com/nfl-stats/fantasy-football-weekly-projections.aspx?fs=0&stype=-1&sn=0&scope=0&w=-1&ew=-1&s=&t=0&p={$Pos}&st=FantasyPoints&d=1&ls=FantasyPoints&live=false&pid=false&minsnaps=4","season","html",2,1,NA
 62,8,"https://www.fantasypros.com/nfl/projections/{$PosID}.php?week=draft","season","html",1,2,NA

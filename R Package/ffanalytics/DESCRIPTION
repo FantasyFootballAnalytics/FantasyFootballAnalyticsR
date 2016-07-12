@@ -1,7 +1,7 @@
 Package: ffanalytics
 Type: Package
 Title: Fantasy Football Analytics
-Version: 0.1.5
+Version: 0.1.6
 Authors@R: c(person("Dennis", "Andersen", email = "andersen.dennis@live.com",
                   role = c("aut", "cre")),
               person("Isaac", "Petersen", email = "isaac@fantasyfootballanalytics.net",
@@ -63,6 +63,7 @@ Collate:
     'runScrape.R'
     'scoringUI.R'
     'scrapeGadget.R'
+    'scrapeJQuery.R'
     'scrapeJSONdata.R'
     'tierFunction.R'
     'yahooBasics.R'

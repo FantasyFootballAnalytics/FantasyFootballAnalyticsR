@@ -41,6 +41,9 @@ Run_Scrape <- function(){
       scrapePeriod <- dataPeriod(weekNo = as.numeric(input$scrapeWeek),
                                  season = as.numeric(input$scrapeSeason))
       analyst_list <- analystOptions(scrapePeriod)
+      analyst_list <- analyst_list[analyst_list != 27]
+      if(input$scrapeWeek == 0)
+        analyst_list <- analyst_list[analyst_list != 8]
       checkboxGroupInput("selectAnalyst", "Select Analysts", analyst_list)
     })
 

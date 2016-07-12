@@ -17,6 +17,7 @@
 #' @param dataType A character indicating the type of data (HTML, XML, file, xls)
 #' @return Returns a \link{data.table} with data from URL.
 #' @export readUrl
+#' @import readxl
 readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
                     dataType, idVar, playerLinkString, fbgUser, fbgPwd){
 
@@ -65,7 +66,8 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
     whichTable <- 1
   }
   if(urlSite == "walterfootball"){
-    whichTable <- names(position.Id)[which(position.Id == as.numeric(whichTable))]
+    dataFile <- tempfile("walterdata", fileext = ".xlsx")
+    download.file(inpUrl, destfile = dataFile, mode = "wb", quiet = TRUE)
   }
   read.try = 0
   stRow <- 1
@@ -80,7 +82,6 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
     return(emptyData)
   }
 
-
   # Will try up to 10 times to get data from the source
   while(read.try <= 10 ){
     srcData <-tryCatch(
@@ -91,16 +92,12 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
                                          which = as.numeric(whichTable)),
              "csv" = read.csv(inpUrl, stringsAsFactors = FALSE, skip = removeRow),
              "xml" = scrapeXMLdata(inpUrl),
-             "xls" = XLConnect::readWorksheetFromFile(file = dataFile,
-                                                      sheet = whichTable
-                                                      , header = TRUE),
-             "file" = XLConnect::readWorksheetFromFile(file = inpUrl,
-                                                       sheet = whichTable,
-                                                       header = TRUE,
-                                                       startRow = stRow),
-             "json" = scrapeJSONdata(inpUrl)
+             "xls" = readxl::read_excel(dataFile, sheet = whichTable),
+             "json" = scrapeJSONdata(inpUrl),
+             "jqry" = scrapeJQuery(inpUrl)
       ),
       error = function(e)data.table::data.table())
+
     if(dataType != "json")
       srcData <- data.table::data.table(srcData)
     if((length(srcData) > 1 &  length(columnNames) <= length(srcData)) | dataType == "json")
@@ -164,7 +161,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
   }
 
   if(exists("position", srcData)){
-    srcData[position %in% c("Def", "D", "DEF"), position := "DST"]
+    srcData[position %in% c("Def", "D", "DEF", "D/ST"), position := "DST"]
     srcData[position == "PK", position := "K"]
     srcData[position %in% c("CB", "S"), position := "DB"]
     srcData[position %in% c("DE", "DT"), position := "DL"]
@@ -185,8 +182,10 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
   if(urlSite == "footballguys" & exists("team", srcData))
     srcData[, team := extractTeam(team, urlSite)]
 
-  if(urlSite %in% c("fantasypros", "fox", "numberfire", "espn"))
+  if(urlSite %in% c("fantasypros", "fox", "espn"))
     srcData[, team := extractTeam(player, urlSite)]
+  if(urlSite == "walterfootball")
+    srcData[, team := nflTeam.abb[which(nflTeam.name == team)], by = rownames(srcData)]
 
   if(exists("player", srcData))
     srcData[, player := getPlayerName(getPlayerName(getPlayerName(player)))]
@@ -226,6 +225,7 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
       srcData[, (idVar) := playerId]
     }
   }
+
 
   if(length(srcData) > 1)
     srcData <- srcData[, lapply(.SD, function(col){

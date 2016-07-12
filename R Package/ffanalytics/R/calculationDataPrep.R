@@ -10,9 +10,9 @@ getMeltedData <- function(dataResult){
     # Variable columns are the remaining columns not identified by the idVars
     varCols <- setdiff(names(statData), idVars)
     # Make sure all variable columns are numric
-    
+
     statData <- statData[, lapply(.SD, as.numeric), .SDcols = varCols, by = idVars]
-    
+
     proj <- data.table::melt.data.table(statData, id.vars = idVars,
                                         variable.name = "dataCol" ,
                                         measure.vars = varCols)
@@ -44,30 +44,30 @@ avgValue <- function(calcMethod = "weighted", dataValue = as.numeric(),
         if(n <= 2){
             return(mean(vec, na.rm = na.rm))
         }
-        
+
         # Calculating the paired avagerages
         pairAvg <- sort(c(vec, combn(vec, 2, function(x)mean(x, na.rm = na.rm))))
         return(median(pairAvg, na.rm = na.rm))
     }
-    
+
     # Checking to see if any weights have been passed. If not then we create a weights vector
     # consisting of 1s
     if(length(dataWeights) == 0)
         dataWeights <- rep(1, length(dataValue))
-    
+
     # Determining which average to use.
     avgFunction <- switch(calcMethod,
                           "average" = mean,
                           "weighted" = weighted.mean,
                           "robust" = wilcox.loc)
-    
+
     # If weighted average is requested then pass weights. Don't pass weights if not.
     if(calcMethod == "weighted"){
         returnValue <- avgFunction(as.numeric(dataValue), dataWeights, na.rm = TRUE)
     } else {
         returnValue <- avgFunction(as.numeric(dataValue), na.rm = TRUE)
     }
-    
+
     return(returnValue)
 }
 
@@ -90,7 +90,7 @@ redistributeValues <- function(valueTable = data.table(), calcType = "weighted",
                                fromVar = "fg",
                                toVars = c("fg0019", "fg2029", "fg3039", "fg4049", "fg50"),
                                excludeAnalyst = 20){
-    
+
     emptyTable <- data.table::data.table(playerId = as.numeric(NA),
                                          player = as.character(NA),
                                          analyst = as.numeric(NA),
@@ -98,7 +98,7 @@ redistributeValues <- function(valueTable = data.table(), calcType = "weighted",
                                          dataCol = as.character(NA),
                                          value = as.numeric(NA),
                                          weight = as.numeric(NA))
-    
+
     if(!("weight" %in% names(valueTable))){
         if(calcType == "weighted")
             warning("calcType is weighted but no weights specified. Using default weights", call. = FALSE)
@@ -106,17 +106,17 @@ redistributeValues <- function(valueTable = data.table(), calcType = "weighted",
         setnames(analystWeights, "analystId", "analyst")
         valueTable <- merge(valueTable, analystWeights, by = "analyst")
     }
-    
-    
+
+
     if(length(excludeAnalyst) > 1)
         stop("Only specify one analyst to exclude", call. = FALSE)
-    
+
     if(length(fromVar) != 1)
         stop("Please specify one variable to distribute from", call. = FALSE)
-    
+
     allAnalysts <- valueTable[["analyst"]]
     allVars <- valueTable[["dataCol"]]
-    
+
     if(any(allAnalysts == excludeAnalyst)){
         fromSelection <- which(allAnalysts == excludeAnalyst & allVars == fromVar)
         toSelection <- which(allAnalysts !=  excludeAnalyst & allVars %in% toVars)
@@ -124,39 +124,39 @@ redistributeValues <- function(valueTable = data.table(), calcType = "weighted",
         fromSelection <- which(allVars == fromVar)
         toSelection <- which(allVars %in% toVars)
     }
-    
+
     if(length(toSelection) == 0)
         return(emptyTable[0])
     fromTable <- valueTable[fromSelection,]
     fromTable[, dataCol := NULL]
-    
+
     avgTable <- valueTable[toSelection,
                            .(totalValue = avgValue(calcMethod = calcType, dataValue = .SD[[1]],
                                                    dataWeights = .SD[[2]], na.rm = TRUE)),
                            by = c("playerId", "dataCol", "position"),
                            .SDcols = c("value", "weight")]
-    
+
     allAvgVars <- avgTable[["dataCol"]]
-    
+
     avgTable[which(allAvgVars %in% toVars), totalVar := sum(totalValue, na.rm = TRUE),
              by = c("playerId", "position")]
-    
+
     avgTable[which(allAvgVars %in% toVars) & totalVar != 0 , varShare := totalValue / totalVar]
-    
+
     toTable <- merge(avgTable, fromTable, suffixes = c("", "_from"),
                      by = c("playerId", "position"), allow.cartesian = TRUE)
     toTable <- toTable[!is.na(totalValue)]
-    
+
     allToVars <- toTable[["dataCol"]]
     fromValues <- toTable[["value"]]
-    
+
     toTable[which(allToVars %in% toVars), value := fromValues * ifelse(is.na(varShare), 0, varShare)]
-    
+
     toCols <- intersect(names(toTable),c("playerId", "player", "analyst",
                                          "position", "dataCol", "value", "weight"))
-    
+
     toTable <- toTable[, toCols, with = FALSE]
-    
+
     return(toTable)
 }
 
@@ -170,7 +170,7 @@ redistributeValues <- function(valueTable = data.table(), calcType = "weighted",
 #' average values
 #' @export replaceMissingData
 replaceMissingData <- function(statData = data.table(), calcType = "weighted"){
-    
+
     if(!("weight" %in% names(statData))){
         if(calcType == "weighted")
             warning("calcType is weighted but no weights specified. Using default weights", call. = FALSE)
@@ -178,14 +178,14 @@ replaceMissingData <- function(statData = data.table(), calcType = "weighted"){
         data.table::setnames(analystWeights, "analystId", "analyst")
         statData <- merge(statData, analystWeights, by = "analyst")
     }
-    
+
     missVars <- c("analyst", "position", "dataCol")
     avgVars <- c("playerId", "position", "dataCol")
-    
+
     # Finding all the data that is missing for analysts
     missData <- statData[, .(missTest = all(is.na(.SD))), by = missVars ,
                          .SDcols = "value"][missTest == TRUE, missVars, with = FALSE]
-    
+
     # Calculating the average for each of the variables for each player
     avgData <- statData[, .(replValue = avgValue(calcMethod = calcType,
                                                  dataValue = .SD[[1]],
@@ -194,33 +194,33 @@ replaceMissingData <- function(statData = data.table(), calcType = "weighted"){
                         by = avgVars, .SDcols = c("value", "weight")]
     avgData <- avgData[is.finite(replValue)]
     mergeVar <- intersect(missVars, avgVars)
-    
+
     return(merge(missData, avgData, by = mergeVar, allow.cartesian = TRUE))
 }
 
 
 #' @export dualPositionData
 dualPositionData <- function(scrapeData){
-    
+
     ## Combining data for dual position players
     offpos <- intersect(names(scrapeData), c("QB", "RB", "WR", "TE"))
     defpos <- intersect(names(scrapeData), c("DL", "DB", "LB"))
-    
+
     if(length(defpos) > 1 & length(offpos) > 1){
         posComb <- cbind(combn(offpos, 2), combn(defpos, 2))
     }
-    
+
     if(length(defpos) == 0 & length(offpos) > 1){
         posComb <- combn(offpos, 2)
     }
-    
+
     if(length(defpos) > 1 & length(offpos) == 0){
         posComb <- combn(defpos, 2)
     }
-    
+
     if(exists("posComb")){
-        
-        
+
+
         copyData <- apply(posComb,2, function(comb){
             data1 <- data.table::copy(scrapeData[[comb[1]]]@resultData)
             data2 <- data.table::copy(scrapeData[[comb[2]]]@resultData)
@@ -228,7 +228,7 @@ dualPositionData <- function(scrapeData){
                 data.table::setnames(data1, "analystId", "analyst")
             if(exists("analystId", data2))
                 data.table::setnames(data2, "analystId", "analyst")
-            
+
             commonPlayers <- unique(intersect(data1$playerId, data2$playerId))
             newData1 <- data.table::data.table()
             newData2 <- data.table::data.table()
@@ -237,7 +237,7 @@ dualPositionData <- function(scrapeData){
                 for(pl in commonPlayers){
                     addSources1 <- setdiff(data1$analyst[data1$playerId == pl], data2$analyst[data2$playerId == pl])
                     addSources2 <- setdiff(data2$analyst[data2$playerId == pl], data1$analyst[data1$playerId == pl])
-                    
+
                     if(length(addSources1) >0 ){
                         addData1 <- data1[playerId == pl & analyst %in% addSources1, commonData, with = FALSE]
                         newData2<- data.table::rbindlist(list(newData2, addData1), use.names = TRUE, fill = TRUE)
@@ -248,7 +248,7 @@ dualPositionData <- function(scrapeData){
                         newData1<- data.table::rbindlist(list(newData1, addData2), use.names = TRUE, fill = TRUE)
                         newData1[, position := comb[[1]]]
                     }
-                    
+
                 }
                 result = list(newData1, newData2)
                 names(result) <- c(comb[1],comb[2])
@@ -268,7 +268,7 @@ dualPositionData <- function(scrapeData){
 updateFieldGoals <- function(kickerData){
     if(exists("analystId", kickerData))
         data.table::setnames(kickerData, "analystId", "analyst")
-    
+
     if(nrow(kickerData) == 0)
         return(kickerData)
     fg.cols <- c("fg", "fg0019", "fg2029", "fg3039", "fg4049", "fg50", "fg0039")
@@ -278,7 +278,7 @@ updateFieldGoals <- function(kickerData){
             kickerData[ , (fg.var) := as.numeric(NA)]
         }
     }
-    
+
     if(exists("fg", kickerData)){
         kickerData[is.na(fg) | fg == 0 ,  fg := sum(.SD, na.rm = TRUE), by = c("playerId", "analyst"),
                    .SDcols = fg.cols[fg.cols != "fg"]]
@@ -287,13 +287,22 @@ updateFieldGoals <- function(kickerData){
         kickerData[is.na(fgMiss), fg.Miss := sum(.SD, na.rm = TRUE), by = c("playerId", "analyst"),
                    .SDcols = fg.miss[fg.miss != "fgMiss"]]
     }
-    
+
     if(exists("fg0019", kickerData)){
         kickerData[, fg_check := sum(.SD, na.rm = TRUE), by = c("playerId", "analyst"),
                    .SDcols = fg.cols[fg.cols != "fg"]]
         kickerData[fg < fg_check, fg := fg_check]
         kickerData[, fg_check := NULL]
     }
-    
+
+    if(exists("fgAtt", kickerData) & exists("fg", kickerData) & !exists("fgMiss", kickerData))
+      kickerData[, fgMiss := fgAtt - fg]
+
+    if(exists("fgMiss", kickerData) & exists("fg", kickerData) & !exists("fgAtt", kickerData))
+      kickerData[, fgAtt:= fgMiss + fg]
+    if(exists("fgMiss", kickerData) & exists("fgAtt", kickerData) & !exists("fg", kickerData))
+      kickerData[, fg := fgAtt - fgMiss]
+
+
     return(kickerData)
 }

@@ -71,6 +71,9 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
   tableNum <- srcTbl@urlTable
   dataType <- srcTbl@urlType
 
+  if(length(grep("walterfootball", urlAddress)) > 0)
+    tableNum <- srcTbl@positionAlias
+
   playerLinkString <- srcTbl@playerLink
   if(is.null(playerLinkString))
     playerLinkString <- ""
@@ -142,7 +145,6 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
   scrapeColumns <- scrapeColumns[order(columnOrder)]
 
   removeRows <- tableRowRemove$rowRemove[tableRowRemove$tableId == scrapeTable]
-
   # Scraping data from the URL
   dataTable <- data.table::rbindlist(
     lapply(urlAddress, function(inpUrl)readUrl(inpUrl,
