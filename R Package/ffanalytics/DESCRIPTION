@@ -24,7 +24,7 @@ Imports:
     httr,
     tcltk,
     RCurl,
-    Hmisc
+    Hmisc, readxl, RSelenium
 RoxygenNote: 5.0.1
 Collate:
     'calcStdDev.R'
