@@ -13,8 +13,7 @@ calculateRisk <- function(var1, var2){
   Z_var1[is.na(Z_var1)] <- Z_var2[is.na(Z_var1)]
   Z_var2[is.na(Z_var2)] <- Z_var1[is.na(Z_var2)]
 
-  riskValue <- sqrt((Z_var1^2 + Z_var2^2)/2)
-  riskValue <- ((riskValue * 2/(sd(riskValue, na.rm=TRUE))) + (3-(mean(riskValue, na.rm=TRUE))))
+  riskValue <- 2 * scale(rowMeans(data.frame(Z_var1, Z_var2), na.rm=TRUE)) + 5
 
   return(riskValue)
 
