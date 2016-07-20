@@ -32,6 +32,6 @@ extractTeam <- function(teamInfo, siteName){
     }
 
   )
-
+  teams <- gsub("WSH", "WAS", gsub("JAX", "JAC", teams))
   return(teams)
 }
