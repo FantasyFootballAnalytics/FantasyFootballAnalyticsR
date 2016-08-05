@@ -38,6 +38,9 @@ getProjections <- function(scrapeData = NULL,
   # Run data scrape if scrapeData is not passed.
   if(is.null(scrapeData))
     scrapeData <- runScrape()
+
+  getADP <- !is.null(adpSources)
+
   scrapePositions <- intersect(position.name, names(scrapeData))
   scrapePeriod <- scrapeData$period
   week <- scrapePeriod["weekNo"]
