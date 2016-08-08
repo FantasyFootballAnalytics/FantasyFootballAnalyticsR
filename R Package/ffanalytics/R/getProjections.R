@@ -39,7 +39,7 @@ getProjections <- function(scrapeData = NULL,
   if(is.null(scrapeData))
     scrapeData <- runScrape()
 
-  getADP <- !is.null(adpSources)
+  getADP <- !is.null(adpSources) & getADP
 
   scrapePositions <- intersect(position.name, names(scrapeData))
   scrapePeriod <- scrapeData$period

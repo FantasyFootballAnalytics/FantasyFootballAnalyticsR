@@ -6,7 +6,9 @@
 #' @export position.name
 #' @export position.Id
 #' @export yahooLeague
-
+#' @export nflTeam.abb
+#' @export nflTeam.id
+#' @export nflTeam.name
 #' @format NULL
 position.name <- c("QB", "RB", "WR", "TE", "K", "DST", "DL", "LB", "DB")
 
