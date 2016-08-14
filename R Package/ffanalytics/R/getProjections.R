@@ -178,16 +178,19 @@ getProjections <- function(scrapeData = NULL,
                                               weekNo = week), fill = TRUE)
 
 
-    rankTable <- rankTable[, c("player", "position", "team", "ecrRank", "sdRank"),
+    rankTable <- rankTable[, c("player", "position", "team", "avgRank", "sdRank"),
                            with = FALSE]
 
-    data.table::setnames(rankTable, "ecrRank", "ecrPosition")
+
+    data.table::setnames(rankTable, "avgRank", "ecrPosition")
 
 
     cat("Retrieving overall ECR ranks                                         \r")
     overallRanks <- getRanks("consensus", leagueType = rankFormat, weekNo = week)
-    overallRanks <- overallRanks[, c("player", "position", "team", "ecrRank"),
+    overallRanks <- overallRanks[, c("player", "position", "team", "avgRank"),
                                  with = FALSE]
+
+    data.table::setnames(overallRanks, "avgRank", "ecrRank")
 
     rankTable <- merge(rankTable, overallRanks, by = c("player", "position", "team"))
 

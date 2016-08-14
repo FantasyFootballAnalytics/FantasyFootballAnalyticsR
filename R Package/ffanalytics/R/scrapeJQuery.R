@@ -25,7 +25,7 @@ readRTSdata <- function(posNum){
   cityPattern <- paste(nflTeam.city, collapse = "|")
   tblNum <- 3 + posNum
   rts.url <- paste0("https://www.freedraftguide.com/football/draft-guide-rankings.php?POS=", posNum)
-  rts.xpath <- paste0("/html/body/div[2]/div[", tblNum,"]/table/tbody")
+  rts.xpath <- paste0("/html/body/div[2]/div[", tblNum,"]/table")
   srv <- RSelenium::startServer()
   remDr <- RSelenium::remoteDriver$new(browserName = "chrome")
   brws <- remDr$open(silent = TRUE)
@@ -47,7 +47,7 @@ readRTSdata <- function(posNum){
     temp <- data.table::as.data.table(t(unlist(strsplit(x, " "))))
     final <- data.table::rbindlist(list(final, temp), fill = TRUE)
   }
-  return(final)
+  return(final[-1])
 }
 
 #' @export readNMFdata
@@ -57,7 +57,9 @@ readNMFdata <- function(nmf.url){
   remDr <- RSelenium::remoteDriver$new(browserName = "chrome")
   brws <- remDr$open(silent = TRUE)
   nav <- remDr$navigate(nmf.url)
-  player_table <- remDr$findElement('id', 'complete-projection')
+  nmf.xpath <- paste0("/html/body/main/section[1]/div/table/tbody")
+  player_table <- remDr$findElement('xpath', nmf.xpath)
+  print(player_table$getElementText())
   players <- strsplit(player_table$getElementText()[[1]], "\n")
 
   remDr$close()
