@@ -214,6 +214,10 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
     dataTable[, fgMiss := as.numeric(fgAtt) - as.numeric(fg)]
   }
 
+  if(exists("games", dataTable)){
+    dataTable[games == 0 , games := NA]
+  }
+
   dataTable[, analyst := srcTbl@analystId]
 
   if(idVar != "playerId" & nrow(dataTable) > 0){# & exists(ifelse(nchar(idVar) > 0, idVar, "_none_"), dataTable)){
