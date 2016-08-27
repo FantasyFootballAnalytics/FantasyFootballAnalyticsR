@@ -12,6 +12,8 @@ scoringNames = c(passYds ="Passing Yds", passAtt = "Pass Attempts",
                  rush200 = "200 Yd Rush Bonus", rec = "Receptions",
                  recYds = "Receiving Yds", recTds = "Receiving TDs",
                  rec40 = "40 Yd Receiving TD", returnYds = "Return Yds",
+                 rec100 = "100 Yd Receiving Bonus", rec150 = "150 Yd Receiving Bonus",
+                 rec200 = "200 Yd Receiving Bonus", rec = "Receptions",
                  returnTds = "Return TDs", xp = "Extra Pts",
                  fg0019 = "Field Goals 0-19 Yds",  fg2029 = "Field Goals 20-29 Yds",
                  fg3039 = "Field Goals 30-39 Yds", fg4049 = "Field Goals 40-49 Yds",
@@ -33,14 +35,17 @@ defaultScoring = list(
 
   RB = c(rushYds = 0.1, rushAtt = 0, rushTds = 6, rush40 = 0, rush100 = 0,
          rush150 = 0, rush200 = 0, rec = 0, recYds = 0.1, recTds = 6, rec40 = 0,
+         rec100 = 0, rec150 = 0, rec200 = 0,
          returnYds = 0, returnTds = 6, twoPts=2 , fumbles = -3),
 
   WR = c(rushYds = 0.1, rushAtt = 0, rushTds = 6, rush40 = 0, rush100 = 0,
          rush150 = 0, rush200 = 0, rec = 0, recYds = 0.1, recTds = 6, rec40 = 0,
+         rec100 = 0, rec150 = 0, rec200 = 0,
          returnYds = 0, returnTds = 6, twoPts=2 , fumbles = -3),
 
   TE = c(rushYds = 0.1, rushAtt = 0, rushTds = 6, rush40 = 0, rush100 = 0,
          rush150 = 0, rush200 = 0, rec = 0, recYds = 0.1, recTds = 6, rec40 = 0,
+         rec100 = 0, rec150 = 0, rec200 = 0,
          returnYds = 0, returnTds = 6, twoPts=2 , fumbles = -3),
 
   K = c(xp = 1, fg0019 = 3, fg2029 = 3, fg3039 = 3, fg4049 = 4, fg50 = 5, fgMiss = 0),
