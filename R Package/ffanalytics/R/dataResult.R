@@ -29,8 +29,8 @@ setMethod("initialize",
 
             resultData <- resultData[, intersect(names(resultData), resCols),
                                      with = FALSE]
-
-            resultData$position <- position
+            if(length(resultData) > 0)
+              resultData$position <- position
 
             .Object@resultData <- resultData
             .Object@position <- position
