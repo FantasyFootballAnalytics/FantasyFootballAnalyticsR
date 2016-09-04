@@ -43,14 +43,14 @@ getRanks <- function(rank.position = "consensus", leagueType = "std", weekNo = 0
   if(weekNo != 0 & rank.position %in% c("DB", "DL", "LB")){
     warning("Weekly ECR ranks not available for IDP", call. = FALSE)
     dt <- data.table::data.table(t(defaultTable))
-    return(dt[!is.na(playerId), returnColumns, with = FALSE])
+    return(dt[, returnColumns, with = FALSE][0])
   }
 
   # Overall ranks are not available on weekly data, so we return empty table
   if(weekNo != 0 & rank.position == "consensus"){
     warning("Weekly overall rankings not available", call. = FALSE)
     dt <- data.table(t(defaultTable))
-    return(dt[!is.na(playerId), returnColumns, with = FALSE])
+    return(dt[, returnColumns, with = FALSE][0])
   }
 
   # Generating the URL to scrape the data from
