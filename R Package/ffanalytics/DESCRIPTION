@@ -24,7 +24,9 @@ Imports:
     httr,
     tcltk,
     RCurl,
-    Hmisc, readxl, RSelenium
+    Hmisc,
+    readxl,
+    RSelenium
 RoxygenNote: 5.0.1
 Collate:
     'calcStdDev.R'
@@ -65,5 +67,6 @@ Collate:
     'scrapeGadget.R'
     'scrapeJQuery.R'
     'scrapeJSONdata.R'
+    'tableMerge.R'
     'tierFunction.R'
     'yahooBasics.R'

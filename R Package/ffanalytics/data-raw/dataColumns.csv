@@ -227,3 +227,6 @@
 259,"dstPts2127","numeric"
 260,"dstPts2834","numeric"
 262,"espnPts","numeric"
+263,"season","numeric"
+264,"week","numeric"
+265,"aFPA","numeric"

@@ -167,15 +167,17 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
     srcData[position %in% c("DE", "DT"), position := "DL"]
   }
 
-  if(exists("firstName", srcData)){
-    srcData[, player := paste(firstName, lastName)]
+
+    if(exists("firstName", srcData)){
+    srcData[, player := paste(firstName, lastName), by = row.names(srcData)]
   }
+
 
   if(urlSite == "yahoo"){
     srcData[, player := gsub("Sun 10:00 am|Sun 5:30 pm|Mon 4:10 pm|Sun 1:25 pm|Thu 5:30 pm|Mon 7:20 pm|Sun 1:05 pm", "", player)]
   }
 
-  if(urlSite %in% c("fantasysharks", "rotowire")){
+  if(urlSite %in% c("fantasysharks", "rotowire") & !exists("firstName", srcData)){
     srcData[, player := firstLast(player)]
   }
 
@@ -234,5 +236,6 @@ readUrl <- function(inpUrl, columnTypes, columnNames, whichTable, removeRow,
       return(as.numeric(col))
     }), by = intersect(names(srcData), c("playerId", idVar, "player", "team",
                                          "position","passCompAtt"))]
+
   return(srcData)
 }

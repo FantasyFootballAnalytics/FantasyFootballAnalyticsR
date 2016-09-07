@@ -33,3 +33,4 @@
 61,8,"https://www.fantasypros.com/nfl/projections/{$PosID}.php?week=draft","season","html",1,1,NA
 62,19,"https://fantasydata.com/nfl-stats/fantasy-football-weekly-projections.aspx?fs=0&stype=-1&sn=0&scope=0&w=-1&ew=-1&s=&t=0&p={$Pos}&st=FantasyPoints&d=1&ls=FantasyPoints&live=false&pid=false&minsnaps=4","season","html",2,1,NA
 63,20,"/PFF/PFF_{$Season}_{$WeekNo}_{$Pos}.csv","season","csv",2,1,NA
+64,20,"/PFF/PFF_{$Season}_{$WeekNo}_{$Pos}.csv","week","csv",2,1,NA

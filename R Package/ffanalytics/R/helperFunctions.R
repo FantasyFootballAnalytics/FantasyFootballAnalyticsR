@@ -4,6 +4,7 @@
 #' to "First Name Last Name".
 #' @examples firstLast("Smith, John") # Will return John Smith
 #' @param lastFist A string with the name to be converted
+#' @export firstLast
 firstLast <- function(lastFirst){
   nameMatrix <- matrix(unlist(strsplit(lastFirst, ", ")), ncol =2, byrow = TRUE)
   fullName <- paste(nameMatrix[,2], nameMatrix[,1])
