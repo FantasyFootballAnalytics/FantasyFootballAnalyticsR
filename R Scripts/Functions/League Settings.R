@@ -8,20 +8,20 @@
 ###########################
 
 #Season
-season <- 2014
+season <- 2016
 weekNo <- 0   # Set weekNo = 0 for seasonal projections
 
 #Roster
 numQBstarters <- 1
 numRBstarters <- 2
-numWRstarters <- 2
-numTEstarters <- 1
-numTotalStarters <- 7
-numTotalPlayers <- 20
+numWRstarters <- 3
+numTEstarters <- 0
+numTotalStarters <- 8
+numTotalPlayers <- 14
 
 #League settings
-defaultCap <- 200           #what the typical cap is for your service (ESPN, Yahoo, etc.) -- used for placing "avg cost" in context
-leagueCap <- 225            #your league's cap
+defaultCap <- 0          #what the typical cap is for your service (ESPN, Yahoo, etc.) -- used for placing "avg cost" in context
+leagueCap <- 0            #your league's cap
 maxCost <- leagueCap - (numTotalPlayers - numTotalStarters)
 
 #Variable names
@@ -44,33 +44,33 @@ passCompMultiplier <- 0     #0 pts per passing completion
 passIncompMultiplier <- 0   #0 pts per passing incompletion
 passYdsMultiplier <- (1/25) #1 pt per 25 passing yds
 passTdsMultiplier <- 4      #4 pts per passing td
-passIntMultiplier <- -3     #-3 pts per passing interception
+passIntMultiplier <- -2     #-3 pts per passing interception
 rushAttMultiplier <- 0      #0 pts per rushing attempt
 rushYdsMultiplier <- (1/10) #1 pt per 10 rushing yds
 rushTdsMultiplier <- 6      #6 pts per rushing touchdown
 recMultiplier <- 0          #0 pts per reception
-recYdsMultiplier <- (1/8)   #1 pt per 8 receiving yds
+recYdsMultiplier <- (1/10)   #1 pt per 8 receiving yds
 recTdsMultiplier <- 6       #6 pts per receiving touchdown
 returnTdsMultiplier <- 6    #6 pts per return touchdown
 twoPtsMultiplier <- 2       #2 pts per 2-point conversion
-fumlMultiplier <- -3        #-3 pts per fumble lost
+fumlMultiplier <- -2        #-3 pts per fumble lost
 
 scoringRules <- list(
-    QB = data.frame(dataCol = c("passYds", "passTds", "passInt", "rushYds", "rushTds", "twoPts", "fumbles"),
-                    multiplier = c(1/25, 4, -3, 1/10, 6, 2, -3 )),
-    RB = data.frame(dataCol = c("rushYds", "rushTds", "rec", "recYds", "recTds", "returnTds", "twoPts", "fumbles"),
-                    multiplier = c(1/10, 6, 0, 1/8, 6, 6, 2, -3)), 
-    WR = data.frame(dataCol = c("rushYds", "rushTds", "rec", "recYds", "recTds", "returnTds", "twoPts", "fumbles"),
-                    multiplier = c(1/10, 6, 0, 1/8, 6, 6, 2, -3)),
-    TE = data.frame(dataCol = c("rushYds", "rushTds", "rec", "recYds", "recTds", "returnTds", "twoPts", "fumbles"),
-                    multiplier = c(1/10, 6, 0, 1/8, 6, 6, 2, -3)),
-    K = data.frame(dataCol = c("xp", "fg", "fg0019", "fg2029", "fg3039", "fg4049", "fg50"),
-                   multiplier = c(1, 3, 3, 3, 3, 4, 5)),
-    DST = data.frame(dataCol = c("dstFumlRec", "dstInt", "dstSafety", "dstSack", "dstTd", "dstBlk"),
-                     multiplier = c(2, 2, 2, 1, 6, 1.5)),
-    ptsBracket = data.frame(threshold = c(0, 6, 20, 34, 99),
-                             points = c(10, 7, 4, 0, -4))
-  )
+  QB = data.table::data.table(dataCol = c("passYds", "passTds", "passInt", "rushYds", "rushTds", "twoPts", "fumbles"),
+                  multiplier = c(1/25, 4, -2, 1/10, 6, 2, -2 )),
+  RB = data.table::data.table(dataCol = c("rushYds", "rushTds", "rec", "recYds", "recTds", "returnTds", "twoPts", "fumbles"),
+                  multiplier = c(1/10, 6, 0, 1/10, 6, 6, 2, -2)),
+  WR = data.table::data.table(dataCol = c("rushYds", "rushTds", "rec", "recYds", "recTds", "returnTds", "twoPts", "fumbles"),
+                  multiplier = c(1/10, 6, 0, 1/10, 6, 6, 2, -2)),
+  TE = data.table::data.table(dataCol = c("rushYds", "rushTds", "rec", "recYds", "recTds", "returnTds", "twoPts", "fumbles"),
+                  multiplier = c(1/10, 6, 0, 1/10, 6, 6, 2, -2)),
+  K = data.table::data.table(dataCol = c("xp", "fg0019", "fg2029", "fg3039", "fg4049", "fg50"),
+                 multiplier = c(1,  3, 3, 3, 3, 5)),
+  DST = data.table::data.table(dataCol = c("dstFumlRec", "dstInt", "dstSafety", "dstSack", "dstTd", "dstBlk"),
+                   multiplier = c(2, 2, 2, 1, 6, 2)),
+  ptsBracket = data.table::data.table(threshold = c(0, 6, 13, 20, 27, 34, 99),
+                          points = c(10, 8, 6, 4, 0, -2, -4))
+)
 
 
 #Projections
@@ -121,10 +121,10 @@ sourceWeights <- c(
 
 
 #Number of players at each position drafted in Top 100 (adjust for your league)
-qbReplacements <- 15
-rbReplacements <- 37
-wrReplacements <- 36
-teReplacements <- 11
+qbReplacements <- 19
+rbReplacements <- 42
+wrReplacements <- 50
+teReplacements <- 12
 
 #Alternative way of calculating the number of players at each position drafted in Top 100 based on league settings
 #numTeams <- 10  #number of teams in league
