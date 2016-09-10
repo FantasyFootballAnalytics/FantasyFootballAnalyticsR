@@ -192,7 +192,8 @@ getProjections <- function(scrapeData = NULL,
 
     data.table::setnames(overallRanks, "avgRank", "ecrRank")
 
-    rankTable <- merge(rankTable, overallRanks, by = c("player", "position", "team"))
+    if(nrow(rankTable) > 0 & nrow(overallRanks) > 0)
+      rankTable <- merge(rankTable, overallRanks, by = c("player", "position", "team"))
 
     # Adding ranking info to table
     projectedPoints <- merge(projectedPoints, rankTable,

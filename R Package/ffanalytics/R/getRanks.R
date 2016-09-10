@@ -100,7 +100,7 @@ getRanks <- function(rank.position = "consensus", leagueType = "std", weekNo = 0
 
   rnks <-data.table::data.table(XML::readHTMLTable(RCurl::getURL(inpUrl))$data)
   if(length(rnks) == 0){
-    rnks <- data.table::data.table(t(rep(NA, length(cNames))))
+    rnks <- data.table::data.table(t(rep(as.character(NA), length(cNames))))
     rnks <- rnks[0]
   }
   data.table::setnames(rnks, cNames)

@@ -24,7 +24,7 @@ data.table::setnames(siteUrls, c("urlData", "whichTable", "playerLinkString", "s
 siteUrls[, urlID := NULL]
 
 siteUrls[, siteUrl := gsub("{$PosID}", "{$Pos}", siteUrl, fixed = TRUE)]
-
+siteUrls[siteId ==8 & urlPeriod == "week", urlTable := 1]
 dataColumns <- data.table::data.table(read.csv("data-raw/dataColumns.csv", stringsAsFactors = FALSE, na.strings = c("NA", "NULL")))
 tableColumns <- data.table::data.table(read.csv("data-raw/tableColumns.csv", stringsAsFactors = FALSE, na.strings = c("NA", "NULL")))
 data.table::setnames(tableColumns, c("dataColID", "siteTableID"), c("dataColId", "tableId"))
