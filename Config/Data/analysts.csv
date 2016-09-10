@@ -1,8 +1,5 @@
 analystId,analystName,analystWeight,siteID,weekly,season
-acsc,Accuscore,0.428,accu,0,1
 cbav,CBS: CBS Average,0.428,cbs,1,1
-jaei,CBS: Jamey Eisenberg,0.403,cbs,0,0
-dari,CBS: Dave Richard,0.412,cbs,0,0
 yasp,Yahoo Sports,0.433,yahoo,1,1
 essit,ESPN,0.383,espn,1,1
 nfla,NFL,0.384,nfl,1,1
@@ -10,19 +7,22 @@ fosp,FOX Sports,0.428,fox,1,1
 ffto,FFToday,0.482,fft,1,1
 numf,NumberFire,0.404,nmf,1,1
 fapro,FantasyPros,0.518,ffp,1,0
-#bohe,Footballguys: Bob Henry,0.521,fbg,0,1
-#jono,Footballguys: John Norton,0.428,fbg,0,1
-#dado,Footballguys: David Dodds,0.473,fbg,0,1
-#jawo,Footballguys: Jason Wood,0.505,fbg,0,1
-#matr,Footballguys: Maurile Tremblay,0.477,fbg,1,1
-#sibl,Footballguys: Sigmund Bloom,0.428,fbg,1,0
-#mihe,Footballguys: Mike Herman,0.428,fbg,1,1
-#aaru,Footballguys: Aaron Rudnicki,0.428,fbg,0,1
-#dono,Footballguys: Dodds-Norton,0.428,fbg,1,0
 edfo,EDS Football,0.428,eds,1,1
 fash,FantasySharks,0.453,fs,1,1
+acsc,Accuscore,0.428,accu,0,1
+jaei,CBS: Jamey Eisenberg,0.403,cbs,0,0
+dari,CBS: Dave Richard,0.412,cbs,0,0
 ffne,FantasyFootballNerd,0.428,ffn,1,1
 wafo,WalterFootball,0.428,wf,0,1
-#4fo4,4for4,0.428,fff,1,1
-#rowi,Rotowire,0.428,roto,1,1
 rtsp,RTSports.com,0.428,rts,0,1
+bohe,Footballguys: Bob Henry,0.521,fbg,0,1
+jono,Footballguys: John Norton,0.428,fbg,0,1
+dado,Footballguys: David Dodds,0.473,fbg,0,1
+jawo,Footballguys: Jason Wood,0.505,fbg,0,1
+matr,Footballguys: Maurile Tremblay,0.477,fbg,1,1
+sibl,Footballguys: Sigmund Bloom,0.428,fbg,1,0
+mihe,Footballguys: Mike Herman,0.428,fbg,1,1
+aaru,Footballguys: Aaron Rudnicki,0.428,fbg,0,1
+dono,Footballguys: Dodds-Norton,0.428,fbg,1,0
+4fo4,4for4,0.428,fff,1,1
+rowi,Rotowire,0.428,roto,1,1
