@@ -35,30 +35,30 @@
 #' @export scoringRules
 scoringRules <- list(
   QB = data.table::data.table(dataCol = c("passYds", "passTds", "passInt", "rushYds", "rushTds", "twoPts", "fumbles"),
-                  multiplier = c(1/25, 4, -3, 1/10, 6, 2, -3 )),
+                  multiplier = c(1/25, 4, -2, 1/10, 6, 2, -2 )),
   RB = data.table::data.table(dataCol = c("rushYds", "rushTds", "rec", "recYds", "recTds", "returnTds", "twoPts", "fumbles"),
-                  multiplier = c(1/10, 6, 0, 1/8, 6, 6, 2, -3)),
+                  multiplier = c(1/10, 6, 0, 1/10, 6, 6, 2, -2)),
   WR = data.table::data.table(dataCol = c("rushYds", "rushTds", "rec", "recYds", "recTds", "returnTds", "twoPts", "fumbles"),
-                  multiplier = c(1/10, 6, 0, 1/8, 6, 6, 2, -3)),
+                  multiplier = c(1/10, 6, 0, 1/10, 6, 6, 2, -2)),
   TE = data.table::data.table(dataCol = c("rushYds", "rushTds", "rec", "recYds", "recTds", "returnTds", "twoPts", "fumbles"),
-                  multiplier = c(1/10, 6, 0, 1/8, 6, 6, 2, -3)),
+                  multiplier = c(1/10, 6, 0, 1/10, 6, 6, 2, -2)),
   K = data.table::data.table(dataCol = c("xp", "fg0019", "fg2029", "fg3039", "fg4049", "fg50"),
-                 multiplier = c(1,  3, 3, 3, 4, 5)),
+                 multiplier = c(1,  3, 3, 3, 3, 5)),
   DST = data.table::data.table(dataCol = c("dstFumlRec", "dstInt", "dstSafety", "dstSack", "dstTd", "dstBlk"),
-                   multiplier = c(2, 2, 2, 1, 6, 1.5)),
-  DL = data.table::data.table(dataCol = c("idpSolo", "idpAst", "idpSack", "idpInt", "idpFumlForce", "idpFumlRec", "idpPD", "idpTd", "idpSafety"),
-                              multiplier = c(1, 0.5, 2, 3, 3, 2, 1, 6, 2)),
-  LB =  data.table::data.table(dataCol = c("idpSolo", "idpAst", "idpSack", "idpInt", "idpFumlForce", "idpFumlRec", "idpPD", "idpTd", "idpSafety"),
-                                     multiplier = c(1, 0.5, 2, 3, 3, 2, 1, 6, 2)),
-  DB = data.table::data.table(dataCol = c("idpSolo", "idpAst", "idpSack", "idpInt", "idpFumlForce", "idpFumlRec", "idpPD", "idpTd", "idpSafety"),
-                              multiplier = c(1, 0.5, 2, 3, 3, 2, 1, 6, 2)),
-  ptsBracket = data.table::data.table(threshold = c(0, 6, 20, 34, 99),
-                          points = c(10, 7, 4, 0, -4))
+                   multiplier = c(2, 2, 2, 1, 6, 2)),
+  #DL = data.table::data.table(dataCol = c("idpSolo", "idpAst", "idpSack", "idpInt", "idpFumlForce", "idpFumlRec", "idpPD", "idpTd", "idpSafety"),
+  #                            multiplier = c(1, 0.5, 2, 3, 3, 2, 1, 6, 2)),
+  #LB =  data.table::data.table(dataCol = c("idpSolo", "idpAst", "idpSack", "idpInt", "idpFumlForce", "idpFumlRec", "idpPD", "idpTd", "idpSafety"),
+  #                                   multiplier = c(1, 0.5, 2, 3, 3, 2, 1, 6, 2)),
+  #DB = data.table::data.table(dataCol = c("idpSolo", "idpAst", "idpSack", "idpInt", "idpFumlForce", "idpFumlRec", "idpPD", "idpTd", "idpSafety"),
+  #                            multiplier = c(1, 0.5, 2, 3, 3, 2, 1, 6, 2)),
+  ptsBracket = data.table::data.table(threshold = c(0, 6, 13, 20, 27, 34, 99),
+                          points = c(10, 8, 6, 4, 0, -2, -4))
 )
 
 #' Default VOR Baseline
 #' @export ffa.vorBaseline
-ffa.vorBaseline <- c(QB = 13, RB = 35, WR = 36, TE = 10, K= 8, DST = 3, DL = 10, LB = 10, DB = 10)
+ffa.vorBaseline <- c(QB = 19, RB = 42, WR = 50, TE = 12, K= 8, DST = 3, DL = 10, LB = 10, DB = 10)
 
 #' Default VOR Adjustments
 #' @export ffa.vorAdjustment
