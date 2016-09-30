@@ -1,7 +1,7 @@
 Package: ffanalytics
 Type: Package
 Title: Fantasy Football Analytics
-Version: 0.1.8
+Version: 0.1.9
 Authors@R: c(person("Dennis", "Andersen", email = "andersen.dennis@live.com",
                   role = c("aut", "cre")),
               person("Isaac", "Petersen", email = "isaac@fantasyfootballanalytics.net",

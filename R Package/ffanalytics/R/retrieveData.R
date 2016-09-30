@@ -103,7 +103,7 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
   # This is special for FantasySharks as they designate the period as
   # a segment.
   if("{$Segment}" %in% urlParms){
-    segment <- sharkSegment[[as.character(srcPeriod@season)]] + (srcPeriod@weekNo > 0) * 10
+    segment <- sharkSegment[[as.character(srcPeriod@season)]] + (srcPeriod@weekNo > 0) * 10 +  (srcPeriod@weekNo > 0) * srcPeriod@weekNo - 1
   }
 
 
