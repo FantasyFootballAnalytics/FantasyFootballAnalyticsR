@@ -103,7 +103,8 @@ getRanks <- function(rank.position = "consensus", leagueType = "std", weekNo = 0
     rnks <- data.table::data.table(t(rep(as.character(NA), length(cNames))))
     rnks <- rnks[0]
   }
-  data.table::setnames(rnks, cNames)
+
+  data.table::setnames(rnks, seq_along(cNames), cNames)
   if(nrow(rnks) > 0 ){
 
     rnks$team <- extractTeam(rnks$player, "fantasypros")
