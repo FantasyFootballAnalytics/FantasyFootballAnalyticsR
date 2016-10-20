@@ -1,0 +1,387 @@
+---
+title: "Example Roundup"
+author: "Michael Griebe"
+date: "October 20, 2016"
+output: 
+  html_document: 
+    keep_md: yes
+---
+```{r setup, echo=FALSE,message=FALSE,results='hide',warning=FALSE}
+require(data.table)
+require(ggplot2)
+require(RColorBrewer)
+require(knitr)
+require(zoo)
+require(mclust)
+require(DT)
+require(ggthemes)
+
+#Must Define next_week before sourcing "weeklyRoundup.R"
+next_week=5
+source("../R/WeeklyRoundup.R")
+####  Combine Standard Scoring and PPR scoring into single table. 
+# Standard Scoring Projections Table
+# LT4 stands for league type 4, which is a standard scoring league.
+# load the file -it dumps projectedPoints into the workspace.
+load(file=paste0("../data/week",next_week,"LT4","projections.RData"))
+# rename (by reference since its a data table) projected points.
+StandardWP<-projectedPoints
+# remove the old reference.
+rm(projectedPoints)
+# add the column "leagueType" and make every entry "Standard".
+StandardWP[,leagueType:="Standard"]
+
+## PPR Scoring Table
+load(file=paste0("../data/week",next_week,"LT8","projections.RData"))
+PPRWP <-projectedPoints
+rm(projectedPoints)
+PPRWP[,leagueType:="PPR"]
+
+## .5 PPR Scoring Table
+load(file=paste0("../data/week",next_week,"LT8","projections.RData"))
+HPPRWP <- projectedPoints
+HPPRWP[,leagueType:="HPPR"]
+
+# create one table from the three tables (WP stands for Weekly Projections)
+WP<-rbindlist(list(StandardWP,PPRWP,HPPRWP))
+
+# Some sources were not removing players on a bye week.  We did not catch this until the first bye week.
+# So, if you run this line of code with week 1-5 data, it will not work -just omit it.
+
+if(next_week>4) {WP<-WP[next_week!=byeweek]}
+
+# Generate sumary table by player.  The "model" variable holds the Hodges-Lehmann estimator.
+Models<- WP[,list(model=list(h.l(points)),
+                  nAnalysts=length(unique(analystId)),
+                  mean=mean(points,na.rm=TRUE),
+                  floor=quantile(points,.1),
+                  ceiling=quantile(points,.9)),
+            by=list(player,team,position,leagueType,playerId)]
+
+# Throw out players with less than 4 projections -in early weeks, due to the move of the Rams, we did not get
+# the full compliment of sources, hence we include the rams even if it does not meet the 3 or more analyst threshold.
+
+Models<-Models[nAnalysts>=3|player=="Rams"]
+
+# Extract the pm, pm_l, and pm_h from each player's model.
+Models[,c("pm","pm_l","pm_h"):=list(vapply(model,function(x){x$estimate},double(1)),
+                                    vapply(model,function(x){x$conf.int[1]},double(1)),
+                                    vapply(model,function(x){x$conf.int[2]},double(1)))]
+
+# Don't allow the lower confidence bound to be negative.  This is only a problem if there are few
+# analytsts.
+
+Models[pm_l<0,pm_l:=0]
+
+#Add Rank by pm.
+Models[order(-pm),rank:=1:.N,by=list(position,leagueType)]
+
+#Reduce to top 60 in each position.
+Models<-Models[rank<60]
+
+# Cluster based on pseudomeans - to give the charts some color.  There are other possible interesting
+# ways to cluster.  For instance, one could do a multi-dimensional cluster on analyst projections.
+# One dimension would be NFL projections, the next, CBS, etc.
+Models[,tier:=Mclust(-pm, G=6)$classification,by=list(leagueType,position)]
+
+# There are other ways to calculate the upside and downside.
+Models[,upside:=ceiling-pm]
+Models[,downside:=pm-floor]
+# This is easiest to explain, but it may not conform with the standard notion of upside.
+# One alternative that I have tossed around is
+# Upside = ceiling + floor - 2*pm
+# Downside = 2*pm - ceiling - floor
+# This definition essentially captures how skewed the distribution is.
+# Arguably, if the projections are all over the place symetrically, then you don't have upside or downside, you have
+# variation.  If the projections are skewed to the right, then you have upside.  If they are skewed left, then you
+# have downside.
+
+# Extract discussion about articles.
+writers<-unique(WP$analystName)
+
+# Get the injury status -I have not been saving this table weekly, so I only have the most recent version.
+load(file="../data/injuryStatus-2016-10-20.RData")
+
+# For our articles, we extract the update date from the database of projections.
+# Here, we just use today for demonstration purposes.
+UpdateDate<-Sys.Date()
+
+#Add Injury Status to the Models Table
+Models<-merge(Models,injuryStatus[,list(playerId,injuryStatus)],by="playerId",all.x = TRUE)
+
+Models[is.na(injuryStatus),injuryStatus:="Healthy"]
+unique(Models$injuryStatus)
+#Abbreviate injury statuss.
+injAbrv=list(Questionable="Q",Out="Out",Doubtful="D",IR="IR",`Ir-pup`="IR",`Ir-nfi`="IR",Healthy="",
+             Suspended="Susp")
+#Warning is not enough here.  Need a stop.  Recycling is BAD.
+if(nrow(Models)!=length(unlist(injAbrv[Models$injuryStatus]))){stop("Something is wrong with the injury list.")}
+
+Models[,Status:=unlist(injAbrv[injuryStatus])]
+Models[,injuryStatus:=NULL]
+
+#If there are any players to exclude from commentary, put them here.
+#exclude=c("Jordy Nelson","Trent Richardson","Kelvin Benjamin")
+exclude=NULL
+```
+
+Welcome to week `r next_week`. The graphs below summarize the projections from a variety of sources.  This week&rsquo;s summary includes projections from: `r p_and(writers)`.  The data for this article was collected on `r format(as.Date(UpdateDate), format="%D")`. For more details on WR gold mining and how to interpret the graphs above, see [Chad&rsquo;s post explaining gold mining](http://fantasyfootballanalytics.net/2014/11/gold-mining-explained.html).
+
+
+## Projection Table
+```{r datatable,echo=FALSE,message=FALSE,warning=FALSE}
+datatable(Models[order(leagueType,mean,decreasing = T),
+                     list(Player=player,
+                          Status=as.factor(Status),
+                          Team=as.factor(team),
+                          Position=as.factor(position),
+                          Scoring=as.factor(leagueType),
+                          Mean=round(mean,1),
+                          Floor=round(floor,1),
+                          Ceiling=round(ceiling),
+                           `Number of Analysts Included`=nAnalysts)],
+              rownames=F,filter='top',options=list(lengthChange=F,pageLength=15))
+```
+
+
+## Projection Graphs Standard Leagues  {.tabset .tabset-pills}
+### RB
+#### Standard Scoring League Running Backs
+
+From the graph below notice that:
+  
+- `r bullet1("RB","Standard")`
+- `r bullet2("RB","Standard")`
+- `r bullet3("RB","Standard")`
+
+<center> 
+```{r Standard_RB,echo=FALSE,message=FALSE,warning=FALSE,fig.height=10,fig.width=9,dpi=100}
+roundupGraph(Models,"RB","Standard",60,next_week)
+```
+</center>
+  
+  
+### WR
+#### Standard Scoring League Wide Receiver 
+  
+From the graph below notice that:
+
+- `r bullet1("WR","Standard")`
+- `r bullet2("WR","Standard")`
+- `r bullet3("WR","Standard")`
+
+<center> 
+```{r Standard_WR,message=FALSE,warning=FALSE,echo=FALSE,fig.height=10,fig.width=9,dpi=100}
+roundupGraph(Models, "WR","Standard",60,next_week)
+```
+</center>
+  
+### QB
+#### Standard Scoring League Quarterback
+  
+From the graph below notice that:
+  
+- `r bullet1("QB","Standard")`
+- `r bullet2("QB","Standard")`
+- `r bullet3("QB","Standard")`
+
+
+<div>
+<center>
+```{r Standard_QB, message=FALSE,warning=FALSE,echo=FALSE,fig.height=8,fig.width=9,dpi=100}
+roundupGraph(Models,"QB","Standard",60,next_week)
+```
+</center>
+</div>
+  
+### TE
+#### Standard Scoring League Tight-End
+  
+From the graph below notice that:
+  
+- `r bullet1("TE","Standard")`
+- `r bullet2("TE","Standard")`
+- `r bullet3("TE","Standard")`
+
+
+<div>
+<center>
+```{r Standard_TE,message=FALSE,warning=FALSE,echo=FALSE,fig.height=8,fig.width=9,dpi=100}
+roundupGraph(Models,"TE","Standard",60,next_week)
+```
+</center>
+</div>
+  
+  
+## Projection Graphs Point-per-Reception Leagues  {.tabset .tabset-pills} 
+### RB
+#### Point-per-Reception League Running Back Roundup
+  
+  From the graph below notice that:
+  
+- `r bullet1("RB","PPR")`
+- `r bullet2("RB","PPR")`
+- `r bullet3("RB","PPR")`
+
+
+<center> 
+```{r PPR_RB,message=FALSE,warning=FALSE,echo=FALSE,fig.height=10,fig.width=9,dpi=100}
+roundupGraph(Models, "RB","PPR",60,next_week)
+```
+
+</center>
+  
+  
+### WR
+#### Point-per-Reception League Wide Receiver
+  
+From the graph below notice that:
+  
+- `r bullet1("WR","PPR")`
+- `r bullet2("WR","PPR")`
+- `r bullet3("WR","PPR")`
+
+
+<center> 
+```{r PPR_WR, message=FALSE,warning=FALSE,echo=FALSE,fig.height=10,fig.width=9,dpi=100}
+roundupGraph(Models, "WR","PPR",60,next_week)
+```
+</center>
+  
+  
+### QB
+#### Point-per-Reception League Quarterback
+  
+From the graph below notice that:
+  
+- `r bullet1("QB","PPR")`
+- `r bullet2("QB","PPR")`
+- `r bullet3("QB","PPR")`
+
+<div>
+<center>
+```{r PPR_QB, message=FALSE,warning=FALSE,echo=FALSE,fig.height=8,fig.width=9,dpi=100}
+roundupGraph(Models,"QB","PPR",60,next_week)
+```
+</center>
+</div>
+  
+### TE
+#### Point-per-Reception League Tight-End
+  
+From the graph below notice that:
+  
+- `r bullet1("TE","PPR")`
+- `r bullet2("TE","PPR")`
+- `r bullet3("TE","PPR")`
+
+<div>
+<center>
+```{r PPR_TE,message=FALSE,warning=FALSE,echo=FALSE,fig.height=10,fig.width=9,dpi=100}
+roundupGraph(Models,"TE","PPR",60,next_week)
+```
+</center>
+</div>
+
+## Projection Graphs Half-Point-per-Reception Leagues  {.tabset .tabset-pills} 
+### RB
+#### Half-Point-per-Reception League Running Back Roundup
+  
+  From the graph below notice that:
+  
+- `r bullet1("RB","PPR")`
+- `r bullet2("RB","PPR")`
+- `r bullet3("RB","PPR")`
+
+
+<center> 
+```{r HPPR_RB,message=FALSE,warning=FALSE,echo=FALSE,fig.height=10,fig.width=9,dpi=100}
+roundupGraph(Models, "RB","HPPR",60,next_week)
+```
+
+</center>
+  
+  
+### WR
+#### Half-Point-per-Reception League Wide Receiver
+  
+From the graph below notice that:
+  
+- `r bullet1("WR","PPR")`
+- `r bullet2("WR","PPR")`
+- `r bullet3("WR","PPR")`
+
+
+<center> 
+```{r HPPR_WR, message=FALSE,warning=FALSE,echo=FALSE,fig.height=10,fig.width=9,dpi=100}
+roundupGraph(Models, "WR","HPPR",60,next_week)
+```
+</center>
+  
+  
+### QB
+#### Half-Point-per-Reception League Quarterback
+  
+From the graph below notice that:
+  
+- `r bullet1("QB","PPR")`
+- `r bullet2("QB","PPR")`
+- `r bullet3("QB","PPR")`
+
+<div>
+<center>
+```{r HPPR_QB, message=FALSE,warning=FALSE,echo=FALSE,fig.height=8,fig.width=9,dpi=100}
+roundupGraph(Models,"QB","HPPR",60,next_week)
+```
+</center>
+</div>
+  
+### TE
+#### Half-Point-per-Reception League Tight-End
+  
+From the graph below notice that:
+  
+- `r bullet1("TE","PPR")`
+- `r bullet2("TE","PPR")`
+- `r bullet3("TE","PPR")`
+
+<div>
+<center>
+```{r HPPR_TE,message=FALSE,warning=FALSE,echo=FALSE,fig.height=10,fig.width=9,dpi=100}
+roundupGraph(Models,"TE","HPPR",60,next_week)
+```
+</center>
+</div>
+
+
+## Projection Graphs Defense/Special Teams and Kickers  {.tabset .tabset-pills}
+### DST
+#### Standard Scoring DST
+
+From the graph below notice that:
+  
+- `r bullet1("DST","Standard")`
+- `r bullet2("DST","Standard")`
+- `r bullet3("DST","Standard")`
+
+<center> 
+```{r DST, message=FALSE,warning=FALSE,echo=FALSE,fig.height=10,fig.width=9,dpi=100}
+roundupGraph(Models,"DST","Standard",30,next_week)
+```
+</center>
+
+### K
+#### Standard Scoring K
+
+From the graph below notice that:
+  
+- `r bullet1("K","Standard")`
+- `r bullet2("K","Standard")`
+- `r bullet3("K","Standard")`
+
+<center> 
+```{r K, message=FALSE,warning=FALSE,echo=FALSE,fig.height=10,fig.width=9,dpi=100}
+roundupGraph(Models,"K","Standard",30,next_week)
+```
+</center>
+  
