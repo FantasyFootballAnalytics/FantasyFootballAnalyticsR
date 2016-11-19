@@ -226,9 +226,11 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
 
 
     if(length(idVar) > 0 & nchar(idVar) > 0 & srcTbl@sourcePosition != "DST"){
+      idTbl <- playerData[, playerIds, with = FALSE]
       if(!(idVar %in% names(idTbl))){
         stop(cat(idVar, "is not a column in the player table"), call. = FALSE)
       } else {
+
         idTbl <- idTbl[!is.na(idTbl[[idVar]])]
         idTbl$cbsId <- as.numeric(idTbl$cbsId)
         idTbl$yahooId <- as.numeric(idTbl$yahooId)
