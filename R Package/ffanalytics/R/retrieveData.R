@@ -223,11 +223,7 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
 
   if(idVar != "playerId" & nrow(dataTable) > 0){# & exists(ifelse(nchar(idVar) > 0, idVar, "_none_"), dataTable)){
     playerIds <- intersect(names(playerData), c("playerId", "player", "team", "cbsId", "mflId", "yahooId", "fbgId"))
-    if(srcTbl@sourcePosition %in% c("DL", "LB", "DB")){
-      idTbl <- playerData[position  %in% c("DL", "LB", "DB"), playerIds, with = FALSE]
-    } else {
-      idTbl <- playerData[position == srcTbl@sourcePosition, playerIds, with = FALSE]
-    }
+
 
     if(length(idVar) > 0 & nchar(idVar) > 0 & srcTbl@sourcePosition != "DST"){
       if(!(idVar %in% names(idTbl))){
@@ -251,7 +247,11 @@ retrieveData <- function(srcTbl, srcPeriod, fbgUser = NULL, fbgPwd = NULL){
         dataTable <- dataTable[!is.na(playerId)]
       }
     } else {
-
+      if(srcTbl@sourcePosition %in% c("DL", "LB", "DB")){
+        idTbl <- playerData[position  %in% c("DL", "LB", "DB"), playerIds, with = FALSE]
+      } else {
+        idTbl <- playerData[position == srcTbl@sourcePosition, playerIds, with = FALSE]
+      }
       if(exists("position", dataTable)){
         if(length(unique(dataTable$position)) > 1)
           dataTable <- dataTable[position == srcTbl@sourcePosition]
