@@ -7,5 +7,5 @@ Once you have downloaded the repo to your local environment, the first thing tha
 install.packages(c("reshape", "MASS", "psych", "Rglpk", "XML", "data.table"), dependencies=TRUE)
 ```
 
-=========================
+# More info
 Fantasy Football Analytics is a website for harnessing the power of statistics, data analysis, and R to improve your performance in fantasy football.  This GitHub repository includes R scripts and data files for conducting the analyses in R as described on the website.  Read more at http://fantasyfootballanalytics.net/.
