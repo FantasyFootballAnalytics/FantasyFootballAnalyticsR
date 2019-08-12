@@ -8,7 +8,7 @@
 ###########################
 
 #Season
-season <- 2014
+season <- 2019
 weekNo <- 0   # Set weekNo = 0 for seasonal projections
 
 #Roster
@@ -109,7 +109,7 @@ sourceWeights <- c(
   "FOX Sports"        = 1, 
   "FFtoday"           = 1,
   "NumberFire"        = 1, 
-  "FantasyPros"       = 1,
+  "FantasyPros"       = 4,
   "Dodds-Norton"      = 1, 
   "Dodds"             = 1, 
   "Tremblay"          = 1, 
@@ -127,7 +127,7 @@ wrReplacements <- 36
 teReplacements <- 11
 
 #Alternative way of calculating the number of players at each position drafted in Top 100 based on league settings
-#numTeams <- 10  #number of teams in league
+#numTeams <- 12  #number of teams in league
 #numQB <- 1      #number of avg QBs in starting lineup
 #numRB <- 2.5    #number of avg RBs in starting lineup
 #numWR <- 2.5    #number of avg WRs in starting lineup
