@@ -27,7 +27,7 @@ calculatePoints <- function(projectionData = data.table(), scoringRules = list()
     # if all the points allowed are over 100 then we assume it is seasonal data
     is.season <- all(ptsAllow[is.finite(ptsAllow)] > 100)
     if(is.season){
-      ptsAllow <- ptsAllow / 16
+      ptsAllow <- ptsAllow / 17
     }
 
     # Creating a 0 vector to capture the points
@@ -39,7 +39,7 @@ calculatePoints <- function(projectionData = data.table(), scoringRules = list()
     }
 
     if(is.season){
-      pts <- pts * 16
+      pts <- pts * 17
     }
     return(as.numeric(pts))
   }
