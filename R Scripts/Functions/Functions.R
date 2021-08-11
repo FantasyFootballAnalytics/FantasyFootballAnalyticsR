@@ -403,7 +403,7 @@ wilcox.loc <- function(vec, na.rm = FALSE){
 dstPts <- function(ptsAllow, brackets){
   is.season <- all(ptsAllow > 100)
   if(is.season){
-    ptsAllow <- ptsAllow / 16
+    ptsAllow <- ptsAllow / 17
   }
   pts <- rep(0, length(ptsAllow))
   for(r in nrow(brackets):1){
@@ -411,7 +411,7 @@ dstPts <- function(ptsAllow, brackets){
   }
   
   if(is.season){
-    pts <- pts * 16
+    pts <- pts * 17
   }
   return(as.numeric(pts))
 }
