@@ -2,6 +2,7 @@ Fantasy Football Analytics
 =========================
 
 # Description:
+
 This repository contains R scripts and data files used for advanced fantasy football analysis. It’s part of the Fantasy Football Analytics platform, which focuses on applying statistical modeling and data-driven insights to enhance decision-making in fantasy football.
 
 # Features:
@@ -11,6 +12,7 @@ This repository contains R scripts and data files used for advanced fantasy foot
 - Draft Tools: Tools for making informed draft picks based on statistical analysis.
 
 # Installation:
+
 To get started, you need to install the required R packages. You can do this by running the following command in R:
 ```r
 install.packages(c("reshape", "MASS", "psych", "Rglpk", "XML", "data.table"), dependencies=TRUE)
@@ -28,5 +30,15 @@ Clone the repository:
 git clone https://github.com/FantasyFootballAnalytics/FantasyFootballAnalyticsR.git
 ```
 
-# More info
-Fantasy Football Analytics is a website for harnessing the power of statistics, data analysis, and R to improve your performance in fantasy football.  This GitHub repository includes R scripts and data files for conducting the analyses in R as described on the website.  Read more at http://fantasyfootballanalytics.net/.
+# More Info:
+
+Fantasy Football Analytics is a platform that leverages statistics, data analysis, and R programming to enhance fantasy football strategies and performance. The GitHub repository hosts R scripts and data sets used to conduct these analyses, aligning with the methodologies outlined on the website. You can learn more by visiting http://fantasyfootballanalytics.net/. 
+
+**Pros:** 
+- Provides tools and resources for data-driven decision-making in fantasy football.
+- Utilizes the powerful R language, ideal for statistical analysis.
+- Open access to the code allows for customization and deeper learning.
+
+**Cons:** 
+- Requires familiarity with R programming, which may pose a learning curve.
+- Success in fantasy football still depends on the quality of real-world data.
